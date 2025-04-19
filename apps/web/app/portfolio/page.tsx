@@ -9,6 +9,7 @@ import BalanceSection from "./_components/balance";
 import ChartSection from "./_components/pnl-graph";
 import TransactionsTable from "./_components/transactions-table";
 import Performance from "./_components/performance";
+import { WalletValueChart } from "./_components/wallet-value-chart";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Dashboard",
@@ -28,7 +29,8 @@ export default function DashboardPage() {
             <TabsContent value="spot" className="flex flex-col gap-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <BalanceSection />
-                <ChartSection />
+                {/* <ChartSection /> */}
+                <WalletValueChart />
                 <Performance />
               </div>
               <TransactionsTable />

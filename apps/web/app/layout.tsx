@@ -1,8 +1,8 @@
+import "@repo/ui/globals.css";
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import SiteHeader from "./_components/site-header";
+import SiteHeader from "./_components/header/site-header";
 import { ThemeProvider } from "./_components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });

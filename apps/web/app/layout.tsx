@@ -1,9 +1,10 @@
+import "@repo/ui/globals.css";
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import SiteHeader from "./_components/site-header";
+import SiteHeader from "./_components/header/site-header";
 import { ThemeProvider } from "./_components/theme-provider";
+import { Toaster } from "@repo/ui/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster position="top-center" />
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>

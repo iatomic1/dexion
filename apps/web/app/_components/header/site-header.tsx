@@ -4,6 +4,7 @@ import { Search, Bell, User, ChevronDown } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
+import { AccountPopover } from "./account-management";
 
 export default function SiteHeader() {
   return (
@@ -85,27 +86,21 @@ export default function SiteHeader() {
             className="w-64 rounded-full bg-muted pl-8 text-xs"
           />
         </div>
-        <Button variant="outline" size="sm" className="hidden md:flex">
-          <span className="mr-2">0.157</span>
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="sm" className="hidden md:flex">
-          <span className="mr-2">8.715</span>
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+        {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
+        {/*   <span className="mr-2">0.157</span> */}
+        {/*   <ChevronDown className="h-4 w-4" /> */}
+        {/* </Button> */}
+        {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
+        {/*   <span className="mr-2">8.715</span> */}
+        {/*   <ChevronDown className="h-4 w-4" /> */}
+        {/* </Button> */}
         <Button variant="default" size="sm" className="rounded-full">
           Deposit
         </Button>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full text-primary"
-        >
-          <User className="h-5 w-5" />
-        </Button>
+        <AccountPopover />
       </div>
     </header>
   );

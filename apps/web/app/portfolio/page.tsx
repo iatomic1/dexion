@@ -21,7 +21,7 @@ export default function DashboardPage() {
       <div className="flex flex-1">
         <main className="flex-1 p-4">
           <Tabs defaultValue="spot">
-            <TabsList className="flex gap-3 justify-start">
+            <TabsList className="flex gap-3 justify-start w-fit">
               <TabsTrigger value="spot">Spot</TabsTrigger>
               <TabsTrigger value="wallets">Wallets</TabsTrigger>
               <TabsTrigger value="perpetuals">Perpetuals</TabsTrigger>

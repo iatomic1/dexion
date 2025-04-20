@@ -47,26 +47,28 @@ export default function TradingPanel({ token }: TradingPanelProps) {
           onValueChange={setTradeType}
           className="w-full"
         >
-          <TabsList className="text-foreground h-auto gap-2 rounded-none border-b bg-transparent px-0 py-1">
-            <TabsTrigger
-              value="market"
-              className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Market
-            </TabsTrigger>
-            <TabsTrigger
-              value="limit"
-              className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Limit
-            </TabsTrigger>
-            <TabsTrigger
-              value="advanced"
-              className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              Adv.
-            </TabsTrigger>
-          </TabsList>
+          <div clz>
+            <TabsList className="text-foreground h-auto gap-2 rounded-none border-b bg-transparent px-0 py-1">
+              <TabsTrigger
+                value="market"
+                className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                Market
+              </TabsTrigger>
+              <TabsTrigger
+                value="limit"
+                className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                Limit
+              </TabsTrigger>
+              <TabsTrigger
+                value="advanced"
+                className="data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                Adv.
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </Tabs>
 
         <div className="mt-6">

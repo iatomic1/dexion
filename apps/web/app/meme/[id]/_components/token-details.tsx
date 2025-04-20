@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import TokenChart from "./token-chart";
 import TokenInfo from "./token-info";
 import TokenTabs from "./token-tabs";
-import CryptoTradingInterface from "./trading-panel";
-import TradingPanel from "./trading-panel";
+import CryptoTradingInterface from "./trading/trading-panel";
+import TradingPanel from "./trading/trading-panel";
 
 // Mock data for the token
 const mockTokenData = {

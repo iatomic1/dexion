@@ -1,0 +1,30 @@
+version: '2'
+sql:
+- engine: postgresql
+  schema: ./internal/db/migrations
+  database:
+    uri: postgres://postgres:password@localhost:5431/dexion?sslmode=disable
+  queries: ./internal/db/query
+  gen:
+    go:
+      emit_json_tags: true
+      emit_interface: true
+      emit_pointers_for_null_types: true
+      emit_result_struct_pointers: true
+      json_tags_case_style: camel
+      package: repository
+      out: internal/db/repository
+      sql_package: pgx/v5
+      overrides:
+      - db_type: uuid
+        go_type:
+          import: github.com/google/uuid
+          type: UUID
+      - db_type: timestamptz
+        go_type:
+          import: time
+          type: Time
+      - column: users.email
+        go_struct_tag: binding:"required,email" example:"mosh@mail.com"
+      - column: users.password
+        go_struct_tag: binding:"required" example:"Hello"

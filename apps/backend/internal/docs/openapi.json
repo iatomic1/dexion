@@ -1,0 +1,395 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "API for Dexion",
+        "title": "DEXION API",
+        "contact": {
+            "name": "Atomic",
+            "url": "https://github.com/iatomic1",
+            "email": "atomic.k.2739@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Logs a user into his/her account",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login to your account",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.RegisterUserParams"
+                            }
+                        }
+                    },
+                    "description": "Login data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Login success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_domain.AuthResponse"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "get": {
+                "security": [
+                    {
+                        "RefreshTokenBearer": []
+                    }
+                ],
+                "description": "Refreshes token to get new token pair",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh Token",
+                "responses": {
+                    "200": {
+                        "description": "TokenPair",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_pkg_jwt.TokenPair"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.UnauthorizedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Profile not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.NotFoundResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "description": "Create an account on unwind",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Create an account",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_domain.RegisterRequest"
+                            }
+                        }
+                    },
+                    "description": "Signup data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_domain.AuthResponse"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "description": "Authentication endpoints",
+            "name": "Auth"
+        }
+    ],
+    "servers": [
+        {
+            "url": "http://localhost:8080/api/v1"
+        },
+        {
+            "url": "https://localhost:8080/api/v1"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "AccessTokenBearer": {
+                "description": "AccessTokenBearer Authentication",
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "RefreshTokenBearer": {
+                "description": "RefreshTokenBearer Authentication",
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            },
+            "Google_OAuth2": {
+                "type": "oauth2",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+                        "tokenUrl": "https://oauth2.googleapis.com/token",
+                        "scopes": {
+                            "email": "Grants access to user's email",
+                            "profile": "Grants access to user's basic profile info"
+                        }
+                    }
+                }
+            }
+        },
+        "schemas": {
+            "EmailID": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "profileId": {
+                        "type": "string"
+                    }
+                }
+            },
+            "backend_api_http.InternalServerErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "errors": {},
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                }
+            },
+            "backend_api_http.NotFoundResponse": {
+                "type": "object",
+                "properties": {
+                    "errors": {},
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "Not Found"
+                    }
+                }
+            },
+            "backend_api_http.Response": {
+                "type": "object",
+                "properties": {
+                    "data": {},
+                    "errors": {},
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    }
+                }
+            },
+            "backend_api_http.SuccessResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {},
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "OK"
+                    }
+                }
+            },
+            "backend_api_http.UnauthorizedResponse": {
+                "type": "object",
+                "properties": {
+                    "errors": {},
+                    "message": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "Unauthorized"
+                    }
+                }
+            },
+            "backend_internal_db_repository.RegisterUserParams": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "mosh@mail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "Hello"
+                    }
+                }
+            },
+            "backend_internal_domain.AuthResponse": {
+                "type": "object",
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "refreshTokenId": {
+                        "description": "Added to hold the refresh token ID",
+                        "type": "string"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/EmailID"
+                    }
+                }
+            },
+            "backend_internal_domain.RegisterRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "mosh@mail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "Hello"
+                    }
+                }
+            },
+            "backend_pkg_jwt.TokenPair": {
+                "type": "object",
+                "properties": {
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "refreshTokenId": {
+                        "description": "Added to hold the refresh token ID",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

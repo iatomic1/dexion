@@ -103,11 +103,11 @@ definitions:
 host: localhost:8080
 info:
   contact:
-    email: adeyemialameen04@gmail.com
-    name: Al-Ameen Adeyemi
-    url: https://github.com/adeyemialameen04
-  description: API for Unwind
-  title: Unwind API
+    email: atomic.k.2739@gmail.com
+    name: Atomic
+    url: https://github.com/iatomic1
+  description: API for Dexion
+  title: DEXION API
   version: "1.0"
 paths:
   /auth/login:

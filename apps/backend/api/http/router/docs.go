@@ -30,7 +30,7 @@ func RegisterDocsRoutes(router *gin.RouterGroup) {
 				scalargo.WithTitle("Unwind"),
 			),
 			scalargo.WithTheme(scalargo.ThemeDeepSpace),
-			scalargo.WithLayout(scalargo.LayoutClassic),
+			scalargo.WithLayout(scalargo.LayoutModern),
 			// scalargo.WithBaseServerURL("http://localhost:2020/"),
 		)
 		if err != nil {

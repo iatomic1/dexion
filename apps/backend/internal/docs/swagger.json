@@ -5,12 +5,12 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "API for Unwind",
-        "title": "Unwind API",
+        "description": "API for Dexion",
+        "title": "DEXION API",
         "contact": {
-            "name": "Al-Ameen Adeyemi",
-            "url": "https://github.com/adeyemialameen04",
-            "email": "adeyemialameen04@gmail.com"
+            "name": "Atomic",
+            "url": "https://github.com/iatomic1",
+            "email": "atomic.k.2739@gmail.com"
         },
         "version": "1.0"
     },

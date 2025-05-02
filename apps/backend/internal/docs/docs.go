@@ -10,9 +10,9 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Al-Ameen Adeyemi",
-            "url": "https://github.com/adeyemialameen04",
-            "email": "adeyemialameen04@gmail.com"
+            "name": "Atomic",
+            "url": "https://github.com/iatomic1",
+            "email": "atomic.k.2739@gmail.com"
         },
         "version": "{{.Version}}"
     },
@@ -377,8 +377,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{"http", "https"},
-	Title:            "Unwind API",
-	Description:      "API for Unwind",
+	Title:            "DEXION API",
+	Description:      "API for Dexion",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

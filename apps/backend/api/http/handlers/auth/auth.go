@@ -369,8 +369,9 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 	}
 
 	response := jwt.TokenPair{
-		AccessToken:  tokens.AccessToken,
-		RefreshToken: tokens.RefreshToken,
+		AccessToken:    tokens.AccessToken,
+		RefreshToken:   tokens.RefreshToken,
+		RefreshTokenID: refreshTokenIdStr,
 	}
 	http.SendSuccess(c, response, http.WithMessage(domain.TokensRefreshed))
 }

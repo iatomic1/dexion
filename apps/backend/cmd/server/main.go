@@ -1,10 +1,10 @@
-//	@title			Unwind API
+//	@title			DEXION API
 //	@version		1.0
-//	@description	API for Unwind
-//	@contact.name	Al-Ameen Adeyemi
-//	@contact.email	adeyemialameen04@gmail.com
+//	@description	API for Dexion
+//	@contact.name	Atomic
+//	@contact.email	atomic.k.2739@gmail.com
 //
-//	@contact.url	https://github.com/adeyemialameen04
+//	@contact.url	https://github.com/iatomic1
 //	@host			localhost:8080
 //	@basePath		/api/v1
 //	@schemes		http https

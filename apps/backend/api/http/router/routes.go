@@ -15,6 +15,7 @@ func SetupRouter(srv *http.Server) {
 	api := router.Group(srv.Config.ApiPrefixStr)
 	{
 		fmt.Println("registering routes")
+		RegisterAuthRoutes(srv, api.Group("/auth"))
 
 		RegisterDocsRoutes(api.Group("/docs"))
 	}

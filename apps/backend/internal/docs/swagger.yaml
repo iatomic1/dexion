@@ -1,0 +1,240 @@
+basePath: /api/v1
+definitions:
+  EmailID:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      profileId:
+        type: string
+    type: object
+  backend_api_http.InternalServerErrorResponse:
+    properties:
+      errors: {}
+      message:
+        type: string
+      status:
+        example: Internal Server Error
+        type: string
+    type: object
+  backend_api_http.NotFoundResponse:
+    properties:
+      errors: {}
+      message:
+        type: string
+      status:
+        example: Not Found
+        type: string
+    type: object
+  backend_api_http.Response:
+    properties:
+      data: {}
+      errors: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  backend_api_http.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        example: OK
+        type: string
+    type: object
+  backend_api_http.UnauthorizedResponse:
+    properties:
+      errors: {}
+      message:
+        type: string
+      status:
+        example: Unauthorized
+        type: string
+    type: object
+  backend_internal_db_repository.RegisterUserParams:
+    properties:
+      email:
+        example: mosh@mail.com
+        type: string
+      password:
+        example: Hello
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  backend_internal_domain.AuthResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      refreshTokenId:
+        description: Added to hold the refresh token ID
+        type: string
+      user:
+        $ref: '#/definitions/EmailID'
+    type: object
+  backend_internal_domain.RegisterRequest:
+    properties:
+      email:
+        example: mosh@mail.com
+        type: string
+      password:
+        example: Hello
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  backend_pkg_jwt.TokenPair:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      refreshTokenId:
+        description: Added to hold the refresh token ID
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: adeyemialameen04@gmail.com
+    name: Al-Ameen Adeyemi
+    url: https://github.com/adeyemialameen04
+  description: API for Unwind
+  title: Unwind API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Logs a user into his/her account
+      parameters:
+      - description: Login data
+        in: body
+        name: EmailAndPassword
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.RegisterUserParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Login success
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain.AuthResponse'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Login to your account
+      tags:
+      - Auth
+  /auth/refresh:
+    get:
+      consumes:
+      - application/json
+      description: Refreshes token to get new token pair
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: TokenPair
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_pkg_jwt.TokenPair'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/backend_api_http.UnauthorizedResponse'
+        "404":
+          description: Profile not found
+          schema:
+            $ref: '#/definitions/backend_api_http.NotFoundResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - RefreshTokenBearer: []
+      summary: Refresh Token
+      tags:
+      - Auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create an account on unwind
+      parameters:
+      - description: Signup data
+        in: body
+        name: EmailAndPassword
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_domain.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_domain.AuthResponse'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Create an account
+      tags:
+      - Auth
+schemes:
+- http
+- https
+securityDefinitions:
+  AccessTokenBearer:
+    description: AccessTokenBearer Authentication
+    in: header
+    name: Authorization
+    type: apiKey
+  Google OAuth2:
+    authorizationUrl: https://accounts.google.com/o/oauth2/auth
+    flow: accessCode
+    scopes:
+      email: Grants access to user's email
+      profile: Grants access to user's basic profile info
+    tokenUrl: https://oauth2.googleapis.com/token
+    type: oauth2
+  RefreshTokenBearer:
+    description: RefreshTokenBearer Authentication
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: Authentication endpoints
+  name: Auth

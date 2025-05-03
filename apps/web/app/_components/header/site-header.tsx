@@ -5,6 +5,8 @@ import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
 import { AccountPopover } from "./account-management";
+import AuthComponent from "../auth/auth";
+import SignUpModal from "../auth/sign-up";
 
 export default function SiteHeader() {
   return (
@@ -74,6 +76,7 @@ export default function SiteHeader() {
                 Rewards
               </Link>
             </li>
+            <SignUpModal />
           </ul>
         </nav>
       </div>

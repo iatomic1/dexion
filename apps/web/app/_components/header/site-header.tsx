@@ -13,7 +13,7 @@ export default function SiteHeader() {
         <Link href="/" className="flex items-center gap-2 font-bold">
           <div className="flex items-center">
             <div className="h-6 w-6 bg-primary clip-triangle"></div>
-            <span className="ml-2">{siteConfig.title} Pro</span>
+            <span className="ml-2 text-blue-400">{siteConfig.title} Pro</span>
           </div>
         </Link>
         <nav className="hidden md:flex">

@@ -12,7 +12,7 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, password, updated_at, created_at FROM "users"
+SELECT id, email, password, updated_at, created_at, type, telegram_chat_id FROM "users"
 WHERE email = $1
 `
 
@@ -25,12 +25,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (*User, erro
 		&i.Password,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
+		&i.TelegramChatID,
 	)
 	return &i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, password, updated_at, created_at FROM "users"
+SELECT id, email, password, updated_at, created_at, type, telegram_chat_id FROM "users"
 WHERE id = $1
 `
 
@@ -43,6 +45,8 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (*User, error) 
 		&i.Password,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
+		&i.TelegramChatID,
 	)
 	return &i, err
 }
@@ -51,7 +55,7 @@ const registerUser = `-- name: RegisterUser :one
 INSERT INTO "users" (
  id, email, password
 ) VALUES ( uuid_generate_v4(), $1, $2 )
-RETURNING id, email, password, updated_at, created_at
+RETURNING id, email, password, updated_at, created_at, type, telegram_chat_id
 `
 
 type RegisterUserParams struct {
@@ -68,6 +72,8 @@ func (q *Queries) RegisterUser(ctx context.Context, arg RegisterUserParams) (*Us
 		&i.Password,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
+		&i.TelegramChatID,
 	)
 	return &i, err
 }

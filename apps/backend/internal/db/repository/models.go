@@ -5,11 +5,55 @@
 package repository
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type UserType string
+
+const (
+	UserTypeAPP      UserType = "APP"
+	UserTypeTELEGRAM UserType = "TELEGRAM"
+)
+
+func (e *UserType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = UserType(s)
+	case string:
+		*e = UserType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for UserType: %T", src)
+	}
+	return nil
+}
+
+type NullUserType struct {
+	UserType UserType `json:"userType"`
+	Valid    bool     `json:"valid"` // Valid is true if UserType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullUserType) Scan(value interface{}) error {
+	if value == nil {
+		ns.UserType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.UserType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullUserType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.UserType), nil
+}
 
 type RefreshToken struct {
 	ID        uuid.UUID        `json:"id"`
@@ -20,11 +64,13 @@ type RefreshToken struct {
 }
 
 type User struct {
-	ID        uuid.UUID          `json:"id"`
-	Email     string             `binding:"required,email" example:"mosh@mail.com" json:"email"`
-	Password  string             `binding:"required" example:"Hello" json:"password"`
-	UpdatedAt time.Time          `json:"updatedAt"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	ID             uuid.UUID          `json:"id"`
+	Email          string             `binding:"required,email" example:"mosh@mail.com" json:"email"`
+	Password       string             `binding:"required" example:"Hello" json:"password"`
+	UpdatedAt      time.Time          `json:"updatedAt"`
+	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
+	Type           UserType           `json:"type"`
+	TelegramChatID *string            `json:"telegramChatId"`
 }
 
 type Wallet struct {

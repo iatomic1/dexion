@@ -1,7 +1,5 @@
 import { Button } from "@repo/ui/components/ui/button";
 import { LogOut, User } from "lucide-react";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -21,7 +19,7 @@ export function AccountPopover() {
           <User className="h-5 w-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-60 p-2">
+      <PopoverContent className="w-60 p-2" side="left">
         <AccountSecurityModal>
           <Button
             className="w-full justify-start gap-3 bg-transparent "

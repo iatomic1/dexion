@@ -29,7 +29,6 @@ export default function DashboardPage() {
             <TabsContent value="spot" className="flex flex-col gap-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <BalanceSection />
-                {/* <ChartSection /> */}
                 <WalletValueChart />
                 <Performance />
               </div>

@@ -61,6 +61,12 @@ func (h *Handler) LoginUser(c *gin.Context) {
 
 	repo := repository.New(tx)
 	user, err := repo.GetUserByEmail(ctx, req.Email)
+
+	if user.Type != "APP" {
+		http.SendUnauthorized(c, nil, http.WithMessage(domain.ErrInvalidEmailOrPassword))
+		return
+	}
+
 	verify := password.VerifyPassword(req.Password, user.Password)
 
 	if err != nil || !verify {
@@ -344,6 +350,11 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 
 	repo := repository.New(tx)
 	user, err := repo.GetUserById(ctx, parsedUserId)
+	if user.Type != "APP" {
+		http.SendUnauthorized(c, nil, http.WithMessage(domain.ErrInvalidEmailOrPassword))
+		return
+	}
+
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return

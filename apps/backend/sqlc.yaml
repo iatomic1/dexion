@@ -26,5 +26,7 @@ sql:
           type: Time
       - column: users.email
         go_struct_tag: binding:"required,email" example:"mosh@mail.com"
+      - column: users.type
+        go_struct_tag: binding:"required" example:"APP"
       - column: users.password
         go_struct_tag: binding:"required" example:"Hello"

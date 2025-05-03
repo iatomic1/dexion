@@ -1,13 +1,16 @@
 basePath: /api/v1
 definitions:
-  EmailID:
+  api_http_handlers_auth.TelegramRegisterRequest:
     properties:
-      email:
+      password:
         type: string
-      id:
+      telegram_chat_id:
         type: string
-      profileId:
-        type: string
+      type:
+        $ref: '#/definitions/backend_internal_db_repository.UserType'
+    required:
+    - telegram_chat_id
+    - type
     type: object
   backend_api_http.InternalServerErrorResponse:
     properties:
@@ -62,10 +65,48 @@ definitions:
       password:
         example: Hello
         type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/backend_internal_db_repository.UserType'
+        example: APP
     required:
     - email
     - password
+    - type
     type: object
+  backend_internal_db_repository.User:
+    properties:
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      email:
+        example: mosh@mail.com
+        type: string
+      id:
+        type: string
+      password:
+        example: Hello
+        type: string
+      telegramChatId:
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/backend_internal_db_repository.UserType'
+        example: APP
+      updatedAt:
+        type: string
+    required:
+    - email
+    - password
+    - type
+    type: object
+  backend_internal_db_repository.UserType:
+    enum:
+    - APP
+    - TELEGRAM
+    type: string
+    x-enum-varnames:
+    - UserTypeAPP
+    - UserTypeTELEGRAM
   backend_internal_domain.AuthResponse:
     properties:
       accessToken:
@@ -75,8 +116,8 @@ definitions:
       refreshTokenId:
         description: Added to hold the refresh token ID
         type: string
-      user:
-        $ref: '#/definitions/EmailID'
+      userID:
+        type: string
     type: object
   backend_internal_domain.RegisterRequest:
     properties:
@@ -86,9 +127,14 @@ definitions:
       password:
         example: Hello
         type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/backend_internal_db_repository.UserType'
+        example: APP
     required:
     - email
     - password
+    - type
     type: object
   backend_pkg_jwt.TokenPair:
     properties:
@@ -99,6 +145,25 @@ definitions:
       refreshTokenId:
         description: Added to hold the refresh token ID
         type: string
+    type: object
+  pgtype.InfinityModifier:
+    enum:
+    - 1
+    - 0
+    - -1
+    type: integer
+    x-enum-varnames:
+    - Infinity
+    - Finite
+    - NegativeInfinity
+  pgtype.Timestamptz:
+    properties:
+      infinityModifier:
+        $ref: '#/definitions/pgtype.InfinityModifier'
+      time:
+        type: string
+      valid:
+        type: boolean
     type: object
 host: localhost:8080
 info:
@@ -204,6 +269,37 @@ paths:
             - properties:
                 data:
                   $ref: '#/definitions/backend_internal_domain.AuthResponse'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Create an account
+      tags:
+      - Auth
+  /auth/signup/tg:
+    post:
+      consumes:
+      - application/json
+      description: Create an account on dexion
+      parameters:
+      - description: Signup data
+        in: body
+        name: EmailAndPassword
+        required: true
+        schema:
+          $ref: '#/definitions/api_http_handlers_auth.TelegramRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.User'
               type: object
         "500":
           description: Internal server error

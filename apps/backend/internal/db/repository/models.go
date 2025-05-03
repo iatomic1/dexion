@@ -65,18 +65,22 @@ type RefreshToken struct {
 
 type User struct {
 	ID             uuid.UUID          `json:"id"`
-	Email          string             `binding:"required,email" example:"mosh@mail.com" json:"email"`
+	Email          *string            `binding:"required,email" example:"mosh@mail.com" json:"email"`
+	Type           UserType           `binding:"required" example:"APP" json:"type"`
+	TelegramChatID *string            `json:"telegramChatId"`
 	Password       string             `binding:"required" example:"Hello" json:"password"`
 	UpdatedAt      time.Time          `json:"updatedAt"`
 	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	Type           UserType           `json:"type"`
-	TelegramChatID *string            `json:"telegramChatId"`
+}
+
+type UserWallet struct {
+	UserID        uuid.UUID `json:"userId"`
+	WalletAddress string    `json:"walletAddress"`
+	Nickname      string    `json:"nickname"`
+	Emoji         *string   `json:"emoji"`
 }
 
 type Wallet struct {
-	ID            uuid.UUID   `json:"id"`
-	UserID        pgtype.UUID `json:"userId"`
-	Emoji         *string     `json:"emoji"`
-	ChatID        *string     `json:"chatId"`
-	WalletAddress string      `json:"walletAddress"`
+	Address   string           `json:"address"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
 }

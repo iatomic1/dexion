@@ -20,7 +20,7 @@ const (
 
 type AuthResponse struct {
 	jwt.TokenPair
-	User EmailID `json:"user"`
+	UserID string
 }
 
 type RegisterRequest struct {

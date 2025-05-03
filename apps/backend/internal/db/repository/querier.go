@@ -15,9 +15,10 @@ type Querier interface {
 	AddRefreshTokenID(ctx context.Context, arg AddRefreshTokenIDParams) (*RefreshToken, error)
 	DeleteRefreshToken(ctx context.Context, id uuid.UUID) error
 	GetRefreshTokenUserID(ctx context.Context, id uuid.UUID) (pgtype.UUID, error)
-	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	GetUserByEmail(ctx context.Context, email *string) (*User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)
 	RefreshTokenExists(ctx context.Context, id uuid.UUID) (bool, error)
+	RegisterTelegramUser(ctx context.Context, arg RegisterTelegramUserParams) (*User, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (*User, error)
 }
 

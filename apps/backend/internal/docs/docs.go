@@ -189,20 +189,76 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/auth/signup/tg": {
+            "post": {
+                "description": "Create an account on dexion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Create an account",
+                "parameters": [
+                    {
+                        "description": "Signup data",
+                        "name": "EmailAndPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_http_handlers_auth.TelegramRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "EmailID": {
+        "api_http_handlers_auth.TelegramRegisterRequest": {
             "type": "object",
+            "required": [
+                "telegram_chat_id",
+                "type"
+            ],
             "properties": {
-                "email": {
+                "password": {
                     "type": "string"
                 },
-                "id": {
+                "telegram_chat_id": {
                     "type": "string"
                 },
-                "profileId": {
-                    "type": "string"
+                "type": {
+                    "$ref": "#/definitions/backend_internal_db_repository.UserType"
                 }
             }
         },
@@ -275,7 +331,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "email",
-                "password"
+                "password",
+                "type"
             ],
             "properties": {
                 "email": {
@@ -285,8 +342,65 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "Hello"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
+                        }
+                    ],
+                    "example": "APP"
                 }
             }
+        },
+        "backend_internal_db_repository.User": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "type"
+            ],
+            "properties": {
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "mosh@mail.com"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Hello"
+                },
+                "telegramChatId": {
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
+                        }
+                    ],
+                    "example": "APP"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.UserType": {
+            "type": "string",
+            "enum": [
+                "APP",
+                "TELEGRAM"
+            ],
+            "x-enum-varnames": [
+                "UserTypeAPP",
+                "UserTypeTELEGRAM"
+            ]
         },
         "backend_internal_domain.AuthResponse": {
             "type": "object",
@@ -301,8 +415,8 @@ const docTemplate = `{
                     "description": "Added to hold the refresh token ID",
                     "type": "string"
                 },
-                "user": {
-                    "$ref": "#/definitions/EmailID"
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -310,7 +424,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "email",
-                "password"
+                "password",
+                "type"
             ],
             "properties": {
                 "email": {
@@ -320,6 +435,14 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "Hello"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
+                        }
+                    ],
+                    "example": "APP"
                 }
             }
         },
@@ -335,6 +458,33 @@ const docTemplate = `{
                 "refreshTokenId": {
                     "description": "Added to hold the refresh token ID",
                     "type": "string"
+                }
+            }
+        },
+        "pgtype.InfinityModifier": {
+            "type": "integer",
+            "enum": [
+                1,
+                0,
+                -1
+            ],
+            "x-enum-varnames": [
+                "Infinity",
+                "Finite",
+                "NegativeInfinity"
+            ]
+        },
+        "pgtype.Timestamptz": {
+            "type": "object",
+            "properties": {
+                "infinityModifier": {
+                    "$ref": "#/definitions/pgtype.InfinityModifier"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "type": "boolean"
                 }
             }
         }

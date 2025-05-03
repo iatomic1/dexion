@@ -13,6 +13,7 @@ func RegisterAuthRoutes(srv *http.Server, router *gin.RouterGroup) {
 	authGroup := router
 	authGroup.POST("/login", authHandler.LoginUser)
 	authGroup.POST("/signup", authHandler.RegisterUser)
+	authGroup.POST("/signup/tg", authHandler.RegisterTelegramUser)
 
 	authGroup.Use(middleware.RefreshTokenMiddleware(srv))
 	{

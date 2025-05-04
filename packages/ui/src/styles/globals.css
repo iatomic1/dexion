@@ -97,6 +97,43 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+@layer utilities {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    transition: background-color 5000s ease-in-out 0s;
+    /* box-shadow: inset 0 0 20px 20px hsl(var(--background)) !important; */
+  }
+
+  /* For inputs with muted background */
+  input.bg-muted:-webkit-autofill,
+  input.bg-muted:-webkit-autofill:hover,
+  input.bg-muted:-webkit-autofill:focus,
+  input.bg-muted\/50:-webkit-autofill,
+  input.bg-muted\/50:-webkit-autofill:hover,
+  input.bg-muted\/50:-webkit-autofill:focus,
+  input.bg-muted\/50:-webkit-autofill:active {
+    /* box-shadow: inset 0 0 20px 20px hsl(var(--muted)) !important; */
+  }
+
+  /* Firefox */
+  input:autofill {
+    background-color: transparent !important;
+    color: hsl(var(--foreground)) !important;
+  }
+}
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

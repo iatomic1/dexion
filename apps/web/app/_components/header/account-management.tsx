@@ -20,15 +20,15 @@ export function AccountPopover() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-60 p-2" side="left">
-        <AccountSecurityModal>
-          <Button
-            className="w-full justify-start gap-3 bg-transparent "
-            variant={"ghost"}
-          >
-            <User className="h-4 w-4" />
-            Account and Security
-          </Button>
-        </AccountSecurityModal>
+        {/* <AccountSecurityModal> */}
+        {/*   <Button */}
+        {/*     className="w-full justify-start gap-3 bg-transparent " */}
+        {/*     variant={"ghost"} */}
+        {/*   > */}
+        {/*     <User className="h-4 w-4" /> */}
+        {/*     Account and Security */}
+        {/*   </Button> */}
+        {/* </AccountSecurityModal> */}
         <Button
           className="w-full justify-start gap-3 bg-transparent text-destructive"
           variant={"ghost"}

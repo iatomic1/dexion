@@ -57,6 +57,22 @@ definitions:
         example: Unauthorized
         type: string
     type: object
+  backend_internal_db_repository.GetUserTrackedWalletsRow:
+    properties:
+      address:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamp'
+      emoji:
+        type: string
+      nickname:
+        example: iatomic
+        type: string
+    required:
+    - address
+    - nickname
+    type: object
   backend_internal_db_repository.RegisterUserParams:
     properties:
       email:
@@ -73,6 +89,38 @@ definitions:
     - email
     - password
     - type
+    type: object
+  backend_internal_db_repository.UpdateWalletPreferencesParams:
+    properties:
+      emoji:
+        type: string
+      nickname:
+        example: iatomic
+        type: string
+      userId:
+        type: string
+      walletAddress:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+    required:
+    - nickname
+    - walletAddress
+    type: object
+  backend_internal_db_repository.UpsertUserWalletParams:
+    properties:
+      emoji:
+        type: string
+      nickname:
+        example: iatomic
+        type: string
+      userId:
+        type: string
+      walletAddress:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+    required:
+    - nickname
+    - walletAddress
     type: object
   backend_internal_db_repository.User:
     properties:
@@ -107,6 +155,22 @@ definitions:
     x-enum-varnames:
     - UserTypeAPP
     - UserTypeTELEGRAM
+  backend_internal_db_repository.UserWallet:
+    properties:
+      emoji:
+        type: string
+      nickname:
+        example: iatomic
+        type: string
+      userId:
+        type: string
+      walletAddress:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+    required:
+    - nickname
+    - walletAddress
+    type: object
   backend_internal_domain.AuthResponse:
     properties:
       accessToken:
@@ -156,6 +220,16 @@ definitions:
     - Infinity
     - Finite
     - NegativeInfinity
+  pgtype.Timestamp:
+    properties:
+      infinityModifier:
+        $ref: '#/definitions/pgtype.InfinityModifier'
+      time:
+        description: Time zone will be ignored when encoding to PostgreSQL.
+        type: string
+      valid:
+        type: boolean
+    type: object
   pgtype.Timestamptz:
     properties:
       infinityModifier:
@@ -308,6 +382,152 @@ paths:
       summary: Create an account
       tags:
       - Auth
+  /wallets:
+    get:
+      description: Retrieve all wallets tracked by the user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wallets retrieved
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.GetUserTrackedWalletsRow'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get tracked wallets
+      tags:
+      - Wallets
+    post:
+      consumes:
+      - application/json
+      description: Add a wallet to user's tracking list
+      parameters:
+      - description: Wallet tracking data
+        in: body
+        name: WalletRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpsertUserWalletParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Wallet tracked successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.UserWallet'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Wallet already tracked
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Track a new wallet
+      tags:
+      - Wallets
+  /wallets/{address}:
+    delete:
+      description: Remove a wallet from user's tracking list
+      parameters:
+      - description: Wallet address
+        in: path
+        name: address
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Wallet untracked
+        "404":
+          description: Wallet not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Untrack wallet
+      tags:
+      - Wallets
+    patch:
+      consumes:
+      - application/json
+      description: Update nickname or emoji for a tracked wallet
+      parameters:
+      - description: Wallet address
+        in: path
+        name: address
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: preferences
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateWalletPreferencesParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Preferences updated
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.UserWallet'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Wallet not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update wallet preferences
+      tags:
+      - Wallets
 schemes:
 - http
 - https

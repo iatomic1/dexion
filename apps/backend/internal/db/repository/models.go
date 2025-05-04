@@ -75,12 +75,12 @@ type User struct {
 
 type UserWallet struct {
 	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `json:"walletAddress"`
-	Nickname      string    `json:"nickname"`
+	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
 	Emoji         *string   `json:"emoji"`
 }
 
 type Wallet struct {
-	Address   string           `json:"address"`
+	Address   string           `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
 	CreatedAt pgtype.Timestamp `json:"createdAt"`
 }

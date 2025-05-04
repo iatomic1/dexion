@@ -13,13 +13,23 @@ import (
 
 type Querier interface {
 	AddRefreshTokenID(ctx context.Context, arg AddRefreshTokenIDParams) (*RefreshToken, error)
+	CleanupOrphanedWallet(ctx context.Context, address string) error
+	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	DeleteRefreshToken(ctx context.Context, id uuid.UUID) error
 	GetRefreshTokenUserID(ctx context.Context, id uuid.UUID) (pgtype.UUID, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)
+	GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error)
+	GetUserWalletDetails(ctx context.Context, arg GetUserWalletDetailsParams) (*GetUserWalletDetailsRow, error)
+	GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error)
+	IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error)
 	RefreshTokenExists(ctx context.Context, id uuid.UUID) (bool, error)
 	RegisterTelegramUser(ctx context.Context, arg RegisterTelegramUserParams) (*User, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (*User, error)
+	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
+	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
+	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)
+	WalletExists(ctx context.Context, address string) (bool, error)
 }
 
 var _ Querier = (*Queries)(nil)

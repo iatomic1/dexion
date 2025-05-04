@@ -253,6 +253,287 @@
                     }
                 }
             }
+        },
+        "/wallets": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all wallets tracked by the user",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get tracked wallets",
+                "responses": {
+                    "200": {
+                        "description": "Wallets retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/backend_internal_db_repository.GetUserTrackedWalletsRow"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a wallet to user's tracking list",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Track a new wallet",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UpsertUserWalletParams"
+                            }
+                        }
+                    },
+                    "description": "Wallet tracking data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wallet tracked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.UserWallet"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Wallet already tracked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{address}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a wallet from user's tracking list",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Untrack wallet",
+                "parameters": [
+                    {
+                        "description": "Wallet address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Wallet untracked"
+                    },
+                    "404": {
+                        "description": "Wallet not found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update nickname or emoji for a tracked wallet",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Update wallet preferences",
+                "parameters": [
+                    {
+                        "description": "Wallet address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UpdateWalletPreferencesParams"
+                            }
+                        }
+                    },
+                    "description": "Update data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preferences updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.UserWallet"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Wallet not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -381,6 +662,29 @@
                     }
                 }
             },
+            "backend_internal_db_repository.GetUserTrackedWalletsRow": {
+                "type": "object",
+                "required": [
+                    "address",
+                    "nickname"
+                ],
+                "properties": {
+                    "address": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamp"
+                    },
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    }
+                }
+            },
             "backend_internal_db_repository.RegisterUserParams": {
                 "type": "object",
                 "required": [
@@ -404,6 +708,52 @@
                             }
                         ],
                         "example": "APP"
+                    }
+                }
+            },
+            "backend_internal_db_repository.UpdateWalletPreferencesParams": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                }
+            },
+            "backend_internal_db_repository.UpsertUserWalletParams": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
                     }
                 }
             },
@@ -455,6 +805,29 @@
                     "UserTypeAPP",
                     "UserTypeTELEGRAM"
                 ]
+            },
+            "backend_internal_db_repository.UserWallet": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                }
             },
             "backend_internal_domain.AuthResponse": {
                 "type": "object",
@@ -527,6 +900,21 @@
                     "Finite",
                     "NegativeInfinity"
                 ]
+            },
+            "pgtype.Timestamp": {
+                "type": "object",
+                "properties": {
+                    "infinityModifier": {
+                        "$ref": "#/components/schemas/pgtype.InfinityModifier"
+                    },
+                    "time": {
+                        "description": "Time zone will be ignored when encoding to PostgreSQL.",
+                        "type": "string"
+                    },
+                    "valid": {
+                        "type": "boolean"
+                    }
+                }
             },
             "pgtype.Timestamptz": {
                 "type": "object",

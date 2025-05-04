@@ -54,6 +54,7 @@ func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		fmt.Println("final", userId)
 		c.Set("userId", userId)
 	}
 }

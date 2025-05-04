@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import SiteHeader from "./_components/header/site-header";
 import { ThemeProvider } from "./_components/theme-provider";
 import { Toaster } from "@repo/ui/components/ui/sonner";
+import { TokenRefresher } from "./_components/token-refresher";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body className={inter.className}>
+        <TokenRefresher />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

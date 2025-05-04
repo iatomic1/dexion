@@ -1,9 +1,13 @@
 package domain
 
 import (
+	"backend/api/http"
 	"backend/internal/db/repository"
 	"backend/pkg/jwt"
+	"errors"
+	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
@@ -15,12 +19,14 @@ const (
 	ErrInvalidEmailOrPassword = "Invalid email or password"
 	LoginSuccessful           = "Login Successful"
 	ErrGeneratingTokens       = "Error generating token pair"
-	TokensRefreshed           = "Tokens Refreshed successfully"
+	ErrTelegramUserNotFound   = "telegram user not found"
+
+	TokensRefreshed = "Tokens Refreshed successfully"
 )
 
 type AuthResponse struct {
 	jwt.TokenPair
-	User EmailID `json:"user"`
+	UserID string
 }
 
 type RegisterRequest struct {
@@ -44,4 +50,26 @@ func ParseIDs(id string) (uuid.UUID, error) {
 	}
 
 	return userId, nil
+}
+
+func GetUserIDFromContext(c *gin.Context) (uuid.UUID, error) {
+	userID, exists := c.Get("userId")
+	if !exists {
+		http.SendUnauthorized(c, nil, http.WithMessage("User ID not found in context"))
+		return uuid.Nil, errors.New("user id not found")
+	}
+
+	userIDStr, ok := userID.(string)
+	if !ok {
+		http.SendInternalServerError(c, nil, http.WithMessage("Invalid user ID format"))
+		return uuid.Nil, errors.New("invalid user ID type")
+	}
+
+	parsedID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		http.SendInternalServerError(c, err, http.WithMessage("Failed to parse user ID"))
+		return uuid.Nil, fmt.Errorf("parse UUID: %w", err)
+	}
+
+	return parsedID, nil
 }

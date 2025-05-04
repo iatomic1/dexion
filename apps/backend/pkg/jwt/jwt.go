@@ -156,7 +156,9 @@ func ExtractDataFromToken(claims jwt.MapClaims, refresh bool) (string, error) {
 	}
 
 	userId, ok := claims["authenticatedUserId"].(string)
+	fmt.Println("extracting", userId)
 	if !ok {
+		fmt.Print("stopped out here")
 		return "", ErrInvalidToken
 	}
 

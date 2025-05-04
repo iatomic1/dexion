@@ -24,7 +24,15 @@ sql:
         go_type:
           import: time
           type: Time
+      - column: wallets.address
+        go_struct_tag: binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+      - column: user_wallets.wallet_address
+        go_struct_tag: binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+      - column: user_wallets.nickname
+        go_struct_tag: binding:"required" example:"iatomic"
       - column: users.email
         go_struct_tag: binding:"required,email" example:"mosh@mail.com"
+      - column: users.type
+        go_struct_tag: binding:"required" example:"APP"
       - column: users.password
         go_struct_tag: binding:"required" example:"Hello"

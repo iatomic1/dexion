@@ -61,6 +61,12 @@ func (h *Handler) LoginUser(c *gin.Context) {
 
 	repo := repository.New(tx)
 	user, err := repo.GetUserByEmail(ctx, req.Email)
+
+	if user.Type != "APP" {
+		http.SendUnauthorized(c, nil, http.WithMessage(domain.ErrInvalidEmailOrPassword))
+		return
+	}
+
 	verify := password.VerifyPassword(req.Password, user.Password)
 
 	if err != nil || !verify {
@@ -124,10 +130,7 @@ func (h *Handler) LoginUser(c *gin.Context) {
 			AccessToken:  tokens.AccessToken,
 			RefreshToken: tokens.RefreshToken,
 		},
-		User: domain.EmailID{
-			Email: user.Email,
-			ID:    user.ID.String(),
-		},
+		UserID: user.ID.String(),
 	}
 
 	http.SendSuccess(c, response, http.WithMessage(domain.LoginSuccessful))
@@ -158,6 +161,7 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("getting here")
 	tx, err := h.srv.DB.Begin(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
@@ -174,8 +178,10 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 	user, err := repo.RegisterUser(ctx, repository.RegisterUserParams{
 		Email:    req.Email,
 		Password: hashed_password,
+		Type:     req.Type,
 	})
 	if err != nil {
+		fmt.Println(err)
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == domain.UniqueViolation {
 			http.SendConflict(c, err, http.WithMessage(domain.ErrEmailAlreadyExist))
@@ -242,12 +248,71 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 			AccessToken:  tokens.AccessToken,
 			RefreshToken: tokens.RefreshToken,
 		},
-		User: domain.EmailID{
-			ID: user.ID.String(),
-		},
+		UserID: user.ID.String(),
 	}
 
 	http.SendCreated(c, response, http.WithMessage(domain.UserCreated))
+}
+
+type TelegramRegisterRequest struct {
+	TelegramChatID string              `json:"telegram_chat_id" binding:"required"`
+	Type           repository.UserType `json:"type" binding:"required,eq=TELEGRAM"`
+	Password       string
+}
+
+// SignupTG godoc
+//
+//	@Summary		Create an account
+//	@Description	Create an account on dexion
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			EmailAndPassword	body		TelegramRegisterRequest						true	"Signup data"
+//	@Success		201					{object}	http.Response{data=repository.User}	"User created successfully"
+//	@Failure		500					{object}	http.InternalServerErrorResponse			"Internal server error"
+//	@Router			/auth/signup/tg [post]
+func (h *Handler) RegisterTelegramUser(c *gin.Context) {
+	var req TelegramRegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		validator := galidator.New().Validator(TelegramRegisterRequest{})
+		http.SendValidationError(c, validator.DecryptErrors(err))
+		return
+	}
+
+	ctx := context.Background()
+	tx, err := h.srv.DB.Begin(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err)
+		return
+	}
+	defer tx.Rollback(ctx)
+
+	repo := repository.New(tx)
+
+	// Use a random/placeholder password if it's required by DB (can’t be null)
+	placeholderPassword := uuid.NewString()
+
+	user, err := repo.RegisterTelegramUser(ctx, repository.RegisterTelegramUserParams{
+		Type:           req.Type,
+		TelegramChatID: &req.TelegramChatID,
+		Password:       placeholderPassword,
+	})
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == domain.UniqueViolation {
+			http.SendConflict(c, err, http.WithMessage("Telegram user already exists"))
+			return
+		}
+		http.SendInternalServerError(c, err)
+		return
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+		return
+	}
+
+	http.SendCreated(c, user, http.WithMessage("Telegram user created"))
 }
 
 // @Summary		Refresh Token
@@ -285,6 +350,11 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 
 	repo := repository.New(tx)
 	user, err := repo.GetUserById(ctx, parsedUserId)
+	if user.Type != "APP" {
+		http.SendUnauthorized(c, nil, http.WithMessage(domain.ErrInvalidEmailOrPassword))
+		return
+	}
+
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return

@@ -244,3 +244,7 @@ func SendConflict(c *gin.Context, err error, opts ...ResponseOption) {
 func SendInternalServerError(c *gin.Context, err error, opts ...ResponseOption) {
 	SendError(c, http.StatusInternalServerError, wrapError(err), opts...)
 }
+
+func SendNoContent(c *gin.Context) {
+	c.Status(http.StatusNoContent)
+}

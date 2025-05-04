@@ -199,6 +199,387 @@
                     }
                 }
             }
+        },
+        "/auth/signup/tg": {
+            "post": {
+                "description": "Create an account on dexion",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Create an account",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api_http_handlers_auth.TelegramRegisterRequest"
+                            }
+                        }
+                    },
+                    "description": "Signup data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.User"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all wallets tracked by the user",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get tracked wallets",
+                "responses": {
+                    "200": {
+                        "description": "Wallets retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/backend_internal_db_repository.GetUserTrackedWalletsRow"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a wallet to user's tracking list",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Track a new wallet",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UpsertUserWalletParams"
+                            }
+                        }
+                    },
+                    "description": "Wallet tracking data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wallet tracked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.UserWallet"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Wallet already tracked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/all": {
+            "get": {
+                "description": "Retrieve all wallets in the system",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "All wallets retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/backend_internal_db_repository.Wallet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/{address}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a wallet from user's tracking list",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Untrack wallet",
+                "parameters": [
+                    {
+                        "description": "Wallet address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Wallet untracked"
+                    },
+                    "404": {
+                        "description": "Wallet not found",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update nickname or emoji for a tracked wallet",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Update wallet preferences",
+                "parameters": [
+                    {
+                        "description": "Wallet address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UpdateWalletPreferencesParams"
+                            }
+                        }
+                    },
+                    "description": "Update data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preferences updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.UserWallet"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Wallet not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -244,17 +625,21 @@
             }
         },
         "schemas": {
-            "EmailID": {
+            "api_http_handlers_auth.TelegramRegisterRequest": {
                 "type": "object",
+                "required": [
+                    "telegram_chat_id",
+                    "type"
+                ],
                 "properties": {
-                    "email": {
+                    "password": {
                         "type": "string"
                     },
-                    "id": {
+                    "telegram_chat_id": {
                         "type": "string"
                     },
-                    "profileId": {
-                        "type": "string"
+                    "type": {
+                        "$ref": "#/components/schemas/backend_internal_db_repository.UserType"
                     }
                 }
             },
@@ -323,11 +708,35 @@
                     }
                 }
             },
+            "backend_internal_db_repository.GetUserTrackedWalletsRow": {
+                "type": "object",
+                "required": [
+                    "address",
+                    "nickname"
+                ],
+                "properties": {
+                    "address": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                    },
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    }
+                }
+            },
             "backend_internal_db_repository.RegisterUserParams": {
                 "type": "object",
                 "required": [
                     "email",
-                    "password"
+                    "password",
+                    "type"
                 ],
                 "properties": {
                     "email": {
@@ -337,6 +746,147 @@
                     "password": {
                         "type": "string",
                         "example": "Hello"
+                    },
+                    "type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UserType"
+                            }
+                        ],
+                        "example": "APP"
+                    }
+                }
+            },
+            "backend_internal_db_repository.UpdateWalletPreferencesParams": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                }
+            },
+            "backend_internal_db_repository.UpsertUserWalletParams": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                }
+            },
+            "backend_internal_db_repository.User": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password",
+                    "type"
+                ],
+                "properties": {
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "mosh@mail.com"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "Hello"
+                    },
+                    "telegramChatId": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UserType"
+                            }
+                        ],
+                        "example": "APP"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                }
+            },
+            "backend_internal_db_repository.UserType": {
+                "type": "string",
+                "enum": [
+                    "APP",
+                    "TELEGRAM"
+                ],
+                "x-enum-varnames": [
+                    "UserTypeAPP",
+                    "UserTypeTELEGRAM"
+                ]
+            },
+            "backend_internal_db_repository.UserWallet": {
+                "type": "object",
+                "required": [
+                    "nickname",
+                    "walletAddress"
+                ],
+                "properties": {
+                    "emoji": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "iatomic"
+                    },
+                    "userId": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                }
+            },
+            "backend_internal_db_repository.Wallet": {
+                "type": "object",
+                "required": [
+                    "address"
+                ],
+                "properties": {
+                    "address": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
                     }
                 }
             },
@@ -353,8 +903,8 @@
                         "description": "Added to hold the refresh token ID",
                         "type": "string"
                     },
-                    "user": {
-                        "$ref": "#/components/schemas/EmailID"
+                    "userID": {
+                        "type": "string"
                     }
                 }
             },
@@ -362,7 +912,8 @@
                 "type": "object",
                 "required": [
                     "email",
-                    "password"
+                    "password",
+                    "type"
                 ],
                 "properties": {
                     "email": {
@@ -372,6 +923,14 @@
                     "password": {
                         "type": "string",
                         "example": "Hello"
+                    },
+                    "type": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.UserType"
+                            }
+                        ],
+                        "example": "APP"
                     }
                 }
             },
@@ -387,6 +946,33 @@
                     "refreshTokenId": {
                         "description": "Added to hold the refresh token ID",
                         "type": "string"
+                    }
+                }
+            },
+            "pgtype.InfinityModifier": {
+                "type": "integer",
+                "enum": [
+                    1,
+                    0,
+                    -1
+                ],
+                "x-enum-varnames": [
+                    "Infinity",
+                    "Finite",
+                    "NegativeInfinity"
+                ]
+            },
+            "pgtype.Timestamptz": {
+                "type": "object",
+                "properties": {
+                    "infinityModifier": {
+                        "$ref": "#/components/schemas/pgtype.InfinityModifier"
+                    },
+                    "time": {
+                        "type": "string"
+                    },
+                    "valid": {
+                        "type": "boolean"
                     }
                 }
             }

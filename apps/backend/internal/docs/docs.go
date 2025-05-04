@@ -361,6 +361,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/wallets/all": {
+            "get": {
+                "description": "Retrieve all wallets in the system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "All wallets retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.Wallet"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/{address}": {
             "delete": {
                 "security": [
@@ -581,7 +622,7 @@ const docTemplate = `{
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
                 },
                 "createdAt": {
-                    "$ref": "#/definitions/pgtype.Timestamp"
+                    "$ref": "#/definitions/pgtype.Timestamptz"
                 },
                 "emoji": {
                     "type": "string"
@@ -736,6 +777,21 @@ const docTemplate = `{
                 }
             }
         },
+        "backend_internal_db_repository.Wallet": {
+            "type": "object",
+            "required": [
+                "address"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                }
+            }
+        },
         "backend_internal_domain.AuthResponse": {
             "type": "object",
             "properties": {
@@ -807,21 +863,6 @@ const docTemplate = `{
                 "Finite",
                 "NegativeInfinity"
             ]
-        },
-        "pgtype.Timestamp": {
-            "type": "object",
-            "properties": {
-                "infinityModifier": {
-                    "$ref": "#/definitions/pgtype.InfinityModifier"
-                },
-                "time": {
-                    "description": "Time zone will be ignored when encoding to PostgreSQL.",
-                    "type": "string"
-                },
-                "valid": {
-                    "type": "boolean"
-                }
-            }
         },
         "pgtype.Timestamptz": {
             "type": "object",

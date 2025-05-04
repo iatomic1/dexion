@@ -388,6 +388,52 @@
                 }
             }
         },
+        "/wallets/all": {
+            "get": {
+                "description": "Retrieve all wallets in the system",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "All wallets retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/backend_internal_db_repository.Wallet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/{address}": {
             "delete": {
                 "security": [
@@ -674,7 +720,7 @@
                         "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
                     },
                     "createdAt": {
-                        "$ref": "#/components/schemas/pgtype.Timestamp"
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
                     },
                     "emoji": {
                         "type": "string"
@@ -829,6 +875,21 @@
                     }
                 }
             },
+            "backend_internal_db_repository.Wallet": {
+                "type": "object",
+                "required": [
+                    "address"
+                ],
+                "properties": {
+                    "address": {
+                        "type": "string",
+                        "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                    }
+                }
+            },
             "backend_internal_domain.AuthResponse": {
                 "type": "object",
                 "properties": {
@@ -900,21 +961,6 @@
                     "Finite",
                     "NegativeInfinity"
                 ]
-            },
-            "pgtype.Timestamp": {
-                "type": "object",
-                "properties": {
-                    "infinityModifier": {
-                        "$ref": "#/components/schemas/pgtype.InfinityModifier"
-                    },
-                    "time": {
-                        "description": "Time zone will be ignored when encoding to PostgreSQL.",
-                        "type": "string"
-                    },
-                    "valid": {
-                        "type": "boolean"
-                    }
-                }
             },
             "pgtype.Timestamptz": {
                 "type": "object",

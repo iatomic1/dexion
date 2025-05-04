@@ -24,6 +24,9 @@ FROM user_wallets uw
 JOIN wallets w ON uw.wallet_address = w.address
 WHERE uw.user_id = $1;
 
+-- name: GetAllWallets :many
+SELECT * FROM wallets;
+
 -- name: IsTrackingWallet :one
 SELECT EXISTS(
   SELECT 1 FROM user_wallets

@@ -63,7 +63,7 @@ definitions:
         example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
         type: string
       createdAt:
-        $ref: '#/definitions/pgtype.Timestamp'
+        $ref: '#/definitions/pgtype.Timestamptz'
       emoji:
         type: string
       nickname:
@@ -171,6 +171,16 @@ definitions:
     - nickname
     - walletAddress
     type: object
+  backend_internal_db_repository.Wallet:
+    properties:
+      address:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
+    required:
+    - address
+    type: object
   backend_internal_domain.AuthResponse:
     properties:
       accessToken:
@@ -220,16 +230,6 @@ definitions:
     - Infinity
     - Finite
     - NegativeInfinity
-  pgtype.Timestamp:
-    properties:
-      infinityModifier:
-        $ref: '#/definitions/pgtype.InfinityModifier'
-      time:
-        description: Time zone will be ignored when encoding to PostgreSQL.
-        type: string
-      valid:
-        type: boolean
-    type: object
   pgtype.Timestamptz:
     properties:
       infinityModifier:
@@ -526,6 +526,30 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update wallet preferences
+      tags:
+      - Wallets
+  /wallets/all:
+    get:
+      description: Retrieve all wallets in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All wallets retrieved
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.Wallet'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Get all wallets
       tags:
       - Wallets
 schemes:

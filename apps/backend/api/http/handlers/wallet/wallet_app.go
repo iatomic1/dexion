@@ -143,18 +143,20 @@ func (h *NewWalletHandler) GetTrackedWallets(c *gin.Context) {
 // @Summary        Get all wallets
 // @Description    Retrieve all wallets in the system
 // @Tags           Wallets
-// @Security       ApiKeyAuth
 // @Produce        json
 // @Success        200    {object}    http.Response{data=[]repository.Wallet}    "All wallets retrieved"
 // @Failure        500    {object}    http.InternalServerErrorResponse           "Internal server error"
 // @Router         /wallets/all [get]
 func (h *NewWalletHandler) GetAllWallets(c *gin.Context) {
-	// ctx := context.Background()
+	ctx := context.Background()
+	repo := repository.New(h.srv.DB)
+	wallets, err := repo.GetAllWallets(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err)
+		return
+	}
 
-	// This would require a new query in the repository
-	// We'd need something like "SELECT * FROM wallets" for the repository
-	// For now, we'll return a not implemented response
-	// http.SendNotImplemented(c, nil, http.WithMessage("Getting all wallets is not implemented yet"))
+	http.SendSuccess(c, wallets, http.WithMessage(domain.WalletsRetrieved))
 }
 
 // UpdateWalletPreferences godoc

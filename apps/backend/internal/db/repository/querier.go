@@ -16,6 +16,7 @@ type Querier interface {
 	CleanupOrphanedWallet(ctx context.Context, address string) error
 	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	DeleteRefreshToken(ctx context.Context, id uuid.UUID) error
+	GetAllWallets(ctx context.Context) ([]*Wallet, error)
 	GetRefreshTokenUserID(ctx context.Context, id uuid.UUID) (pgtype.UUID, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)
 	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)

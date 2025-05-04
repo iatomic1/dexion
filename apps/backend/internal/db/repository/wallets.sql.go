@@ -39,8 +39,8 @@ SELECT address, created_at FROM wallets WHERE address = $1
 `
 
 type CreateWalletRow struct {
-	Address   string           `json:"address"`
-	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Address   string             `json:"address"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
 func (q *Queries) CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error) {
@@ -48,6 +48,30 @@ func (q *Queries) CreateWallet(ctx context.Context, address string) (*CreateWall
 	var i CreateWalletRow
 	err := row.Scan(&i.Address, &i.CreatedAt)
 	return &i, err
+}
+
+const getAllWallets = `-- name: GetAllWallets :many
+SELECT address, created_at FROM wallets
+`
+
+func (q *Queries) GetAllWallets(ctx context.Context) ([]*Wallet, error) {
+	rows, err := q.db.Query(ctx, getAllWallets)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Wallet
+	for rows.Next() {
+		var i Wallet
+		if err := rows.Scan(&i.Address, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUserTrackedWallets = `-- name: GetUserTrackedWallets :many
@@ -58,10 +82,10 @@ WHERE uw.user_id = $1
 `
 
 type GetUserTrackedWalletsRow struct {
-	Address   string           `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
-	Nickname  string           `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji     *string          `json:"emoji"`
-	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Address   string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
+	Nickname  string             `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji     *string            `json:"emoji"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
 func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error) {

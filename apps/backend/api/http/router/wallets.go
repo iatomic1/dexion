@@ -12,7 +12,9 @@ func RegisterWalletRoutes(srv *http.Server, router *gin.RouterGroup) {
 	walletHandler := wallet.NewAppWalletHandler(srv)
 
 	// Protected wallet routes requiring authentication
-	walletGroup := router.Group("")
+	walletGroup := router
+
+	walletGroup.GET("/all", walletHandler.GetAllWallets)
 	walletGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
 		walletGroup.POST("", walletHandler.TrackWallet)

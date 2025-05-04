@@ -81,6 +81,6 @@ type UserWallet struct {
 }
 
 type Wallet struct {
-	Address   string           `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
-	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Address   string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }

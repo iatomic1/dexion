@@ -20,7 +20,6 @@ import {
 } from "@repo/ui/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { authAction } from "~/app/actions";
 import { saveUserTokens } from "~/lib/auth/auth";
 import { HTTP_STATUS } from "~/lib/constants";
 import { useServerAction } from "zsa-react";
@@ -28,6 +27,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { AuthSchema, loginSchema } from "~/app/schema";
 import { z } from "zod";
+import { authAction } from "~/app/_actions/auth-actions";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -50,7 +50,7 @@ export function LoginModal({
         await saveUserTokens({
           accessToken: res?.data.accessToken as string,
           refreshToken: res?.data.refreshToken as string,
-          userId: res?.data.UserId,
+          userId: res?.data.userId,
         });
         router.push("/portfolio");
         router.refresh();

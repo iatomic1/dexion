@@ -187,8 +187,9 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 	customizer := g.Validator(repository.UpdateWalletPreferencesParams{})
 
 	var req struct {
-		Nickname string  `binding:"required" json:"nickname"`
-		Emoji    *string `json:"emoji"`
+		Nickname      string  `binding:"required" json:"nickname"`
+		Notifications bool    `json:"notifications"`
+		Emoji         *string `json:"emoji"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -226,6 +227,7 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 		WalletAddress: address,
 		Nickname:      req.Nickname,
 		Emoji:         req.Emoji,
+		Notifications: req.Notifications,
 	})
 	if err != nil {
 		http.SendInternalServerError(c, err)

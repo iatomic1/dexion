@@ -9,9 +9,12 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@ferrucc-io/emoji-picker": "^0.0.44",
     "@repo/ui": "workspace:*",
+    "@stacks/transactions": "^7.0.6",
     "@tailwindcss/cli": "^4.1.5",
     "@tailwindcss/postcss": "^4.1.5",
+    "dayjs": "^1.11.13",
     "jose": "^6.0.10",
     "lightweight-charts": "^5.0.5",
     "next": "14.2.8",

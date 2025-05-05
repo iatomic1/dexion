@@ -21,7 +21,7 @@ import {
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import router from "next/router";
-import { authAction } from "~/app/actions";
+import { authAction } from "~/app/actions/auth-actions";
 import { saveUserTokens } from "~/lib/auth/auth";
 import { HTTP_STATUS } from "~/lib/constants";
 import { useServerAction } from "zsa-react";

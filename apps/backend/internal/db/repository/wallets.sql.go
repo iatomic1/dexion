@@ -75,17 +75,18 @@ func (q *Queries) GetAllWallets(ctx context.Context) ([]*Wallet, error) {
 }
 
 const getUserTrackedWallets = `-- name: GetUserTrackedWallets :many
-SELECT w.address, uw.nickname, uw.emoji, w.created_at
+SELECT w.address, uw.nickname, uw.emoji, uw.notifications, w.created_at
 FROM user_wallets uw
 JOIN wallets w ON uw.wallet_address = w.address
 WHERE uw.user_id = $1
 `
 
 type GetUserTrackedWalletsRow struct {
-	Address   string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
-	Nickname  string             `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji     *string            `json:"emoji"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	Address       string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
+	Nickname      string             `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string            `json:"emoji"`
+	Notifications bool               `json:"notifications"`
+	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 }
 
 func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error) {
@@ -101,6 +102,7 @@ func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) (
 			&i.Address,
 			&i.Nickname,
 			&i.Emoji,
+			&i.Notifications,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -114,7 +116,8 @@ func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) (
 }
 
 const getUserWalletDetails = `-- name: GetUserWalletDetails :one
-SELECT nickname, emoji FROM user_wallets
+SELECT nickname, emoji, notifications
+FROM user_wallets
 WHERE user_id = $1 AND wallet_address = $2
 `
 
@@ -124,27 +127,29 @@ type GetUserWalletDetailsParams struct {
 }
 
 type GetUserWalletDetailsRow struct {
-	Nickname string  `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji    *string `json:"emoji"`
+	Nickname      string  `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string `json:"emoji"`
+	Notifications bool    `json:"notifications"`
 }
 
 func (q *Queries) GetUserWalletDetails(ctx context.Context, arg GetUserWalletDetailsParams) (*GetUserWalletDetailsRow, error) {
 	row := q.db.QueryRow(ctx, getUserWalletDetails, arg.UserID, arg.WalletAddress)
 	var i GetUserWalletDetailsRow
-	err := row.Scan(&i.Nickname, &i.Emoji)
+	err := row.Scan(&i.Nickname, &i.Emoji, &i.Notifications)
 	return &i, err
 }
 
 const getWatchersForWallet = `-- name: GetWatchersForWallet :many
-SELECT user_id, nickname, emoji
+SELECT user_id, nickname, emoji, notifications
 FROM user_wallets
 WHERE wallet_address = $1
 `
 
 type GetWatchersForWalletRow struct {
-	UserID   uuid.UUID `json:"userId"`
-	Nickname string    `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji    *string   `json:"emoji"`
+	UserID        uuid.UUID `json:"userId"`
+	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string   `json:"emoji"`
+	Notifications bool      `json:"notifications"`
 }
 
 func (q *Queries) GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error) {
@@ -156,7 +161,12 @@ func (q *Queries) GetWatchersForWallet(ctx context.Context, walletAddress string
 	var items []*GetWatchersForWalletRow
 	for rows.Next() {
 		var i GetWatchersForWalletRow
-		if err := rows.Scan(&i.UserID, &i.Nickname, &i.Emoji); err != nil {
+		if err := rows.Scan(
+			&i.UserID,
+			&i.Nickname,
+			&i.Emoji,
+			&i.Notifications,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, &i)
@@ -203,9 +213,9 @@ func (q *Queries) UntrackWallet(ctx context.Context, arg UntrackWalletParams) er
 
 const updateWalletPreferences = `-- name: UpdateWalletPreferences :one
 UPDATE user_wallets
-SET nickname = $3, emoji = $4
+SET nickname = $3, emoji = $4, notifications = $5
 WHERE user_id = $1 AND wallet_address = $2
-RETURNING user_id, wallet_address, nickname, emoji
+RETURNING user_id, wallet_address, nickname, emoji, created_at, notifications
 `
 
 type UpdateWalletPreferencesParams struct {
@@ -213,6 +223,7 @@ type UpdateWalletPreferencesParams struct {
 	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
 	Emoji         *string   `json:"emoji"`
+	Notifications bool      `json:"notifications"`
 }
 
 func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error) {
@@ -221,6 +232,7 @@ func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletP
 		arg.WalletAddress,
 		arg.Nickname,
 		arg.Emoji,
+		arg.Notifications,
 	)
 	var i UserWallet
 	err := row.Scan(
@@ -228,6 +240,8 @@ func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletP
 		&i.WalletAddress,
 		&i.Nickname,
 		&i.Emoji,
+		&i.CreatedAt,
+		&i.Notifications,
 	)
 	return &i, err
 }
@@ -239,7 +253,7 @@ ON CONFLICT (user_id, wallet_address)
 DO UPDATE SET
   nickname = EXCLUDED.nickname,
   emoji = EXCLUDED.emoji
-RETURNING user_id, wallet_address, nickname, emoji
+RETURNING user_id, wallet_address, nickname, emoji, created_at, notifications
 `
 
 type UpsertUserWalletParams struct {
@@ -262,6 +276,8 @@ func (q *Queries) UpsertUserWallet(ctx context.Context, arg UpsertUserWalletPara
 		&i.WalletAddress,
 		&i.Nickname,
 		&i.Emoji,
+		&i.CreatedAt,
+		&i.Notifications,
 	)
 	return &i, err
 }

@@ -630,6 +630,9 @@ const docTemplate = `{
                 "nickname": {
                     "type": "string",
                     "example": "iatomic"
+                },
+                "notifications": {
+                    "type": "boolean"
                 }
             }
         },
@@ -672,6 +675,9 @@ const docTemplate = `{
                 "nickname": {
                     "type": "string",
                     "example": "iatomic"
+                },
+                "notifications": {
+                    "type": "boolean"
                 },
                 "userId": {
                     "type": "string"
@@ -761,12 +767,18 @@ const docTemplate = `{
                 "walletAddress"
             ],
             "properties": {
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
                 "emoji": {
                     "type": "string"
                 },
                 "nickname": {
                     "type": "string",
                     "example": "iatomic"
+                },
+                "notifications": {
+                    "type": "boolean"
                 },
                 "userId": {
                     "type": "string"
@@ -805,7 +817,7 @@ const docTemplate = `{
                     "description": "Added to hold the refresh token ID",
                     "type": "string"
                 },
-                "userID": {
+                "userId": {
                     "type": "string"
                 }
             }

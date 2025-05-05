@@ -728,6 +728,9 @@
                     "nickname": {
                         "type": "string",
                         "example": "iatomic"
+                    },
+                    "notifications": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -770,6 +773,9 @@
                     "nickname": {
                         "type": "string",
                         "example": "iatomic"
+                    },
+                    "notifications": {
+                        "type": "boolean"
                     },
                     "userId": {
                         "type": "string"
@@ -859,12 +865,18 @@
                     "walletAddress"
                 ],
                 "properties": {
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                    },
                     "emoji": {
                         "type": "string"
                     },
                     "nickname": {
                         "type": "string",
                         "example": "iatomic"
+                    },
+                    "notifications": {
+                        "type": "boolean"
                     },
                     "userId": {
                         "type": "string"
@@ -903,7 +915,7 @@
                         "description": "Added to hold the refresh token ID",
                         "type": "string"
                     },
-                    "userID": {
+                    "userId": {
                         "type": "string"
                     }
                 }

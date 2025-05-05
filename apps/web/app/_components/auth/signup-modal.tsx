@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import Link from "next/link";
-import { authAction } from "~/app/actions";
+import { authAction } from "~/app/_actions/auth-actions";
 import { saveUserTokens } from "~/lib/auth/auth";
 import { HTTP_STATUS } from "~/lib/constants";
 import { useServerAction } from "zsa-react";

@@ -669,9 +669,6 @@ const docTemplate = `{
                 "walletAddress"
             ],
             "properties": {
-                "emoji": {
-                    "type": "string"
-                },
                 "nickname": {
                     "type": "string",
                     "example": "iatomic"

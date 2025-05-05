@@ -10,7 +10,7 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
   const userId = cookieStore.get(userIdKey);
 
   if (!refreshToken || !userId) {
-    throw new Error("User not authenticated");
+    // throw new Error("User not authenticated");
   }
 
   try {
@@ -21,7 +21,7 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
     };
   } catch (error) {
     console.error("Error parsing user data:", error);
-    throw new Error("Invalid authentication");
+    // throw new Error("Invalid authentication");
   }
 };
 

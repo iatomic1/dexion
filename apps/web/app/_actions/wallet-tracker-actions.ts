@@ -40,6 +40,45 @@ export const trackWalletAction = authenticatedAction
     }
   });
 
+export const updateWalletPreferences = authenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      nickname: z.string().optional(),
+      notifications: z.boolean().optional(),
+      walletAddress: z.string(),
+    }),
+  )
+  .handler(async ({ input, ctx: { user } }) => {
+    console.log(user, input);
+    try {
+      const body = {
+        nickname: input.nickname,
+        notifcations: input.notifications,
+        // ...(input.nickname !== undefined ? { nickname: input.nickname } : {}),
+        // ...(input.notifications !== undefined
+        //   ? { notifications: input.notifications }
+        //   : {}),
+      };
+
+      return await makeFetch<ApiResponse<UserWallet>>(
+        "dexion",
+        `wallets/${input.walletAddress}`,
+        user.accessToken,
+        {
+          method: "PATCH",
+          body,
+          next: {
+            tags: ["wallets"],
+          },
+        },
+      )();
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+
 export const untrackWalletAction = authenticatedAction
   .createServerAction()
   .input(

@@ -94,8 +94,6 @@ definitions:
     type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
     properties:
-      emoji:
-        type: string
       nickname:
         example: iatomic
         type: string

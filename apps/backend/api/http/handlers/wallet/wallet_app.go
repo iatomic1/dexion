@@ -187,9 +187,8 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 	customizer := g.Validator(repository.UpdateWalletPreferencesParams{})
 
 	var req struct {
-		Nickname      string  `binding:"required" json:"nickname"`
-		Notifications bool    `json:"notifications"`
-		Emoji         *string `json:"emoji"`
+		Nickname      string `json:"nickname"`
+		Notifications bool   `json:"notifications"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -221,15 +220,14 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 		return
 	}
 
-	// Update wallet preferences
 	updatedWallet, err := repo.UpdateWalletPreferences(ctx, repository.UpdateWalletPreferencesParams{
 		UserID:        userID,
 		WalletAddress: address,
 		Nickname:      req.Nickname,
-		Emoji:         req.Emoji,
 		Notifications: req.Notifications,
 	})
 	if err != nil {
+		fmt.Println(err, "here")
 		http.SendInternalServerError(c, err)
 		return
 	}

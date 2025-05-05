@@ -10,8 +10,9 @@ CREATE TABLE IF NOT EXISTS user_wallets (
   wallet_address TEXT REFERENCES wallets(address) NOT NULL, -- tags:`binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
   nickname TEXT NOT NULL, -- tags:`binding:"required" example:"iatomic"
   emoji TEXT,
-  created_at TIMESTAMPTZ DEFAULT now(),
-notifications BOOLEAN DEFAULT true NOT NULL,
+  notifications BOOLEAN DEFAULT true NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY (user_id, wallet_address)
 );
 

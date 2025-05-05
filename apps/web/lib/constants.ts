@@ -16,3 +16,6 @@ export const REFRESH_JWT_KEY = process.env.REFRESH_JWT_KEY ?? "";
 export const accessTokenKey = "auth-access-token";
 export const refreshTokenKey = "auth-refresh-token";
 export const userIdKey = "userId";
+
+export const EXPLORER_BASE_URL = "https://explorer.hiro.so/";
+export const HIRO_API_BASE_URL = "";

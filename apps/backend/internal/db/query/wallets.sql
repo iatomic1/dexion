@@ -19,7 +19,7 @@ DO UPDATE SET
 RETURNING *;
 
 -- name: GetUserTrackedWallets :many
-SELECT w.address, uw.nickname, uw.emoji, w.created_at
+SELECT w.address, uw.nickname, uw.emoji, uw.notifications, w.created_at
 FROM user_wallets uw
 JOIN wallets w ON uw.wallet_address = w.address
 WHERE uw.user_id = $1;
@@ -35,7 +35,7 @@ SELECT EXISTS(
 
 -- name: UpdateWalletPreferences :one
 UPDATE user_wallets
-SET nickname = $3, emoji = $4
+SET nickname = $3, emoji = $4, notifications = $5
 WHERE user_id = $1 AND wallet_address = $2
 RETURNING *;
 
@@ -52,7 +52,7 @@ AND NOT EXISTS (
 );
 
 -- name: GetWatchersForWallet :many
-SELECT user_id, nickname, emoji
+SELECT user_id, nickname, emoji, notifications
 FROM user_wallets
 WHERE wallet_address = $1;
 
@@ -60,5 +60,6 @@ WHERE wallet_address = $1;
 SELECT EXISTS(SELECT 1 FROM wallets WHERE address = $1);
 
 -- name: GetUserWalletDetails :one
-SELECT nickname, emoji FROM user_wallets
+SELECT nickname, emoji, notifications
+FROM user_wallets
 WHERE user_id = $1 AND wallet_address = $2;

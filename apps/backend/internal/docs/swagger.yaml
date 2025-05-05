@@ -69,6 +69,8 @@ definitions:
       nickname:
         example: iatomic
         type: string
+      notifications:
+        type: boolean
     required:
     - address
     - nickname
@@ -97,6 +99,8 @@ definitions:
       nickname:
         example: iatomic
         type: string
+      notifications:
+        type: boolean
       userId:
         type: string
       walletAddress:
@@ -157,11 +161,15 @@ definitions:
     - UserTypeTELEGRAM
   backend_internal_db_repository.UserWallet:
     properties:
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
       emoji:
         type: string
       nickname:
         example: iatomic
         type: string
+      notifications:
+        type: boolean
       userId:
         type: string
       walletAddress:
@@ -190,7 +198,7 @@ definitions:
       refreshTokenId:
         description: Added to hold the refresh token ID
         type: string
-      userID:
+      userId:
         type: string
     type: object
   backend_internal_domain.RegisterRequest:

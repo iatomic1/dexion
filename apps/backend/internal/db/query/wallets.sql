@@ -35,8 +35,11 @@ SELECT EXISTS(
 
 -- name: UpdateWalletPreferences :one
 UPDATE user_wallets
-SET nickname = $3, emoji = $4, notifications = $5
-WHERE user_id = $1 AND wallet_address = $2
+SET
+    nickname = COALESCE(sqlc.arg('nickname'), nickname),
+    notifications = COALESCE(sqlc.arg('notifications'), notifications),
+    updated_at = now()
+WHERE user_id = sqlc.arg('id') AND wallet_address = sqlc.arg('wallet_address')
 RETURNING *;
 
 -- name: UntrackWallet :exec

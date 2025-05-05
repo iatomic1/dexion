@@ -74,12 +74,13 @@ type User struct {
 }
 
 type UserWallet struct {
-	UserID        uuid.UUID          `json:"userId"`
-	WalletAddress string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
-	Nickname      string             `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji         *string            `json:"emoji"`
-	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
-	Notifications bool               `json:"notifications"`
+	UserID        uuid.UUID `json:"userId"`
+	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string   `json:"emoji"`
+	Notifications bool      `json:"notifications"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
 type Wallet struct {

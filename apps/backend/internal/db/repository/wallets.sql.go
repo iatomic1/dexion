@@ -213,26 +213,27 @@ func (q *Queries) UntrackWallet(ctx context.Context, arg UntrackWalletParams) er
 
 const updateWalletPreferences = `-- name: UpdateWalletPreferences :one
 UPDATE user_wallets
-SET nickname = $3, emoji = $4, notifications = $5
-WHERE user_id = $1 AND wallet_address = $2
-RETURNING user_id, wallet_address, nickname, emoji, created_at, notifications
+SET
+    nickname = COALESCE($1, nickname),
+    notifications = COALESCE($2, notifications),
+    updated_at = now()
+WHERE user_id = $3 AND wallet_address = $4
+RETURNING user_id, wallet_address, nickname, emoji, notifications, created_at, updated_at
 `
 
 type UpdateWalletPreferencesParams struct {
-	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji         *string   `json:"emoji"`
 	Notifications bool      `json:"notifications"`
+	ID            uuid.UUID `json:"id"`
+	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 }
 
 func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error) {
 	row := q.db.QueryRow(ctx, updateWalletPreferences,
-		arg.UserID,
-		arg.WalletAddress,
 		arg.Nickname,
-		arg.Emoji,
 		arg.Notifications,
+		arg.ID,
+		arg.WalletAddress,
 	)
 	var i UserWallet
 	err := row.Scan(
@@ -240,8 +241,9 @@ func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletP
 		&i.WalletAddress,
 		&i.Nickname,
 		&i.Emoji,
-		&i.CreatedAt,
 		&i.Notifications,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return &i, err
 }
@@ -253,7 +255,7 @@ ON CONFLICT (user_id, wallet_address)
 DO UPDATE SET
   nickname = EXCLUDED.nickname,
   emoji = EXCLUDED.emoji
-RETURNING user_id, wallet_address, nickname, emoji, created_at, notifications
+RETURNING user_id, wallet_address, nickname, emoji, notifications, created_at, updated_at
 `
 
 type UpsertUserWalletParams struct {
@@ -276,8 +278,9 @@ func (q *Queries) UpsertUserWallet(ctx context.Context, arg UpsertUserWalletPara
 		&i.WalletAddress,
 		&i.Nickname,
 		&i.Emoji,
-		&i.CreatedAt,
 		&i.Notifications,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return &i, err
 }

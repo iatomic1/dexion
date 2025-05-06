@@ -34,7 +34,7 @@ export default function RootLayout({
           <Toaster position="top-center" richColors />
           <WalletTrackerSocketProvider>
             <div className="flex min-h-screen flex-col">
-              <SiteHeader />
+              {/* <SiteHeader /> */}
               <main className="flex-1">{children}</main>
               <SiteFooter />
             </div>

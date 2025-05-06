@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import TokenChart from "./token-chart";
 import TokenInfo from "./token-info";
 import TokenTabs from "./token-tabs";
-import CryptoTradingInterface from "./trading/trading-panel";
 import TradingPanel from "./trading/trading-panel";
 
 // Mock data for the token
@@ -54,7 +53,6 @@ export default function TokenDetailPage({ tokenId }: { tokenId: string }) {
             <TokenChart tokenSymbol={tokenData.symbol} />
           </div>
           <div className="border-l lg:col-span-1">
-            {/* <CryptoTradingInterface /> */}
             <TradingPanel token={tokenData} />
           </div>
         </div>

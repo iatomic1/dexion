@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { cn } from "@repo/ui/lib/utils";
+import { ChevronDown, Crosshair, User } from "lucide-react";
 
 export default function TokenInfo() {
   return (
@@ -10,39 +11,39 @@ export default function TokenInfo() {
         <ChevronDown className="h-4 w-4" />
       </div>
 
-      <div className="grid grid-cols-3 gap-4 text-center text-xs">
-        <div>
-          <div className="text-muted-foreground">Supply M/H</div>
-          <div className="font-medium text-green-500">0.35%</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Own %</div>
-          <div className="font-medium">0.0%</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Slippage H</div>
-          <div className="font-medium text-green-500">0.0%</div>
-        </div>
-      </div>
+      {/* <div className="grid grid-cols-3 gap-4 text-center text-xs"> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">Supply M/H</div> */}
+      {/*     <div className="font-medium text-green-500">0.35%</div> */}
+      {/*   </div> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">Own %</div> */}
+      {/*     <div className="font-medium">0.0%</div> */}
+      {/*   </div> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">Slippage H</div> */}
+      {/*     <div className="font-medium text-green-500">0.0%</div> */}
+      {/*   </div> */}
+      {/* </div> */}
+
+      {/* <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs"> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">Holders</div> */}
+      {/*     <div className="font-medium">0.0%</div> */}
+      {/*   </div> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">Bubblers</div> */}
+      {/*     <div className="font-medium">0.0%</div> */}
+      {/*   </div> */}
+      {/*   <div> */}
+      {/*     <div className="text-muted-foreground">LP Burned</div> */}
+      {/*     <div className="font-medium text-green-500">0.100%</div> */}
+      {/*   </div> */}
+      {/* </div> */}
 
       <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs">
-        <div>
-          <div className="text-muted-foreground">Holders</div>
-          <div className="font-medium">0.0%</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Bubblers</div>
-          <div className="font-medium">0.0%</div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">LP Burned</div>
-          <div className="font-medium text-green-500">0.100%</div>
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs">
-        <InfoItem icon={<UserIcon />} value="13" label="Holders" />
-        <InfoItem icon={<UserIcon />} value="4" label="Top Traders" />
+        <InfoItem icon={<User />} value="13" label="Holders" />
+        <InfoItem icon={<Crosshair />} value="2.21 %" label="Snipers H." />
         <InfoItem icon={<UserIcon isRed />} value="Unrugged" label="Dev Paid" />
       </div>
     </div>
@@ -57,14 +58,14 @@ interface InfoItemProps {
 
 function InfoItem({ icon, value, label, isRed = false }: InfoItemProps) {
   return (
-    <div>
-      <div
-        className={`flex items-center justify-center ${isRed ? "text-red-500" : ""}`}
-      >
+    <div className="p-4 border-muted border-[1px] rounded-md items-center justify-center gap-2">
+      <div className={cn("flex items-center justify-center gap-1")}>
         {icon}
-        <span className="ml-1">{value}</span>
+        <span className="text-sm leading-[16px] text-red-700 font-normal">
+          {value}
+        </span>
       </div>
-      <div className="text-muted-foreground">{label}</div>
+      <span></span>
     </div>
   );
 }

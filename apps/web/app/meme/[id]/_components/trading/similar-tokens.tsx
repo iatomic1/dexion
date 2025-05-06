@@ -1,7 +1,15 @@
 "use client";
+import { Button } from "@repo/ui/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@repo/ui/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export default function SimilarTokens() {
+  const [isOpen, setIsOpen] = useState(false);
   // Mock data for similar tokens
   const similarTokens = [
     {
@@ -28,13 +36,15 @@ export default function SimilarTokens() {
   ];
 
   return (
-    <div className="mt-6">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm">Similar Tokens</span>
-        <ChevronDown className="h-4 w-4" />
-      </div>
+    <Collapsible className="mt-6" open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <Button className="mb-2 w-fit" variant={"ghost"} size={"sm"}>
+          <span className="text-sm">Similar Tokens</span>
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </CollapsibleTrigger>
 
-      <div className="space-y-2">
+      <CollapsibleContent className="space-y-2">
         {similarTokens.map((token, index) => (
           <TokenListItem
             key={index}
@@ -45,8 +55,8 @@ export default function SimilarTokens() {
             lastTx={token.lastTx}
           />
         ))}
-      </div>
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 

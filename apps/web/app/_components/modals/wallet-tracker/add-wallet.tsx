@@ -137,14 +137,14 @@ export default function AddWalletModal() {
       <DialogTrigger asChild>
         <Button className="">Add Wallet</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-sm">
         <DialogHeader>
           <DialogTitle>Add Wallet</DialogTitle>
         </DialogHeader>
         <Separator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 py-3 mb-20">
+            <div className="grid gap-4 py-3 mb-28">
               <FormField
                 control={form.control}
                 name="address"

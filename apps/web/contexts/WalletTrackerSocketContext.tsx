@@ -36,8 +36,8 @@ export const WalletTrackerSocketProvider: React.FC<{ children: ReactNode }> = ({
     });
 
     newSocket.on("wallet-alert", (data) => {
-      console.log("📣 Notification received:", data);
-      toast.success("Received");
+      // console.log("📣 Notification received:", data);
+      // toast.success("Received");
       // trigger UI, toast, etc.
     });
 

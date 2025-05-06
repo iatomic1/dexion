@@ -11,7 +11,7 @@ import {
 } from "@repo/ui/components/ui/tabs";
 import { Input } from "@repo/ui/components/ui/input";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddWalletModal from "./add-wallet";
 import { UserWallet } from "~/types/wallets";
 import { WalletItem } from "./wallet-item";
@@ -22,6 +22,32 @@ export default function WalletTrackerModal({
   wallets: UserWallet[];
 }) {
   const [activeTab, setActiveTab] = useState("manager");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredWallets, setFilteredWallets] = useState<UserWallet[]>(
+    wallets || [],
+  );
+
+  // Clear search input function
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
+
+  // Update filtered wallets whenever search query or wallets change
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredWallets(wallets || []);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = wallets.filter(
+      (wallet) =>
+        wallet.nickname.toLowerCase().includes(query) ||
+        wallet.address.toLowerCase().includes(query),
+    );
+
+    setFilteredWallets(filtered);
+  }, [searchQuery, wallets]);
 
   return (
     <Tabs defaultValue="manager" value={activeTab} onValueChange={setActiveTab}>
@@ -41,6 +67,7 @@ export default function WalletTrackerModal({
               <Input
                 placeholder="Search by name or addr..."
                 className="rounded-full text-xs placeholder:text-xs h-7"
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Button variant="ghost" size="icon" className="h-6 w-6">
                 <X className="h-3 w-3" />
@@ -73,21 +100,21 @@ export default function WalletTrackerModal({
             </div>
             <Separator />
             <ScrollArea className="h-64 w-full">
-              <div className="">
-                {wallets && wallets.length > 0 ? (
-                  wallets.map((wallet, index) => (
-                    <WalletItem
-                      key={wallet.address}
-                      wallet={wallet}
-                      index={index}
-                    />
-                  ))
-                ) : (
-                  <p className="text-center text-muted-foreground mt-4 text-sm">
-                    You are not tracking any wallets
-                  </p>
-                )}
-              </div>
+              {filteredWallets && filteredWallets.length > 0 ? (
+                filteredWallets.map((wallet, index) => (
+                  <WalletItem
+                    key={wallet.address}
+                    wallet={wallet}
+                    index={index}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-muted-foreground mt-4 text-sm">
+                  {wallets && wallets.length > 0
+                    ? "No wallets match your search"
+                    : "You are not tracking any wallets"}
+                </p>
+              )}
             </ScrollArea>
 
             <Separator className="mt-3" />

@@ -1,21 +1,14 @@
 "use client";
-
 import * as React from "react";
-import { X, GripHorizontal } from "lucide-react";
 import Draggable from "react-draggable";
-
-import {
-  Dialog,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Button } from "@repo/ui/components/ui/button";
+import { Dialog, DialogTrigger } from "@repo/ui/components/ui/dialog";
 import { cn } from "@repo/ui/lib/utils";
 
 interface DraggableDialogProps {
   trigger: React.ReactNode;
-  header: React.ReactNode;
+  header:
+    | React.ReactNode
+    | ((props: { setOpen: (open: boolean) => void }) => React.ReactNode);
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -99,6 +92,14 @@ export function DraggableDialog({
     }
   };
 
+  // Render header based on whether it's a function or ReactNode
+  const renderHeader = () => {
+    if (typeof header === "function") {
+      return header({ setOpen });
+    }
+    return header;
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -127,13 +128,7 @@ export function DraggableDialog({
                 className,
               )}
             >
-              {header}
-              {/**/}
-              {/* {description && ( */}
-              {/*   <DialogDescription className="px-4 pt-2"> */}
-              {/*     {description} */}
-              {/*   </DialogDescription> */}
-              {/* )} */}
+              {renderHeader()}
               <div className="">{children}</div>
             </div>
           </div>

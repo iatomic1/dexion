@@ -580,6 +580,52 @@
                     }
                 }
             }
+        },
+        "/wallets/{address}/watchers": {
+            "get": {
+                "description": "Retrieve all wallets in the system",
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "All wallets retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/backend_internal_db_repository.Wallet"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -767,15 +813,15 @@
                     "walletAddress"
                 ],
                 "properties": {
+                    "id": {
+                        "type": "string"
+                    },
                     "nickname": {
                         "type": "string",
                         "example": "iatomic"
                     },
                     "notifications": {
                         "type": "boolean"
-                    },
-                    "userId": {
-                        "type": "string"
                     },
                     "walletAddress": {
                         "type": "string",
@@ -863,7 +909,7 @@
                 ],
                 "properties": {
                     "createdAt": {
-                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                        "type": "string"
                     },
                     "emoji": {
                         "type": "string"
@@ -874,6 +920,9 @@
                     },
                     "notifications": {
                         "type": "boolean"
+                    },
+                    "updatedAt": {
+                        "type": "string"
                     },
                     "userId": {
                         "type": "string"

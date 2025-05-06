@@ -1,0 +1,16 @@
+{
+  "name": "@repo/tracker-lib",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@stacks/blockchain-api-client": "^8.10.0",
+    "express": "^5.1.0",
+    "ioredis": "^5.6.1",
+    "socket.io": "^4.8.1"
+  }
+}

@@ -8,6 +8,7 @@ import { ThemeProvider } from "./_components/theme-provider";
 import { Toaster } from "@repo/ui/components/ui/sonner";
 import { TokenRefresher } from "./_components/token-refresher";
 import SiteFooter from "./_components/site-footer";
+import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,11 +32,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster position="top-center" richColors />
-          <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
+          <WalletTrackerSocketProvider>
+            <div className="flex min-h-screen flex-col">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+          </WalletTrackerSocketProvider>
         </ThemeProvider>
       </body>
     </html>

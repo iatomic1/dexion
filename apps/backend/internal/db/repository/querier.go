@@ -22,6 +22,7 @@ type Querier interface {
 	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)
 	GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error)
 	GetUserWalletDetails(ctx context.Context, arg GetUserWalletDetailsParams) (*GetUserWalletDetailsRow, error)
+	GetWalletsWithWatchers(ctx context.Context) ([]*GetWalletsWithWatchersRow, error)
 	GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error)
 	IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error)
 	RefreshTokenExists(ctx context.Context, id uuid.UUID) (bool, error)

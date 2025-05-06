@@ -524,6 +524,47 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/wallets/{address}/watchers": {
+            "get": {
+                "description": "Retrieve all wallets in the system",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallets"
+                ],
+                "summary": "Get all wallets",
+                "responses": {
+                    "200": {
+                        "description": "All wallets retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.Wallet"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -669,15 +710,15 @@ const docTemplate = `{
                 "walletAddress"
             ],
             "properties": {
+                "id": {
+                    "type": "string"
+                },
                 "nickname": {
                     "type": "string",
                     "example": "iatomic"
                 },
                 "notifications": {
                     "type": "boolean"
-                },
-                "userId": {
-                    "type": "string"
                 },
                 "walletAddress": {
                     "type": "string",
@@ -765,7 +806,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "createdAt": {
-                    "$ref": "#/definitions/pgtype.Timestamptz"
+                    "type": "string"
                 },
                 "emoji": {
                     "type": "string"
@@ -776,6 +817,9 @@ const docTemplate = `{
                 },
                 "notifications": {
                     "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "string"
                 },
                 "userId": {
                     "type": "string"

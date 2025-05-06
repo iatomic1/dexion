@@ -139,6 +139,54 @@ func (q *Queries) GetUserWalletDetails(ctx context.Context, arg GetUserWalletDet
 	return &i, err
 }
 
+const getWalletsWithWatchers = `-- name: GetWalletsWithWatchers :many
+SELECT
+  w.address,
+  w.created_at,
+  jsonb_build_object(
+    'address', w.address,
+    'created_at', w.created_at,
+    'watchers', jsonb_agg(
+      jsonb_build_object(
+        'user_id', uw.user_id,
+        'nickname', uw.nickname,
+        'emoji', uw.emoji,
+        'notifications', uw.notifications
+      )
+    )
+  ) as wallet_with_watchers
+FROM wallets w
+JOIN user_wallets uw ON w.address = uw.wallet_address
+GROUP BY w.address, w.created_at
+HAVING COUNT(uw.user_id) > 0
+`
+
+type GetWalletsWithWatchersRow struct {
+	Address            string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
+	CreatedAt          pgtype.Timestamptz `json:"createdAt"`
+	WalletWithWatchers []byte             `json:"walletWithWatchers"`
+}
+
+func (q *Queries) GetWalletsWithWatchers(ctx context.Context) ([]*GetWalletsWithWatchersRow, error) {
+	rows, err := q.db.Query(ctx, getWalletsWithWatchers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*GetWalletsWithWatchersRow
+	for rows.Next() {
+		var i GetWalletsWithWatchersRow
+		if err := rows.Scan(&i.Address, &i.CreatedAt, &i.WalletWithWatchers); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getWatchersForWallet = `-- name: GetWatchersForWallet :many
 SELECT user_id, nickname, emoji, notifications
 FROM user_wallets

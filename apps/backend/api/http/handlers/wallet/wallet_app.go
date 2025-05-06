@@ -150,7 +150,61 @@ func (h *NewWalletHandler) GetTrackedWallets(c *gin.Context) {
 func (h *NewWalletHandler) GetAllWallets(c *gin.Context) {
 	ctx := context.Background()
 	repo := repository.New(h.srv.DB)
+
 	wallets, err := repo.GetAllWallets(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err)
+		return
+	}
+
+	var combined []map[string]interface{}
+
+	for _, w := range wallets {
+		watchers, err := repo.GetWatchersForWallet(ctx, w.Address)
+		if err != nil {
+			http.SendInternalServerError(c, err)
+			return
+		}
+
+		var formattedWatchers []map[string]interface{}
+		for _, watcher := range watchers {
+			formattedWatchers = append(formattedWatchers, map[string]interface{}{
+				"userId":        watcher.UserID,
+				"nickname":      watcher.Nickname,
+				"emoji":         watcher.Emoji,
+				"notifications": watcher.Notifications,
+			})
+		}
+
+		combined = append(combined, map[string]interface{}{
+			"wallet_address": w.Address,
+			"watchers":       formattedWatchers,
+			"created_at":     w.CreatedAt,
+		})
+	}
+
+	http.SendSuccess(c, combined)
+}
+
+// GetWalletWatchers godoc
+//
+// @Summary        Get all wallets
+// @Description    Retrieve all wallets in the system
+// @Tags           Wallets
+// @Produce        json
+// @Success        200    {object}    http.Response{data=[]repository.Wallet}    "All wallets retrieved"
+// @Failure        500    {object}    http.InternalServerErrorResponse           "Internal server error"
+// @Router         /wallets/{address}/watchers [get]
+func (h *NewWalletHandler) GetWalletWatchers(c *gin.Context) {
+	address := c.Param("address")
+	if address == "" {
+		http.SendBadRequest(c, fmt.Errorf("address is required"), http.WithMessage("Wallet address is required"))
+		return
+	}
+
+	ctx := context.Background()
+	repo := repository.New(h.srv.DB)
+	wallets, err := repo.GetWatchersForWallet(ctx, address)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
@@ -221,7 +275,7 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 	}
 
 	updatedWallet, err := repo.UpdateWalletPreferences(ctx, repository.UpdateWalletPreferencesParams{
-		UserID:        userID,
+		ID:            userID,
 		WalletAddress: address,
 		Nickname:      req.Nickname,
 		Notifications: req.Notifications,

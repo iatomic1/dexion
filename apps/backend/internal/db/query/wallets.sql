@@ -66,3 +66,25 @@ SELECT EXISTS(SELECT 1 FROM wallets WHERE address = $1);
 SELECT nickname, emoji, notifications
 FROM user_wallets
 WHERE user_id = $1 AND wallet_address = $2;
+
+
+-- name: GetWalletsWithWatchers :many
+SELECT
+  w.address,
+  w.created_at,
+  jsonb_build_object(
+    'address', w.address,
+    'created_at', w.created_at,
+    'watchers', jsonb_agg(
+      jsonb_build_object(
+        'user_id', uw.user_id,
+        'nickname', uw.nickname,
+        'emoji', uw.emoji,
+        'notifications', uw.notifications
+      )
+    )
+  ) as wallet_with_watchers
+FROM wallets w
+JOIN user_wallets uw ON w.address = uw.wallet_address
+GROUP BY w.address, w.created_at
+HAVING COUNT(uw.user_id) > 0;

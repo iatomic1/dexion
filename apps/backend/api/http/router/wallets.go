@@ -15,6 +15,7 @@ func RegisterWalletRoutes(srv *http.Server, router *gin.RouterGroup) {
 	walletGroup := router
 
 	walletGroup.GET("/all", walletHandler.GetAllWallets)
+	walletGroup.GET("/:address/watchers", walletHandler.GetWalletWatchers)
 	walletGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
 		walletGroup.POST("", walletHandler.TrackWallet)

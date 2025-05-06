@@ -94,13 +94,13 @@ definitions:
     type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
     properties:
+      id:
+        type: string
       nickname:
         example: iatomic
         type: string
       notifications:
         type: boolean
-      userId:
-        type: string
       walletAddress:
         example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
         type: string
@@ -160,7 +160,7 @@ definitions:
   backend_internal_db_repository.UserWallet:
     properties:
       createdAt:
-        $ref: '#/definitions/pgtype.Timestamptz'
+        type: string
       emoji:
         type: string
       nickname:
@@ -168,6 +168,8 @@ definitions:
         type: string
       notifications:
         type: boolean
+      updatedAt:
+        type: string
       userId:
         type: string
       walletAddress:
@@ -532,6 +534,30 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update wallet preferences
+      tags:
+      - Wallets
+  /wallets/{address}/watchers:
+    get:
+      description: Retrieve all wallets in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: All wallets retrieved
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.Wallet'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Get all wallets
       tags:
       - Wallets
   /wallets/all:

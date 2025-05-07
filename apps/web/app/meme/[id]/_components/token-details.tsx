@@ -32,7 +32,7 @@ export default function TokenDetailPage({ tokenId }: { tokenId: string }) {
             <TokenTabs />
           </div>
           <div className="border-l md:w-3/5 lg:w-3/5 xl:w-1/5">
-            <TradingPanel token={tokenData} />
+            <TradingPanel />
           </div>
         </div>
       </main>

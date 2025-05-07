@@ -108,7 +108,7 @@ export default function Performance() {
             <Progress
               value={75}
               className="h-1.5 bg-muted"
-              indicatorClassName="bg-gradient-to-r from-green-500 to-red-500"
+              // indicatorClassName="bg-gradient-to-r from-green-500 to-red-500"
             />
           </div>
         </div>

@@ -1,13 +1,11 @@
 "use client";
 import Link from "next/link";
-import { Search, Bell, User, ChevronDown } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
 import { AccountPopover } from "./account-management";
-import AuthModal from "../auth/auth-modal";
 import AuthController from "../auth/auth-controller";
-import { DraggableDialog } from "../drag";
 
 export default function SiteHeader() {
   return (

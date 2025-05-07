@@ -1,4 +1,4 @@
-import { Share, Star, Copy, ExternalLink, Info } from "lucide-react";
+import { Share, Star, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,

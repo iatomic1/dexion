@@ -34,13 +34,8 @@ import {
 } from "@repo/ui/components/ui/form";
 import { useServerAction } from "zsa-react";
 import { trackWalletAction } from "~/app/_actions/wallet-tracker-actions";
-import router from "next/router";
 import { toast } from "sonner";
-import { saveUserTokens } from "~/lib/auth/auth";
 import { HTTP_STATUS } from "~/lib/constants";
-import { ApiResponse } from "~/types";
-import { AuthSuccess } from "~/types/auth";
-import { UserWallet } from "~/types/wallets";
 import { revalidateTagServer } from "~/app/_actions/revalidate";
 
 export default function AddWalletModal() {
@@ -88,6 +83,10 @@ export default function AddWalletModal() {
             nickname: values.name,
             emoji: selectedEmoji,
           });
+
+          if (!response || !response[0]) {
+            throw new Error("No response received");
+          }
 
           const result = response[0];
 

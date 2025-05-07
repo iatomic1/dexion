@@ -61,6 +61,7 @@ export function SignUpModal({
   const onSubmit = async (values: SignUpFormValues) => {
     try {
       toast.promise(
+        // @ts-expect-errorWeird err here
         async () => {
           const result = await execute({
             ...values,

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import Draggable from "react-draggable";
+import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { Dialog, DialogTrigger } from "@repo/ui/components/ui/dialog";
 import { cn } from "@repo/ui/lib/utils";
 
@@ -18,8 +18,6 @@ interface DraggableDialogProps {
 
 export function DraggableDialog({
   trigger,
-  title,
-  description,
   children,
   className,
   storageKey,
@@ -27,7 +25,8 @@ export function DraggableDialog({
 }: DraggableDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
-  const nodeRef = React.useRef(null);
+  // Fix: Use HTMLDivElement instead of HTMLElement | null
+  const nodeRef = React.useRef<HTMLDivElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const [bounds, setBounds] = React.useState({
     left: 0,
@@ -80,7 +79,8 @@ export function DraggableDialog({
     };
   }, [open]);
 
-  const handleDragStop = (e: any, data: { x: number; y: number }) => {
+  // Fix: Use proper type for the drag event and data
+  const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
     setPosition({ x: data.x, y: data.y });
     try {
       localStorage.setItem(
@@ -108,6 +108,7 @@ export function DraggableDialog({
         style={{ pointerEvents: "none" }}
       >
         <Draggable
+          // @ts-expect-error Lib Error
           nodeRef={nodeRef}
           handle=".drag-handle"
           bounds={bounds}

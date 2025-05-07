@@ -1,52 +1,81 @@
 "use client";
-
+import { Button } from "@repo/ui/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@repo/ui/components/ui/collapsible";
 import { cn } from "@repo/ui/lib/utils";
-import { ChevronDown, Crosshair, User } from "lucide-react";
+import { ChefHat, ChevronDown, Crosshair, User } from "lucide-react";
+import { useState } from "react";
 
 export default function TokenInfo() {
+  const [isOpen, setIsOpen] = useState(true);
   return (
-    <div className="mt-6">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm">Token Info</span>
-        <ChevronDown className="h-4 w-4" />
-      </div>
-
-      {/* <div className="grid grid-cols-3 gap-4 text-center text-xs"> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">Supply M/H</div> */}
-      {/*     <div className="font-medium text-green-500">0.35%</div> */}
-      {/*   </div> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">Own %</div> */}
-      {/*     <div className="font-medium">0.0%</div> */}
-      {/*   </div> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">Slippage H</div> */}
-      {/*     <div className="font-medium text-green-500">0.0%</div> */}
-      {/*   </div> */}
-      {/* </div> */}
-
-      {/* <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs"> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">Holders</div> */}
-      {/*     <div className="font-medium">0.0%</div> */}
-      {/*   </div> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">Bubblers</div> */}
-      {/*     <div className="font-medium">0.0%</div> */}
-      {/*   </div> */}
-      {/*   <div> */}
-      {/*     <div className="text-muted-foreground">LP Burned</div> */}
-      {/*     <div className="font-medium text-green-500">0.100%</div> */}
-      {/*   </div> */}
-      {/* </div> */}
-
-      <div className="mt-4 grid grid-cols-3 gap-4 text-center text-xs">
-        <InfoItem icon={<User />} value="13" label="Holders" />
-        <InfoItem icon={<Crosshair />} value="2.21 %" label="Snipers H." />
-        <InfoItem icon={<UserIcon isRed />} value="Unrugged" label="Dev Paid" />
-      </div>
-    </div>
+    <Collapsible className="mt-6" open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <Button className="mb-2 w-fit text-sm" variant={"ghost"} size={"sm"}>
+          Token Info
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="flex flex-col gap-2">
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <InfoItem
+            icon={<User className="h-5 w-5" strokeWidth={2} />}
+            value="13"
+            label="Holders"
+          />
+          <InfoItem
+            icon={<Crosshair className="h-5 w-5" strokeWidth={2} />}
+            value="2.21 %"
+            label="Snipers H."
+          />
+          <InfoItem
+            icon={<ChefHat className="h-5 w-5" strokeWidth={2} />}
+            isRed
+            value="Unrugged"
+            label="Dev H."
+          />
+        </div>{" "}
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <InfoItem
+            icon={<User className="h-5 w-5" />}
+            value="13"
+            label="Holders"
+          />
+          <InfoItem
+            icon={<Crosshair className="h-5 w-5" />}
+            value="2.21 %"
+            label="Snipers H."
+          />
+          <InfoItem
+            icon={<ChefHat className="h-5 w-5" />}
+            isRed
+            value="Unrugged"
+            label="Dev H."
+          />
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+          <InfoItem
+            icon={<User className="h-5 w-5" />}
+            value="13"
+            label="Holders"
+          />
+          <InfoItem
+            icon={<Crosshair className="h-5 w-5" />}
+            value="2.21 %"
+            label="Snipers H."
+          />
+          <InfoItem
+            icon={<ChefHat className="h-5 w-5" />}
+            isRed
+            value="Unrugged"
+            label="Dev H."
+          />
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 interface InfoItemProps {
@@ -58,39 +87,21 @@ interface InfoItemProps {
 
 function InfoItem({ icon, value, label, isRed = false }: InfoItemProps) {
   return (
-    <div className="p-4 border-muted border-[1px] rounded-md items-center justify-center gap-2">
+    <div className="p-3 border-muted border-[1px] rounded-md items-center justify-center flex flex-col gap-1">
       <div className={cn("flex items-center justify-center gap-1")}>
         {icon}
-        <span className="text-sm leading-[16px] text-red-700 font-normal">
+        <span
+          className={cn(
+            "text-sm leading-[24px] font-medium",
+            isRed && "text-red-700",
+          )}
+        >
           {value}
         </span>
       </div>
-      <span></span>
+      <span className="text-muted-foreground font-semibold text-center">
+        {label}
+      </span>
     </div>
-  );
-}
-interface UserIconProps {
-  isRed?: boolean;
-}
-
-function UserIcon({ isRed = false }: UserIconProps) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-4 w-4"
-    >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
   );
 }

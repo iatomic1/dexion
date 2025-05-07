@@ -115,7 +115,7 @@ export default function TradingPanel({ token }: TradingPanelProps) {
 
                   <div className="grid grid-cols-4 gap-2">
                     <Input
-                      value={amount}
+                      // value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       className="col-span-1 text-center"
                     />

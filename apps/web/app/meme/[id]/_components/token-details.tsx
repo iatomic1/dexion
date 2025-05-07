@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import TokenChart from "./token-chart";
 import TokenInfo from "./token-info";
@@ -22,41 +21,20 @@ const mockTokenData = {
 
 export default function TokenDetailPage({ tokenId }: { tokenId: string }) {
   const [tokenData, setTokenData] = useState(mockTokenData);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // In a real app, you would fetch the token data based on the tokenId
-    // For now, we'll just simulate a loading state
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [tokenId]);
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col w-full">
       <main className="flex flex-1 flex-col">
         <TokenInfo token={tokenData} />
-        <div className="grid flex-1 grid-cols-1 lg:grid-cols-4">
-          <div className="lg:col-span-3">
+        <div className="flex flex-1 flex-col lg:flex-row">
+          <div className="grid grid-cols-1 w-full">
             <TokenChart tokenSymbol={tokenData.symbol} />
+            <TokenTabs />
           </div>
-          <div className="border-l lg:col-span-1">
+          <div className="border-l md:w-3/5 lg:w-3/5 xl:w-1/5">
             <TradingPanel token={tokenData} />
           </div>
         </div>
-        <TokenTabs />
       </main>
     </div>
   );

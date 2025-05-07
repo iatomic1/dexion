@@ -2,15 +2,14 @@
 import "./globals.css";
 import type React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import SiteHeader from "./_components/header/site-header";
 import { ThemeProvider } from "./_components/theme-provider";
 import { Toaster } from "@repo/ui/components/ui/sonner";
 import { TokenRefresher } from "./_components/token-refresher";
 import SiteFooter from "./_components/site-footer";
 import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
-
-const inter = Inter({ subsets: ["latin"] });
+import { geistSans } from "./fonts/geist";
+import { PresetsContextProvider } from "~/contexts/PresetsContext";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",
@@ -23,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={inter.className}>
+      <body className={geistSans.variable}>
         <TokenRefresher />
         <ThemeProvider
           attribute="class"
@@ -33,11 +32,13 @@ export default function RootLayout({
         >
           <Toaster position="top-center" richColors />
           <WalletTrackerSocketProvider>
-            <div className="flex min-h-screen flex-col">
-              <SiteHeader />
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </div>
+            <PresetsContextProvider>
+              <div className="flex min-h-screen flex-col font-geist">
+                {/* <SiteHeader /> */}
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+              </div>
+            </PresetsContextProvider>
           </WalletTrackerSocketProvider>
         </ThemeProvider>
       </body>

@@ -21,7 +21,7 @@
     "ui": "bun --filter @repo/ui ui"
   },
   "workspaces": [
-    "./apps/*",
-    "./packages/*"
+    "apps/*",
+    "packages/*"
   ]
 }

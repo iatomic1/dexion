@@ -1,4 +1,4 @@
-import { Share, Star, Copy, ExternalLink, Info } from "lucide-react";
+import { Share, Star, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,
@@ -99,13 +99,13 @@ export default function TokenInfo({ token }: TokenInfoProps) {
             <Button variant="outline" size="icon" className="h-8 w-8">
               <Star className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon" className="h-8 w-8">
+            <Button variant="outline" size="sm" className="">
               <Share className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm">
-              <Info className="mr-2 h-4 w-4" />
               Share PNL
             </Button>
+            {/* <Button variant="outline" size="sm"> */}
+            {/*   <Info className="mr-2 h-4 w-4" /> */}
+            {/* </Button> */}
           </div>
         </div>
       </div>

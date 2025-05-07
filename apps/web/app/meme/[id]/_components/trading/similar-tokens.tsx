@@ -9,7 +9,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 export default function SimilarTokens() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   // Mock data for similar tokens
   const similarTokens = [
     {

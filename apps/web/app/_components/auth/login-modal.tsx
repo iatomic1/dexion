@@ -1,12 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@repo/ui/components/ui/dialog";
 import { Input } from "@repo/ui/components/ui/input";
 import { Button } from "@repo/ui/components/ui/button";
@@ -25,9 +23,11 @@ import { HTTP_STATUS } from "~/lib/constants";
 import { useServerAction } from "zsa-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { AuthSchema, loginSchema } from "~/app/schema";
+import { loginSchema } from "~/app/schema";
 import { z } from "zod";
 import { authAction } from "~/app/_actions/auth-actions";
+import { ApiResponse } from "~/types";
+import { AuthSuccess } from "~/types/auth";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -79,19 +79,44 @@ export function LoginModal({
     try {
       console.log(values);
 
-      // Use toast.promise to show loading, success, and error states
       toast.promise(
+        // @ts-expect-errorWeird err here
         async () => {
           const result = await execute({
             ...values,
-            signUp: false,
+            signUp: true,
           });
-          return result.data;
+          return result[0];
         },
         {
-          loading: "Authenticating...",
-          success: (data) => `Authenticated`,
-          error: (err) => err.message || "Failed to authenticate",
+          loading: "Authenticating ",
+          success: async (res: ApiResponse<AuthSuccess>) => {
+            // Handle the response based on status
+            if (res.status === HTTP_STATUS.OK) {
+              await saveUserTokens({
+                accessToken: res?.data.accessToken as string,
+                refreshToken: res?.data.refreshToken as string,
+                userId: res?.data.userId,
+              });
+
+              setTimeout(() => {
+                router.push("/portfolio");
+                router.refresh();
+              }, 500);
+
+              return "Authenticated";
+            } else {
+              if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+                return "Invalid username or password";
+              }
+
+              return "Authentication failed";
+            }
+          },
+          error: (err) => {
+            // Return the error message
+            return err.message || "Authentication failed";
+          },
         },
       );
     } catch (error) {

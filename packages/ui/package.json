@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "tailwindcss -i ./src/styles.css -o ./dist/styles.css",
-    "dev": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --watch",
     "ui": "bunx shadcn@latest",
     "lint": "eslint ."
   },

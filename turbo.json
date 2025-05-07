@@ -5,14 +5,17 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": ["NODE_ENV", "ACCESS_JWT_KEY", "REFRESH_JWT_KEY"],
       "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["NODE_ENV", "ACCESS_JWT_KEY", "REFRESH_JWT_KEY"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "env": ["NODE_ENV"]
     }
   }
 }

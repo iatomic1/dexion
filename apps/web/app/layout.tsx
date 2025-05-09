@@ -36,7 +36,7 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-col font-geist">
               <SiteHeader />
               <main className="flex-1">{children}</main>
-              <SiteFooter />
+              {/* <SiteFooter /> */}
             </div>
           </PresetsContextProvider>
           {/* </WalletTrackerSocketProvider> */}

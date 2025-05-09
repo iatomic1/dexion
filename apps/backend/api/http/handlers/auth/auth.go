@@ -26,6 +26,33 @@ func NewAuthHandler(srv *http.Server) *Handler {
 	return &Handler{srv: srv}
 }
 
+// Helper function to acquire a connection from the pool and create a transaction
+func (h *Handler) beginTx(ctx context.Context) (repository.DBTX, func(), error) {
+	// Get a connection from the pool
+	conn, err := h.srv.DB.Acquire(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to acquire connection: %w", err)
+	}
+
+	// Create cleanup function that will be called in defer
+	cleanup := func() {
+		conn.Release()
+	}
+
+	// Begin transaction
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		cleanup()
+		return nil, nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	// Return transaction and cleanup function
+	return tx, func() {
+		tx.Rollback(ctx)
+		cleanup()
+	}, nil
+}
+
 // Login godoc
 //
 //	@Summary		Login to your account
@@ -52,12 +79,13 @@ func (h *Handler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	tx, err := h.srv.DB.Begin(ctx)
+	// Get connection and transaction
+	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
-	defer tx.Rollback(ctx)
+	defer cleanup()
 
 	repo := repository.New(tx)
 	user, err := repo.GetUserByEmail(ctx, req.Email)
@@ -120,8 +148,14 @@ func (h *Handler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+	// Commit transaction
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 
@@ -161,19 +195,21 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("getting here")
-	tx, err := h.srv.DB.Begin(ctx)
+	// Get connection and transaction
+	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
-	defer tx.Rollback(ctx)
+	defer cleanup()
 
 	hashed_password, err := password.HashPassword(req.Password)
 	if err != nil {
 		fmt.Println(err)
+		http.SendInternalServerError(c, err, http.WithMessage("Failed to hash password"))
 		return
 	}
+
 	repo := repository.New(tx)
 	user, err := repo.RegisterUser(ctx, repository.RegisterUserParams{
 		Email:    req.Email,
@@ -181,7 +217,6 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		Type:     req.Type,
 	})
 	if err != nil {
-		fmt.Println(err)
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == domain.UniqueViolation {
 			http.SendConflict(c, err, http.WithMessage(domain.ErrEmailAlreadyExist))
@@ -238,8 +273,14 @@ func (h *Handler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+	// Commit transaction
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 
@@ -280,16 +321,18 @@ func (h *Handler) RegisterTelegramUser(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	tx, err := h.srv.DB.Begin(ctx)
+
+	// Get connection and transaction
+	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
-	defer tx.Rollback(ctx)
+	defer cleanup()
 
 	repo := repository.New(tx)
 
-	// Use a random/placeholder password if it's required by DB (can’t be null)
+	// Use a random/placeholder password if it's required by DB (can't be null)
 	placeholderPassword := uuid.NewString()
 
 	user, err := repo.RegisterTelegramUser(ctx, repository.RegisterTelegramUserParams{
@@ -307,8 +350,14 @@ func (h *Handler) RegisterTelegramUser(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+	// Commit transaction
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 
@@ -329,18 +378,18 @@ func (h *Handler) RegisterTelegramUser(c *gin.Context) {
 func (h *Handler) RefreshToken(c *gin.Context) {
 	ctx := context.Background()
 
-	tx, err := h.srv.DB.Begin(ctx)
-	if err != nil {
-		http.SendInternalServerError(c, err)
-		return
-	}
-	defer tx.Rollback(ctx)
-
 	userId, ok := c.Get("userId")
 	if !ok {
 		http.SendUnauthorized(c, nil, http.WithMessage("UserId not found for some reason"))
 		return
 	}
+
+	tx, cleanup, err := h.beginTx(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err)
+		return
+	}
+	defer cleanup()
 
 	parsedUserId, err := domain.ParseIDs(userId.(string))
 	if err != nil {
@@ -433,8 +482,13 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err, http.WithMessage("Failed to commit transaction"))
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 

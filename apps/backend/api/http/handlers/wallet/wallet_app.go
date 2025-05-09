@@ -21,6 +21,33 @@ func NewAppWalletHandler(srv *http.Server) *NewWalletHandler {
 	return &NewWalletHandler{srv: srv}
 }
 
+// Helper function to acquire a connection from the pool and create a transaction
+func (h *NewWalletHandler) beginTx(ctx context.Context) (repository.DBTX, func(), error) {
+	// Get a connection from the pool
+	conn, err := h.srv.DB.Acquire(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to acquire connection: %w", err)
+	}
+
+	// Create cleanup function that will be called in defer
+	cleanup := func() {
+		conn.Release()
+	}
+
+	// Begin transaction
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		cleanup()
+		return nil, nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	// Return transaction and cleanup function
+	return tx, func() {
+		tx.Rollback(ctx)
+		cleanup()
+	}, nil
+}
+
 // TrackWallet godoc
 //
 // @Summary        Track a new wallet
@@ -55,6 +82,7 @@ func (h *NewWalletHandler) TrackWallet(c *gin.Context) {
 	ctx := context.Background()
 
 	// First check if user is already tracking this wallet
+	// We use the main pool for read operations, not a transaction
 	repo := repository.New(h.srv.DB)
 	isTracking, err := repo.IsTrackingWallet(ctx, repository.IsTrackingWalletParams{
 		UserID:        userID,
@@ -70,12 +98,13 @@ func (h *NewWalletHandler) TrackWallet(c *gin.Context) {
 		return
 	}
 
-	tx, err := h.srv.DB.Begin(ctx)
+	// For write operations, use our helper to get a transaction
+	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
-	defer tx.Rollback(ctx)
+	defer cleanup()
 
 	txRepo := repository.New(tx)
 
@@ -102,8 +131,14 @@ func (h *NewWalletHandler) TrackWallet(c *gin.Context) {
 		return
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err)
+	// We need to cast to the underlying transaction type to commit
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err)
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 
@@ -128,6 +163,7 @@ func (h *NewWalletHandler) GetTrackedWallets(c *gin.Context) {
 	}
 	ctx := context.Background()
 
+	// For read-only operations, we can use the DB pool directly
 	repo := repository.New(h.srv.DB)
 	wallets, err := repo.GetUserTrackedWallets(ctx, userID)
 	if err != nil {
@@ -149,7 +185,17 @@ func (h *NewWalletHandler) GetTrackedWallets(c *gin.Context) {
 // @Router         /wallets/all [get]
 func (h *NewWalletHandler) GetAllWallets(c *gin.Context) {
 	ctx := context.Background()
-	repo := repository.New(h.srv.DB)
+
+	// For this operation, we'll use a single connection from the pool
+	// to ensure consistency across multiple queries
+	conn, err := h.srv.DB.Acquire(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err, http.WithMessage("failed to acquire connection"))
+		return
+	}
+	defer conn.Release()
+
+	repo := repository.New(conn)
 
 	wallets, err := repo.GetAllWallets(ctx)
 	if err != nil {
@@ -257,6 +303,8 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 	}
 
 	ctx := context.Background()
+
+	// First check using the connection pool
 	repo := repository.New(h.srv.DB)
 
 	// First check if wallet is being tracked by the user
@@ -274,14 +322,23 @@ func (h *NewWalletHandler) UpdateWalletPreferences(c *gin.Context) {
 		return
 	}
 
-	updatedWallet, err := repo.UpdateWalletPreferences(ctx, repository.UpdateWalletPreferencesParams{
+	// For the update, acquire a dedicated connection
+	conn, err := h.srv.DB.Acquire(ctx)
+	if err != nil {
+		http.SendInternalServerError(c, err, http.WithMessage("failed to acquire connection"))
+		return
+	}
+	defer conn.Release()
+
+	connRepo := repository.New(conn)
+
+	updatedWallet, err := connRepo.UpdateWalletPreferences(ctx, repository.UpdateWalletPreferencesParams{
 		ID:            userID,
 		WalletAddress: address,
 		Nickname:      req.Nickname,
 		Notifications: req.Notifications,
 	})
 	if err != nil {
-		fmt.Println(err, "here")
 		http.SendInternalServerError(c, err)
 		return
 	}
@@ -314,12 +371,14 @@ func (h *NewWalletHandler) UntrackWallet(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	tx, err := h.srv.DB.Begin(ctx)
+
+	// Get transaction using our helper function
+	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
-	defer tx.Rollback(ctx)
+	defer cleanup()
 
 	repo := repository.New(tx)
 
@@ -355,8 +414,14 @@ func (h *NewWalletHandler) UntrackWallet(c *gin.Context) {
 		return
 	}
 
-	if err = tx.Commit(ctx); err != nil {
-		http.SendInternalServerError(c, err)
+	// We need to cast to the underlying transaction type to commit
+	if txObj, ok := tx.(interface{ Commit(context.Context) error }); ok {
+		if err := txObj.Commit(ctx); err != nil {
+			http.SendInternalServerError(c, err)
+			return
+		}
+	} else {
+		http.SendInternalServerError(c, fmt.Errorf("transaction doesn't support commit"))
 		return
 	}
 

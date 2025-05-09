@@ -37,8 +37,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -47,18 +48,43 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	conn, err := pgx.Connect(context.Background(), cfg.DbURL)
-	if err != nil {
-		log.Fatalf("Unable to connect to db: %v\n", err)
+	// Get database URL from environment or config
+	dbURL := os.Getenv("DB_URL")
+	if dbURL == "" {
+		dbURL = cfg.DbURL
 	}
-	defer conn.Close(context.Background())
 
-	srv, err := http.NewServer(cfg, conn)
+	// Create a connection pool instead of a single connection
+	poolConfig, err := pgxpool.ParseConfig(dbURL)
+	if err != nil {
+		log.Fatalf("Unable to parse pool config: %v\n", err)
+	}
+
+	// Set some reasonable pool settings
+	// Adjust these values based on your application's needs
+	poolConfig.MaxConns = 10
+
+	// Create the connection pool
+	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
+	if err != nil {
+		log.Fatalf("Unable to create connection pool: %v\n", err)
+	}
+	defer pool.Close()
+
+	// Verify connection is working
+	if err := pool.Ping(context.Background()); err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+
+	fmt.Println("Database connection pool established successfully")
+
+	// Pass the pool to your server instead of a single connection
+	srv, err := http.NewServer(cfg, pool)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("It is done")
+	fmt.Println("Server initialized successfully")
 	router.SetupRouter(srv)
 	http.RunServer(srv)
 }

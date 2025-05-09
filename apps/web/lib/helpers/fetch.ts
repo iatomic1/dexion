@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../constants";
+import { API_BASE_URL, PUBLIC_BASE_URL } from "../constants";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 interface NextJsOptions {
@@ -27,6 +27,13 @@ export default function makeFetch<T>(
     const headers = new Headers(restOptions.headers);
 
     if (accessToken) {
+      const response = await fetch(`${PUBLIC_BASE_URL}/api/refresh`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 

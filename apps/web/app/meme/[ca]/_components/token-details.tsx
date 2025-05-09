@@ -4,6 +4,7 @@ import TokenChart from "./token-chart";
 import TokenInfo from "./token-info";
 import TokenTabs from "./token-tabs";
 import TradingPanel from "./trading/trading-panel";
+import { useTokenSocket } from "~/contexts/TokenWatcherSocketContext";
 
 // Mock data for the token
 const mockTokenData = {
@@ -21,6 +22,14 @@ const mockTokenData = {
 
 export default function TokenDetailPage({ tokenId }: { tokenId: string }) {
   const [tokenData, setTokenData] = useState(mockTokenData);
+
+  const tx = useTokenSocket();
+
+  useEffect(() => {
+    if (tx?.contract === tokenId) {
+      console.log("Live tx:", tx);
+    }
+  }, [tx]);
 
   return (
     <div className="flex min-h-screen flex-col w-full">

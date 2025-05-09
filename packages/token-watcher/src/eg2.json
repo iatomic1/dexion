@@ -1,0 +1,25 @@
+{
+  "name": "lol",
+  "uuid": "313f1396-f6b4-4429-b0bf-4d9da6ee26c6",
+  "chain": "stacks",
+  "version": 1,
+  "networks": {
+    "mainnet": {
+      "if_this": {
+        "scope": "contract_call",
+        "method": "apply",
+        "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging"
+      },
+      "end_block": null,
+      "then_that": {
+        "http_post": {
+          "url": "https://1a85-2a09-bac1-5420-18-00-ae-12.ngrok-free.app/api/track",
+          "authorization_header": "me"
+        }
+      },
+      "start_block": 1109582,
+      "decode_clarity_values": true,
+      "expire_after_occurrence": null
+    }
+  }
+}

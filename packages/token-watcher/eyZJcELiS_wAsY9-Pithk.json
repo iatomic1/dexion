@@ -1,0 +1,389 @@
+{
+  "apply": [
+    {
+      "block_identifier": {
+        "hash": "0x2e659cc9d5f74bb79b83fe8e553355d8374d59c64a15e8059d7138a0e1b97238",
+        "index": 1117644
+      },
+      "metadata": {
+        "bitcoin_anchor_block_identifier": {
+          "hash": "0x000000000000000000008471bb830186b313afc0bf3550f230bd969998451a0a",
+          "index": 895905
+        },
+        "block_time": 1746758668,
+        "confirm_microblock_identifier": null,
+        "cycle_number": null,
+        "pox_cycle_index": 44790,
+        "pox_cycle_length": 20,
+        "pox_cycle_position": 4,
+        "reward_set": null,
+        "signer_bitvec": "0f49000001eaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff01",
+        "signer_public_keys": [
+          "0x0215245613e31de2ec2e7f2c4facb45724be2e49d9d42abb0a5e571322593b36bf",
+          "0x022150d4ea6dc60e75e162455553a92adea0a0f3000c192cc55d0bffed22c0a8e0",
+          "0x02254a34747123978819f2a90506f76cb057fe3fbff6d8721a0d9cf8e9412d0e60",
+          "0x023d6e4adbd5e7bedd5a1e1b85940e1e8c6c34924fd0d584e5e15d84c8572083d9",
+          "0x023d6ecdc36fa1e1c6a9f116c7f13ae843001ed9d617f66f6c68cabf751bf82555",
+          "0x024f164c6e73df283d34d7d9cc86553a82dce76045ba7dfbf4de0004f89eabb8e0",
+          "0x025588e24e2bf387fe8cc7bccba1aac7fe599b96724892431e992a40d06e8fe220",
+          "0x0268e6f499fca2912488e89fc8b6734cafbe24a4ecbcd3312e4eb27ed8e5cfb4f3",
+          "0x027af6b78b484b2c129dab7e490e8438f9a6eb4890071335a5781d483073866b9a",
+          "0x02844807121921880119fe05ae47fccb4945a4bb2f840fe7de66e6f32640bc8169",
+          "0x0284df4505c6318a0017a7848aa0a95bf8cd3db697a89d2ec1978a027bece770ef",
+          "0x02877ce29ba35458b827a6ea18510b9058ae4c30e2c33d288f2982c13497caec6e",
+          "0x02879477ec9ed8a56c0b26ba4b452246608d6e1b02ae1fa405a2c97ee8af5da202",
+          "0x029e1245f007bd8f76d5ce67e759acd21f8b0f2538a80713468f7524bf3fff6136",
+          "0x02a89cb3164d3dabcb5cf8796bfc28b91fade8c71a64b5a76d94e79cd27cfa8895",
+          "0x0309126df3691918f25f8872819bc8268e9e1e0d92d0494fa4fb9783589a1392fa",
+          "0x0321129d7a3e14cce66abef68b9a3d31d998f14e9a18b09d66aa1110fc604a3b1f",
+          "0x034df3feda207a1cd4f31ae2b58f136a0d382d23419ef8d06569fa538202ba8aed",
+          "0x03632c3412fc3db64c4efd21cac47714f2408752c9eeec70c2364f814623da77f4",
+          "0x03815f036a90512671911fd66cca53dd88d421beaa3253083635f267dc614ee888",
+          "0x038b1879ce76e0332b6420144abf959479f206c2e64b07dead643e2885136610ed",
+          "0x038b9ddb9808631dd75ccb0b6715b36bb1e391d85d40f1a031e98a332890bed2ea",
+          "0x038cb1e945144ca7669b0f33656b8379bcb3c17795b4d8665e42dea76eb3f86d2f",
+          "0x039262e5a8badd8e49eaa1808a675ad005f7b324bd677576fa670e43e73b166844",
+          "0x03b42ff50ea79b0dcee6a8e90610fb9f3cd00ce29769cc278dee2e446ab105722a",
+          "0x03cc1da6f6235699284987f7d3a98a950b0c693cdbed87ab33c04f61e2dfb6a177",
+          "0x03e0df37e83e43847625a0320456cb9758050a61ce76c2c130bf50242f27ba6d54"
+        ],
+        "signer_signature": [
+          "0085d0b5920b902cfad6bf5d7f224f5a0e0d4fe7a683d5c5a17ff610830d02910c67dbee8295cb97127047c98f288d5f1a49bd9e6f369ac3f2a14d49342e74f25a",
+          "012a4430fd6702131b648f5f18a9d0d2efd623329e1e74947673edc7f030c2f694006116ef753c38d1c95b4322f9087305a05ada39733dfe483cb892b85f69c376",
+          "0165c8964a0fcfd71331fb6b6d8b1f551c412ae86370a78ea0d749c1e9d4de551723bf3037b8dee2c2045009f993ee3125567764ccf8d8dc57fc702557fef76f73",
+          "008cfa26c8da9a13475f1ece7d08b4b034894fd40de3ee108aa11676fe21f8ca6e59b4cc1c3edf1194473dbc87b77001b37101bf4bca68bcc91f2c6ffd70328501",
+          "00fd6693ef9f9512950b0fc56f1a115bfdc8ed63fe845271c0e2d12bd3d4f7a31f135b9c773357117c6471ff8f1d096612eb10e927ed4f6d0ee621955bbdce00b4",
+          "01ce90d82c8c44939aa09da7c543c2a29388938d21326b0f5f74e553335fd00fd85207cebbb3860b988a763ec4d2e7faa315d9f9cfc26e6f893cc133caa6e7cefd",
+          "010facbbf98ad7d12d82df9627d240b15165593a9eec46ca3b4abd6ff9d25a7c251c77bba3ad0effab0a16ffd302d4edf556e2a0b5481478b932996ffca6476b6e",
+          "00286903b56f3ab7b65bd397656be032ad5bc90b5359554a4043fd3294d0adf1e45e9e6be00c4b90ee0fe3204d63518feff9ae1c21f7a1091d0c8d76605490ad83",
+          "01ca72448f52b393a9f8acc77b856284e2fb06ea0d137c9f4f8326df12aae082157c04ea01eea4adab0c0281824dc132490399ee594a86175babcc2622bfc6d6ac",
+          "00de8ee0df62212315a705eb35d1a2978a0bda43f7503b7e1df1ce9f96ae5958010d0c22f2a08f1f57c1ceb21b9cc928a0b34ad5a3a39a47eadb1b2eeb5d8ee23c",
+          "0111861365959e1b4aa3fc6f506a77d9f85c472c403e5fb099860c2e5f7dbc01450933fbb1f278236426732fe9b80bf51e833f7784df8103635cbd3a5676cd7638",
+          "00de022a4265d33d9b093b2b3ca3966cefd6ad44f4abb3089e850f5bcc5d5accb16036fd7de8cf57be4d8b9e780a97ba42725b6ae20e8bd52014cd92c6424893ab",
+          "016fe6cdbe7921a03742a1dd6a3cfab2688356df4ed5aea8e4e9a914f4e7b617726b9d5e90d56df50c90c681d14dc75de57aeab16d2370439333936e9525c7123c",
+          "00a36e8c1ae999ec8b79b51a309931e1f39c0a95ca468b89eb5a813832f3526a4c436c039118be116e4ef902870517d1b0ce5e2fd0b3f10f2b9d7d39c3ebc0ddc2",
+          "0178fdfaedd423c062c3a39ba041db868f3bba36556ba39759be48cb5c734c66ed3f024d63e643632886ba99543f6dac76f8304e31877ffe3579cc1e1ffbd38280",
+          "00f62c4ab76aea092213e57dd8fbfb2247c5839c2e381ebe8c12341913bb1a81ab12fc1601fe2c4dfd888311f3795cfeeb9e04bfa95bea68f4c9532e5c3a7324fc",
+          "00e68a0cfbfbab34abfd1cfb15e6d3275c4f93b132df0c43c2297598493aba51a03d81eed2ce455be6f79927dbb7d35fa77b23b8c26dde000ba837bffc6d489e0f",
+          "0034bf17ff1e75daedd49cf69a66cdafcb3b0b4f2686df61a5148c266df0529b270cbb552fde579327a61eed34d1d7c4b1e776b28e632b7180ab8d08cf74007835",
+          "017b52f1b9ad3fa9b9155790483e4b57bbbee3c990192b451afc98e1516ad6563f70c5a743d2d6274d450ecbffd61273304b5deb106d688d14c5fa83ca38c66a9c",
+          "000dc48995d54f0f536656f0f1517922c4fdb867cf44bba7c49dd5411a1c28d4de6d0263db9abcd10c4121f5df563957d753da38e47d49c05eb9ebd675cb9d597b",
+          "00680f8509ebe62a74ccf474085e3a0295836e138007ef5db081d1f8aeb0fca2d85aeee4f82b87539df24c968d38a8e80dd1c016d16775a5de01847d4265fe4789",
+          "001c3fd4e8acf8f7cdcf383a87cc4fd42fb497ea4fa02e75a5f291813bad97ab766683cb21b8b0614b34df64ddf37f927e5c92c932738c7bfed840c55b57c05cf7",
+          "0061b9beadd742ac3a8c9d71ad11a32b7d93c102fe7cfa0218fd621e3c6ea4fb8423e66d91cdb900bbfc400d29ea5e065099db8c1d477fbe109e544c5b81e507ee",
+          "000a1b847768837fad94886e4801437ab181d7f936fc207dd2d04eb0638e4b92082fc7e84d8f5314726e6f2a5b0e81bb52f65b15ef026ba8d8ccbbdf8a67df4727",
+          "002744bb7709478add738f7567c3cb1b379bee3870f575596f480f89135a7b7ea803d61f38ff1d29dc34d026cd58f63a6cbc40e410792f9caaaf8068deebdb70a3",
+          "00ebce2a3d9903daa5ceba75efe3c82851ee911af171969ebf4c754916c8ebb5cf011cfa2b66956efe16c50b6846a9e03859047d45d7f0ea45010b5d7b926b3591",
+          "012f83aafead1f60fc34d5635a936652b8cbe8ce4af59b8b375ad50e7aedf249a5761cf123f6ad82dae830c9e330b191a690ef403b216b10b406b889fce9d86d50"
+        ],
+        "stacks_block_hash": "0x22ab17ae11c9336c0717c944bd9be63d5a2943b0f9ce88981262d6a5cf4deb02",
+        "tenure_height": 195780
+      },
+      "parent_block_identifier": {
+        "hash": "0xc1fd438be3007c33c937d42499a00ff01e45c36a5c7f60d14a5bc3f79060f272",
+        "index": 1117643
+      },
+      "timestamp": 1746758477,
+      "transactions": [
+        {
+          "metadata": {
+            "description": "invoked: SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging::apply(((tuple (a \"v\") (b SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033) (c u21000033) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity) (f true))), u1000000, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx), (some SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity), none, none, none, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to), (some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033), none, none, none, (some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0033), none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none)",
+            "execution_cost": {
+              "read_count": 37,
+              "read_length": 41382,
+              "runtime": 400337,
+              "write_count": 6,
+              "write_length": 385
+            },
+            "fee": 740,
+            "kind": {
+              "data": {
+                "args": [
+                  "((tuple (a \"v\") (b SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033) (c u21000033) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity) (f true)))",
+                  "u1000000",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx)",
+                  "(some SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                  "(some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0033)",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none"
+                ],
+                "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                "method": "apply"
+              },
+              "type": "ContractCall"
+            },
+            "nonce": 395,
+            "position": {
+              "index": 0
+            },
+            "raw_tx": "0x000000000104002e958f3e7ec0a7fbc935ea5fc97583318fb1947c000000000000018b00000000000002e4000071d012ac5c08ae23f27e9422c016269571ae1b9c5f17e52a143de7c0461ca9751198bb26c6ae4ddf0802d6e17e89e520e1197af0986dda35ebe0c713e60eecb60302000000030002162e958f3e7ec0a7fbc935ea5fc97583318fb1947c0100000000000f424000031681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3030333305000000000000271001031681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3030333316e357773d94c58f5605b1bd9738a37e1dd310b2b40c6d656d652d73747863697479044d454d450300000055df7659d5021681d1b585c012192166f5afa30d1245701e2073a912706174682d6170706c795f73746167696e67056170706c79000000200b000000010c0000000601610d00000001760162061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3030333301630100000000000000000000000001406f61016406167c5f674a8fd08efa61dd9b11121e046dd2c89273047773747801650616e357773d94c58f5605b1bd9738a37e1dd310b2b40c6d656d652d7374786369747901660301000000000000000000000000000f42400a06167c5f674a8fd08efa61dd9b11121e046dd2c8927304777374780a0616e357773d94c58f5605b1bd9738a37e1dd310b2b40c6d656d652d737478636974790909090a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f0a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d303033330909090a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d666565732d76315f305f302d3030333309090909090909090909090909090909090909",
+            "receipt": {
+              "contract_calls_stack": [],
+              "events": [
+                {
+                  "data": {
+                    "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033",
+                    "topic": "print",
+                    "value": {
+                      "amt-fee-lps": 2250,
+                      "amt-fee-protocol": 750,
+                      "amt-in": 1000000,
+                      "amt-in-adjusted": 997000,
+                      "amt-out": 384188849555,
+                      "amt-out-desired": 1,
+                      "op": "swap",
+                      "pool": {
+                        "block-height": 195769,
+                        "burn-block-height": 895892,
+                        "fees": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0033",
+                        "lp-token": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-lp-token-v1_0_0-0033",
+                        "reserve0": 23212564254,
+                        "reserve1": 8945227073476001,
+                        "symbol": "wSTX-MEME",
+                        "token0": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx",
+                        "token1": "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity"
+                      },
+                      "user": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+                    }
+                  },
+                  "position": {
+                    "index": 3
+                  },
+                  "type": "SmartContractEvent"
+                },
+                {
+                  "data": {
+                    "amount": "384188849555",
+                    "asset_identifier": "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity::MEME",
+                    "recipient": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+                    "sender": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033"
+                  },
+                  "position": {
+                    "index": 1
+                  },
+                  "type": "FTTransferEvent"
+                },
+                {
+                  "data": {
+                    "amount": "1000000",
+                    "recipient": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033",
+                    "sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+                  },
+                  "position": {
+                    "index": 0
+                  },
+                  "type": "STXTransferEvent"
+                },
+                {
+                  "data": {
+                    "amount": "750",
+                    "recipient": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0033",
+                    "sender": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033"
+                  },
+                  "position": {
+                    "index": 2
+                  },
+                  "type": "STXTransferEvent"
+                }
+              ],
+              "mutated_assets_radius": [
+                "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity::MEME"
+              ],
+              "mutated_contracts_radius": [
+                "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033",
+                "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity"
+              ]
+            },
+            "result": "(ok (tuple (swap1 (tuple (amt-in u1000000) (amt-out u384188849555))) (swap2 (tuple (amt-in u384188849555) (amt-out u384188849555))) (swap3 (tuple (amt-in u384188849555) (amt-out u384188849555))) (swap4 (tuple (amt-in u384188849555) (amt-out u384188849555)))))",
+            "sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+            "sponsor": null,
+            "success": true
+          },
+          "operations": [
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "metadata": {
+                    "asset_class_identifier": "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity::MEME",
+                    "asset_identifier": null,
+                    "standard": "SIP10"
+                  },
+                  "symbol": "TOKEN"
+                },
+                "value": 384188849555
+              },
+              "operation_identifier": {
+                "index": 0
+              },
+              "related_operations": [
+                {
+                  "index": 1
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "metadata": {
+                    "asset_class_identifier": "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity::MEME",
+                    "asset_identifier": null,
+                    "standard": "SIP10"
+                  },
+                  "symbol": "TOKEN"
+                },
+                "value": 384188849555
+              },
+              "operation_identifier": {
+                "index": 1
+              },
+              "related_operations": [
+                {
+                  "index": 0
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            },
+            {
+              "account": {
+                "address": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 1000000
+              },
+              "operation_identifier": {
+                "index": 2
+              },
+              "related_operations": [
+                {
+                  "index": 3
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 1000000
+              },
+              "operation_identifier": {
+                "index": 3
+              },
+              "related_operations": [
+                {
+                  "index": 2
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 750
+              },
+              "operation_identifier": {
+                "index": 4
+              },
+              "related_operations": [
+                {
+                  "index": 5
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0033"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 750
+              },
+              "operation_identifier": {
+                "index": 5
+              },
+              "related_operations": [
+                {
+                  "index": 4
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            }
+          ],
+          "transaction_identifier": {
+            "hash": "0x93d04734ea528d7d32eb56563903c7e672f55e9a7e54d2b5aa3d6505afeb545d"
+          }
+        }
+      ]
+    }
+  ],
+  "chainhook": {
+    "is_streaming_blocks": true,
+    "predicate": {
+      "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+      "method": "apply",
+      "scope": "contract_call"
+    },
+    "uuid": "63c0081d-0614-4a9e-a186-27707e129e2b"
+  },
+  "events": [],
+  "rollback": []
+}

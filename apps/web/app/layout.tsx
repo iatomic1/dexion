@@ -31,15 +31,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster position="top-center" richColors />
-          <WalletTrackerSocketProvider>
-            <PresetsContextProvider>
-              <div className="flex min-h-screen flex-col font-geist">
-                {/* <SiteHeader /> */}
-                <main className="flex-1">{children}</main>
-                <SiteFooter />
-              </div>
-            </PresetsContextProvider>
-          </WalletTrackerSocketProvider>
+          {/* <WalletTrackerSocketProvider> */}
+          <PresetsContextProvider>
+            <div className="flex min-h-screen flex-col font-geist">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+          </PresetsContextProvider>
+          {/* </WalletTrackerSocketProvider> */}
         </ThemeProvider>
       </body>
     </html>

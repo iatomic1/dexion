@@ -84,7 +84,7 @@ export function LoginModal({
         async () => {
           const result = await execute({
             ...values,
-            signUp: true,
+            signUp: false,
           });
           return result[0];
         },

@@ -88,7 +88,9 @@ export default function AddWalletModal() {
             throw new Error("No response received");
           }
 
+          console.log("response", response);
           const result = response[0];
+          console.log("result", result);
 
           // Only return successfully if status is CREATED
           if (result.status === HTTP_STATUS.CREATED) {

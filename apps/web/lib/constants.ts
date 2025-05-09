@@ -1,7 +1,7 @@
-export const DEV = true;
+export const DEV = false;
 export const API_BASE_URL = DEV
   ? "http://localhost:8080/api/v1/"
-  : "http://localhost:8080/api/v1/";
+  : "https://dexion-backend-production.up.railway.app/api/v1/";
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 
 export const HTTP_STATUS = {

@@ -4,6 +4,7 @@ import (
 	"backend/config"
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,16 +13,16 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Server struct {
 	Router *gin.Engine
 	Config *config.Config
-	DB     *pgx.Conn
+	DB     *pgxpool.Pool
 }
 
-func NewServer(cfg *config.Config, db *pgx.Conn) (*Server, error) {
+func NewServer(cfg *config.Config, db *pgxpool.Pool) (*Server, error) {
 	return &Server{
 		Config: cfg,
 		DB:     db,
@@ -33,8 +34,15 @@ func RunServer(srv *Server) {
 		log.Fatal(errors.New("Server instance can't be nil"))
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = srv.Config.HttpAddress
+	}
+	fmt.Println(port)
+
 	httpServer := &http.Server{
-		Addr:         srv.Config.HttpAddress,
+		Addr: "0.0.0.0:" + port,
+		// Addr:         port,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,

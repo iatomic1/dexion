@@ -1,6 +1,9 @@
 package config
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/spf13/viper"
 )
 
@@ -28,31 +31,104 @@ type Config struct {
 }
 
 func Load(path string) (*Config, error) {
-	return LoadEnvironmentVariables(path, ".env")
-}
-
-func LoadTest(path string) (*Config, error) {
-	return LoadEnvironmentVariables(path, ".env.test")
+	env := os.Getenv("ENVIROMENT")
+	if env == "" {
+		env = "development"
+	}
+	return LoadEnvironmentVariables(path, env)
 }
 
 func LoadEnvironmentVariables(p string, env string) (*Config, error) {
-	cfg := Config{}
+	// Initialize config with default values
+	cfg := &Config{}
 
-	viper.AddConfigPath(p)
-	viper.SetConfigName(env)
-	viper.SetConfigType("env")
+	// Only try to load local .env if in development or local environment
+	if env == "development" || env == "local" {
+		viper.SetConfigFile(p + "/.env")
+		viper.SetConfigType("env")
+		_ = viper.ReadInConfig() // Ignore error if .env doesn't exist
 
-	viper.AutomaticEnv()
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, err
+		// Use viper to unmarshal for local development
+		if err := viper.Unmarshal(cfg); err != nil {
+			return nil, err
+		}
 	}
 
-	err = viper.Unmarshal(&cfg)
-	if err != nil {
-		return nil, err
+	// Directly load all environment variables, overriding any values from .env file
+
+	// String variables
+	if val := os.Getenv("REDIS_ADDRESS"); val != "" {
+		cfg.RedisAddress = val
+	}
+	if val := os.Getenv("ACCESS_JWT_KEY"); val != "" {
+		cfg.AccessJwtKey = val
+	}
+	if val := os.Getenv("ENVIROMENT"); val != "" {
+		cfg.Environment = val
+	}
+	if val := os.Getenv("DB_TYPE"); val != "" {
+		cfg.DbType = val
+	}
+	if val := os.Getenv("REDIS_PASSWORD"); val != "" {
+		cfg.RedisPassword = val
+	}
+	if val := os.Getenv("REFRESH_JWT_KEY"); val != "" {
+		cfg.RefreshJwtKey = val
+	}
+	if val := os.Getenv("API_V1_PREFIX_STRING"); val != "" {
+		cfg.ApiPrefixStr = val
+	}
+	if val := os.Getenv("REDIS_USERNAME"); val != "" {
+		cfg.RedisUsername = val
+	}
+	if val := os.Getenv("DB_URL"); val != "" {
+		cfg.DbURL = val
+	}
+	if val := os.Getenv("HTTP_SERVER_ADDRESS"); val != "" {
+		cfg.HttpAddress = val
+	}
+	if val := os.Getenv("HOST"); val != "" {
+		cfg.Host = val
+	}
+	if val := os.Getenv("CLOUDINARY_URL"); val != "" {
+		cfg.CoudinaryURL = val
+	}
+	if val := os.Getenv("FRONTEND_URL"); val != "" {
+		cfg.FrontendURL = val
+	}
+	if val := os.Getenv("GOOGLE_CLIENT_SECRET"); val != "" {
+		cfg.GoogleClientSecret = val
+	}
+	if val := os.Getenv("GOOGLE_CLIENT_ID"); val != "" {
+		cfg.GoogleClientID = val
+	}
+	if val := os.Getenv("GOOGLE_SIGNING_KEY"); val != "" {
+		cfg.GoogleSigningKey = val
 	}
 
-	return &cfg, nil
+	// Integer variables
+	if val := os.Getenv("GOOGLE_MAX_AGE"); val != "" {
+		if intVal, err := strconv.Atoi(val); err == nil {
+			cfg.GoogleMaxAge = intVal
+		}
+	}
+	if val := os.Getenv("REDIS_DB"); val != "" {
+		if intVal, err := strconv.Atoi(val); err == nil {
+			cfg.RedisDB = intVal
+		}
+	}
+
+	// Float variables
+	if val := os.Getenv("ACCESS_EXPIRATION_HOUR"); val != "" {
+		if floatVal, err := strconv.ParseFloat(val, 64); err == nil {
+			cfg.AccessExpirationHour = floatVal
+		}
+	}
+	if val := os.Getenv("REFRESH_EXPIRATION_HOUR"); val != "" {
+		if floatVal, err := strconv.ParseFloat(val, 64); err == nil {
+			cfg.RefreshExpirationHour = floatVal
+		}
+	}
+
+	return cfg, nil
 }

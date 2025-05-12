@@ -8,7 +8,7 @@ import { Toaster } from "@repo/ui/components/ui/sonner";
 import { TokenRefresher } from "./_components/token-refresher";
 import SiteFooter from "./_components/site-footer";
 import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
-import { geistSans } from "./fonts/geist";
+import { geistMono, geistSans } from "./fonts/geist";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={geistSans.variable}>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <TokenRefresher />
         <ThemeProvider
           attribute="class"
@@ -34,7 +34,7 @@ export default function RootLayout({
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">
-              {/* <SiteHeader /> */}
+              <SiteHeader />
               <main className="flex-1">{children}</main>
               {/* <SiteFooter /> */}
             </div>

@@ -8,7 +8,7 @@
  * @param {string} [ellipsis="..."] - The ellipsis string to use
  * @returns {string} The truncated string
  */
-export const truncateAddress = (
+export const truncateString = (
   str: string,
   startChars: number = 7,
   endChars: number = 4,

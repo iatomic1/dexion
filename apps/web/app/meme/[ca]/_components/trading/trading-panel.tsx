@@ -4,16 +4,14 @@ import SimilarTokens from "./similar-tokens";
 import TokenInfo from "./token-audit";
 import PresetTabs from "./preset-tabs";
 import TradingStats from "./stats";
+import { DexBanner } from "./dex-banner";
+import { TokenMetadata } from "@repo/token-watcher/token.ts";
 
 interface TradingPanelProps {
-  token: {
-    name: string;
-    symbol: string;
-    price: number;
-  };
+  token: TokenMetadata;
 }
 
-export default function TradingPanel() {
+export default function TradingPanel({ token }: TradingPanelProps) {
   // const [tradeAction, setTradeAction] = useState("buy");
   // const [tradeType, setTradeType] = useState("market");
   // const [amount, setAmount] = useState("0.01");
@@ -378,8 +376,9 @@ export default function TradingPanel() {
         {/**/}
         <TradingStats />
         <PresetTabs />
-        <TokenInfo />
+        <TokenInfo ca={token.contract_id} />
         <SimilarTokens />
+        <DexBanner bannerUrl={token.header_image_url} />
       </div>
     </div>
   );

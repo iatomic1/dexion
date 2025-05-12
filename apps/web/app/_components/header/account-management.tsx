@@ -19,7 +19,7 @@ export function AccountPopover() {
           <User className="h-5 w-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-60 p-2" side="left">
+      <PopoverContent className="w-60 p-2" side="bottom">
         <AccountSecurityModal>
           <Button
             className="w-full justify-start gap-3 bg-transparent "

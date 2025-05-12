@@ -5,11 +5,11 @@ import { notFound } from "next/navigation";
 export default async function MemeTokenPage(props: {
   params: Promise<{ ca: string }>;
 }) {
-  const params = await props.params;
+  const { ca } = await props.params;
 
-  if (!validateContractAddress(params.ca)) {
+  if (!validateContractAddress(ca)) {
     notFound();
   }
 
-  return <TokenDetailPage tokenId={params.ca} />;
+  return <TokenDetailPage ca={ca} />;
 }

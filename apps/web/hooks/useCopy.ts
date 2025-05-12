@@ -1,37 +1,42 @@
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type CopiedValue = string | null;
-
 type CopyFn = (text: string) => Promise<boolean>;
 
-type CopyReturn = [CopiedValue, CopyFn];
-
 /**
- * A hook that allows to copy text to clipboard.
- * @returns {CopyReturn} An array of two elements:
- * 1. The current value of the copied text.
- * 2. A function to copy text to clipboard.
+ * A hook that allows copying text to clipboard.
+ * @param {boolean} trackCopiedText - Whether to track the copied text in state (default: false)
+ * @returns The copy function only (if trackCopiedText is false) or [copiedText, copy] (if trackCopiedText is true)
  */
-export default function useCopyToClipboard(): CopyReturn {
+export default function useCopyToClipboard(trackCopiedText = false) {
   const [copiedText, setCopiedText] = useState<CopiedValue>(null);
 
-  const copy: CopyFn = useCallback(async (text) => {
-    if (!navigator?.clipboard) {
-      console.warn("Clipboard not supported");
-      return false;
-    }
+  const copy: CopyFn = useCallback(
+    async (text) => {
+      if (!navigator?.clipboard) {
+        toast.error("Clipboard not supported");
+        console.warn("Clipboard not supported");
+        return false;
+      }
 
-    // Try to save to clipboard then save it in the state if worked
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedText(text);
-      return true;
-    } catch (error) {
-      console.warn("Copy failed", error);
-      setCopiedText(null);
-      return false;
-    }
-  }, []);
+      // Try to save to clipboard then save it in the state if worked
+      try {
+        await navigator.clipboard.writeText(text);
+        if (trackCopiedText) {
+          setCopiedText(text);
+        }
+        return true;
+      } catch (error) {
+        console.warn("Copy failed", error);
+        if (trackCopiedText) {
+          setCopiedText(null);
+        }
+        return false;
+      }
+    },
+    [trackCopiedText],
+  );
 
-  return [copiedText, copy];
+  return trackCopiedText ? ([copiedText, copy] as const) : copy;
 }

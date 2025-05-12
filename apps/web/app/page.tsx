@@ -36,6 +36,16 @@ import { Badge } from "@repo/ui/components/ui/badge";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
+      <div className="py-4 border-b flex items-center justify-center">
+        <span className="text-sm">Charts are powered by</span>
+        <a
+          href="https://tradingview.com"
+          className="underline ml-2 text-blue-300"
+          target="_blank"
+        >
+          TradingView
+        </a>
+      </div>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">

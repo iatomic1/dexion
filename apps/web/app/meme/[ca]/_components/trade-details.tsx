@@ -39,16 +39,7 @@ import openInNewPage from "~/lib/helpers/openInNewPage";
 interface CryptoCardProps {
   bns: string;
   address: string;
-  price: number;
-  priceChange: number;
-  buys: number;
-  sells: number;
-  pnl: number;
-  balance: number;
-  balancePercentage: number;
-  holderSince: string;
   children: React.ReactNode;
-  dopen?: boolean;
   ft: TokenSwapTransaction["wallet"]["fungible_tokens"][0];
   decimals: number;
   valueUsd: number;
@@ -81,8 +72,6 @@ function PriceInfoItem({ icon, value, label, isRed = false }: InfoItemProps) {
         className="text-muted-foreground text-center text-xs align-sub"
         dangerouslySetInnerHTML={{ __html: label }}
       />
-      {/* {label} */}
-      {/* </span> */}
     </div>
   );
 }
@@ -92,7 +81,6 @@ export function CryptoHoverCard({
   address,
   children,
   ft,
-  dopen,
   decimals,
   valueUsd,
   percentageHolding,
@@ -101,7 +89,7 @@ export function CryptoHoverCard({
   const copy = useCopyToClipboard();
 
   return (
-    <HoverCard defaultOpen={dopen}>
+    <HoverCard>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent
         className={cn(

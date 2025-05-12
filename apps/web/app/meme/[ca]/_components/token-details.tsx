@@ -29,15 +29,15 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
       } else if (tx.type === "trades") {
         console.log("Received trade update with", tx.trades.length, "trades");
 
-        // Create a new array for state update to ensure triggering re-renders
         setTradesData((prevTrades) => {
           const newTrades = [...tx.trades];
-          console.log(
-            "Updating trades state from",
-            prevTrades.length,
-            "to",
-            newTrades.length,
-          );
+          console.log("newest trade", tx.trades[0]);
+          // console.log(
+          //   "Updating trades state from",
+          //   prevTrades.length,
+          //   "to",
+          //   newTrades.length,
+          // );
           return newTrades;
         });
       }
@@ -77,7 +77,6 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           <ResizableHandle />
           <ResizablePanel
             // defaultSize={25}
-
             minSize={35}
             maxSize={35}
             className="h-full"

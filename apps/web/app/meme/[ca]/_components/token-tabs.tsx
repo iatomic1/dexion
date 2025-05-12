@@ -23,10 +23,6 @@ export default function TokenTabs({
 }) {
   const [activeTab, setActiveTab] = useState("trades");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setActiveTab(newValue);
-  };
-
   useEffect(() => {
     console.log("TokenTabs received updated trades:", trades.length);
   }, [trades, activeTab]);
@@ -51,7 +47,6 @@ export default function TokenTabs({
       <Tabs
         className="w-full h-full flex flex-col"
         defaultValue={tabs[0]?.value}
-        onChange={handleChange}
       >
         <TabsList className="w-fit flex items-center gap-4 bg-transparent mt-1">
           {tabs.map((tab) => (

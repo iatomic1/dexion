@@ -38,5 +38,5 @@ export default function useCopyToClipboard(trackCopiedText = false) {
     [trackCopiedText],
   );
 
-  return trackCopiedText ? ([copiedText, copy] as const) : copy;
+  return copy;
 }

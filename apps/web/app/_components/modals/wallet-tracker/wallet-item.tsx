@@ -36,7 +36,7 @@ export const WalletItem = ({
   const nicknameSectionRef = useRef(null);
   const isNicknameHover = useHover(nicknameSectionRef);
 
-  const [copiedText, copy] = useCopyToClipboard();
+  const copy = useCopyToClipboard();
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(wallet.nickname);
   const [notifications, setNotifications] = useState(wallet.notifications);

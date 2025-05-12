@@ -40,14 +40,14 @@ const calculateMarketCap = (token: TokenMetadata, price: number) => {
 };
 
 const calculateTokenValue = (
-  ft: TokenSwapTransaction["wallet"]["fungible_tokens"][0],
+  ft: TokenSwapTransaction["wallet"]["fungible_tokens"][0] | undefined,
   token: TokenMetadata,
 ) => {
+  if (!ft) return 0;
+
   const tokenBal = Number(ft.balance);
-
-  return Number((tokenBal / 10 ** token.decimals) * token.metrics.price_usd);
+  return (tokenBal / 10 ** token.decimals) * token.metrics.price_usd;
 };
-
 const determineTransactionType = (
   trade: TokenSwapTransaction,
   token: TokenMetadata,
@@ -174,7 +174,6 @@ export const columns = (
     accessorKey: "trader",
     header: "Trader",
     cell: ({ row }) => {
-      const copy = useCopyToClipboard();
       const wallet = row.original.wallet;
       const ft = wallet.fungible_tokens[0];
       const bns = wallet.bns;
@@ -195,13 +194,13 @@ export const columns = (
           <CryptoHoverCard
             address={address}
             bns={bns}
-            ft={ft}
+            ft={ft as TokenSwapTransaction["wallet"]["fungible_tokens"][0]}
             decimals={token.decimals}
-            valueUsd={formatPrice(calculateTokenValue(ft, token))}
+            valueUsd={calculateTokenValue(ft, token)}
             percentageHolding={
-              (Number(ft?.balance) / Number(token.total_supply)) * 100
+              ft ? (Number(ft.balance) / Number(token.total_supply)) * 100 : 0
             }
-            txId={row.original.txId}
+            txId={row.original.tx_id}
           >
             <div className="text-xs font-geist-mono hover:underline">
               {bns ? bns : truncateString(address, 8, 5)}

@@ -10,7 +10,6 @@ import { useState } from "react";
 
 export default function SimilarTokens() {
   const [isOpen, setIsOpen] = useState(true);
-  // Mock data for similar tokens
   const similarTokens = [
     {
       initial: "L",
@@ -36,7 +35,7 @@ export default function SimilarTokens() {
   ];
 
   return (
-    <Collapsible className="mt-6" open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible className="mt-3" open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
         <Button className="mb-2 w-fit" variant={"ghost"} size={"sm"}>
           <span className="text-sm">Similar Tokens</span>

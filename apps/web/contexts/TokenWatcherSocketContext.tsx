@@ -3,12 +3,19 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getSocket } from "~/lib/token-socket";
+import {
+  TokenHolder,
+  TokenMetadata,
+  TokenSwapTransaction,
+} from "@repo/token-watcher/token.ts";
 
 type TxPayload = {
   type: string;
   contract: string;
   txId: string;
-  tokenMetadata?: any;
+  tokenMetadata: TokenMetadata;
+  trades: TokenSwapTransaction[];
+  holders: TokenHolder[];
 };
 
 const TokenSocketContext = createContext<null | TxPayload>(null);

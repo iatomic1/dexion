@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, BarChart3 } from "lucide-react";
-import { Button } from "@repo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
 
 declare global {
@@ -79,34 +77,7 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b p-2">
-        {/* <div className="flex items-center gap-2"> */}
-        {/*   <span className="text-sm font-medium">{tokenSymbol} on Pump V1</span> */}
-        {/*   <span className="text-xs text-muted-foreground">1s</span> */}
-        {/*   <span className="text-xs text-muted-foreground">•</span> */}
-        {/*   <span className="text-xs text-muted-foreground">axiom.trade</span> */}
-        {/* </div> */}
-        {/* <div className="flex items-center gap-2"> */}
-        {/*   <Button variant="ghost" size="sm"> */}
-        {/*     <BarChart3 className="mr-2 h-4 w-4" /> */}
-        {/*     Indicators */}
-        {/*     <ChevronDown className="ml-2 h-4 w-4" /> */}
-        {/*   </Button> */}
-        {/*   <Button variant="ghost" size="sm"> */}
-        {/*     Display Options */}
-        {/*   </Button> */}
-        {/*   <Button variant="ghost" size="sm"> */}
-        {/*     Hide All Bubbles */}
-        {/*   </Button> */}
-        {/*   <Button variant="ghost" size="sm"> */}
-        {/*     USD/SOL */}
-        {/*   </Button> */}
-        {/*   <Button variant="ghost" size="sm"> */}
-        {/*     Market Cap/Price */}
-        {/*   </Button> */}
-        {/* </div> */}
-      </div>
-      <div className="relative flex-1">
+      <div className="flex-1 relative">
         <div ref={containerRef} className="h-full w-full" />
         <div className="absolute bottom-4 left-4 z-10">
           <Tabs

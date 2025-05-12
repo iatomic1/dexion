@@ -7,7 +7,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@repo/ui/components/ui/tooltip";
-import dayjs from "dayjs";
 import { useRef, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
@@ -19,34 +18,10 @@ import {
 import useCopyToClipboard from "~/hooks/useCopy";
 import useHover from "~/hooks/useHover";
 import { HTTP_STATUS, EXPLORER_BASE_URL } from "~/lib/constants";
-import { truncateAddress } from "~/lib/helpers/strings";
+import { truncateString } from "~/lib/helpers/strings";
 import { UserWallet } from "~/types/wallets";
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
-
-dayjs.extend(relativeTime);
-dayjs.extend(updateLocale);
-
-// Customize the relative time formatting to be more compact
-dayjs.updateLocale("en", {
-  relativeTime: {
-    future: "in %s",
-    past: "%s ago",
-    s: "now",
-    m: "1m",
-    mm: "%dm",
-    h: "1h",
-    hh: "%dh",
-    d: "1d",
-    dd: "%dd",
-    w: "1w",
-    ww: "%dw",
-    M: "1M",
-    MM: "%dM",
-    y: "1y",
-    yy: "%dy",
-  },
-});
+import openInNewPage from "~/lib/helpers/openInNewPage";
+import { formatRelativeTime } from "~/lib/helpers/dayjs";
 
 export const WalletItem = ({
   wallet,
@@ -152,7 +127,8 @@ export const WalletItem = ({
     };
   }, [isEditing, nickname]);
 
-  const formattedTime = dayjs(wallet.createdAt).fromNow(true);
+  // Use our new formatter utility instead of direct dayjs call
+  const formattedTime = formatRelativeTime(wallet.createdAt);
 
   return (
     <div
@@ -168,11 +144,7 @@ export const WalletItem = ({
               <span
                 className="text-xs text-muted-foreground w-8 underline cursor-pointer"
                 onClick={() => {
-                  window.open(
-                    `${EXPLORER_BASE_URL}/${wallet.address}`,
-                    "_blank",
-                    "noopener,noreferrer",
-                  );
+                  openInNewPage(`${EXPLORER_BASE_URL}/${wallet.address}`);
                 }}
               >
                 {formattedTime}
@@ -222,7 +194,7 @@ export const WalletItem = ({
               toast.success("Address copied to clipboard");
             }}
           >
-            <p>{truncateAddress(wallet.address, 10, 4)}</p>
+            <p>{truncateString(wallet.address, 10, 4)}</p>
             <Copy className="h-3 w-3" strokeWidth={1} />
           </Button>
         </div>

@@ -24,7 +24,7 @@ export function AccountSecurityModal({
 }: {
   children: React.ReactNode;
 }) {
-  const [copiedText, copy] = useCopyToClipboard();
+  const copy = useCopyToClipboard();
 
   return (
     <Credenza>

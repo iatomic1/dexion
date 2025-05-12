@@ -2,8 +2,7 @@ GO = go
 DB_CONTAINER = dexion
 DB_PASSWORD = password
 DB_PORT = 5431
-DB_URL =
-# DB_URL = postgres://postgres:$(DB_PASSWORD)@localhost:$(DB_PORT)/dexion?sslmode=disable
+DB_URL = postgres://postgres:$(DB_PASSWORD)@localhost:$(DB_PORT)/dexion?sslmode=disable
 MIGRATION_DIR = internal/db/migrations
 DOCS_DIR = internal/docs
 SWAGGER_ENTRY = cmd/server/main.go

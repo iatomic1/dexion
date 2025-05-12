@@ -30,3 +30,63 @@ export type TokenMetadata = {
     volume_7d_usd: number;
   };
 };
+
+export type TokenSwapTransaction = {
+  tx_id: string;
+  tx_index: number;
+  pool_id: string;
+  token_x_amount: string;
+  token_y_amount: string;
+  burn_block_time: number;
+  price_usd: number;
+  volume_usd: number;
+  wallet: {
+    address: string;
+    bns: string;
+    fungible_tokens: Array<{
+      balance: string;
+      credits: string;
+      debits: string;
+      total_buys: string;
+      total_sells: string;
+      total_spent_usd: string;
+      total_received_usd: string;
+      total_pnl_usd: string;
+      created_at: string;
+    }>;
+  };
+  token_x: {
+    contract_id: string;
+    decimals: number;
+    image_url: string;
+    symbol: string;
+  };
+  token_y: {
+    contract_id: string;
+    decimals: number;
+    image_url: string;
+    symbol: string;
+  };
+};
+
+export type ApiRes<T> = {
+  data: T[];
+  rowCount: number;
+};
+
+export type TokenHolder = {
+  balance: string;
+  debits: string;
+  credits: string;
+  total_spent_usd: string;
+  total_received_usd: string;
+  total_buys: string;
+  total_sells: string;
+  total_pnl_usd: string;
+  wallet: {
+    address: string;
+    bns: string | null;
+    tags: string[];
+  };
+  rank: number;
+};

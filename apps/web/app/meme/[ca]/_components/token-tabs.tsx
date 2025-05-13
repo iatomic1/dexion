@@ -12,14 +12,18 @@ import TradesTable from "./tables/trades-table";
 import type {
   TokenSwapTransaction,
   TokenMetadata,
+  TokenHolder,
 } from "@repo/token-watcher/token.ts";
+import HoldersTable from "./tables/holders-table";
 
 export default function TokenTabs({
   trades,
   token,
+  holders,
 }: {
   trades: TokenSwapTransaction[];
   token: TokenMetadata;
+  holders: TokenHolder[];
 }) {
   const [activeTab, setActiveTab] = useState("trades");
 
@@ -34,12 +38,12 @@ export default function TokenTabs({
     },
     {
       value: "holders",
-      component: <TradesTable trades={trades} token={token} />,
+      component: <HoldersTable holders={holders} token={token} />,
     },
-    {
-      value: "top traders",
-      component: <TradesTable trades={trades} token={token} />,
-    },
+    // {
+    //   value: "top traders",
+    //   component: <TradesTable trades={trades} token={token} />,
+    // },
   ];
 
   return (
@@ -53,10 +57,12 @@ export default function TokenTabs({
             <TabsTrigger
               value={tab.value.toLowerCase()}
               key={tab.value.toLowerCase()}
-              className="w-fit capitalize"
+              className="w-fit capitalize items-center"
               onClick={() => setActiveTab(tab.value.toLowerCase())}
             >
-              {tab.value}
+              {tab.value === "holders"
+                ? `holders (${token.metrics.holder_count})`
+                : tab.value}
             </TabsTrigger>
           ))}
         </TabsList>

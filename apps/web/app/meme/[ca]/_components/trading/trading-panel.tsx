@@ -18,7 +18,7 @@ export default function TradingPanel({ token }: TradingPanelProps) {
   // const [preset, setPreset] = useState("preset1");
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="sm:flex h-full flex-col hidden">
       <div className="flex flex-col p-4">
         {/* <Tabs */}
         {/*   defaultValue="buy" */}
@@ -376,7 +376,7 @@ export default function TradingPanel({ token }: TradingPanelProps) {
         {/**/}
         <TradingStats />
         <PresetTabs />
-        <TokenInfo ca={token.contract_id} />
+        <TokenInfo token={token} />
         <SimilarTokens />
         <DexBanner bannerUrl={token.header_image_url} />
       </div>

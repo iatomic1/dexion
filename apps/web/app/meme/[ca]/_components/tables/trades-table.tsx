@@ -39,13 +39,10 @@ const calculateMarketCap = (token: TokenMetadata, price: number) => {
   return (Number(token.circulating_supply) / 10 ** token.decimals) * price;
 };
 
-const calculateTokenValue = (
-  ft: TokenSwapTransaction["wallet"]["fungible_tokens"][0] | undefined,
-  token: TokenMetadata,
-) => {
-  if (!ft) return 0;
+export const calculateTokenValue = (balance: string, token: TokenMetadata) => {
+  if (balance === "") return 0;
 
-  const tokenBal = Number(ft.balance);
+  const tokenBal = Number(balance);
   return (tokenBal / 10 ** token.decimals) * token.metrics.price_usd;
 };
 const determineTransactionType = (
@@ -178,9 +175,9 @@ export const columns = (
       const ft = wallet.fungible_tokens[0];
       const bns = wallet.bns;
       const address = wallet.address;
-      if (wallet.bns === "ozai.btc") {
-        console.log(row.original);
-      }
+      // if (wallet.bns === "ozai.btc") {
+      //   console.log(row.original);
+      // }
       return (
         <div className="flex items-center gap-2 text-right self-end  justify-end">
           <Tooltip>
@@ -196,7 +193,7 @@ export const columns = (
             bns={bns}
             ft={ft as TokenSwapTransaction["wallet"]["fungible_tokens"][0]}
             decimals={token.decimals}
-            valueUsd={calculateTokenValue(ft, token)}
+            valueUsd={calculateTokenValue(ft?.balance as string, token)}
             percentageHolding={
               ft ? (Number(ft.balance) / Number(token.total_supply)) * 100 : 0
             }

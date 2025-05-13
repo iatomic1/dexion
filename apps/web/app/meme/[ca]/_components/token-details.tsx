@@ -6,6 +6,7 @@ import TokenTabs from "./token-tabs";
 import TradingPanel from "./trading/trading-panel";
 import { useTokenSocket } from "~/contexts/TokenWatcherSocketContext";
 import type {
+  TokenHolder,
   TokenMetadata,
   TokenSwapTransaction,
 } from "@repo/token-watcher/token.ts";
@@ -19,6 +20,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
   const tx = useTokenSocket();
   const [tokenData, setTokenData] = useState<TokenMetadata | null>(null);
   const [tradesData, setTradesData] = useState<TokenSwapTransaction[]>([]);
+  const [holdersData, setHoldersData] = useState<TokenHolder[]>([]);
 
   useEffect(() => {
     if (tx?.contract === ca) {
@@ -27,7 +29,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
       if (tx.type === "metadata") {
         setTokenData(tx.tokenMetadata);
       } else if (tx.type === "trades") {
-        console.log("Received trade update with", tx.trades.length, "trades");
+        // console.log("Received trade update with", tx.trades.length, "trades");
 
         setTradesData((prevTrades) => {
           const newTrades = [...tx.trades];
@@ -40,6 +42,9 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           // );
           return newTrades;
         });
+      } else if (tx.type === "holders") {
+        setHoldersData(tx.holders);
+        console.log(holdersData);
       }
     }
   }, [tx, ca]);
@@ -68,7 +73,11 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
                     minSize={20}
                     className="overflow-hidden"
                   >
-                    <TokenTabs token={tokenData} trades={tradesData} />
+                    <TokenTabs
+                      token={tokenData}
+                      trades={tradesData}
+                      holders={holdersData}
+                    />
                   </ResizablePanel>
                 </ResizablePanelGroup>
               </div>
@@ -79,7 +88,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
             // defaultSize={25}
             minSize={35}
             maxSize={35}
-            className="h-full"
+            className="h-full lg:max-w-[35%]"
           >
             <TradingPanel token={tokenData} />
           </ResizablePanel>

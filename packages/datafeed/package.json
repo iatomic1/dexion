@@ -1,0 +1,25 @@
+{
+  "name": "@repo/datafeed",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@stacks/blockchain-api-client": "^8.10.0",
+    "@types/express": "^5.0.1",
+    "axios": "^1.9.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "hono": "^4.7.9",
+    "ioredis": "^5.6.1",
+    "nanoid": "^5.1.5",
+    "socket.io": "^4.8.1"
+  },
+  "packageManager": "bun@1.0.18"
+}

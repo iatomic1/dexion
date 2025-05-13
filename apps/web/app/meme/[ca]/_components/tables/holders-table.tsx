@@ -45,7 +45,6 @@ function calculatePnl(
     };
   }
 
-  // Otherwise, use the calculated total PnL
   const pnlValue = Number(row.total_pnl_usd);
   return {
     value: pnlValue,

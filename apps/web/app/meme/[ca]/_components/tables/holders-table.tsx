@@ -25,8 +25,8 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@repo/ui/components/ui/tooltip";
-import { Worm, ExternalLink, ChevronDown } from "lucide-react";
-import { EXPLORER_BASE_URL } from "~/lib/constants";
+import { Worm, ExternalLink, Vault } from "lucide-react";
+import { EXPLORER_BASE_URL, POOLS_ADDRESSES } from "~/lib/constants";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { CryptoHoverCard } from "../trade-details";
 
@@ -53,13 +53,14 @@ function calculatePnl(
   };
 }
 
-// Define desktop columns
-export const desktopColumns = (
+// Define columns for both desktop and mobile
+export const tableColumns = (
   token: TokenMetadata,
+  isMobile: boolean,
 ): ColumnDef<TokenHolder>[] => [
   {
     accessorKey: "indexAndWallet",
-    header: () => <div className="w-48">Wallet</div>,
+    header: () => <div className={isMobile ? "w-32" : "w-48"}>Wallet</div>,
     cell: ({ row }) => {
       const address = row.original.wallet.address;
       const isCa = validateContractAddress(address);
@@ -107,10 +108,14 @@ export const desktopColumns = (
             >
               <div className="text-xs font-geist-mono hover:underline">
                 {bns
-                  ? bns.length >= 20
-                    ? truncateString(bns, 10, 6)
+                  ? bns.length >= (isMobile ? 15 : 20)
+                    ? truncateString(bns, isMobile ? 8 : 10, isMobile ? 4 : 6)
                     : bns
-                  : truncateString(address, isCa ? 7 : 10, isCa ? 6 : 6)}
+                  : truncateString(
+                      address,
+                      isCa ? (isMobile ? 5 : 7) : isMobile ? 8 : 10,
+                      isCa ? (isMobile ? 4 : 6) : isMobile ? 4 : 6,
+                    )}
               </div>
             </CryptoHoverCard>
 
@@ -232,196 +237,23 @@ export const desktopColumns = (
   },
 ];
 
-// Define mobile columns with essential information
-export const mobileColumns = (
-  token: TokenMetadata,
-): ColumnDef<TokenHolder>[] => [
-  {
-    accessorKey: "wallet",
-    header: "Wallet",
-    cell: ({ row }) => {
-      const address = row.original.wallet.address;
-      const isCa = validateContractAddress(address);
-      const bns = row.original.wallet.bns;
-      const data = row.original;
+// Custom hook for media queries
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
 
-      return (
-        <div className="flex items-center space-x-2">
-          <div className="text-xs font-geist-mono text-muted-foreground">
-            {row.index + 1}
-          </div>
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
 
-          {(!data?.total_buys || data?.total_buys === "0") && (
-            <Worm className="h-3 w-3" />
-          )}
+    const listener = () => setMatches(media.matches);
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [matches, query]);
 
-          <div className="text-xs font-geist-mono">
-            {bns
-              ? bns.length >= 15
-                ? truncateString(bns, 8, 4)
-                : bns
-              : truncateString(address, isCa ? 5 : 8, isCa ? 4 : 4)}
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "pnl",
-    header: "PnL",
-    cell: ({ row }) => {
-      const pnl = calculatePnl(row.original, token);
-      const colorClass =
-        pnl.value > 0
-          ? "text-emerald-600"
-          : pnl.value < 0
-            ? "text-destructive"
-            : "text-muted-foreground";
-
-      return (
-        <div
-          className={cn("text-xs font-semibold font-geist-mono", colorClass)}
-        >
-          ${pnl.formatted}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "remaining",
-    header: "Value",
-    cell: ({ row }) => {
-      return (
-        <div className="text-xs font-geist-mono flex flex-col gap-1">
-          ${formatPrice(calculateTokenValue(row.original.balance, token))}
-        </div>
-      );
-    },
-  },
-];
-
-// Mobile Expandable Row component
-const MobileExpandableRow = ({
-  row,
-  token,
-  isExpanded,
-  toggleExpand,
-}: {
-  row: TokenHolder;
-  token: TokenMetadata;
-  isExpanded: boolean;
-  toggleExpand: () => void;
-}) => {
-  const address = row.wallet.address;
-  const pnl = calculatePnl(row, token);
-  const colorClass =
-    pnl.value > 0
-      ? "text-emerald-500"
-      : pnl.value < 0
-        ? "text-destructive"
-        : "text-muted-foreground";
-
-  return (
-    <div className="border-b">
-      {/* Main row - always visible */}
-      <div
-        className="flex items-center justify-between px-3 py-2"
-        onClick={toggleExpand}
-      >
-        <div className="flex items-center space-x-2">
-          <div className="text-xs font-geist-mono text-muted-foreground mr-1">
-            {/* Index */}
-          </div>
-
-          {(!row?.total_buys || row?.total_buys === "0") && (
-            <Worm className="h-3 w-3 mr-1" />
-          )}
-
-          <div className="text-xs font-geist-mono truncate max-w-32">
-            {row.wallet.bns || truncateString(address, 8, 4)}
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div
-            className={cn("text-xs font-semibold font-geist-mono", colorClass)}
-          >
-            ${pnl.formatted}
-          </div>
-
-          <div className="text-xs font-geist-mono">
-            ${formatPrice(calculateTokenValue(row.balance as string, token))}
-          </div>
-
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform",
-              isExpanded && "transform rotate-180",
-            )}
-          />
-        </div>
-      </div>
-
-      {/* Expanded details */}
-      {isExpanded && (
-        <div className="px-3 py-2 bg-muted/30 text-xs">
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <div className="text-muted-foreground mb-1">STX Balance</div>
-              <div className="font-geist-mono">1.23k</div>
-            </div>
-
-            <div>
-              <div className="text-muted-foreground mb-1">Token Holdings</div>
-              <div className="font-geist-mono">
-                {formatPrice(Number(row.balance) / 10 ** token.decimals)}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-muted-foreground mb-1">Bought</div>
-              <div className="font-geist-mono text-emerald-500">
-                ${formatPrice(Number(row.total_spent_usd))}
-              </div>
-              <div className="text-[10px] text-muted-foreground">
-                {formatPrice(Number(row.credits) / 10 ** token.decimals)} /{" "}
-                {row.total_buys}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-muted-foreground mb-1">Sold</div>
-              <div className="font-geist-mono text-destructive">
-                ${formatPrice(Number(row.total_received_usd))}
-              </div>
-              <div className="text-[10px] text-muted-foreground">
-                {formatPrice(Number(row.debits) / 10 ** token.decimals)} /{" "}
-                {row.total_sells}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-2">
-            <div className="text-muted-foreground mb-1">Value Distribution</div>
-            <Progress value={40} className="h-1 mb-1" />
-          </div>
-
-          <div className="mt-2 flex justify-end">
-            <div
-              className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                openInNewPage(`${EXPLORER_BASE_URL}address/${address}`);
-              }}
-            >
-              View on Explorer <ExternalLink className="h-3 w-3" />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+  return matches;
+}
 
 export default function HoldersTable({
   holders,
@@ -431,16 +263,7 @@ export default function HoldersTable({
   token: TokenMetadata;
 }) {
   const [tableData, setTableData] = useState<TokenHolder[]>(holders);
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const isMobile = useMediaQuery("(max-width: 768px)");
-
-  // Toggle row expansion
-  const toggleRowExpansion = (id: string) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
 
   useEffect(() => {
     setTableData([...holders]);
@@ -448,57 +271,20 @@ export default function HoldersTable({
 
   const table = useReactTable({
     data: tableData,
-    columns: isMobile ? mobileColumns(token) : desktopColumns(token),
+    columns: tableColumns(token, isMobile),
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // For mobile view
-  if (isMobile) {
-    return (
-      <div className="flex h-full w-full flex-col border-t">
-        <div className="flex justify-between px-4 py-3 border-b bg-muted/50">
-          <div className="text-xs font-medium text-muted-foreground">
-            Wallet
-          </div>
-          <div className="flex space-x-4">
-            <div className="text-xs font-medium text-muted-foreground">PnL</div>
-            <div className="text-xs font-medium text-muted-foreground">
-              Value
-            </div>
-            <div className="w-4"></div>
-          </div>
-        </div>
-
-        <div className="relative flex-1 overflow-hidden">
-          <ScrollArea className="h-full w-full">
-            {tableData.length ? (
-              tableData.map((row, index) => (
-                <MobileExpandableRow
-                  key={row.wallet.address}
-                  row={row}
-                  token={token}
-                  isExpanded={!!expandedRows[row.wallet.address]}
-                  toggleExpand={() => toggleRowExpansion(row.wallet.address)}
-                />
-              ))
-            ) : (
-              <div className="flex h-24 w-full items-center justify-center">
-                <span className="text-sm text-muted-foreground">
-                  No results.
-                </span>
-              </div>
-            )}
-          </ScrollArea>
-        </div>
-      </div>
-    );
-  }
-
-  // For desktop view
   return (
     <div className="flex h-full w-full flex-col border-t">
       {/* Header */}
-      <div className="w-full border-b grid grid-cols-6">
+      <div
+        className={cn(
+          "w-full border-b grid",
+          isMobile ? "min-w-[800px]" : "",
+          "grid-cols-6",
+        )}
+      >
         {table.getHeaderGroups().map((headerGroup) => (
           <div key={headerGroup.id} className="contents">
             {headerGroup.headers.map((header) => (
@@ -523,8 +309,8 @@ export default function HoldersTable({
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full">
-          <div className="">
+        <ScrollArea className="h-full w-full" orientation="both">
+          <div className={cn(isMobile ? "min-w-[800px]" : "")}>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <div
@@ -556,22 +342,4 @@ export default function HoldersTable({
       </div>
     </div>
   );
-}
-
-// Custom hook for media queries
-export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
-
-    const listener = () => setMatches(media.matches);
-    media.addEventListener("change", listener);
-    return () => media.removeEventListener("change", listener);
-  }, [matches, query]);
-
-  return matches;
 }

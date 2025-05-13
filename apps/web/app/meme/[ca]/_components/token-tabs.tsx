@@ -57,10 +57,12 @@ export default function TokenTabs({
             <TabsTrigger
               value={tab.value.toLowerCase()}
               key={tab.value.toLowerCase()}
-              className="w-fit capitalize"
+              className="w-fit capitalize items-center"
               onClick={() => setActiveTab(tab.value.toLowerCase())}
             >
-              {tab.value}
+              {tab.value === "holders"
+                ? `holders (${token.metrics.holder_count})`
+                : tab.value}
             </TabsTrigger>
           ))}
         </TabsList>

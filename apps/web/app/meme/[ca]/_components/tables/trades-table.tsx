@@ -28,29 +28,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
-import { ExternalLink, Worm } from "lucide-react";
-import useCopyToClipboard from "~/hooks/useCopy";
+import { ExternalLink, Funnel, Worm } from "lucide-react";
 import { CryptoHoverCard } from "../trade-details";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { EXPLORER_BASE_URL } from "~/lib/constants";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-
-const calculateMarketCap = (token: TokenMetadata, price: number) => {
-  return (Number(token.circulating_supply) / 10 ** token.decimals) * price;
-};
-
-export const calculateTokenValue = (balance: string, token: TokenMetadata) => {
-  if (balance === "") return 0;
-
-  const tokenBal = Number(balance);
-  return (tokenBal / 10 ** token.decimals) * token.metrics.price_usd;
-};
-const determineTransactionType = (
-  trade: TokenSwapTransaction,
-  token: TokenMetadata,
-) => {
-  return trade.token_x.contract_id === token.contract_id ? "Sell" : "Buy";
-};
+import {
+  determineTransactionType,
+  calculateMarketCap,
+  calculateTokenValue,
+} from "~/lib/utils/token";
 
 // Helper function to define consistent column widths
 function getColumnWidth(columnId: string): string {
@@ -212,6 +199,12 @@ export const columns = (
               <ExternalLink className="h-3 w-3 text-muted-foreground" />
             </TooltipTrigger>
             <TooltipContent>Open in Exp.</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger onClick={() => {}}>
+              <Funnel className="h-3 w-3 text-muted-foreground" />
+            </TooltipTrigger>
+            <TooltipContent>Filter by address</TooltipContent>
           </Tooltip>
         </div>
       );

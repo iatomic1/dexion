@@ -11,24 +11,64 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { cn } from "@repo/ui/lib/utils";
 import {
   ChefHat,
   ChevronDown,
   Crosshair,
+  Flame,
   Kanban,
   NotebookTabs,
   User,
+  UserRoundX,
   Verified,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
+import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
+import { useQuery } from "@tanstack/react-query";
+import { getBalance } from "~/lib/queries/balance";
+import { AddressBalanceResponse } from "~/types/balance";
+import {
+  calculatePercentageHolding,
+  getDevHoldingPercentage,
+  getLockedLiquidityPercentage,
+} from "~/lib/utils/token";
+import { getLockedLiquidity, getPoints } from "~/lib/queries/stxwatch";
+import { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
+import { useAuditData } from "~/hooks/useAuditData";
 
-export default function TokenInfo({ token }: { token: TokenMetadata }) {
+export default function TokenAudit({
+  token,
+  top10Holding,
+}: {
+  token: TokenMetadata;
+  top10Holding: number;
+}) {
   const [isOpen, setIsOpen] = useState(true);
   const copy = useCopyToClipboard();
+  const { totalPoints, lockedLiquidityPercentage, isLoading } = useAuditData(
+    token.contract_id,
+  );
+
+  const {
+    // isPending,
+    // error,
+    data: addressBalance,
+  } = useQuery<AddressBalanceResponse>({
+    queryKey: ["devHolding", token.contract_id.split(".")[0]],
+    queryFn: () => getBalance(token.contract_id.split(".")[0] as string),
+  });
+
+  const devHoldingPercentage = getDevHoldingPercentage(
+    addressBalance as AddressBalanceResponse,
+    token.contract_id,
+    token.total_supply,
+  );
+
   return (
     <Collapsible className="mt-4" open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
@@ -44,53 +84,74 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
       <CollapsibleContent className="flex flex-col gap-4">
         <div className="grid grid-cols-3 gap-4 text-center text-xs">
           <InfoItem
-            icon={<User className="h-5 w-5" strokeWidth={2} />}
-            value={token.metrics.holder_count.toString()}
-            label="Holders"
+            icon={<UserRoundX className="h-4 w-4" />}
+            value={`${formatPrice(top10Holding)}%`}
+            label="Top 10 H."
+            isRed={top10Holding > 20}
+            isGreen={top10Holding < 20}
           />
           <InfoItem
-            icon={<Crosshair className="h-5 w-5" strokeWidth={2} />}
-            value="2.21 %"
-            label="Snipers H."
-          />
-          <InfoItem
-            icon={<ChefHat className="h-5 w-5" strokeWidth={2} />}
-            isRed
-            value="Unrugged"
+            icon={
+              <ChefHat
+                className={cn(
+                  "h-4 w-4",
+                  devHoldingPercentage > 20
+                    ? "text-destructive"
+                    : "text-emerald-500",
+                )}
+              />
+            }
+            value={`${formatPrice(devHoldingPercentage)}%`}
             label="Dev H."
+            isRed={devHoldingPercentage > 20}
+            isGreen={devHoldingPercentage < 20}
           />
-        </div>{" "}
+          <InfoItem
+            icon={
+              <ChefHat
+                className={cn(
+                  "h-4 w-4",
+                  totalPoints > 30 ? "text-emerald-500" : "text-destructive",
+                )}
+              />
+            }
+            isRed={totalPoints < 30}
+            isGreen={totalPoints > 30}
+            value={totalPoints?.toString() as string}
+            label="Trust S."
+          />
+        </div>
         <div className="grid grid-cols-3 gap-4 text-center text-xs">
           <InfoItem
-            icon={<User className="h-5 w-5" />}
+            icon={<User className="h-4 w-4" />}
             value="13"
             label="Holders"
           />
           <InfoItem
-            icon={<Crosshair className="h-5 w-5" />}
+            icon={<Crosshair className="h-4 w-4" />}
             value="2.21 %"
             label="Snipers H."
           />
           <InfoItem
-            icon={<ChefHat className="h-5 w-5" />}
+            icon={<Flame className="h-4 w-4 text-destructive" />}
             isRed
-            value="Unrugged"
-            label="Dev H."
+            value={`${formatPrice(lockedLiquidityPercentage)}%`}
+            label="Locked L."
           />
         </div>
         <div className="grid grid-cols-3 gap-4 border-t pt-4 text-center text-xs">
           <InfoItem
-            icon={<User className="h-5 w-5" />}
+            icon={<User className="h-4 w-4" />}
             value={token.metrics.holder_count.toString()}
             label="Holders"
           />
           <InfoItem
-            icon={<Kanban className="h-5 w-5" />}
+            icon={<Kanban className="h-4 w-4" />}
             value="156"
             label="Pro Traders"
           />
           <InfoItem
-            icon={<Verified className="h-5 w-5 text-emerald-500" />}
+            icon={<Verified className="h-4 w-4 text-emerald-500" />}
             isRed={!token.verified}
             isGreen={token.verified}
             value={token.verified ? "Paid" : "Unpaid"}
@@ -143,7 +204,7 @@ export function InfoItem({
         {icon}
         <span
           className={cn(
-            "text-sm leading-[24px] font-medium",
+            "text-sm leading-[24px] font-normal",
             isRed && "text-destructive",
             isGreen && "text-emerald-500",
           )}
@@ -151,9 +212,27 @@ export function InfoItem({
           {value}
         </span>
       </div>
-      <span className="text-muted-foreground font-semibold text-center">
-        {label}
-      </span>
+      <span className="text-muted-foreground  text-center">{label}</span>
+    </div>
+  );
+}
+
+export function InfoItemSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "p-3 border-muted border-[1px] rounded-md items-center justify-center flex flex-col gap-1",
+        className,
+      )}
+    >
+      <div className="flex items-center justify-center gap-1">
+        <Skeleton className="h-4 w-4 rounded-full" />{" "}
+        {/* Placeholder for icon */}
+        <Skeleton className="h-6 w-16 rounded-md" />{" "}
+        {/* Placeholder for value */}
+      </div>
+      <Skeleton className="h-4 w-24 rounded-md mt-1" />{" "}
+      {/* Placeholder for label */}
     </div>
   );
 }

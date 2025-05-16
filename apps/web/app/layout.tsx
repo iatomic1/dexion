@@ -2,18 +2,19 @@
 import "./globals.css";
 import type React from "react";
 import type { Metadata } from "next";
-import SiteHeader from "./_components/header/site-header";
 import { ThemeProvider } from "./_components/theme-provider";
 import { Toaster } from "@repo/ui/components/ui/sonner";
 import { TokenRefresher } from "./_components/token-refresher";
-import SiteFooter from "./_components/site-footer";
-import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
 import { geistMono, geistSans } from "./fonts/geist";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
+import SiteHeader from "./_components/header/site-header";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ClientQueryProvider } from "./_components/query-client-provider";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",
 };
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -34,8 +35,10 @@ export default function RootLayout({
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">
-              {/* <SiteHeader /> */}
-              <main className="flex-1">{children}</main>
+              <SiteHeader />
+              <main className="flex-1">
+                <ClientQueryProvider>{children}</ClientQueryProvider>
+              </main>
               {/* <SiteFooter /> */}
             </div>
           </PresetsContextProvider>

@@ -24,21 +24,11 @@ import {
   UserRoundX,
   Verified,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
-import { useQuery } from "@tanstack/react-query";
-import { getBalance } from "~/lib/queries/balance";
-import { AddressBalanceResponse } from "~/types/balance";
-import {
-  calculatePercentageHolding,
-  getDevHoldingPercentage,
-  getLockedLiquidityPercentage,
-} from "~/lib/utils/token";
-import { getLockedLiquidity, getPoints } from "~/lib/queries/stxwatch";
-import { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
 import { useAuditData } from "~/hooks/useAuditData";
 
 export default function TokenAudit({
@@ -50,24 +40,12 @@ export default function TokenAudit({
 }) {
   const [isOpen, setIsOpen] = useState(true);
   const copy = useCopyToClipboard();
-  const { totalPoints, lockedLiquidityPercentage, isLoading } = useAuditData(
-    token.contract_id,
-  );
-
   const {
-    // isPending,
-    // error,
-    data: addressBalance,
-  } = useQuery<AddressBalanceResponse>({
-    queryKey: ["devHolding", token.contract_id.split(".")[0]],
-    queryFn: () => getBalance(token.contract_id.split(".")[0] as string),
-  });
-
-  const devHoldingPercentage = getDevHoldingPercentage(
-    addressBalance as AddressBalanceResponse,
-    token.contract_id,
-    token.total_supply,
-  );
+    totalPoints,
+    lockedLiquidityPercentage,
+    isLoading,
+    devHoldingPercentage,
+  } = useAuditData(token.contract_id, token);
 
   return (
     <Collapsible className="mt-4" open={isOpen} onOpenChange={setIsOpen}>
@@ -111,12 +89,14 @@ export default function TokenAudit({
               <ChefHat
                 className={cn(
                   "h-4 w-4",
-                  totalPoints > 30 ? "text-emerald-500" : "text-destructive",
+                  totalPoints && totalPoints > 30
+                    ? "text-emerald-500"
+                    : "text-destructive",
                 )}
               />
             }
-            isRed={totalPoints < 30}
-            isGreen={totalPoints > 30}
+            isRed={totalPoints != null && totalPoints < 30}
+            isGreen={totalPoints != null && totalPoints > 30}
             value={totalPoints?.toString() as string}
             label="Trust S."
           />
@@ -151,11 +131,18 @@ export default function TokenAudit({
             label="Pro Traders"
           />
           <InfoItem
-            icon={<Verified className="h-4 w-4 text-emerald-500" />}
+            icon={
+              <Verified
+                className={cn(
+                  "h-4 w-4",
+                  token.verified ? "text-emerald-500" : "text-destructive",
+                )}
+              />
+            }
             isRed={!token.verified}
             isGreen={token.verified}
             value={token.verified ? "Paid" : "Unpaid"}
-            label="Verified"
+            label={token.verified ? "Verified" : "Unverified"}
           />
         </div>
         <Tooltip>

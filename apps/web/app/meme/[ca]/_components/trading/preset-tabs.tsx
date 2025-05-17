@@ -15,14 +15,10 @@ export default function TradeSettingsUI() {
     usePresetsSettings();
   const { activePreset, activeTab } = state;
 
-  // Ensure tabs reflect the active state from context
-  useEffect(() => {
-    // This effect runs when component mounts and when activePreset or activeTab changes
-  }, [activePreset, activeTab]);
+  useEffect(() => {}, [activePreset, activeTab]);
 
   return (
     <div className="space-y-4 mt-6">
-      {/* Preset Tabs */}
       <Tabs
         value={activePreset}
         onValueChange={(value) => switchPreset(value as PresetKey)}

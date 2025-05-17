@@ -11,8 +11,9 @@ export const getTokenMetadata = async (
   ca: string,
 ): Promise<TokenMetadata | null> => {
   try {
-    const url = `${STX_TOOLS_API_BASE_URL}tokens/${ca}`;
-    const { data } = await axios.get(url);
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // Or host your own
+    const targetUrl = `${STX_TOOLS_API_BASE_URL}tokens/${ca}`;
+    const { data } = await axios.get(proxyUrl + targetUrl);
 
     return data;
   } catch (err) {

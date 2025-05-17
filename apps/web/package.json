@@ -16,6 +16,7 @@
     "@stacks/transactions": "^7.0.6",
     "@tailwindcss/cli": "^4.1.5",
     "@tailwindcss/postcss": "^4.1.5",
+    "@tanstack/react-query": "^5.76.1",
     "@tanstack/react-table": "^8.21.3",
     "dayjs": "^1.11.13",
     "jose": "^6.0.10",

@@ -1,4 +1,10 @@
-import { API_BASE_URL, PUBLIC_BASE_URL } from "../constants";
+import { HIRO_PLATFORM_API_BASE_URL } from "../../../../packages/token-watcher/src/lib/constants";
+import {
+  API_BASE_URL,
+  HIRO_API_BASE_URL,
+  PUBLIC_BASE_URL,
+  STXWATCH_API_BASE_URL,
+} from "../constants";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 interface NextJsOptions {
@@ -13,12 +19,16 @@ interface FetchOptions extends Omit<RequestInit, "method" | "body"> {
 }
 
 export default function makeFetch<T>(
-  service: "dexion",
+  service: "dexion" | "hiro" | "stxwatch",
   path: string,
   accessToken: string | null,
   options: FetchOptions = {},
 ): () => Promise<T> {
   return async () => {
+    let API_URL;
+    if (service === "dexion") API_URL = API_BASE_URL;
+    else if (service === "hiro") API_URL = HIRO_API_BASE_URL;
+    else if (service === "stxwatch") API_URL = STXWATCH_API_BASE_URL;
     const { method = "GET", body, next, ...restOptions } = options;
 
     const shouldAddContentType =
@@ -52,10 +62,7 @@ export default function makeFetch<T>(
       fetchOptions.next = next;
     }
 
-    const res = await fetch(
-      `${service === "dexion" && API_BASE_URL}${path}`,
-      fetchOptions,
-    );
+    const res = await fetch(`${API_URL}${path}`, fetchOptions);
 
     const contentType = res.headers.get("content-type");
     if (contentType?.includes("application/json")) {

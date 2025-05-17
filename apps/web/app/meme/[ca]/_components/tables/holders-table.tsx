@@ -16,7 +16,6 @@ import type {
 import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { calculateTokenValue } from "./trades-table";
 import { validateContractAddress } from "~/lib/helpers/validateContractAddress";
 import { Progress } from "@repo/ui/components/ui/progress";
 import { Badge } from "@repo/ui/components/ui/badge";
@@ -25,35 +24,16 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@repo/ui/components/ui/tooltip";
-import { Worm, ExternalLink, Vault } from "lucide-react";
-import { EXPLORER_BASE_URL, POOLS_ADDRESSES } from "~/lib/constants";
+import { Worm, ExternalLink } from "lucide-react";
+import { EXPLORER_BASE_URL } from "~/lib/constants";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { CryptoHoverCard } from "../trade-details";
+import {
+  calculatePercentageHolding,
+  calculatePnl,
+  calculateTokenValue,
+} from "~/lib/utils/token";
 
-function calculatePnl(
-  row: TokenHolder,
-  token: TokenMetadata,
-): { value: number; formatted: string } {
-  const valueUsd = calculateTokenValue(row.balance as string, token);
-
-  // If no sells have occurred, calculate PnL as current value minus total spent
-  if (row.total_buys && row.total_sells === "0") {
-    const pnlValue = valueUsd - Number(row.total_spent_usd);
-    return {
-      value: pnlValue,
-      formatted: formatPrice(pnlValue),
-    };
-  }
-
-  // Otherwise, use the calculated total PnL
-  const pnlValue = Number(row.total_pnl_usd);
-  return {
-    value: pnlValue,
-    formatted: formatPrice(pnlValue),
-  };
-}
-
-// Define columns for both desktop and mobile
 export const tableColumns = (
   token: TokenMetadata,
   isMobile: boolean,
@@ -102,7 +82,10 @@ export const tableColumns = (
               decimals={token.decimals}
               valueUsd={calculateTokenValue(ft?.balance as string, token)}
               percentageHolding={
-                ft ? (Number(ft.balance) / Number(token.total_supply)) * 100 : 0
+                ft
+                  ? calculatePercentageHolding(ft.balance, token.total_supply) *
+                    100
+                  : 0
               }
               txId={address}
             >

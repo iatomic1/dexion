@@ -1,21 +1,38 @@
 "use client";
 
 import SimilarTokens from "./similar-tokens";
-import TokenInfo from "./token-audit";
+import TokenAudit from "./token-audit";
 import PresetTabs from "./preset-tabs";
 import TradingStats from "./stats";
 import { DexBanner } from "./dex-banner";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenHolder, TokenMetadata } from "@repo/token-watcher/token.ts";
+import { calculatePercentageHolding } from "~/lib/utils/token";
+import { useEffect, useState } from "react";
 
 interface TradingPanelProps {
   token: TokenMetadata;
+  holders: TokenHolder[];
 }
 
-export default function TradingPanel({ token }: TradingPanelProps) {
+export default function TradingPanel({ token, holders }: TradingPanelProps) {
   // const [tradeAction, setTradeAction] = useState("buy");
   // const [tradeType, setTradeType] = useState("market");
   // const [amount, setAmount] = useState("0.01");
   // const [preset, setPreset] = useState("preset1");
+  const [top10Holding, setTop10Holding] = useState<number>(0);
+
+  useEffect(() => {
+    const top10Holders = holders.slice(0, 10);
+
+    const top10Balance = top10Holders.reduce(
+      (sum, holder) => sum + Number(holder.balance),
+      0,
+    );
+
+    setTop10Holding(
+      calculatePercentageHolding(top10Balance.toString(), token.total_supply),
+    );
+  }, [holders]);
 
   return (
     <div className="sm:flex h-full flex-col hidden">
@@ -376,8 +393,8 @@ export default function TradingPanel({ token }: TradingPanelProps) {
         {/**/}
         <TradingStats />
         <PresetTabs />
-        <TokenInfo token={token} />
-        <SimilarTokens />
+        <TokenAudit token={token} top10Holding={top10Holding} />
+        <SimilarTokens token={token} />
         <DexBanner bannerUrl={token.header_image_url} />
       </div>
     </div>

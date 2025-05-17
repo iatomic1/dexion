@@ -54,7 +54,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
             <div className="flex-1 overflow-hidden">
               <div className="h-full w-full flex flex-col">
                 {/* Chart section - 65% height */}
-                <div className="h-[65%] overflow-hidden">
+                <div className="!h-[65%] overflow-hidden">
                   <TokenChart tokenSymbol={tokenData.symbol} />
                 </div>
 
@@ -72,8 +72,8 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
         </div>
 
         {/* Trading panel - 25% on desktop */}
-        <div className="w-full lg:w-1/4 h-full">
-          <TradingPanel token={tokenData} />
+        <div className="w-full lg:w-1/3 h-full">
+          <TradingPanel token={tokenData} holders={holdersData} />
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import {
   CollapsibleTrigger,
 } from "@repo/ui/components/ui/collapsible";
 import { Label } from "@repo/ui/components/ui/label";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -20,16 +21,12 @@ import {
 } from "@repo/ui/components/ui/tooltip";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useTokenPools } from "~/contexts/TokenWatcherSocketContext";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 
-export default function Pools({
-  token,
-  pools,
-}: {
-  token: TokenMetadata;
-  pools: LiquidityPool[];
-}) {
+export default function Pools({}: {}) {
   const [isOpen, setIsOpen] = useState(true);
+  const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 
   return (
     <Collapsible className="mt-3" open={isOpen} onOpenChange={setIsOpen}>
@@ -46,15 +43,17 @@ export default function Pools({
       </CollapsibleTrigger>
 
       <CollapsibleContent className="space-y-2">
-        {pools
-          .filter(
-            (pool) =>
-              pool.target_token.contract_id === "stx" &&
-              pool.liquidity_usd !== 0,
-          )
-          .map((pool) => (
-            <PoolsItem key={pool.pool_id} pool={pool} />
-          ))}
+        {isPoolsLoading ? (
+          <PoolsItemSkeleton />
+        ) : (
+          pools
+            .filter(
+              (pool) =>
+                pool.target_token.contract_id === "stx" &&
+                pool.liquidity_usd !== 0,
+            )
+            .map((pool) => <PoolsItem key={pool.pool_id} pool={pool} />)
+        )}
       </CollapsibleContent>
     </Collapsible>
   );
@@ -67,7 +66,7 @@ function PoolsItem({ pool }: { pool: LiquidityPool }) {
         id={pool.pool_id}
         className="order-1 after:absolute after:inset-0"
         aria-describedby={`${pool.pool_id}-description`}
-        defaultChecked={pool.pool_id.toUpperCase() === "VELAR"}
+        defaultChecked={true}
       />
       <div className="flex grow items-center gap-3">
         <Avatar className="h-12 w-12">
@@ -96,6 +95,40 @@ function PoolsItem({ pool }: { pool: LiquidityPool }) {
               <span className="text-xs">
                 {formatPrice(pool.metrics.swap_count)}
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PoolsItemSkeleton() {
+  return (
+    <div className="border-input relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none">
+      <Checkbox className="order-1 after:absolute after:inset-0" disabled />
+      <div className="flex grow items-center gap-3">
+        {/* Avatar skeleton */}
+        <Skeleton className="h-12 w-12 rounded-full" />
+
+        <div className="grid gap-2">
+          {/* Platform name and price skeleton */}
+          <div className="flex items-center gap-1">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Liquidity skeleton */}
+            <div className="flex flex-col gap-0">
+              <Skeleton className="h-3 w-14 mb-1" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+
+            {/* Swaps skeleton */}
+            <div className="flex flex-col gap-0">
+              <Skeleton className="h-3 w-10 mb-1" />
+              <Skeleton className="h-4 w-12" />
             </div>
           </div>
         </div>

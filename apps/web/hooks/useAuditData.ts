@@ -7,7 +7,7 @@ import {
   getDevHoldingPercentage,
   getLockedLiquidityPercentage,
 } from "~/lib/utils/token";
-import { AddressBalanceResponse } from "~/types/balance";
+import { AddressBalanceResponse } from "~/types/hiro/balance";
 import { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
 
 export function useAuditData(ca: string, token: TokenMetadata) {
@@ -27,8 +27,8 @@ export function useAuditData(ca: string, token: TokenMetadata) {
 
   const { isLoading: isAddressBalanceLoading, data: addressBalanceData } =
     useQuery<AddressBalanceResponse>({
-      queryKey: ["devHolding", ca.split(".")[0]],
-      queryFn: () => getBalance(ca.split(".")[0] as string),
+      queryKey: ["devHolding", ca?.split(".")[0]],
+      queryFn: () => getBalance(ca?.split(".")[0] as string),
     });
 
   const isLoading =
@@ -46,6 +46,7 @@ export function useAuditData(ca: string, token: TokenMetadata) {
       setLockedLiquidityPercentage(percentage);
     }
   }, [lockedLiquidityData]);
+
   useEffect(() => {
     if (addressBalanceData && addressBalanceData.fungible_tokens) {
       setDevHoldingPercentage(

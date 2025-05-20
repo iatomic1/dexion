@@ -8,10 +8,7 @@ import {
   ChartArea,
   Clock,
   Copy,
-  Crosshair,
   ExternalLink,
-  Funnel,
-  Scan,
   Wallet,
 } from "lucide-react";
 import {
@@ -46,6 +43,7 @@ interface CryptoCardProps {
   valueUsd: number;
   percentageHolding: number;
   txId: string;
+  filter?: React.ReactNode;
 }
 
 interface InfoItemProps {
@@ -104,6 +102,7 @@ export function CryptoHoverCard({
   children,
   ft,
   decimals,
+  filter,
   valueUsd,
   percentageHolding,
   txId,
@@ -288,18 +287,7 @@ export function CryptoHoverCard({
             </TooltipTrigger>
             <TooltipContent>Open in Exp.</TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant={"ghost"}
-                size={"icon"}
-                className="hover:text-indigo-500 transition-colors duration-150 ease-in-out h-6 w-6 md:h-7 md:w-7"
-              >
-                <Funnel className="h-4 w-4 md:h-5 md:w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Filter by address</TooltipContent>
-          </Tooltip>
+          {/* {filter} */}
         </div>
       </HoverCardContent>
     </HoverCard>

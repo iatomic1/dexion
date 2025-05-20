@@ -1,20 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
 import TokenChart from "./token-chart";
 import TokenInfo from "./token-info";
 import TokenTabs from "./token-tabs";
 import TradingPanel from "./trading/trading-panel";
-import {
-  useTokenData,
-  useTokenSocket,
-} from "~/contexts/TokenWatcherSocketContext";
-import type {
-  LiquidityPool,
-  TokenHolder,
-  TokenMetadata,
-  TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
+import type { LiquidityPool } from "@repo/token-watcher/token.ts";
 import TokenInfoSkeleton from "./skeleton/token-info-skeleton";
+import { useState } from "react";
 
 export default function TokenDetailPage({ ca }: { ca: string }) {
   const { tokenData, isLoadingMetadata, holdersData, poolsData, tradesData } =

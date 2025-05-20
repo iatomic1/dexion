@@ -21,6 +21,7 @@ import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import { getFilterTrades } from "~/lib/queries/stxtools";
 import { useQuery } from "@tanstack/react-query";
 import { set } from "zod";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 
 export default function TokenTabs() {
   const {
@@ -79,9 +80,19 @@ export default function TokenTabs() {
                 className="w-fit capitalize items-center"
                 onClick={() => setActiveTab(tab.value.toLowerCase())}
               >
-                {tab.value === "holders"
-                  ? `holders (${tokenData?.metrics?.holder_count})`
-                  : tab.value}
+                {tab.value === "holders" ? (
+                  <>
+                    {isLoadingMetadata ? (
+                      <>
+                        Holders <Skeleton className="h-5 w-12" />{" "}
+                      </>
+                    ) : (
+                      `holders (${tokenData?.metrics?.holder_count})`
+                    )}
+                  </>
+                ) : (
+                  tab.value
+                )}
               </TabsTrigger>
             ))}
           </TabsList>

@@ -24,20 +24,19 @@ import {
   UserRoundX,
   Verified,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
 import { useAuditData } from "~/hooks/useAuditData";
+import {
+  useTokenData,
+  useTokenHolders,
+} from "~/contexts/TokenWatcherSocketContext";
+import { calculatePercentageHolding } from "~/lib/utils/token";
 
-export default function TokenAudit({
-  token,
-  top10Holding,
-}: {
-  token: TokenMetadata;
-  top10Holding: number;
-}) {
+export default function TokenAudit({ token }: { token: TokenMetadata }) {
   const [isOpen, setIsOpen] = useState(true);
   const copy = useCopyToClipboard();
   const {
@@ -45,7 +44,23 @@ export default function TokenAudit({
     lockedLiquidityPercentage,
     isLoading,
     devHoldingPercentage,
-  } = useAuditData(token.contract_id, token);
+  } = useAuditData(token?.contract_id, token);
+  const { isLoadingMetadata } = useTokenData();
+  const [top10Holding, setTop10Holding] = useState<number>(0);
+  const { data: holders, isLoading: isHoldersLoading } = useTokenHolders();
+
+  useEffect(() => {
+    const top10Holders = holders.slice(0, 10);
+
+    const top10Balance = top10Holders.reduce(
+      (sum, holder) => sum + Number(holder.balance),
+      0,
+    );
+
+    setTop10Holding(
+      calculatePercentageHolding(top10Balance.toString(), token?.total_supply),
+    );
+  }, [holders]);
 
   return (
     <Collapsible className="mt-4" open={isOpen} onOpenChange={setIsOpen}>
@@ -61,45 +76,58 @@ export default function TokenAudit({
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-4">
         <div className="grid grid-cols-3 gap-4 text-center text-xs">
-          <InfoItem
-            icon={<UserRoundX className="h-4 w-4" />}
-            value={`${formatPrice(top10Holding)}%`}
-            label="Top 10 H."
-            isRed={top10Holding > 20}
-            isGreen={top10Holding < 20}
-          />
-          <InfoItem
-            icon={
-              <ChefHat
-                className={cn(
-                  "h-4 w-4",
-                  devHoldingPercentage > 20
-                    ? "text-destructive"
-                    : "text-emerald-500",
-                )}
-              />
-            }
-            value={`${formatPrice(devHoldingPercentage)}%`}
-            label="Dev H."
-            isRed={devHoldingPercentage > 20}
-            isGreen={devHoldingPercentage < 20}
-          />
-          <InfoItem
-            icon={
-              <ChefHat
-                className={cn(
-                  "h-4 w-4",
-                  totalPoints && totalPoints > 30
-                    ? "text-emerald-500"
-                    : "text-destructive",
-                )}
-              />
-            }
-            isRed={totalPoints != null && totalPoints < 30}
-            isGreen={totalPoints != null && totalPoints > 30}
-            value={totalPoints?.toString() as string}
-            label="Trust S."
-          />
+          {isHoldersLoading ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={<UserRoundX className="h-4 w-4" />}
+              value={`${formatPrice(top10Holding)}%`}
+              label="Top 10 H."
+              isRed={top10Holding > 20}
+              isGreen={top10Holding < 20}
+            />
+          )}
+          {isLoading ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={
+                <ChefHat
+                  className={cn(
+                    "h-4 w-4",
+                    devHoldingPercentage > 20
+                      ? "text-destructive"
+                      : "text-emerald-500",
+                  )}
+                />
+              }
+              value={`${formatPrice(devHoldingPercentage)}%`}
+              label="Dev H."
+              isRed={devHoldingPercentage > 20}
+              isGreen={devHoldingPercentage < 20}
+            />
+          )}
+
+          {isLoading ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={
+                <ChefHat
+                  className={cn(
+                    "h-4 w-4",
+                    totalPoints && totalPoints > 30
+                      ? "text-emerald-500"
+                      : "text-destructive",
+                  )}
+                />
+              }
+              isRed={totalPoints != null && totalPoints < 30}
+              isGreen={totalPoints != null && totalPoints > 30}
+              value={totalPoints?.toString() as string}
+              label="Trust S."
+            />
+          )}
         </div>
         <div className="grid grid-cols-3 gap-4 text-center text-xs">
           <InfoItem
@@ -112,60 +140,76 @@ export default function TokenAudit({
             value="2.21 %"
             label="Snipers H."
           />
-          <InfoItem
-            icon={<Flame className="h-4 w-4 text-destructive" />}
-            isRed
-            value={`${formatPrice(lockedLiquidityPercentage)}%`}
-            label="Locked L."
-          />
+          {isLoading ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={<Flame className="h-4 w-4 text-destructive" />}
+              isRed
+              value={`${formatPrice(lockedLiquidityPercentage)}%`}
+              label="Locked L."
+            />
+          )}
         </div>
         <div className="grid grid-cols-3 gap-4 border-t pt-4 text-center text-xs">
-          <InfoItem
-            icon={<User className="h-4 w-4" />}
-            value={token.metrics.holder_count.toString()}
-            label="Holders"
-          />
+          {isLoadingMetadata ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={<User className="h-4 w-4" />}
+              value={token.metrics.holder_count.toString()}
+              label="Holders"
+            />
+          )}
           <InfoItem
             icon={<Kanban className="h-4 w-4" />}
             value="156"
             label="Pro Traders"
           />
-          <InfoItem
-            icon={
-              <Verified
-                className={cn(
-                  "h-4 w-4",
-                  token.verified ? "text-emerald-500" : "text-destructive",
-                )}
-              />
-            }
-            isRed={!token.verified}
-            isGreen={token.verified}
-            value={token.verified ? "Paid" : "Unpaid"}
-            label={token.verified ? "Verified" : "Unverified"}
-          />
+          {isLoadingMetadata ? (
+            <InfoItemSkeleton />
+          ) : (
+            <InfoItem
+              icon={
+                <Verified
+                  className={cn(
+                    "h-4 w-4",
+                    token.verified ? "text-emerald-500" : "text-destructive",
+                  )}
+                />
+              }
+              isRed={!token.verified}
+              isGreen={token.verified}
+              value={token.verified ? "Paid" : "Unpaid"}
+              label={token.verified ? "Verified" : "Unverified"}
+            />
+          )}
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={"outline"}
-              className=""
-              onClick={() => {
-                copy(token.contract_id);
-                toast.info("Address copied to clipboard");
-              }}
-            >
-              <div className="text-muted-foreground text-sm flex items-center gap-0.5">
-                <NotebookTabs className="h-4 w-4" />
-                <span> CA:</span>
-              </div>
-              <span className="text-[#c8c9d1] font-light">
-                {truncateString(token.contract_id, 14, 15)}
-              </span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Click to copy address</TooltipContent>
-        </Tooltip>
+        {isLoadingMetadata ? (
+          <Skeleton className="w-full h-8" />
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={"outline"}
+                className=""
+                onClick={() => {
+                  copy(token.contract_id);
+                  toast.info("Address copied to clipboard");
+                }}
+              >
+                <div className="text-muted-foreground text-sm flex items-center gap-0.5">
+                  <NotebookTabs className="h-4 w-4" />
+                  <span> CA:</span>
+                </div>
+                <span className="text-[#c8c9d1] font-light">
+                  {truncateString(token.contract_id, 14, 15)}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Click to copy address</TooltipContent>
+          </Tooltip>
+        )}
       </CollapsibleContent>
     </Collapsible>
   );
@@ -215,10 +259,10 @@ export function InfoItemSkeleton({ className }: { className?: string }) {
       <div className="flex items-center justify-center gap-1">
         <Skeleton className="h-4 w-4 rounded-full" />{" "}
         {/* Placeholder for icon */}
-        <Skeleton className="h-6 w-16 rounded-md" />{" "}
+        <Skeleton className="h-4 w-12 rounded-md" />{" "}
         {/* Placeholder for value */}
       </div>
-      <Skeleton className="h-4 w-24 rounded-md mt-1" />{" "}
+      <Skeleton className="h-4 w-12 rounded-md mt-1" />{" "}
       {/* Placeholder for label */}
     </div>
   );

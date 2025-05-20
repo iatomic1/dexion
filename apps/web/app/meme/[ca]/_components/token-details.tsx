@@ -46,13 +46,11 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
 
         {/* Trading panel - 25% on desktop */}
         <div className="w-full lg:w-1/3 h-full">
-          {tokenData && (
-            <TradingPanel
-              token={tokenData}
-              holders={holdersData}
-              pools={poolsData as LiquidityPool[]}
-            />
-          )}
+          <TradingPanel
+            token={tokenData}
+            // holders={holdersData}
+            // pools={poolsData as LiquidityPool[]}
+          />
         </div>
       </div>
     </div>

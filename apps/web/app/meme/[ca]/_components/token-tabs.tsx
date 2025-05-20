@@ -17,30 +17,53 @@ import type {
 import HoldersTable from "./tables/holders-table";
 import { Button } from "@repo/ui/components/ui/button";
 import { Funnel, User2 } from "lucide-react";
+import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
+import TradesTableSkeleton from "./skeleton/trades-table-skeleton";
+import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 
-export default function TokenTabs({
-  trades,
-  token,
-  holders,
-}: {
-  trades: TokenSwapTransaction[];
-  token: TokenMetadata;
-  holders: TokenHolder[];
-}) {
+// export default function TokenTabs({
+//   trades,
+//   token,
+//   holders,
+// }: {
+//   trades: TokenSwapTransaction[];
+//   token: TokenMetadata;
+//   holders: TokenHolder[];
+// }) {
+export default function TokenTabs() {
+  const {
+    tokenData,
+    isLoadingMetadata,
+    holdersData,
+    poolsData,
+    tradesData,
+    isLoadingTrades,
+    isLoadingHolders,
+  } = useTokenData();
   const [activeTab, setActiveTab] = useState("trades");
 
-  useEffect(() => {
-    console.log("TokenTabs received updated trades:", trades.length);
-  }, [trades, activeTab]);
+  // useEffect(() => {
+  //   console.log("TokenTabs received updated trades:", trades.length);
+  // }, [trades, activeTab]);
 
   const tabs = [
     {
       value: "trades",
-      component: <TradesTable trades={trades} token={token} />,
+      component:
+        isLoadingTrades || isLoadingMetadata ? (
+          <TradesTableSkeleton />
+        ) : (
+          <TradesTable trades={tradesData} token={tokenData} />
+        ),
     },
     {
       value: "holders",
-      component: <HoldersTable holders={holders} token={token} />,
+      component:
+        isLoadingHolders || isLoadingMetadata ? (
+          <HoldersTableSkeleton />
+        ) : (
+          <HoldersTable holders={holdersData} token={tokenData} />
+        ),
     },
     // {
     //   value: "top traders",
@@ -64,7 +87,7 @@ export default function TokenTabs({
                 onClick={() => setActiveTab(tab.value.toLowerCase())}
               >
                 {tab.value === "holders"
-                  ? `holders (${token.metrics.holder_count})`
+                  ? `holders (${tokenData?.metrics?.holder_count})`
                   : tab.value}
               </TabsTrigger>
             ))}

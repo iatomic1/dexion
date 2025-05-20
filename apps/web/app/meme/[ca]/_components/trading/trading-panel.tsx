@@ -406,7 +406,7 @@ export default function TradingPanel({
         <TokenAudit token={token} top10Holding={top10Holding} />
         <Pools token={token} pools={pools} />
         <SimilarTokens token={token} />
-        <DexBanner bannerUrl={token.header_image_url} />
+        <DexBanner bannerUrl={token?.header_image_url} />
       </div>
     </div>
   );

@@ -7,37 +7,29 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/components/ui/table";
 import { cn } from "@repo/ui/lib/utils";
-import type {
+import { formatPrice } from "~/lib/helpers/numbers";
+import { truncateString } from "~/lib/helpers/strings";
+import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@repo/ui/components/ui/tooltip";
+import { Worm, ExternalLink, Funnel } from "lucide-react";
+import { EXPLORER_BASE_URL } from "~/lib/constants";
+import openInNewPage from "~/lib/helpers/openInNewPage";
+import { CryptoHoverCard } from "../trade-details";
+import {
+  calculateMarketCap,
+  calculateTokenValue,
+  determineTransactionType,
+} from "~/lib/utils/token";
+import {
   TokenMetadata,
   TokenSwapTransaction,
 } from "@repo/token-watcher/token.ts";
-import { formatPrice } from "~/lib/helpers/numbers";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
-import { truncateString } from "~/lib/helpers/strings";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { ExternalLink, Funnel, Worm } from "lucide-react";
-import { CryptoHoverCard } from "../trade-details";
-import openInNewPage from "~/lib/helpers/openInNewPage";
-import { EXPLORER_BASE_URL } from "~/lib/constants";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import {
-  determineTransactionType,
-  calculateMarketCap,
-  calculateTokenValue,
-} from "~/lib/utils/token";
 
 // Helper function to define consistent column widths
 function getColumnWidth(columnId: string): string {
@@ -162,11 +154,9 @@ export const columns = (
       const ft = wallet.fungible_tokens[0];
       const bns = wallet.bns;
       const address = wallet.address;
-      // if (wallet.bns === "ozai.btc") {
-      //   console.log(row.original);
-      // }
+
       return (
-        <div className="flex items-center gap-2 text-right self-end  justify-end">
+        <div className="flex items-center gap-2 text-right self-end justify-end">
           <Tooltip>
             <TooltipTrigger>
               {(!ft?.total_buys || ft?.total_buys === "0") && (
@@ -213,6 +203,24 @@ export const columns = (
   },
 ];
 
+// Custom hook for media queries (borrowed from HoldersTable)
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+
+    const listener = () => setMatches(media.matches);
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [matches, query]);
+
+  return matches;
+}
+
 export default function TradesTable({
   trades,
   token,
@@ -223,6 +231,7 @@ export default function TradesTable({
   console.log("TradesTable rendering with trades:", trades.length);
   // Create state for table data to ensure re-renders when props change
   const [tableData, setTableData] = useState<TokenSwapTransaction[]>(trades);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Update table data when trades prop changes
   useEffect(() => {
@@ -238,85 +247,87 @@ export default function TradesTable({
 
   return (
     <div className="flex h-full w-full flex-col border-t">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className={cn(
-                      "text-xs text-muted-foreground",
-                      header.column.id === "amount" ||
-                        header.column.id === "totalUsd"
-                        ? "text-right"
-                        : header.id === "trader"
+      {/* Header */}
+      <div
+        className={cn(
+          "w-full border-b grid",
+          isMobile ? "min-w-[800px]" : "",
+          "grid-cols-6", // Assuming 6 columns as per the columns definition
+        )}
+      >
+        {table.getHeaderGroups().map((headerGroup) => (
+          <div key={headerGroup.id} className="contents">
+            {headerGroup.headers.map((header) => (
+              <div
+                key={header.id}
+                className={cn(
+                  "py-3 px-4 text-xs font-medium text-muted-foreground",
+                  header.column.id === "amount" ||
+                    header.column.id === "totalUsd"
+                    ? "text-right"
+                    : header.column.id === "trader"
+                      ? "text-right"
+                      : "text-left",
+                )}
+                style={{
+                  width: getColumnWidth(header.column.id),
+                }}
+              >
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Body */}
+      <div className="relative flex-1 overflow-hidden">
+        <ScrollArea className="h-full w-full" orientation="both">
+          <div className={cn(isMobile ? "min-w-[800px]" : "")}>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row, index) => (
+                <div
+                  key={row.id}
+                  className={cn(
+                    "grid w-full grid-cols-6 border-b items-center",
+                    index % 2 === 0 ? "bg-muted/50" : "",
+                  )}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <div
+                      key={cell.id}
+                      className={cn(
+                        "py-3 px-4",
+                        cell.column.id === "amount" ||
+                          cell.column.id === "totalUsd"
                           ? "text-right"
                           : "text-left",
-                    )}
-                    style={{
-                      width: getColumnWidth(header.column.id),
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-      </Table>
-
-      <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full">
-          <Table>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row, index) => (
-                  <TableRow
-                    key={row.id}
-                    className={cn(index % 2 === 0 ? "bg-muted/50" : "")}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className={cn(
-                          "py-3 px-4",
-                          cell.column.id === "amount" ||
-                            cell.column.id === "totalUsd"
-                            ? "text-right"
-                            : "text-left",
-                        )}
-                        style={{
-                          width: getColumnWidth(cell.column.id),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns(token).length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                      )}
+                      style={{
+                        width: getColumnWidth(cell.column.id),
+                      }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))
+            ) : (
+              <div className="flex h-24 w-full items-center justify-center">
+                <span className="text-sm text-muted-foreground">
+                  No results.
+                </span>
+              </div>
+            )}
+          </div>
         </ScrollArea>
       </div>
     </div>

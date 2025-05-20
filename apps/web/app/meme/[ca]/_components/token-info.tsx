@@ -13,11 +13,7 @@ import {
 } from "@repo/ui/components/ui/avatar";
 import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { Socials } from "./socials";
-import {
-  formatPrice,
-  formatTinyDecimal,
-  formatTokenPrice,
-} from "~/lib/helpers/numbers";
+import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { EXPLORER_BASE_URL, PUBLIC_BASE_URL } from "~/lib/constants";

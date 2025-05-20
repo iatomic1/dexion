@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type React from "react";
 
 import {
@@ -8,58 +8,51 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/ui/tabs";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/ui/components/ui/toggle-group";
 import TradesTable from "./tables/trades-table";
-import type {
-  TokenSwapTransaction,
-  TokenMetadata,
-  TokenHolder,
-} from "@repo/token-watcher/token.ts";
 import HoldersTable from "./tables/holders-table";
-import { Button } from "@repo/ui/components/ui/button";
 import { Funnel, User2 } from "lucide-react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
 import TradesTableSkeleton from "./skeleton/trades-table-skeleton";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
+import { getFilterTrades } from "~/lib/queries/stxtools";
+import { useQuery } from "@tanstack/react-query";
+import { set } from "zod";
 
-// export default function TokenTabs({
-//   trades,
-//   token,
-//   holders,
-// }: {
-//   trades: TokenSwapTransaction[];
-//   token: TokenMetadata;
-//   holders: TokenHolder[];
-// }) {
 export default function TokenTabs() {
   const {
     tokenData,
     isLoadingMetadata,
     holdersData,
-    poolsData,
     tradesData,
     isLoadingTrades,
     isLoadingHolders,
   } = useTokenData();
   const [activeTab, setActiveTab] = useState("trades");
-
-  // useEffect(() => {
-  //   console.log("TokenTabs received updated trades:", trades.length);
-  // }, [trades, activeTab]);
+  const [filterBy, setFilterBy] = useState("");
 
   const tabs = [
     {
       value: "trades",
       component:
-        isLoadingTrades || isLoadingMetadata ? (
+        isLoadingTrades || isLoadingMetadata || !tokenData ? (
           <TradesTableSkeleton />
         ) : (
-          <TradesTable trades={tradesData} token={tokenData} />
+          <TradesTable
+            trades={tradesData}
+            token={tokenData}
+            setFilterBy={setFilterBy}
+            filterBy={filterBy}
+          />
         ),
     },
     {
       value: "holders",
       component:
-        isLoadingHolders || isLoadingMetadata ? (
+        isLoadingHolders || isLoadingMetadata || !tokenData ? (
           <HoldersTableSkeleton />
         ) : (
           <HoldersTable holders={holdersData} token={tokenData} />
@@ -92,24 +85,30 @@ export default function TokenTabs() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <div className="flex items-center gap-2">
-            <Button
-              variant={"ghost"}
+          <ToggleGroup type="single" className="flex items-center">
+            <ToggleGroupItem
+              // variant={"ghost"}
               size={"sm"}
+              aria-label="Toggle dev"
+              value={tokenData?.contract_id?.split(".")[0] as string}
               className="hover:text-indigo-500 text-xs font-medium"
+              onClick={() => setFilterBy(tokenData?.contract_id?.split(".")[0])}
             >
               <Funnel />
               DEV
-            </Button>
-            <Button
-              variant={"ghost"}
+            </ToggleGroupItem>
+            <ToggleGroupItem
               size={"sm"}
               className="hover:text-indigo-500 text-xs font-medium"
+              value="SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+              onClick={() =>
+                setFilterBy("SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z")
+              }
             >
               <User2 />
               You
-            </Button>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
         {tabs.map((tab) => {
           return (

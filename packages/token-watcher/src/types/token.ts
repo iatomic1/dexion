@@ -115,3 +115,36 @@ export type LiquidityPool = {
     price_change_30d: number;
   };
 };
+
+type Token = {
+  contract_id: string;
+  decimals: number;
+  image_url: string;
+  symbol: string;
+};
+
+export type FilterTokenSwapTransaction = {
+  tx_id: string;
+  pool_id: string;
+  token_x_amount: string;
+  token_y_amount: string;
+  burn_block_time: number;
+  price_usd: number;
+  volume_usd: number;
+  wallet: {
+    address: string;
+    bns: string;
+  };
+  token_x: {
+    contract_id: string;
+    decimals: number;
+    image_url: string;
+    symbol: string;
+  };
+  token_y: {
+    contract_id: string;
+    decimals: number;
+    image_url: string;
+    symbol: string;
+  };
+};

@@ -1,5 +1,12 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { usePathname } from "next/navigation";
 import { getSocket } from "~/lib/token-socket";
 import {
@@ -20,38 +27,69 @@ type TxPayload = {
   pools: LiquidityPool[];
 };
 
-// Define the TokenDataContextType with all the properties
-export type TokenDataContextType = {
-  tx: TxPayload | null;
-  tokenData: TokenMetadata | null;
-  tradesData: TokenSwapTransaction[];
-  holdersData: TokenHolder[];
-  poolsData: LiquidityPool[];
-  isLoadingMetadata: boolean;
-  isLoadingTrades: boolean;
-  isLoadingHolders: boolean;
-  isLoadingPools: boolean;
-};
-
-// Create the contexts with proper default values
-const TokenSocketContext = createContext<TxPayload | null>(null);
-const TokenDataContext = createContext<TokenDataContextType>({
-  tx: null,
-  tokenData: null,
-  tradesData: [],
-  holdersData: [],
-  poolsData: [],
-  isLoadingMetadata: true,
-  isLoadingTrades: true,
-  isLoadingHolders: true,
-  isLoadingPools: true,
+// Split contexts by data domain
+const MetadataContext = createContext<{
+  data: TokenMetadata | null;
+  isLoading: boolean;
+}>({
+  data: null,
+  isLoading: true,
 });
 
-// Hook to access the original socket data
+const TradesContext = createContext<{
+  data: TokenSwapTransaction[];
+  isLoading: boolean;
+}>({
+  data: [],
+  isLoading: true,
+});
+
+const HoldersContext = createContext<{
+  data: TokenHolder[];
+  isLoading: boolean;
+}>({
+  data: [],
+  isLoading: true,
+});
+
+const PoolsContext = createContext<{
+  data: LiquidityPool[];
+  isLoading: boolean;
+}>({
+  data: [],
+  isLoading: true,
+});
+
+// Raw socket context (kept for compatibility)
+const TokenSocketContext = createContext<TxPayload | null>(null);
+
+// Custom hooks for accessing specific data
+export const useTokenMetadata = () => useContext(MetadataContext);
+export const useTokenTrades = () => useContext(TradesContext);
+export const useTokenHolders = () => useContext(HoldersContext);
+export const useTokenPools = () => useContext(PoolsContext);
 export const useTokenSocket = () => useContext(TokenSocketContext);
 
-// Hook to access the processed token data
-export const useTokenData = () => useContext(TokenDataContext);
+// Backwards compatibility hook that combines all data
+export const useTokenData = () => {
+  const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
+  const { data: tradesData, isLoading: isLoadingTrades } = useTokenTrades();
+  const { data: holdersData, isLoading: isLoadingHolders } = useTokenHolders();
+  const { data: poolsData, isLoading: isLoadingPools } = useTokenPools();
+  const tx = useTokenSocket();
+
+  return {
+    tx,
+    tokenData,
+    tradesData,
+    holdersData,
+    poolsData,
+    isLoadingMetadata,
+    isLoadingTrades,
+    isLoadingHolders,
+    isLoadingPools,
+  };
+};
 
 export const TokenSocketProvider = ({
   children,
@@ -67,7 +105,34 @@ export const TokenSocketProvider = ({
   const [isLoadingTrades, setIsLoadingTrades] = useState(true);
   const [isLoadingHolders, setIsLoadingHolders] = useState(true);
   const [isLoadingPools, setIsLoadingPools] = useState(true);
+
   const pathname = usePathname();
+
+  // Socket event handler - memoized to prevent recreating on each render
+  const handleSocketEvent = useCallback((data: TxPayload, ca: string) => {
+    if (data.contract !== ca) return;
+
+    setTx(data);
+
+    switch (data.type) {
+      case "metadata":
+        setTokenData(data.tokenMetadata);
+        setIsLoadingMetadata(false);
+        break;
+      case "trades":
+        setTradesData(data.trades);
+        setIsLoadingTrades(false);
+        break;
+      case "holders":
+        setHoldersData(data.holders);
+        setIsLoadingHolders(false);
+        break;
+      case "pools":
+        setPoolsData(data.pools);
+        setIsLoadingPools(false);
+        break;
+    }
+  }, []);
 
   useEffect(() => {
     const match = pathname?.match(/\/meme\/(.+)/);
@@ -83,48 +148,58 @@ export const TokenSocketProvider = ({
     const socket = getSocket();
     socket.emit("subscribe", ca);
 
-    socket.on("tx", (data: TxPayload) => {
-      if (data.contract === ca) {
-        setTx(data);
-        if (data.type === "metadata") {
-          setTokenData(data.tokenMetadata);
-          setIsLoadingMetadata(false);
-        } else if (data.type === "trades") {
-          setTradesData(data.trades);
-          setIsLoadingTrades(false);
-        } else if (data.type === "holders") {
-          setHoldersData(data.holders);
-          setIsLoadingHolders(false);
-        } else if (data.type === "pools") {
-          setPoolsData(data.pools);
-          setIsLoadingPools(false);
-        }
-      }
-    });
+    socket.on("tx", (data: TxPayload) => handleSocketEvent(data, ca));
 
     return () => {
       socket.emit("unsubscribe", ca);
       socket.off("tx");
     };
-  }, [pathname]);
+  }, [pathname, handleSocketEvent]);
 
-  const contextValue: TokenDataContextType = {
-    tx,
-    tokenData,
-    tradesData,
-    holdersData,
-    poolsData,
-    isLoadingMetadata,
-    isLoadingTrades,
-    isLoadingHolders,
-    isLoadingPools,
-  };
+  // Memoize context values to prevent unnecessary rerenders
+  const metadataValue = useMemo(
+    () => ({
+      data: tokenData,
+      isLoading: isLoadingMetadata,
+    }),
+    [tokenData, isLoadingMetadata],
+  );
+
+  const tradesValue = useMemo(
+    () => ({
+      data: tradesData,
+      isLoading: isLoadingTrades,
+    }),
+    [tradesData, isLoadingTrades],
+  );
+
+  const holdersValue = useMemo(
+    () => ({
+      data: holdersData,
+      isLoading: isLoadingHolders,
+    }),
+    [holdersData, isLoadingHolders],
+  );
+
+  const poolsValue = useMemo(
+    () => ({
+      data: poolsData,
+      isLoading: isLoadingPools,
+    }),
+    [poolsData, isLoadingPools],
+  );
 
   return (
     <TokenSocketContext.Provider value={tx}>
-      <TokenDataContext.Provider value={contextValue}>
-        {children}
-      </TokenDataContext.Provider>
+      <MetadataContext.Provider value={metadataValue}>
+        <TradesContext.Provider value={tradesValue}>
+          <HoldersContext.Provider value={holdersValue}>
+            <PoolsContext.Provider value={poolsValue}>
+              {children}
+            </PoolsContext.Provider>
+          </HoldersContext.Provider>
+        </TradesContext.Provider>
+      </MetadataContext.Provider>
     </TokenSocketContext.Provider>
   );
 };

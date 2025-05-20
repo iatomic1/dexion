@@ -405,7 +405,7 @@ export default function TradingPanel({
         <PresetTabs />
         <TokenAudit token={token} top10Holding={top10Holding} />
         <Pools token={token} pools={pools} />
-        <SimilarTokens token={token} />
+        {/* <SimilarTokens token={token} /> */}
         <DexBanner bannerUrl={token?.header_image_url} />
       </div>
     </div>

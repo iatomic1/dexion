@@ -1,7 +1,12 @@
 import { performance } from "perf_hooks";
 
 import { Server } from "socket.io";
-import { getTokenMetadata, getTrades, getHolders } from "./stxtools-api";
+import {
+  getTokenMetadata,
+  getTrades,
+  getHolders,
+  getPools,
+} from "./stxtools-api";
 
 const contractSubscriptions = new Map<string, Set<string>>(); // contract -> socket IDs
 
@@ -60,6 +65,17 @@ export const createSocketIo = (server) => {
             });
           })
           .catch((err) => console.error("Error fetching holders:", err));
+
+        getPools(contractAddress)
+          .then((pools) => {
+            socket.emit("tx", {
+              type: "pools",
+              contract: contractAddress,
+              pools: pools,
+            });
+          })
+          .catch((err) => console.error("Error fetching pools:", err));
+
         const end = performance.now(); // end timer
         console.log(
           `Fetched initial data for ${contractAddress} in ${(end - start).toFixed(2)}ms`,

@@ -18,6 +18,7 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from "@repo/ui/components/ui/credenza";
+import { cn } from "@repo/ui/lib/utils";
 
 export function AccountSecurityModal({
   children,
@@ -104,7 +105,7 @@ export function AccountSecurityModal({
             title="Language"
             description="Change the application language"
             action={
-              <Select defaultValue="english">
+              <Select defaultValue="english" disabled>
                 <SelectTrigger className="w-[180px] bg-zinc-800 border-zinc-700 text-white">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">🇺🇸</span>
@@ -123,10 +124,12 @@ export function AccountSecurityModal({
           <SettingsSection
             title="Wallets"
             description="Add or manage your external wallet accounts"
+            // className="bg-"
             action={
               <Button
                 variant="secondary"
                 size="sm"
+                disabled
                 className="bg-zinc-800 hover:bg-zinc-700 text-white"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
@@ -189,13 +192,20 @@ function SettingsSection({
   title,
   description,
   action,
+  className,
 }: {
   title: string;
   description: string;
   action: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="p-4 border-t border-zinc-800 flex items-center justify-between">
+    <div
+      className={cn(
+        "p-4 border-t border-zinc-800 flex items-center justify-between",
+        className,
+      )}
+    >
       <div>
         <h3 className="text-white font-medium">{title}</h3>
         <p className="text-sm text-zinc-400">{description}</p>

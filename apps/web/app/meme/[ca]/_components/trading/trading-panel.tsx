@@ -5,16 +5,26 @@ import TokenAudit from "./token-audit";
 import PresetTabs from "./preset-tabs";
 import TradingStats from "./stats";
 import { DexBanner } from "./dex-banner";
-import { TokenHolder, TokenMetadata } from "@repo/token-watcher/token.ts";
+import {
+  LiquidityPool,
+  TokenHolder,
+  TokenMetadata,
+} from "@repo/token-watcher/token.ts";
 import { calculatePercentageHolding } from "~/lib/utils/token";
 import { useEffect, useState } from "react";
+import Pools from "./pools";
 
 interface TradingPanelProps {
   token: TokenMetadata;
   holders: TokenHolder[];
+  pools: LiquidityPool[];
 }
 
-export default function TradingPanel({ token, holders }: TradingPanelProps) {
+export default function TradingPanel({
+  token,
+  holders,
+  pools,
+}: TradingPanelProps) {
   // const [tradeAction, setTradeAction] = useState("buy");
   // const [tradeType, setTradeType] = useState("market");
   // const [amount, setAmount] = useState("0.01");
@@ -394,6 +404,7 @@ export default function TradingPanel({ token, holders }: TradingPanelProps) {
         <TradingStats />
         <PresetTabs />
         <TokenAudit token={token} top10Holding={top10Holding} />
+        <Pools token={token} pools={pools} />
         <SimilarTokens token={token} />
         <DexBanner bannerUrl={token.header_image_url} />
       </div>

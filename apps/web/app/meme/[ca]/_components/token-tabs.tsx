@@ -15,6 +15,8 @@ import type {
   TokenHolder,
 } from "@repo/token-watcher/token.ts";
 import HoldersTable from "./tables/holders-table";
+import { Button } from "@repo/ui/components/ui/button";
+import { Funnel, User2 } from "lucide-react";
 
 export default function TokenTabs({
   trades,
@@ -52,20 +54,40 @@ export default function TokenTabs({
         className="w-full h-full flex flex-col"
         defaultValue={tabs[0]?.value}
       >
-        <TabsList className="w-fit flex items-center gap-4 bg-transparent mt-1">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              value={tab.value.toLowerCase()}
-              key={tab.value.toLowerCase()}
-              className="w-fit capitalize items-center"
-              onClick={() => setActiveTab(tab.value.toLowerCase())}
+        <div className="flex items-center justify-between">
+          <TabsList className="w-fit flex items-center gap-4 bg-transparent mt-1">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                value={tab.value.toLowerCase()}
+                key={tab.value.toLowerCase()}
+                className="w-fit capitalize items-center"
+                onClick={() => setActiveTab(tab.value.toLowerCase())}
+              >
+                {tab.value === "holders"
+                  ? `holders (${token.metrics.holder_count})`
+                  : tab.value}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:text-indigo-500 text-xs font-medium"
             >
-              {tab.value === "holders"
-                ? `holders (${token.metrics.holder_count})`
-                : tab.value}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+              <Funnel />
+              DEV
+            </Button>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:text-indigo-500 text-xs font-medium"
+            >
+              <User2 />
+              You
+            </Button>
+          </div>
+        </div>
         {tabs.map((tab) => {
           return (
             <TabsContent

@@ -6,6 +6,7 @@ import TokenTabs from "./token-tabs";
 import TradingPanel from "./trading/trading-panel";
 import { useTokenSocket } from "~/contexts/TokenWatcherSocketContext";
 import type {
+  LiquidityPool,
   TokenHolder,
   TokenMetadata,
   TokenSwapTransaction,
@@ -16,6 +17,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
   const [tokenData, setTokenData] = useState<TokenMetadata | null>(null);
   const [tradesData, setTradesData] = useState<TokenSwapTransaction[]>([]);
   const [holdersData, setHoldersData] = useState<TokenHolder[]>([]);
+  const [poolsData, setPoolsData] = useState<LiquidityPool[] | null>([]);
 
   useEffect(() => {
     if (tx?.contract === ca) {
@@ -38,6 +40,8 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
       } else if (tx.type === "holders") {
         setHoldersData(tx.holders);
         console.log(holdersData);
+      } else if (tx.type === "pools") {
+        setPoolsData(tx.pools);
       }
     }
   }, [tx, ca]);
@@ -73,7 +77,11 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
 
         {/* Trading panel - 25% on desktop */}
         <div className="w-full lg:w-1/3 h-full">
-          <TradingPanel token={tokenData} holders={holdersData} />
+          <TradingPanel
+            token={tokenData}
+            holders={holdersData}
+            pools={poolsData as LiquidityPool[]}
+          />
         </div>
       </div>
     </div>

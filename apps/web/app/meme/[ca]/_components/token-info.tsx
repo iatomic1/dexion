@@ -107,7 +107,12 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           />
           <MetricItem
             label="Price"
-            value={formatTinyDecimal(token.metrics.price_usd)}
+            value={"100"}
+            // value={
+            //   token.metrics.price_usd > 1
+            //     ? formatPrice(token.metrics.price_usd)
+            //     : formatTinyDecimal(token.metrics.price_usd)
+            // }
           />
           <MetricItem
             label="liquidity"
@@ -115,9 +120,13 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           />
           <MetricItem
             label="c. supply"
-            value={formatPrice(
-              Number(token.circulating_supply) / 10 ** token.decimals,
-            )}
+            value={
+              token.progress && token.progress > 100
+                ? formatPrice(
+                    Number(token.circulating_supply) / 10 ** token.decimals,
+                  )
+                : formatPrice(Number(token.circulating_supply))
+            }
           />
         </div>
       </div>
@@ -143,12 +152,17 @@ const Actions = ({
   const isMobile = useMediaQuery("(max-width: 640px)");
 
   return (
-    <div className={cn("flex items-center gap-0", className)}>
+    <div
+      className={cn("flex items-center gap-0", className, isMobile && "gap-1")}
+    >
       {isMobile && <TokenAudit token={token} />}
       <Button
-        variant={"ghost"}
+        variant={isMobile ? "secondary" : "ghost"}
         size={"icon"}
-        className="hover:text-indigo-500 transition-colors duration-150 ease-in-out h-7 w-7"
+        className={cn(
+          "hover:text-indigo-500 transition-colors duration-150 ease-in-out",
+          isMobile && "rounded-full",
+        )}
         onClick={() => {
           copy(`${PUBLIC_BASE_URL}/meme/${ca}`);
           toast.info("Link copied to clipboard");
@@ -157,9 +171,12 @@ const Actions = ({
         <Share2 className="h-5 w-5" />
       </Button>
       <Button
-        variant={"ghost"}
+        variant={isMobile ? "secondary" : "ghost"}
         size={"icon"}
-        className="hover:text-indigo-500 transition-colors duration-150 ease-in-out h-7 w-7"
+        className={cn(
+          "hover:text-indigo-500 transition-colors duration-150 ease-in-out",
+          isMobile && "rounded-full",
+        )}
       >
         <Star className="h-5 w-5" />
       </Button>

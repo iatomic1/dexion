@@ -120,6 +120,7 @@ export const TokenSocketProvider = ({
         setIsLoadingMetadata(false);
         break;
       case "trades":
+        console.log("trades emitted", data);
         setTradesData(data.trades);
         setIsLoadingTrades(false);
         break;

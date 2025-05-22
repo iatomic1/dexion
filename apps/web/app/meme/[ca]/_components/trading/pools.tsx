@@ -105,7 +105,10 @@ function PoolsItem({ pool }: { pool: LiquidityPool }) {
               <span
                 className="text-muted-foreground text-xs leading-[inherit] font-normal"
                 dangerouslySetInnerHTML={{
-                  __html: formatTinyDecimal(pool?.token_x_price_usd),
+                  __html:
+                    pool?.token_x_price_usd < 1
+                      ? formatTinyDecimal(pool?.token_x_price_usd)
+                      : formatPrice(pool?.token_x_price_usd),
                 }}
               />
             ) : (

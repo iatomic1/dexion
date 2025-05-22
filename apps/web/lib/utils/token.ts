@@ -4,12 +4,21 @@ import {
   TokenSwapTransaction,
 } from "@repo/token-watcher/token.ts";
 import { formatPrice } from "../helpers/numbers";
-import { Address } from "@stacks/transactions";
-import { AddressBalanceResponse } from "~/types/balance";
 import { TokenLockedLiquidity } from "~/types/stxwatch";
+import { AddressBalanceResponse } from "~/types/hiro/balance";
 
 export const calculateMarketCap = (token: TokenMetadata, price: number) => {
-  return (Number(token.circulating_supply) / 10 ** token.decimals) * price;
+  const cs =
+    token.progress && token.progress >= 100
+      ? Number(token.circulating_supply) / 10 ** token.decimals
+      : Number(token.circulating_supply);
+  const mc = cs * price;
+  // console.log("mccc", token.circulating_supply, price);
+  // console.log(
+  //   (Number(token.circulating_supply) / 10 ** token.decimals) * price,
+  //   "finall",
+  // );
+  return mc;
 };
 
 export const calculateTokenValue = (balance: string, token: TokenMetadata) => {
@@ -29,19 +38,33 @@ export function calculatePnl(
   row: TokenHolder,
   token: TokenMetadata,
 ): { value: number; formatted: string } {
-  const valueUsd = calculateTokenValue(row.balance as string, token);
+  const currentValueUsd = calculateTokenValue(row.balance as string, token);
 
-  // If no sells have occurred, calculate PnL as current value minus total spent
-  if (row.total_buys && row.total_sells === "0") {
-    const pnlValue = valueUsd - Number(row.total_spent_usd);
+  const totalBuys = Number(row.total_buys);
+  const totalSells = Number(row.total_sells);
+  const totalSpent = Number(row.total_spent_usd);
+
+  const totalValueNow = currentValueUsd + totalSells;
+
+  if (totalBuys && totalSells === 0) {
+    const pnlValue = currentValueUsd - totalSpent;
     return {
       value: pnlValue,
       formatted: formatPrice(pnlValue),
     };
   }
 
-  // Otherwise, use the calculated total PnL
-  const pnlValue = Number(row.total_pnl_usd);
+  // Proportional cost basis calculation
+  const soldProportion = totalSells / totalValueNow;
+  const heldProportion = currentValueUsd / totalValueNow;
+
+  const soldCostBasis = totalSpent * soldProportion;
+  const heldCostBasis = totalSpent * heldProportion;
+
+  const realizedPnL = totalSells - soldCostBasis;
+  const unrealizedPnL = currentValueUsd - heldCostBasis;
+  const pnlValue = realizedPnL + unrealizedPnL;
+
   return {
     value: pnlValue,
     formatted: formatPrice(pnlValue),

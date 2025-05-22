@@ -1,15 +1,16 @@
-import {
+"use client";
+
+import type {
   TokenMetadata,
   TokenSwapTransaction,
 } from "@repo/token-watcher/token.ts";
-import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@repo/ui/components/ui/tooltip";
-import { ColumnDef } from "@tanstack/react-table";
-import { Worm, Funnel, ExternalLink } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Worm, FilterIcon as Funnel, ExternalLink } from "lucide-react";
 import { EXPLORER_BASE_URL } from "~/lib/constants";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
 import { formatPrice } from "~/lib/helpers/numbers";
@@ -26,17 +27,17 @@ import { CryptoHoverCard } from "../trade-details";
 export function getColumnWidth(columnId: string): string {
   switch (columnId) {
     case "timestamp":
-      return "120px";
-    case "type":
       return "100px";
+    case "type":
+      return "80px";
     case "mc":
-      return "120px";
+      return "100px";
     case "amount":
-      return "120px";
+      return "100px";
     case "totalUsd":
-      return "120px";
+      return "100px";
     case "trader":
-      return "200px";
+      return "150px";
     default:
       return "auto";
   }
@@ -126,7 +127,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-xs font-geist-mono text-right ${
+          className={`text-xs font-geist-mono text-center ${
             determineTransactionType(row.original, token) === "Buy"
               ? "text-green-500"
               : "text-destructive"

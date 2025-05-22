@@ -19,11 +19,13 @@ import openInNewPage from "~/lib/helpers/openInNewPage";
 import { EXPLORER_BASE_URL, PUBLIC_BASE_URL } from "~/lib/constants";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { toast } from "sonner";
+import { useMediaQuery } from "./trade-details";
+import TokenAudit from "./trading/token-audit";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
   return (
-    <div className="border-b bg-background p-4 h-fit sm:flex justify-between items-center">
+    <div className="border-b bg-background px-4 pb-2 sm:p-4 h-fit sm:flex justify-between items-center">
       <div className=" flex flex-col gap-3 md:flex-row md:gap-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -92,7 +94,7 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
               <Socials socials={token.socials} />
             </div>
           </div>
-          <Actions className="sm:hidden" ca={token.contract_id} />
+          <Actions className="sm:hidden" ca={token.contract_id} token={token} />
         </div>
         <div className="flex items-center justify-between md:gap-5 xl:gap-8">
           <h1 className="font-medium hidden sm:flex text-lg">
@@ -119,16 +121,30 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           />
         </div>
       </div>
-      <Actions className="hidden sm:flex" ca={token.contract_id} />
+      <Actions
+        className="hidden sm:flex"
+        ca={token.contract_id}
+        token={token}
+      />
     </div>
   );
 }
 
-const Actions = ({ className, ca }: { className: string; ca: string }) => {
+const Actions = ({
+  className,
+  ca,
+  token,
+}: {
+  className: string;
+  ca: string;
+  token: TokenMetadata;
+}) => {
   const copy = useCopyToClipboard();
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   return (
     <div className={cn("flex items-center gap-0", className)}>
+      {isMobile && <TokenAudit token={token} />}
       <Button
         variant={"ghost"}
         size={"icon"}

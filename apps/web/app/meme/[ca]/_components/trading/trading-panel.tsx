@@ -21,7 +21,7 @@ export default function TradingPanel({
     <div className="sm:flex h-full flex-col hidden">
       <div className="flex flex-col p-4">
         {/* <TradingStats /> */}
-        <PresetTabs />
+        {/* <PresetTabs /> */}
         <TokenAudit token={token} />
         <Pools />
         {/* <SimilarTokens token={token} /> */}

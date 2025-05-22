@@ -1,12 +1,9 @@
 import { performance } from "perf_hooks";
-
 import { Server } from "socket.io";
-import {
-  getTokenMetadata,
-  getTrades,
-  getHolders,
-  getPools,
-} from "./stxtools-api";
+import { getTokenMetadata, getPools } from "./stxtools-api";
+import { getStxCityTokenMetadata, getStxCityTokenTrades } from "./stxcity";
+import { transformToTokenMetadata } from "../utils/transferToTokenMetadata";
+import { convertTransaction } from "../utils/convertSwapTransaction";
 
 const contractSubscriptions = new Map<string, Set<string>>(); // contract -> socket IDs
 
@@ -28,72 +25,125 @@ export const createSocketIo = (server) => {
 
     socket.on("subscribe", async (contractAddress: string) => {
       console.log("sub was emitted");
+
       if (!contractSubscriptions.has(contractAddress))
         contractSubscriptions.set(contractAddress, new Set());
       contractSubscriptions.get(contractAddress)?.add(socket.id);
 
       console.log(`Fetching initial data for ${contractAddress}`);
 
-      const startAll = performance.now();
-
-      const measureApi = async (label, fn) => {
-        const start = performance.now();
-        const result = await fn();
-        const end = performance.now();
-        console.log(`[${label}] took ${(end - start).toFixed(2)}ms`);
-        return result;
-      };
-
       try {
-        measureApi("getTokenMetadata", () =>
-          getTokenMetadata(contractAddress).then((tokenMetadata) => {
+        // First try to get metadata from stxcity
+        console.log("Attempting to get metadata from stxcity...");
+        const stxCityMetadata = await getStxCityTokenMetadata(contractAddress);
+        console.log("Raw stxcity metadata:", stxCityMetadata);
+
+        if (stxCityMetadata) {
+          console.log("Transforming stxcity metadata...");
+          const token = transformToTokenMetadata(stxCityMetadata);
+          console.log("Transformed token:", token);
+
+          // Check if progress is 100 (complete)
+          if (stxCityMetadata.progress === 100) {
+            console.log("Progress is 100, fetching from stxtools...");
+
+            const tokenMetadata = await getTokenMetadata(contractAddress);
+
+            if (tokenMetadata) {
+              console.log("Got metadata from stxtools:", tokenMetadata);
+              socket.emit("tx", {
+                type: "metadata",
+                contract: contractAddress,
+                tokenMetadata,
+              });
+            } else {
+              console.log("No metadata from stxtools, using stxcity data");
+              socket.emit("tx", {
+                type: "metadata",
+                contract: contractAddress,
+                tokenMetadata: token,
+              });
+            }
+          } else {
+            console.log(
+              `Progress is ${stxCityMetadata.progress}, using stxcity data and fetching trades...`,
+            );
+
+            // Emit stxcity metadata
+            socket.emit("tx", {
+              type: "metadata",
+              contract: contractAddress,
+              tokenMetadata: token,
+            });
+
+            // Get trades from stxcity since progress < 100
+            console.log(
+              `Getting trades for dex_contract: ${token.dex_contract}, contract_id: ${token.contract_id}`,
+            );
+            const res = await getStxCityTokenTrades(
+              token.dex_contract as string,
+              token.contract_id,
+            );
+
+            const swapTxs = res.swapTXs;
+            console.log(
+              `Got ${swapTxs?.length || 0} swap transactions from stxcity and ${res.chartData.length} chartData`,
+            );
+
+            if (swapTxs && swapTxs.length > 0) {
+              console.log();
+              const trades = swapTxs.map((trade, index) =>
+                convertTransaction(trade, {
+                  token_y_contract: token.contract_id,
+                  token_y_decimals: token.decimals,
+                  token_y_image: token.image_url,
+                  token_y_symbol: token.symbol,
+                  tx_index: index,
+                  chartData: res.chartData,
+                }),
+              );
+
+              console.log(
+                `Converted ${trades.length} trades, emitting to socket`,
+                trades[0],
+              );
+              socket.emit("tx", {
+                type: "trades",
+                contract: contractAddress,
+                trades: trades,
+              });
+            } else {
+              console.log("No trades found or empty array returned");
+            }
+          }
+        } else {
+          console.log(
+            "No metadata from stxcity, trying stxtools as fallback...",
+          );
+
+          // Fallback to stxtools if stxcity has no data
+          const tokenMetadata = await getTokenMetadata(contractAddress);
+
+          if (tokenMetadata) {
+            console.log("Got metadata from stxtools:", tokenMetadata);
             socket.emit("tx", {
               type: "metadata",
               contract: contractAddress,
               tokenMetadata,
             });
-          }),
-        ).catch((err) => console.error("Error fetching tokenMetadata:", err));
-
-        measureApi("getTrades", () =>
-          getTrades(contractAddress).then((trades) => {
-            socket.emit("tx", {
-              type: "trades",
-              contract: contractAddress,
-              trades: trades?.data,
-            });
-          }),
-        ).catch((err) => console.error("Error fetching trades:", err));
-
-        measureApi("getHolders", () =>
-          getHolders(contractAddress).then((holders) => {
-            socket.emit("tx", {
-              type: "holders",
-              contract: contractAddress,
-              holders: holders?.data,
-            });
-          }),
-        ).catch((err) => console.error("Error fetching holders:", err));
-
-        measureApi("getPools", () =>
-          getPools(contractAddress).then((pools) => {
-            socket.emit("tx", {
-              type: "pools",
-              contract: contractAddress,
-              pools: pools,
-            });
-          }),
-        ).catch((err) => console.error("Error fetching pools:", err));
-
-        const endAll = performance.now();
-        console.log(
-          `Fetched all data for ${contractAddress} in ${(endAll - startAll).toFixed(2)}ms`,
-        );
+          } else {
+            console.log("No metadata found from either source");
+          }
+        }
       } catch (err) {
-        console.error("Error fetching initial data:", err);
+        console.error("Error in subscribe handler:", err);
+        console.error("Stack trace:", err.stack);
+
+        // Emit error to client
         socket.emit("tx", {
           type: "error",
-          message: "Failed to fetch initial data",
+          contract: contractAddress,
+          error: err.message,
         });
       }
     });

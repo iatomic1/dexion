@@ -17,7 +17,7 @@ export const getTokenMetadata = async (
 
     return data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return null;
   }
 };
@@ -31,7 +31,7 @@ export const getTrades = async (
 
     return data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return null;
   }
 };
@@ -45,7 +45,7 @@ export const getHolders = async (
 
     return data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return null;
   }
 };
@@ -56,7 +56,7 @@ export const getPools = async (ca: string): Promise<LiquidityPool[] | null> => {
 
     return data;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return null;
   }
 };

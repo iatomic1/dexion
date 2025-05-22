@@ -7,6 +7,9 @@ const nextConfig = {
       {
         hostname: "images.ctfassets.net",
       },
+      {
+        hostname: "assets.hiro.so",
+      },
     ],
   },
 };

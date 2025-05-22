@@ -19,8 +19,8 @@ import {
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
 import { Button } from "@repo/ui/components/ui/button";
-
-import { Filter } from "lucide-react";
+import { RotateCcw } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { z } from "zod";
 
 const formSchema = z
@@ -69,7 +69,7 @@ export default function FilterByAddressModal() {
   return (
     <Credenza>
       <CredenzaTrigger asChild>
-        <Filter className="h-4 w-4" />
+        <SlidersHorizontal className="h-4 w-4" />
       </CredenzaTrigger>
       <CredenzaContent className="sm:max-w-2xl bg-zinc-900 border-zinc-800 text-white p-0 overflow-hidden">
         {/* <CredenzaHeader className="p-4 border-b border-zinc-800 flex flex-row items-center justify-between"> */}
@@ -152,10 +152,19 @@ export default function FilterByAddressModal() {
             </div>
 
             <CredenzaFooter className="grid grid-cols-2 mt-0 gap-4 items-center w-full">
-              <Button variant="ghost" size="lg" className="w-full">
+              <Button
+                variant="ghost"
+                size="lg"
+                className="w-full rounded-full items-center"
+              >
+                <RotateCcw />
                 Reset
               </Button>
-              <Button variant="default" size="lg" className="w-full">
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full rounded-full"
+              >
                 Apply
               </Button>
             </CredenzaFooter>

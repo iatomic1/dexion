@@ -1,5 +1,7 @@
 export type TokenMetadata = {
   contract_id: string;
+  dex_contract: string | null;
+  progress: number | null;
   symbol: string;
   decimals: number;
   name: string;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type React from "react";
 
 import {
@@ -16,12 +16,12 @@ import TradesTable from "./tables/trades-table";
 import HoldersTable from "./tables/holders-table";
 import { Funnel, User2 } from "lucide-react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
-import TradesTableSkeleton from "./skeleton/trades-table-skeleton";
+import TradesTableSkeleton, {
+  useMediaQuery,
+} from "./skeleton/trades-table-skeleton";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
-import { getFilterTrades } from "~/lib/queries/stxtools";
-import { useQuery } from "@tanstack/react-query";
-import { set } from "zod";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { TokenMetadata } from "@repo/token-watcher/token.ts";
 
 export default function TokenTabs() {
   const {
@@ -34,21 +34,29 @@ export default function TokenTabs() {
   } = useTokenData();
   const [activeTab, setActiveTab] = useState("trades");
   const [filterBy, setFilterBy] = useState("");
+  const isMobile = useMediaQuery("(max-width: 640px)");
+
+  // Handle filter changes from TradesTable component
+  const handleFilterChange = (newFilter: string) => {
+    setFilterBy(newFilter);
+  };
+
+  // Handle filter toggle buttons
+  const handleToggleFilter = (value: string) => {
+    setFilterBy((prevFilter) => (prevFilter === value ? "" : value));
+  };
 
   const tabs = [
     {
       value: "trades",
-      component:
-        isLoadingTrades || isLoadingMetadata || !tokenData ? (
-          <TradesTableSkeleton />
-        ) : (
-          <TradesTable
-            trades={tradesData}
-            token={tokenData}
-            setFilterBy={setFilterBy}
-            filterBy={filterBy}
-          />
-        ),
+      component: (
+        <TradesTable
+          token={tokenData as TokenMetadata}
+          onFilterChange={handleFilterChange}
+          initialFilterValue={filterBy}
+        />
+      ),
+      // ),
     },
     {
       value: "holders",
@@ -96,14 +104,18 @@ export default function TokenTabs() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <ToggleGroup type="single" className="flex items-center">
+          <ToggleGroup
+            type="single"
+            className="flex items-center"
+            value={filterBy}
+            onValueChange={(value) => handleToggleFilter(value)}
+          >
             <ToggleGroupItem
               // variant={"ghost"}
               size={"sm"}
               aria-label="Toggle dev"
               value={tokenData?.contract_id?.split(".")[0] as string}
               className="hover:text-indigo-500 text-xs font-medium"
-              onClick={() => setFilterBy(tokenData?.contract_id?.split(".")[0])}
             >
               <Funnel />
               DEV
@@ -112,9 +124,6 @@ export default function TokenTabs() {
               size={"sm"}
               className="hover:text-indigo-500 text-xs font-medium"
               value="SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
-              onClick={() =>
-                setFilterBy("SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z")
-              }
             >
               <User2 />
               You

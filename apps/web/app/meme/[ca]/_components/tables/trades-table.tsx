@@ -7,21 +7,19 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { cn } from "@repo/ui/lib/utils";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import {
+import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
+import type {
   TokenMetadata,
   TokenSwapTransaction,
 } from "@repo/token-watcher/token.ts";
 import { columns, getColumnWidth } from "./trades-table-columns";
-import {
-  useTokenPools,
-  useTokenTrades,
-} from "~/contexts/TokenWatcherSocketContext";
+
 import TradesTableSkeleton from "../skeleton/trades-table-skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getFilterTrades } from "~/lib/queries/stxtools";
 import { Button } from "@repo/ui/components/ui/button";
 import { truncateString } from "~/lib/helpers/strings";
+import { useTokenTrades } from "~/contexts/TokenWatcherSocketContext";
 
 // Custom hook for media queries (borrowed from HoldersTable)
 export function useMediaQuery(query: string): boolean {
@@ -43,18 +41,17 @@ export function useMediaQuery(query: string): boolean {
 
 export default function TradesTable({
   token,
-  filterBy,
-  setFilterBy,
-  trades,
+  onFilterChange,
+  initialFilterValue = "",
 }: {
-  trades: TokenSwapTransaction[];
   token: TokenMetadata;
-  filterBy: string;
-  setFilterBy: any;
+  onFilterChange: (filterValue: string) => void;
+  initialFilterValue?: string;
 }) {
-  // const { data: poolsData, isLoading: poolsLoading } = useTokenPools();
+  const { data: trades, isLoading: isTradesLoading } = useTokenTrades();
+  const [filterBy, setFilterBy] = useState(initialFilterValue);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const velarPoolId = `VELAR_${token.contract_id}_stx`;
+  const velarPoolId = `VELAR_${token?.contract_id}_stx`;
 
   const { data: filteredTrades, isLoading: isFilterLoading } = useQuery({
     queryKey: ["trades", token?.contract_id, filterBy],
@@ -65,7 +62,8 @@ export default function TradesTable({
   const displayTrades =
     filterBy && !isFilterLoading && filteredTrades ? filteredTrades : trades;
   const [tableData, setTableData] =
-    useState<TokenSwapTransaction[]>(displayTrades); // Update table data when trades prop changes
+    useState<TokenSwapTransaction[]>(displayTrades);
+
   useEffect(() => {
     const currentData =
       filterBy && !isFilterLoading && filteredTrades?.data?.length > 0
@@ -74,22 +72,41 @@ export default function TradesTable({
     setTableData([...currentData]);
   }, [trades, filteredTrades, isFilterLoading, filterBy]);
 
-  const handleFilterClick = (address: string) => {
-    console.log("called in handleFilterClick");
-    setFilterBy(address);
-  };
+  // Set initial filter value when it changes from parent
   useEffect(() => {
-    console.log("filterby changed to", filterBy);
-  }, [filterBy]);
+    if (initialFilterValue !== filterBy) {
+      setFilterBy(initialFilterValue);
+    }
+  }, [initialFilterValue]);
+
+  const handleFilterClick = (address: string) => {
+    setFilterBy(address);
+    onFilterChange(address); // Propagate filter change to parent
+  };
+
+  // Get visible columns based on screen size
+  const getVisibleColumns = () => {
+    const allColumns = columns(token, handleFilterClick);
+    // If mobile, filter out 'type' and 'amount' columns
+    return isMobile
+      ? allColumns.filter(
+          (col) => col.accessorKey !== "type" && col.accessorKey !== "amount",
+        )
+      : allColumns;
+  };
 
   const table = useReactTable({
     data: tableData,
-    columns: columns(token, handleFilterClick),
+    columns: getVisibleColumns(),
     getCoreRowModel: getCoreRowModel(),
   });
-  if (isFilterLoading) {
+
+  if (isFilterLoading || isTradesLoading || !token) {
     return <TradesTableSkeleton />;
   }
+
+  // Calculate the number of columns to display (4 for mobile, 6 for desktop)
+  const gridColumnsClass = isMobile ? "grid-cols-4" : "grid-cols-6";
 
   return (
     <div className="flex h-full w-full flex-col border-t">
@@ -110,13 +127,7 @@ export default function TradesTable({
         </div>
       )}
       {/* Header */}
-      <div
-        className={cn(
-          "w-full border-b grid",
-          isMobile ? "min-w-[800px]" : "",
-          "grid-cols-6", // Assuming 6 columns as per the columns definition
-        )}
-      >
+      <div className={cn("w-full border-b grid", gridColumnsClass)}>
         {table.getHeaderGroups().map((headerGroup) => (
           <div key={headerGroup.id} className="contents">
             {headerGroup.headers.map((header) => (
@@ -124,8 +135,7 @@ export default function TradesTable({
                 key={header.id}
                 className={cn(
                   "py-3 px-4 text-xs font-medium text-muted-foreground",
-                  header.column.id === "amount" ||
-                    header.column.id === "totalUsd"
+                  header.column.id === "totalUsd"
                     ? "text-right"
                     : header.column.id === "trader"
                       ? "text-right"
@@ -149,29 +159,34 @@ export default function TradesTable({
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full" orientation="both">
-          <div className={cn(isMobile ? "min-w-[800px]" : "")}>
+        <ScrollArea className="h-full w-full">
+          <div className="w-full">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <div
                   key={row.id}
                   className={cn(
-                    "grid w-full grid-cols-6 border-b items-center",
+                    "grid w-full border-b items-center",
+                    gridColumnsClass,
                     index % 2 === 0 ? "bg-muted/50" : "",
                   )}
+                  style={{ minWidth: isMobile ? "auto" : "auto" }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <div
                       key={cell.id}
                       className={cn(
-                        "py-3 px-4",
-                        cell.column.id === "amount" ||
-                          cell.column.id === "totalUsd"
+                        "py-3 px-4 truncate",
+                        cell.column.id === "totalUsd"
                           ? "text-right"
-                          : "text-left",
+                          : cell.column.id === "trader"
+                            ? "text-right"
+                            : "text-left",
                       )}
                       style={{
-                        width: getColumnWidth(cell.column.id),
+                        width: isMobile
+                          ? "auto"
+                          : getColumnWidth(cell.column.id),
                       }}
                     >
                       {flexRender(
@@ -190,6 +205,8 @@ export default function TradesTable({
               </div>
             )}
           </div>
+          <ScrollBar orientation="vertical" />
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
     </div>

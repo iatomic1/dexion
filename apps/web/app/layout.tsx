@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <TokenRefresher />
+        {/* <TokenRefresher /> */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -35,7 +35,7 @@ export default function RootLayout({
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">
-              <SiteHeader />
+              {/* <SiteHeader /> */}
               <main className="flex-1">
                 <ClientQueryProvider>{children}</ClientQueryProvider>
               </main>

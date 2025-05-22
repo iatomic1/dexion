@@ -23,12 +23,32 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTokenPools } from "~/contexts/TokenWatcherSocketContext";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
+import { useMediaQuery } from "../trade-details";
 
 export default function Pools({}: {}) {
   const [isOpen, setIsOpen] = useState(true);
   const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 
-  return (
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  return isMobile ? (
+    <div className="grid grid-cols-2 gap-4">
+      {isPoolsLoading ? (
+        <PoolsItemSkeleton />
+      ) : (
+        pools
+          .filter(
+            (pool) =>
+              pool.target_token.contract_id === "stx" && pool.liquidity_usd,
+          )
+          .sort((a, b) => {
+            if (a.platform.toLowerCase() === "velar") return -1;
+            if (b.platform.toLowerCase() === "velar") return 1;
+            return 0;
+          })
+          .map((pool) => <PoolsItem key={pool.pool_id} pool={pool} />)
+      )}
+    </div>
+  ) : (
     <Collapsible className="mt-3" open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
         <Tooltip>
@@ -49,9 +69,13 @@ export default function Pools({}: {}) {
           pools
             .filter(
               (pool) =>
-                pool.target_token.contract_id === "stx" &&
-                pool.liquidity_usd !== 0,
+                pool.target_token.contract_id === "stx" && pool.liquidity_usd,
             )
+            .sort((a, b) => {
+              if (a.platform.toLowerCase() === "velar") return -1;
+              if (b.platform.toLowerCase() === "velar") return 1;
+              return 0;
+            })
             .map((pool) => <PoolsItem key={pool.pool_id} pool={pool} />)
         )}
       </CollapsibleContent>
@@ -66,7 +90,8 @@ function PoolsItem({ pool }: { pool: LiquidityPool }) {
         id={pool.pool_id}
         className="order-1 after:absolute after:inset-0"
         aria-describedby={`${pool.pool_id}-description`}
-        defaultChecked={true}
+        defaultChecked={pool?.platform.toLowerCase() === "velar"}
+        disabled={pool?.platform.toLowerCase() === "arkadiko"}
       />
       <div className="flex grow items-center gap-3">
         <Avatar className="h-12 w-12">
@@ -76,12 +101,18 @@ function PoolsItem({ pool }: { pool: LiquidityPool }) {
         <div className="grid gap-2">
           <Label htmlFor={pool.pool_id}>
             {pool.platform}
-            <span
-              className="text-muted-foreground text-xs leading-[inherit] font-normal"
-              dangerouslySetInnerHTML={{
-                __html: formatTinyDecimal(pool.token_x_price_usd),
-              }}
-            />
+            {pool?.token_x_price_usd ? (
+              <span
+                className="text-muted-foreground text-xs leading-[inherit] font-normal"
+                dangerouslySetInnerHTML={{
+                  __html: formatTinyDecimal(pool?.token_x_price_usd),
+                }}
+              />
+            ) : (
+              <span className="text-muted-foreground text-xs leading-[inherit] font-normal">
+                N\A
+              </span>
+            )}
           </Label>
           <div className="flex items-center gap-2">
             <div className="flex flex-col gap-0">

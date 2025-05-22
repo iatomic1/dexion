@@ -34,51 +34,60 @@ export const createSocketIo = (server) => {
 
       console.log(`Fetching initial data for ${contractAddress}`);
 
-      const start = performance.now(); // start timer
+      const startAll = performance.now();
+
+      const measureApi = async (label, fn) => {
+        const start = performance.now();
+        const result = await fn();
+        const end = performance.now();
+        console.log(`[${label}] took ${(end - start).toFixed(2)}ms`);
+        return result;
+      };
+
       try {
-        getTokenMetadata(contractAddress)
-          .then((tokenMetadata) => {
+        measureApi("getTokenMetadata", () =>
+          getTokenMetadata(contractAddress).then((tokenMetadata) => {
             socket.emit("tx", {
               type: "metadata",
               contract: contractAddress,
               tokenMetadata,
             });
-          })
-          .catch((err) => console.error("Error fetching tokenMetadata:", err));
+          }),
+        ).catch((err) => console.error("Error fetching tokenMetadata:", err));
 
-        getTrades(contractAddress)
-          .then((trades) => {
+        measureApi("getTrades", () =>
+          getTrades(contractAddress).then((trades) => {
             socket.emit("tx", {
               type: "trades",
               contract: contractAddress,
               trades: trades?.data,
             });
-          })
-          .catch((err) => console.error("Error fetching trades:", err));
+          }),
+        ).catch((err) => console.error("Error fetching trades:", err));
 
-        getHolders(contractAddress)
-          .then((holders) => {
+        measureApi("getHolders", () =>
+          getHolders(contractAddress).then((holders) => {
             socket.emit("tx", {
               type: "holders",
               contract: contractAddress,
               holders: holders?.data,
             });
-          })
-          .catch((err) => console.error("Error fetching holders:", err));
+          }),
+        ).catch((err) => console.error("Error fetching holders:", err));
 
-        getPools(contractAddress)
-          .then((pools) => {
+        measureApi("getPools", () =>
+          getPools(contractAddress).then((pools) => {
             socket.emit("tx", {
               type: "pools",
               contract: contractAddress,
               pools: pools,
             });
-          })
-          .catch((err) => console.error("Error fetching pools:", err));
+          }),
+        ).catch((err) => console.error("Error fetching pools:", err));
 
-        const end = performance.now(); // end timer
+        const endAll = performance.now();
         console.log(
-          `Fetched initial data for ${contractAddress} in ${(end - start).toFixed(2)}ms`,
+          `Fetched all data for ${contractAddress} in ${(endAll - startAll).toFixed(2)}ms`,
         );
       } catch (err) {
         console.error("Error fetching initial data:", err);

@@ -1,6 +1,10 @@
-import { performance } from "perf_hooks";
 import { Server } from "socket.io";
-import { getTokenMetadata, getPools } from "./stxtools-api";
+import {
+  getTokenMetadata,
+  getPools,
+  getHolders,
+  getTrades,
+} from "./stxtools-api";
 import { getStxCityTokenMetadata, getStxCityTokenTrades } from "./stxcity";
 import { transformToTokenMetadata } from "../utils/transferToTokenMetadata";
 import { convertTransaction } from "../utils/convertSwapTransaction";
@@ -55,6 +59,33 @@ export const createSocketIo = (server) => {
                 type: "metadata",
                 contract: contractAddress,
                 tokenMetadata,
+              });
+
+              // Fetch additional data from stxtools
+              console.log("Getting additional data from stxtools...");
+
+              getTrades(contractAddress).then((trades) => {
+                socket.emit("tx", {
+                  type: "trades",
+                  contract: contractAddress,
+                  trades: trades?.data,
+                });
+              });
+
+              getPools(contractAddress).then((pools) => {
+                socket.emit("tx", {
+                  type: "pools",
+                  contract: contractAddress,
+                  pools: pools,
+                });
+              });
+
+              getHolders(contractAddress).then((holders) => {
+                socket.emit("tx", {
+                  type: "holders",
+                  contract: contractAddress,
+                  holders: holders?.data,
+                });
               });
             } else {
               console.log("No metadata from stxtools, using stxcity data");
@@ -121,7 +152,6 @@ export const createSocketIo = (server) => {
             "No metadata from stxcity, trying stxtools as fallback...",
           );
 
-          // Fallback to stxtools if stxcity has no data
           const tokenMetadata = await getTokenMetadata(contractAddress);
 
           if (tokenMetadata) {
@@ -130,6 +160,31 @@ export const createSocketIo = (server) => {
               type: "metadata",
               contract: contractAddress,
               tokenMetadata,
+            });
+            console.log("getting other stuff now");
+
+            getTrades(contractAddress).then((trades) => {
+              socket.emit("tx", {
+                type: "trades",
+                contract: contractAddress,
+                trades: trades?.data,
+              });
+            });
+
+            getPools(contractAddress).then((pools) => {
+              socket.emit("tx", {
+                type: "pools",
+                contract: contractAddress,
+                pools: pools,
+              });
+            });
+
+            getHolders(contractAddress).then((holders) => {
+              socket.emit("tx", {
+                type: "holders",
+                contract: contractAddress,
+                holders: holders?.data,
+              });
             });
           } else {
             console.log("No metadata found from either source");

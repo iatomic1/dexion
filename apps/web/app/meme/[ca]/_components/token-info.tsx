@@ -119,15 +119,23 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
             value={formatPrice(token.metrics.liquidity_usd)}
           />
           <MetricItem
+            label="Holders"
+            value={token.metrics.holder_count.toString()}
+            className="sm:hidden"
+          />
+          <MetricItem
             label="c. supply"
             value={
-              token.progress && token.progress > 100
-                ? formatPrice(
+              token.bc === "stxcity" && token.progress < 100
+                ? formatPrice(Number(token.circulating_supply))
+                : formatPrice(
                     Number(token.circulating_supply) / 10 ** token.decimals,
                   )
-                : formatPrice(Number(token.circulating_supply))
             }
           />
+          {token.progress && token.progress < 100 && (
+            <MetricItem label="B%" value={token.progress.toString()} />
+          )}
         </div>
       </div>
       <Actions

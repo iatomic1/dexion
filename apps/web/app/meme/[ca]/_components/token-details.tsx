@@ -31,6 +31,7 @@ import {
   ToggleGroupItem,
 } from "@repo/ui/components/ui/toggle-group";
 import FilterByAddressModal from "./filter-by-address-modal";
+import TradingInterface from "./trading/trading-interface";
 
 export default function TokenDetailPage({ ca }: { ca: string }) {
   const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
@@ -48,8 +49,8 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
   };
 
   return isMobile ? (
-    <div className="flex flex-col">
-      <Tabs defaultValue="tab-1">
+    <div className="flex flex-col h-full">
+      <Tabs defaultValue="tab-1" className=" h-full">
         <div className="sticky top-0 z-10 bg-background [&>*]:bg-background">
           <ScrollArea>
             <TabsList className="my-3 gap-1 bg-transparent w-full">
@@ -99,6 +100,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           <div className="!h-[65%] overflow-hidden">
             <TokenChart tokenSymbol={tokenData?.symbol} />
           </div>
+          <TradingInterface />
         </TabsContent>
         <TabsContent value="tab-2">
           <div className="flex items-center justify-between mb-2 px-2">

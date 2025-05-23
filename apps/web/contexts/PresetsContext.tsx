@@ -14,6 +14,8 @@ export interface TradeSettings {
 export interface Preset {
   buy: TradeSettings;
   sell: TradeSettings;
+  buyAmount: [number, number, number, number];
+  sellPercentage: [number, number, number, number];
 }
 
 export interface TradeContextState {
@@ -32,6 +34,14 @@ export interface TradeContextType {
     key: keyof TradeSettings,
     value: TradeSettings[keyof TradeSettings],
   ) => void;
+  updateBuyAmount: (preset: PresetKey, index: number, value: number) => void;
+  updateSellPercentage: (
+    preset: PresetKey,
+    index: number,
+    value: number,
+  ) => void;
+  getBuyAmount: (preset: PresetKey) => [number, number, number, number];
+  getSellPercentage: (preset: PresetKey) => [number, number, number, number];
   switchPreset: (preset: PresetKey) => void;
   switchTab: (tab: TradeMode) => void;
 }
@@ -42,9 +52,16 @@ const defaultSettings: TradeSettings = {
   bribe: 0.0001,
 };
 
+const defaultBuyAmount: [number, number, number, number] = [0.1, 0.5, 1, 2];
+const defaultSellPercentage: [number, number, number, number] = [
+  25, 50, 75, 100,
+];
+
 const defaultPreset: Preset = {
   buy: { ...defaultSettings },
   sell: { ...defaultSettings },
+  buyAmount: [...defaultBuyAmount],
+  sellPercentage: [...defaultSellPercentage],
 };
 
 const defaultState: TradeContextState = {
@@ -60,7 +77,7 @@ const PresetsContext = createContext<TradeContextType | undefined>(undefined);
 export const PresetsContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [state, setState, removeState] = useLocalStorage<TradeContextState>(
+  const [state, setState] = useLocalStorage<TradeContextState>(
     "tradePresets",
     defaultState,
   );
@@ -83,6 +100,60 @@ export const PresetsContextProvider: React.FC<{
     }));
   };
 
+  const updateBuyAmount: TradeContextType["updateBuyAmount"] = (
+    preset,
+    index,
+    value,
+  ) => {
+    setState((prev) => {
+      const newBuyAmount = [...prev[preset].buyAmount] as [
+        number,
+        number,
+        number,
+        number,
+      ];
+      newBuyAmount[index] = value;
+      return {
+        ...prev,
+        [preset]: {
+          ...prev[preset],
+          buyAmount: newBuyAmount,
+        },
+      };
+    });
+  };
+
+  const updateSellPercentage: TradeContextType["updateSellPercentage"] = (
+    preset,
+    index,
+    value,
+  ) => {
+    setState((prev) => {
+      const newSellPercentage = [...prev[preset].sellPercentage] as [
+        number,
+        number,
+        number,
+        number,
+      ];
+      newSellPercentage[index] = value;
+      return {
+        ...prev,
+        [preset]: {
+          ...prev[preset],
+          sellPercentage: newSellPercentage,
+        },
+      };
+    });
+  };
+
+  const getBuyAmount: TradeContextType["getBuyAmount"] = (preset) => {
+    return state[preset].buyAmount;
+  };
+
+  const getSellPercentage: TradeContextType["getSellPercentage"] = (preset) => {
+    return state[preset].sellPercentage;
+  };
+
   const switchPreset = (preset: PresetKey) =>
     setState((prev) => ({ ...prev, activePreset: preset }));
 
@@ -91,7 +162,16 @@ export const PresetsContextProvider: React.FC<{
 
   return (
     <PresetsContext.Provider
-      value={{ state, updateSetting, switchPreset, switchTab }}
+      value={{
+        state,
+        updateSetting,
+        updateBuyAmount,
+        updateSellPercentage,
+        getBuyAmount,
+        getSellPercentage,
+        switchPreset,
+        switchTab,
+      }}
     >
       {children}
     </PresetsContext.Provider>

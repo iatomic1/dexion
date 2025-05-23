@@ -21,7 +21,7 @@ export function Socials({ socials }: { socials: TokenMetadata["socials"] }) {
                 size={"icon"}
                 className="!p-0 !bg-transparent h-4 w-4"
               >
-                <a href={social.value}>
+                <a href={social.value} target="_blank">
                   {platform === "twitter" && (
                     <SiX size={14} title="X icon" className="" />
                   )}

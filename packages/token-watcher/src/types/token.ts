@@ -1,7 +1,7 @@
 export type TokenMetadata = {
   contract_id: string;
   dex_contract: string | null;
-  progress: number | null;
+  progress?: number;
   symbol: string;
   decimals: number;
   name: string;
@@ -11,6 +11,7 @@ export type TokenMetadata = {
   header_image_url: string;
   description: string;
   verified: boolean;
+  bc: "stxcity" | "fakfun";
   socials: {
     platform: string;
     value: string;

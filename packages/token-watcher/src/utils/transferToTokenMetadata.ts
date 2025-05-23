@@ -17,7 +17,7 @@ export function transformToTokenMetadata(input: any): TokenMetadata {
     socials: [
       ...(input.xlink ? [{ platform: "twitter", value: input.xlink }] : []),
       ...(input.homepage
-        ? [{ platform: "homepage", value: input.homepage }]
+        ? [{ platform: "website", value: input.homepage }]
         : []),
     ],
     metrics: {

@@ -1,0 +1,176 @@
+{
+  "contractAddress": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY",
+  "contractName": "path-apply_staging",
+  "functionName": "apply",
+  "functionArgs": [
+    {
+      "type": "list",
+      "value": [
+        {
+          "type": "tuple",
+          "value": {
+            "a": {
+              "type": "ascii",
+              "value": "v"
+            },
+            "b": {
+              "type": "contract",
+              "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0025"
+            },
+            "c": {
+              "type": "uint",
+              "value": "21000025n"
+            },
+            "d": {
+              "type": "contract",
+              "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+            },
+            "e": {
+              "type": "contract",
+              "value": "SP14J806BWEPQAXVA0G6RYZN7GNA126B7JFRRYTEM.world-peace-stacks-stxcity"
+            },
+            "f": {
+              "type": "true"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "uint",
+      "value": "10000000n"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+      }
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP14J806BWEPQAXVA0G6RYZN7GNA126B7JFRRYTEM.world-peace-stacks-stxcity"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to"
+      }
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0025"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0025"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    }
+  ],
+  "postConditions": [
+    {
+      "type": "stx-postcondition",
+      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+      "condition": "eq",
+      "amount": "10000000"
+    },
+    {
+      "type": "stx-postcondition",
+      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0025",
+      "condition": "lte",
+      "amount": "100000"
+    },
+    {
+      "type": "ft-postcondition",
+      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0025",
+      "condition": "gte",
+      "amount": "1598439836602",
+      "asset": "SP14J806BWEPQAXVA0G6RYZN7GNA126B7JFRRYTEM.world-peace-stacks-stxcity::WPS"
+    }
+  ],
+  "postConditionMode": 2
+}

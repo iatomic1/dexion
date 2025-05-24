@@ -1,18 +1,20 @@
-import { validateStacksAddress } from "@stacks/transactions";
+import { contractPrincipalCV } from "@stacks/transactions";
 
-export const validateContractAddress = (ca: string): boolean => {
+export const validateContractAddress = (adr: string) => {
   try {
-    const [address, contractName] = ca.split(".");
-
-    validateStacksAddress(address as string);
-
-    // Validate contract name format (should also check if it follows Clarity naming rules)
-    if (!contractName || !contractName.match(/^[a-zA-Z]([a-zA-Z0-9]|-|_)*$/)) {
-      return false;
-    }
-
+    contractPrincipalCV(adr.split(".")[0], adr.split(".")[1]);
     return true;
-  } catch (error) {
+  } catch (e) {
+    console.error(e);
     return false;
   }
+};
+export const getContractAddressAndName = (
+  address: string,
+): { address: string; name: string } => {
+  if (!address) {
+    return { address: "", name: "" };
+  }
+  const arr = address.split(".");
+  return { address: arr[0], name: arr[1] };
 };

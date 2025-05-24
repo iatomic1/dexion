@@ -1,0 +1,176 @@
+{
+  "contractAddress": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY",
+  "contractName": "path-apply_staging",
+  "functionName": "apply",
+  "functionArgs": [
+    {
+      "type": "list",
+      "value": [
+        {
+          "type": "tuple",
+          "value": {
+            "a": {
+              "type": "ascii",
+              "value": "v"
+            },
+            "b": {
+              "type": "contract",
+              "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0065"
+            },
+            "c": {
+              "type": "uint",
+              "value": "21000065n"
+            },
+            "d": {
+              "type": "contract",
+              "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+            },
+            "e": {
+              "type": "contract",
+              "value": "SP1JBV7TE0490KNVM1VAM19KHZG0CPC9426YCY3ZF.drones-stxcity"
+            },
+            "f": {
+              "type": "true"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "uint",
+      "value": "1000000n"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+      }
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP1JBV7TE0490KNVM1VAM19KHZG0CPC9426YCY3ZF.drones-stxcity"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to"
+      }
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0065"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "some",
+      "value": {
+        "type": "contract",
+        "value": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0065"
+      }
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    },
+    {
+      "type": "none"
+    }
+  ],
+  "postConditions": [
+    {
+      "type": "stx-postcondition",
+      "address": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core",
+      "condition": "eq",
+      "amount": "1000000"
+    },
+    {
+      "type": "stx-postcondition",
+      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0065",
+      "condition": "lte",
+      "amount": "10000"
+    },
+    {
+      "type": "ft-postcondition",
+      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0065",
+      "condition": "gte",
+      "amount": "2852889183",
+      "asset": "SP1JBV7TE0490KNVM1VAM19KHZG0CPC9426YCY3ZF.drones-stxcity::UAP"
+    }
+  ],
+  "postConditionMode": 2
+}

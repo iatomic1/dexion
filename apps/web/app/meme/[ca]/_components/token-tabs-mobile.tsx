@@ -13,11 +13,12 @@ import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { cn } from "@repo/ui/lib/utils";
+import DevTokensTable from "./tables/dev-tokens-table";
 
 export default function TokenTabsMobile() {
   const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
     useTokenData();
-  const [activeTab, setActiveTab] = useState("trades");
+  const [activeTab, setActiveTab] = useState("holders");
 
   const tabs = [
     {
@@ -43,7 +44,7 @@ export default function TokenTabsMobile() {
     },
     {
       value: "Dev Tokens",
-      component: <div>Dev Tokens</div>,
+      component: <DevTokensTable />,
     },
     // {
     //   value: "top traders",
@@ -53,10 +54,7 @@ export default function TokenTabsMobile() {
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs
-        className="w-full h-full flex flex-col"
-        defaultValue={tabs[0]?.value}
-      >
+      <Tabs className="w-full h-full flex flex-col" defaultValue={"holders"}>
         <div className="flex items-center justify-between">
           <TabsList className="w-full flex items-center justify-between gap-4 bg-transparent mt-1">
             {tabs.map((tab) => (

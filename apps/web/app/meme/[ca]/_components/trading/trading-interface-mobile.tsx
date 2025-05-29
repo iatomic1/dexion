@@ -17,7 +17,7 @@ import ChangeTradingMode from "./change-trading-mode";
 
 type TradeMode = "market" | "instant" | "limit";
 
-export default function TradingInterface() {
+export default function TradingInterfaceMobile() {
   const [tradeMode, setTradeMode] = useLocalStorage<TradeMode>(
     "tradeMode",
     "market",

@@ -25,6 +25,7 @@ type TxPayload = {
   trades: TokenSwapTransaction[];
   holders: TokenHolder[];
   pools: LiquidityPool[];
+  devTokens: TokenMetadata[];
 };
 
 // Split contexts by data domain
@@ -60,6 +61,14 @@ const PoolsContext = createContext<{
   isLoading: true,
 });
 
+const DevTokensContext = createContext<{
+  data: TokenMetadata[];
+  isLoading: boolean;
+}>({
+  data: [],
+  isLoading: true,
+});
+
 // Raw socket context (kept for compatibility)
 const TokenSocketContext = createContext<TxPayload | null>(null);
 
@@ -68,6 +77,7 @@ export const useTokenMetadata = () => useContext(MetadataContext);
 export const useTokenTrades = () => useContext(TradesContext);
 export const useTokenHolders = () => useContext(HoldersContext);
 export const useTokenPools = () => useContext(PoolsContext);
+export const useDevTokens = () => useContext(DevTokensContext);
 export const useTokenSocket = () => useContext(TokenSocketContext);
 
 // Backwards compatibility hook that combines all data
@@ -76,6 +86,8 @@ export const useTokenData = () => {
   const { data: tradesData, isLoading: isLoadingTrades } = useTokenTrades();
   const { data: holdersData, isLoading: isLoadingHolders } = useTokenHolders();
   const { data: poolsData, isLoading: isLoadingPools } = useTokenPools();
+  const { data: devTokensData, isLoading: isDevTokensLoading } = useDevTokens();
+
   const tx = useTokenSocket();
 
   return {
@@ -88,6 +100,8 @@ export const useTokenData = () => {
     isLoadingTrades,
     isLoadingHolders,
     isLoadingPools,
+    devTokensData,
+    isDevTokensLoading,
   };
 };
 
@@ -101,6 +115,8 @@ export const TokenSocketProvider = ({
   const [tradesData, setTradesData] = useState<TokenSwapTransaction[]>([]);
   const [holdersData, setHoldersData] = useState<TokenHolder[]>([]);
   const [poolsData, setPoolsData] = useState<LiquidityPool[]>([]);
+  const [devTokensData, setDevTokensData] = useState<TokenMetadata[]>([]);
+  const [isDevTokensLoading, setIsDevTokensLoading] = useState(true);
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(true);
   const [isLoadingTrades, setIsLoadingTrades] = useState(true);
   const [isLoadingHolders, setIsLoadingHolders] = useState(true);
@@ -108,7 +124,6 @@ export const TokenSocketProvider = ({
 
   const pathname = usePathname();
 
-  // Socket event handler - memoized to prevent recreating on each render
   const handleSocketEvent = useCallback((data: TxPayload, ca: string) => {
     if (data.contract !== ca) return;
 
@@ -132,6 +147,10 @@ export const TokenSocketProvider = ({
         setPoolsData(data.pools);
         setIsLoadingPools(false);
         break;
+      case "devTokens":
+        setDevTokensData(data.devTokens);
+        console.log("fuck yhhhh", data.devTokens);
+        setIsDevTokensLoading(false);
     }
   }, []);
 
@@ -144,6 +163,7 @@ export const TokenSocketProvider = ({
     setIsLoadingMetadata(true);
     setIsLoadingTrades(true);
     setIsLoadingHolders(true);
+    setIsDevTokensLoading(true);
     setIsLoadingPools(true);
 
     const socket = getSocket();
@@ -190,13 +210,23 @@ export const TokenSocketProvider = ({
     [poolsData, isLoadingPools],
   );
 
+  const devTokensValue = useMemo(
+    () => ({
+      data: devTokensData,
+      isLoading: isDevTokensLoading,
+    }),
+    [devTokensData, isDevTokensLoading],
+  );
+
   return (
     <TokenSocketContext.Provider value={tx}>
       <MetadataContext.Provider value={metadataValue}>
         <TradesContext.Provider value={tradesValue}>
           <HoldersContext.Provider value={holdersValue}>
             <PoolsContext.Provider value={poolsValue}>
-              {children}
+              <DevTokensContext value={devTokensValue}>
+                {children}
+              </DevTokensContext>
             </PoolsContext.Provider>
           </HoldersContext.Provider>
         </TradesContext.Provider>

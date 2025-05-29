@@ -4,6 +4,7 @@ import {
   getPools,
   getHolders,
   getTrades,
+  getDevTokens,
 } from "./stxtools-api";
 import { getStxCityTokenMetadata, getStxCityTokenTrades } from "./stxcity";
 import { transformToTokenMetadata } from "../utils/transferToTokenMetadata";
@@ -11,7 +12,7 @@ import { convertTransaction } from "../utils/convertSwapTransaction";
 
 const contractSubscriptions = new Map<string, Set<string>>(); // contract -> socket IDs
 
-export const createSocketIo = (server) => {
+export const createSocketIo = (server: any) => {
   const io = new Server(server, {
     cors: {
       origin:
@@ -85,6 +86,14 @@ export const createSocketIo = (server) => {
                   type: "holders",
                   contract: contractAddress,
                   holders: holders?.data,
+                });
+              });
+
+              getDevTokens(contractAddress.split(".")[0]).then((tokens) => {
+                socket.emit("tx", {
+                  type: "devTokens",
+                  contract: contractAddress,
+                  devTokens: tokens,
                 });
               });
             } else {

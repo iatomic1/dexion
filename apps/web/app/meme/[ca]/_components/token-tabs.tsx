@@ -20,6 +20,7 @@ import { useMediaQuery } from "./skeleton/trades-table-skeleton";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import DevTokensTable from "./tables/dev-tokens-table";
 
 export default function TokenTabs() {
   const {
@@ -64,6 +65,10 @@ export default function TokenTabs() {
         ) : (
           <HoldersTable holders={holdersData} token={tokenData} />
         ),
+    },
+    {
+      value: "Dev Tokens",
+      component: <DevTokensTable />,
     },
     // {
     //   value: "top traders",

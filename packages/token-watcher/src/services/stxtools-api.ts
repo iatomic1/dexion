@@ -1,5 +1,5 @@
 import axios from "axios";
-import { STX_TOOLS_API_BASE_URL } from "../lib/constants";
+import { HIRO_API_BASE_URL, STX_TOOLS_API_BASE_URL } from "../lib/constants";
 import type {
   TokenMetadata,
   ApiRes,
@@ -60,4 +60,38 @@ export const getPools = async (ca: string): Promise<LiquidityPool[] | null> => {
     return null;
   }
 };
-``;
+
+export const getDevTokens = async (
+  address: string,
+): Promise<TokenMetadata[] | null> => {
+  try {
+    const url = `${HIRO_API_BASE_URL}metadata/v1/ft?address=${address}`;
+    const { data } = await axios.get(url);
+
+    // Check if results exist
+    if (!data?.results || !Array.isArray(data.results)) {
+      return null;
+    }
+
+    // Map through results and call getTokenMetadata for each contract_principal
+    const tokenMetadataPromises = data.results.map(async (token: any) => {
+      if (token.contract_principal) {
+        return await getTokenMetadata(token.contract_principal);
+      }
+      return null;
+    });
+
+    // Wait for all promises to resolve
+    const tokenMetadataResults = await Promise.all(tokenMetadataPromises);
+
+    // Filter out null results and return
+    const validTokenMetadata = tokenMetadataResults.filter(
+      (metadata) => metadata !== null,
+    );
+
+    return validTokenMetadata.length > 0 ? validTokenMetadata : null;
+  } catch (err) {
+    // console.error(err);
+    return null;
+  }
+};

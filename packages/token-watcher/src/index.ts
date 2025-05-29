@@ -1,76 +1,22 @@
-import { ADDRESSES } from "./lib/constants";
-import { sc } from "./services/stacks-socket";
-import { getFungibleContractId } from "./utils/getFungibleContractID";
-import {
-  getHolders,
-  getTokenMetadata,
-  getTrades,
-} from "./services/stxtools-api";
-import express from "express";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { serve } from "@hono/node-server";
 import { createServer } from "http";
-import cors from "cors";
 import { createSocketIo } from "./services/socket-io";
-import { getStxCityTokenMetadata } from "./services/stxcity";
 
 const PORT = process.env.PORT || 3008;
-const app = express();
-const server = createServer(app);
+const app = new Hono();
 
-app.use(cors());
-app.use(express.json());
+app.use("/*", cors());
+
+const server = createServer(serve(app));
 
 const { io, emitTxToContractSubscribers } = createSocketIo(server);
-// console.log(
-//   await getStxCityTokenMetadata(
-//     "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity",
-//   ),
-// );
-
-// sc.subscribeAddressTransactions(ADDRESSES.VELAR, async (address, tx) => {
-//   if (tx.tx.tx_status === "success" && tx.tx.tx_type === "contract_call") {
-//     const ca = getFungibleContractId(tx.tx.post_conditions);
-//     console.log("new tx", tx.tx.tx_status, ca);
-//     if (ca) {
-//       const [tokenMetadata, trades, holders] = await Promise.all([
-//         getTokenMetadata(ca),
-//         getTrades(ca),
-//         getHolders(ca),
-//       ]);
-//       const contractAddress = ca;
-//       getTokenMetadata(contractAddress)
-//         .then((tokenMetadata) => {
-//           emitTxToContractSubscribers(ca as string, {
-//             type: "metadata",
-//             contract: contractAddress,
-//             tokenMetadata,
-//           });
-//         })
-//         .catch((err) => console.error("Error fetching tokenMetadata:", err));
-//
-//       getTrades(contractAddress)
-//         .then((trades) => {
-//           emitTxToContractSubscribers(ca, {
-//             type: "trades",
-//             contract: contractAddress,
-//             trades: trades?.data,
-//           });
-//         })
-//         .catch((err) => console.error("Error fetching trades:", err));
-//
-//       getHolders(contractAddress)
-//         .then((holders) => {
-//           emitTxToContractSubscribers(ca, {
-//             type: "holders",
-//             contract: contractAddress,
-//             holders: holders?.data,
-//           });
-//         })
-//         .catch((err) => console.error("Error fetching holders:", err));
-//     }
-//   } else {
-//   }
-// });
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+app.get("/tokens/:address", async (c) => {
+  const address = c.req.param("address");
 });

@@ -102,7 +102,6 @@ export function CryptoHoverCard({
   children,
   ft,
   decimals,
-  filter,
   valueUsd,
   percentageHolding,
   txId,
@@ -244,7 +243,7 @@ export function CryptoHoverCard({
             <PriceInfoItem
               icon={<Wallet className="h-4 w-4" />}
               value={`$${formatPrice(valueUsd)}`}
-              label={`${formatTinyDecimal(percentageHolding)}% (${formatPrice(Number(ft.balance) / decimals)})`}
+              label={`${formatPrice(percentageHolding)}% (${formatPrice(Number(ft.balance) / decimals)})`}
             />
             <PriceInfoItem
               icon={<Clock className="h-4 w-4" />}

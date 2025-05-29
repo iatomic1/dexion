@@ -1,40 +1,48 @@
 import { Button } from "@repo/ui/components/ui/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from "@repo/ui/components/ui/drawer";
-import { ChevronDown } from "lucide-react";
+import { Drawer, DrawerContent } from "@repo/ui/components/ui/drawer";
+import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
 
 export default function ChangeTradingMode({
   selected,
+  children,
   // setSelected,
 }: {
   selected: string;
+  children: React.ReactNode;
   // setSelected: any;
 }) {
-  const modes = ["instant", "market", "limit"];
+  const modes = ["market", "instant", "limit"];
+  const tabsTriggerClass = `hover:bg-accent hover:text-foreground data-[state=active]:after:bg-primary
+data-[state=active]:hover:bg-accent relative after:absolute
+after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5
+data-[state=active]:bg-transparent data-[state=active]:shadow-none !bg-transparent !border-none cursor-pointer`;
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button variant={"ghost"} size={"sm"} className="items-center">
-          <span className="capitalize text-sm font-medium">{selected}</span>
-          <ChevronDown className="h-3 w-3" />
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className="px-4 py-4 pb-24 flex flex-col gap-4 w-full">
+    <>
+      <Tabs className="hidden sm:flex" defaultValue="market">
+        <TabsList className="text-foreground h-auto gap-2 rounded-none border-b bg-transparent px-0 py-1 w-full">
           {modes.map((mode) => (
-            <Button
-              className="capitalize justify-start"
-              variant={mode === selected ? "secondary" : "ghost"}
-              size={"lg"}
-            >
-              {mode}
-            </Button>
+            <TabsTrigger asChild value={mode} className={tabsTriggerClass}>
+              <span className="capitalize text-sm font-medium">{mode}</span>
+            </TabsTrigger>
           ))}
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </TabsList>
+        {children}
+      </Tabs>
+      <Drawer>
+        <DrawerContent>
+          <div className="">
+            {modes.map((mode) => (
+              <Button
+                className="capitalize justify-start"
+                variant={mode === selected ? "secondary" : "ghost"}
+                size={"lg"}
+              >
+                {mode}
+              </Button>
+            ))}
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }

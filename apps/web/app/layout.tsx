@@ -10,6 +10,7 @@ import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import SiteHeader from "./_components/header/site-header";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClientQueryProvider } from "./_components/query-client-provider";
+import SiteFooter from "./_components/site-footer";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",

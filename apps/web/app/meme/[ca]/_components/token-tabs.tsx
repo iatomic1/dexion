@@ -95,7 +95,7 @@ export default function TokenTabs() {
                         Holders <Skeleton className="h-5 w-12" />{" "}
                       </>
                     ) : (
-                      `holders (${tokenData?.metrics?.holder_count})`
+                      `holders (${tokenData?.metrics?.holder_count.toLocaleString()})`
                     )}
                   </>
                 ) : (

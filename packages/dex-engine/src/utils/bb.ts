@@ -39,7 +39,6 @@ export const buildStxToToken = (options: {
   });
 
   const functionArgs = [
-    trueCV(),
     listCV([tupleItem]),
     uintCV(amount),
     someCV(contractPrincipalCV(commonAddress, wstxContract)),

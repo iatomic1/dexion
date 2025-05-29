@@ -21,6 +21,7 @@ import useCopyToClipboard from "~/hooks/useCopy";
 import { toast } from "sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
+import { truncateString } from "~/lib/helpers/strings";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -38,7 +39,9 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold truncate max-w-[150px]">
-                  {token.name}
+                  {token.name.length >= 12
+                    ? truncateString(token.name, 6, 4)
+                    : token.name}
                 </h1>
                 <Tooltip>
                   <TooltipTrigger>

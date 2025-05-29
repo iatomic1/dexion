@@ -31,7 +31,8 @@ import {
   ToggleGroupItem,
 } from "@repo/ui/components/ui/toggle-group";
 import FilterByAddressModal from "./filter-by-address-modal";
-import TradingInterfaceMobile from "./trading/trading-interface-mobile";
+import TradingInterface from "./trading/trading-interface";
+import TokenTabsMobile from "./token-tabs-mobile";
 
 export default function TokenDetailPage({ ca }: { ca: string }) {
   const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
@@ -100,7 +101,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           <div className="!h-[65%] overflow-hidden">
             <TokenChart tokenSymbol={tokenData?.symbol} />
           </div>
-          <TradingInterfaceMobile />
+          <TradingInterface />
         </TabsContent>
         <TabsContent value="tab-2">
           <div className="flex items-center justify-between mb-2 px-2">
@@ -138,16 +139,14 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           />
         </TabsContent>
         <TabsContent value="tab-3">
-          <p className="text-muted-foreground p-4 pt-1 text-center text-xs">
-            Content for Tab 3
-          </p>
+          <TokenTabsMobile />
         </TabsContent>
       </Tabs>
     </div>
   ) : (
     <div className="flex min-h-screen flex-col w-full">
-      <div className="flex flex-col sm:flex-row h-[calc(100vh-20px)]">
-        <div className="w-full h-full">
+      <div className="flex flex-col sm:flex-row h-[calc(100vh-64px)]">
+        <div className="w-full lg:w-3/4 h-full">
           <div className="flex flex-col h-full">
             {isLoadingMetadata || !tokenData ? (
               <TokenInfoSkeleton />
@@ -170,7 +169,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
         </div>
 
         {/* Trading panel - 25% on desktop */}
-        <div className="w-full h-full max-w-[380px]">
+        <div className="w-full lg:w-1/3 h-full">
           <TradingPanel token={tokenData} />
         </div>
       </div>

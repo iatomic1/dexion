@@ -5,7 +5,7 @@ import PresetTabs from "./preset-tabs";
 import { DexBanner } from "./dex-banner";
 import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import Pools from "./pools";
-import TradingInterface from "./trading-interface";
+import TradingInterfaceDesktop from "./trading-interface-desktop";
 
 interface TradingPanelProps {
   token: TokenMetadata;
@@ -22,6 +22,7 @@ export default function TradingPanel({
     <div className="sm:flex h-full flex-col hidden">
       <div className="flex flex-col p-4">
         {/* <TradingStats /> */}
+        <TradingInterfaceDesktop />
         <PresetTabs />
         {/* <TradingInterface /> */}
         <TokenAudit token={token} />

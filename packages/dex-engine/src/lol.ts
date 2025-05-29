@@ -13,12 +13,14 @@ console.log(jsonStringifyWithBigInt(swapOpts, 2));
 
 const tx = await makeContractCall({
   ...filteredSwapOptions,
+  contractAddress: "SP3451PXD29FVXH7KXCJDRAW5M6H71KXQ2HD50RGR",
+  contractName: "dark-amethyst-anglerfish",
+  functionName: "apply",
   postConditionMode: "allow",
   network: "mainnet",
   senderKey: senderKey as string,
   validateWithAbi: true,
 });
-tx;
 
 const res = await broadcastTransaction({ transaction: tx });
 console.log(res.txid);

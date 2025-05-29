@@ -8,53 +8,25 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/ui/tabs";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@repo/ui/components/ui/toggle-group";
-import TradesTable from "./tables/trades-table";
 import HoldersTable from "./tables/holders-table";
-import { Funnel, User2 } from "lucide-react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
-import { useMediaQuery } from "./skeleton/trades-table-skeleton";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { cn } from "@repo/ui/lib/utils";
 
-export default function TokenTabs() {
-  const {
-    tokenData,
-    isLoadingMetadata,
-    holdersData,
-    tradesData,
-    isLoadingTrades,
-    isLoadingHolders,
-  } = useTokenData();
+export default function TokenTabsMobile() {
+  const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
+    useTokenData();
   const [activeTab, setActiveTab] = useState("trades");
-  const [filterBy, setFilterBy] = useState("");
-  const isMobile = useMediaQuery("(max-width: 640px)");
-
-  // Handle filter changes from TradesTable component
-  const handleFilterChange = (newFilter: string) => {
-    setFilterBy(newFilter);
-  };
-
-  // Handle filter toggle buttons
-  const handleToggleFilter = (value: string) => {
-    setFilterBy((prevFilter) => (prevFilter === value ? "" : value));
-  };
 
   const tabs = [
     {
-      value: "trades",
-      component: (
-        <TradesTable
-          token={tokenData as TokenMetadata}
-          onFilterChange={handleFilterChange}
-          initialFilterValue={filterBy}
-        />
-      ),
-      // ),
+      value: "Positions",
+      component: <div>Positions</div>,
+    },
+    {
+      value: "orders",
+      component: <div>Orders</div>,
     },
     {
       value: "holders",
@@ -64,6 +36,14 @@ export default function TokenTabs() {
         ) : (
           <HoldersTable holders={holdersData} token={tokenData} />
         ),
+    },
+    {
+      value: "Top Traders",
+      component: <div>Top Traders</div>,
+    },
+    {
+      value: "Dev Tokens",
+      component: <div>Dev Tokens</div>,
     },
     // {
     //   value: "top traders",
@@ -78,12 +58,15 @@ export default function TokenTabs() {
         defaultValue={tabs[0]?.value}
       >
         <div className="flex items-center justify-between">
-          <TabsList className="w-fit flex items-center gap-4 bg-transparent mt-1">
+          <TabsList className="w-full flex items-center justify-between gap-4 bg-transparent mt-1">
             {tabs.map((tab) => (
               <TabsTrigger
                 value={tab.value.toLowerCase()}
                 key={tab.value.toLowerCase()}
-                className="w-fit capitalize items-center"
+                className={cn(
+                  "w-full capitalize items-center",
+                  "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none",
+                )}
                 onClick={() => setActiveTab(tab.value.toLowerCase())}
               >
                 {tab.value === "holders" ? (
@@ -102,31 +85,6 @@ export default function TokenTabs() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <ToggleGroup
-            type="single"
-            className="flex items-center"
-            value={filterBy}
-            onValueChange={(value) => handleToggleFilter(value)}
-          >
-            <ToggleGroupItem
-              // variant={"ghost"}
-              size={"sm"}
-              aria-label="Toggle dev"
-              value={tokenData?.contract_id?.split(".")[0] as string}
-              className="hover:text-indigo-500 text-xs font-medium"
-            >
-              <Funnel />
-              DEV
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              size={"sm"}
-              className="hover:text-indigo-500 text-xs font-medium"
-              value="SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
-            >
-              <User2 />
-              You
-            </ToggleGroupItem>
-          </ToggleGroup>
         </div>
         {tabs.map((tab) => {
           return (

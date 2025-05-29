@@ -32,6 +32,7 @@ import {
 } from "@repo/ui/components/ui/toggle-group";
 import FilterByAddressModal from "./filter-by-address-modal";
 import TradingInterface from "./trading/trading-interface";
+import TokenTabsMobile from "./token-tabs-mobile";
 
 export default function TokenDetailPage({ ca }: { ca: string }) {
   const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
@@ -138,9 +139,7 @@ export default function TokenDetailPage({ ca }: { ca: string }) {
           />
         </TabsContent>
         <TabsContent value="tab-3">
-          <p className="text-muted-foreground p-4 pt-1 text-center text-xs">
-            Content for Tab 3
-          </p>
+          <TokenTabsMobile />
         </TabsContent>
       </Tabs>
     </div>

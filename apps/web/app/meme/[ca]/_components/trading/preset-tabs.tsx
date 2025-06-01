@@ -144,7 +144,7 @@ const PresetItem = ({
       <Separator />
       <div className="flex p-1 items-center gap-1 text-center">
         {icon}
-        <span className="leading-[16px] text-muted-foreground text-sm uppercase">
+        <span className="leading-[16px] text-muted-foreground text-xs uppercase">
           {label}
         </span>
       </div>

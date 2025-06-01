@@ -40,7 +40,7 @@ export default function RootLayout({
               <main className="flex-1">
                 <ClientQueryProvider>{children}</ClientQueryProvider>
               </main>
-              {/* <SiteFooter /> */}
+              <SiteFooter />
             </div>
           </PresetsContextProvider>
           {/* </WalletTrackerSocketProvider> */}

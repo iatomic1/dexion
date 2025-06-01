@@ -26,7 +26,7 @@ import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { useMediaQuery } from "../trade-details";
 
 export default function Pools({}: {}) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 
   const isMobile = useMediaQuery("(max-width: 640px)");

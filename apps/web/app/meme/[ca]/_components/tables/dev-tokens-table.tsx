@@ -17,6 +17,7 @@ import {
   AvatarFallback,
 } from "@repo/ui/components/ui/avatar";
 import { formatPrice } from "~/lib/helpers/numbers";
+import Link from "next/link";
 
 export const tableColumns = (isMobile: boolean): ColumnDef<TokenMetadata>[] => [
   {
@@ -29,7 +30,9 @@ export const tableColumns = (isMobile: boolean): ColumnDef<TokenMetadata>[] => [
             <AvatarImage src={t.image_url} />
             <AvatarFallback>{t.symbol.charAt(0)}</AvatarFallback>
           </Avatar>
-          <span className="text-sm text-muted-foreground">{t.name}</span>
+          <Link href={`/meme/${t.contract_id}`} className="hover:underline">
+            <span className="text-sm text-muted-foreground">{t.name}</span>
+          </Link>
         </div>
       );
     },

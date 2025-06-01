@@ -21,7 +21,12 @@ data-[state=active]:bg-transparent data-[state=active]:shadow-none !bg-transpare
       <Tabs className="hidden sm:flex" defaultValue="market">
         <TabsList className="text-foreground h-auto gap-2 rounded-none border-b bg-transparent px-0 py-1 w-full">
           {modes.map((mode) => (
-            <TabsTrigger asChild value={mode} className={tabsTriggerClass}>
+            <TabsTrigger
+              asChild
+              value={mode}
+              className={tabsTriggerClass}
+              key={mode}
+            >
               <span className="capitalize text-sm font-medium">{mode}</span>
             </TabsTrigger>
           ))}
@@ -36,6 +41,7 @@ data-[state=active]:bg-transparent data-[state=active]:shadow-none !bg-transpare
                 className="capitalize justify-start"
                 variant={mode === selected ? "secondary" : "ghost"}
                 size={"lg"}
+                key={mode}
               >
                 {mode}
               </Button>

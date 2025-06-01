@@ -110,12 +110,13 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           />
           <MetricItem
             label="Price"
-            value={"100"}
-            // value={
-            //   token.metrics.price_usd > 1
-            //     ? formatPrice(token.metrics.price_usd)
-            //     : formatTinyDecimal(token.metrics.price_usd)
-            // }
+            value={
+              token.progress && token.progress < 100
+                ? "100"
+                : token.metrics.price_usd > 1
+                  ? formatPrice(token.metrics.price_usd)
+                  : formatTinyDecimal(token.metrics.price_usd)
+            }
           />
           <MetricItem
             label="liquidity"

@@ -12,7 +12,7 @@ export default function TokenInfoSkeleton() {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 {/* Token name skeleton */}
-                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-6 w-24" />
                 {/* Token symbol skeleton */}
                 <Skeleton className="h-4 w-12" />
                 {/* Action buttons skeleton */}
@@ -35,9 +35,9 @@ export default function TokenInfoSkeleton() {
             <Skeleton className="h-7 w-7 rounded-full" />
           </div>
         </div>
-        <div className="flex items-center justify-between md:gap-5 xl:gap-8">
+        <div className="flex items-center justify-between md:gap-3 xl:gap-6">
           {/* Market cap skeleton - desktop */}
-          <Skeleton className="h-6 w-24 hidden sm:flex" />
+          <Skeleton className="h-6 w-16 hidden sm:flex" />
 
           {/* Metrics skeletons */}
           <MetricItemSkeleton className="sm:hidden" />
@@ -47,9 +47,9 @@ export default function TokenInfoSkeleton() {
         </div>
       </div>
       {/* Desktop actions skeleton */}
-      <div className="hidden sm:flex items-center gap-0">
-        <Skeleton className="h-7 w-7 rounded-full" />
-        <Skeleton className="h-7 w-7 rounded-full" />
+      <div className="hidden sm:flex items-center gap-1 ml-2">
+        <Skeleton className="h-6 w-6 rounded-full" />
+        <Skeleton className="h-6 w-6 rounded-full" />
       </div>
     </div>
   );
@@ -64,10 +64,10 @@ const MetricItemSkeleton = ({ className }: { className?: string }) => {
       )}
     >
       {/* Label skeleton */}
-      <Skeleton className="h-3 w-6 sm:hidden" />
-      <Skeleton className="h-3 w-16 hidden sm:flex" />
+      <Skeleton className="h-3 w-5 sm:hidden" />
+      <Skeleton className="h-3 w-14 hidden sm:flex" />
       {/* Value skeleton */}
-      <Skeleton className="h-5 w-16" />
+      <Skeleton className="h-5 w-14" />
     </div>
   );
 };

@@ -306,20 +306,15 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
     );
   }
 
-  // Desktop view with collapsible
   return (
     <Collapsible className="mt-4" open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
-        <Button
-          className={cn("w-fit text-sm", isOpen && "mb-1")}
-          variant={"ghost"}
-          size={"sm"}
-        >
+        <Button className={cn("w-fit text-sm")} variant={"ghost"} size={"sm"}>
           Token Info
           <ChevronDown className="h-4 w-4" />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col gap-4">
+      <CollapsibleContent className="flex flex-col gap-4 pt-2">
         <TokenInfoContent token={token} />
       </CollapsibleContent>
     </Collapsible>

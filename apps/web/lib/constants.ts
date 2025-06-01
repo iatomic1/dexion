@@ -29,6 +29,7 @@ export const userIdKey = "userId";
 
 export const EXPLORER_BASE_URL = "https://explorer.hiro.so/";
 export const HIRO_API_BASE_URL = "https://api.hiro.so/";
+export const TOKEN_WATCHER_API_BASE_URL = "http://localhost:3008/";
 
 export const POOLS_ADDRESSES = [
   "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0033",

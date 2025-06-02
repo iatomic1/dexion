@@ -15,6 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import WalletTrackerModal from "./modals/wallet-tracker/wallet-tracker-modal";
 
 const getTrackedWallets = async () => {
   const session = await assertUserAuthenticated();
@@ -52,11 +53,14 @@ const getBtcAndStxPrices = async (): Promise<CryptoAsset[] | null> => {
 
 export default async function SiteFooter() {
   const btcAndStxPrices = await getBtcAndStxPrices();
-  // const trackedWallets = await getTrackedWallets();
-  // console.log(trackedWallets);
+  const trackedWallets = await getTrackedWallets();
+  console.log(trackedWallets);
 
   return (
-    <footer className="px-2 flex items-center flex-row-reverse justify-between fixed bottom-0 py-2 border-t-[1px] border-t-border w-full">
+    <footer className="px-2 flex items-center flex-row justify-between fixed bottom-0 py-2 border-t-[1px] border-t-border w-full bg-background">
+      <div>
+        <WalletTrackerModal wallets={trackedWallets?.data as UserWallet[]} />
+      </div>
       <div className="flex gap-0.5 items-center self-end">
         {btcAndStxPrices ? (
           btcAndStxPrices?.map((asset) => (

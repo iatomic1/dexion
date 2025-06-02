@@ -1,12 +1,11 @@
-export const DEV = true;
+export const DEV = process.env.NODE_ENV === "development";
 export const API_BASE_URL = DEV
   ? "http://localhost:8080/api/v1/"
   : "https://dexion-backend-production.up.railway.app/api/v1/";
 
-export const PUBLIC_BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "https://dexion.pro";
+export const PUBLIC_BASE_URL = DEV
+  ? "http://localhost:3001"
+  : "https://dexion.pro";
 
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 

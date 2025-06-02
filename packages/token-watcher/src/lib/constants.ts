@@ -2,6 +2,9 @@ export const ADDRESSES = {
   VELAR: "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
 };
 
+export const STX_WATCH_API_KEY = process.env.STX_WATCH_API_KEY;
+export const STXWATCH_API_BASE_URL =
+  "https://alpha.stxwatch.io/supabase/rest/v1/rpc/";
 export const STX_TOOLS_API_BASE_URL = "https://api.stxtools.io/";
 export const STX_CITY_API_BASE_URL = "https://stx.city/api/";
 export const HIRO_PLATFORM_API_BASE_URL = "https://api.platform.hiro.so/";

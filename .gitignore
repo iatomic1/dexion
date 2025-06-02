@@ -17,6 +17,7 @@ coverage
 
 # Vercel
 .vercel
+./apps/backend/Makefile
 
 # Build Outputs
 .next/

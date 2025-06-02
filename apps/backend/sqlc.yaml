@@ -3,7 +3,7 @@ sql:
 - engine: postgresql
   schema: ./internal/db/migrations
   database:
-    uri: postgres://postgres:password@localhost:5431/dexion?sslmode=disable
+    uri: postgresql://postgres:wiMBeMFmbMqKjrzrrSJhWlXSaEnewdev@shuttle.proxy.rlwy.net:46104/railway
   queries: ./internal/db/query
   gen:
     go:
@@ -36,3 +36,5 @@ sql:
         go_struct_tag: binding:"required" example:"APP"
       - column: users.password
         go_struct_tag: binding:"required" example:"Hello"
+      - column: watchlists.ca
+        go_struct_tag: binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"

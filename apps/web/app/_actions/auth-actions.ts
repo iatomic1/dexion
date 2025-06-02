@@ -3,7 +3,7 @@ import { unauthenticatedAction } from "~/lib/safe-action";
 import { AuthSuccess } from "~/types/auth";
 import { ApiResponse } from "~/types";
 import makeFetch from "~/lib/helpers/fetch";
-import { authSchema } from "../schema";
+import { authSchema, baseAuthSchema, loginSchema } from "../schema";
 
 export const authAction = unauthenticatedAction
   .createServerAction()

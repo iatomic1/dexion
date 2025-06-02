@@ -1,7 +1,6 @@
-// schema.ts
 import { z } from "zod";
 
-const baseAuthSchema = {
+export const baseAuthSchema = {
   email: z.string().email("Invalid email address"),
   password: z.string(),
   // password: z.string().min(8, "Password must be at least 8 characters"),
@@ -10,9 +9,18 @@ const baseAuthSchema = {
 export const loginSchema = z.object(baseAuthSchema);
 export const signUpSchema = z.object(baseAuthSchema);
 
+// Fix: Use .extend() instead of spreading .shape
 export const authSchema = z.discriminatedUnion("signUp", [
-  z.object({ signUp: z.literal(true), ...signUpSchema.shape }),
-  z.object({ signUp: z.literal(false), ...loginSchema.shape }),
+  z.object({
+    signUp: z.literal(true),
+    email: z.string().email("Invalid email address"),
+    password: z.string(),
+  }),
+  z.object({
+    signUp: z.literal(false),
+    email: z.string().email("Invalid email address"),
+    password: z.string(),
+  }),
 ]);
 
 export type AuthSchema =

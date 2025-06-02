@@ -87,3 +87,11 @@ type Wallet struct {
 	Address   string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"address"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
+
+type Watchlist struct {
+	ID        uuid.UUID          `json:"id"`
+	Ca        string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+	UserID    uuid.UUID          `json:"userId"`
+	UpdatedAt time.Time          `json:"updatedAt"`
+	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+}

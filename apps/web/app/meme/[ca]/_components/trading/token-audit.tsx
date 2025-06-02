@@ -99,28 +99,27 @@ export function InfoItemSkeleton({ className }: { className?: string }) {
   );
 }
 
-function TokenInfoContent({ token }: { token: TokenMetadata }) {
+// Updated TokenInfoContent to receive data as props instead of calling hooks
+function TokenInfoContent({
+  token,
+  top10Holding,
+  totalPoints,
+  lockedLiquidityPercentage,
+  devHoldingPercentage,
+  isLoading,
+  isLoadingMetadata,
+  isHoldersLoading,
+}: {
+  token: TokenMetadata;
+  top10Holding: number;
+  totalPoints: number | null;
+  lockedLiquidityPercentage: number;
+  devHoldingPercentage: number;
+  isLoading: boolean;
+  isLoadingMetadata: boolean;
+  isHoldersLoading: boolean;
+}) {
   const copy = useCopyToClipboard();
-  const {
-    totalPoints,
-    lockedLiquidityPercentage,
-    isLoading,
-    devHoldingPercentage,
-  } = useAuditData(token?.contract_id, token);
-  const { isLoadingMetadata } = useTokenData();
-  const [top10Holding, setTop10Holding] = useState<number>(0);
-  const { data: holders, isLoading: isHoldersLoading } = useTokenHolders();
-
-  useEffect(() => {
-    const top10Holders = holders.slice(0, 10);
-    const top10Balance = top10Holders.reduce(
-      (sum, holder) => sum + Number(holder.balance),
-      0,
-    );
-    setTop10Holding(
-      calculatePercentageHolding(top10Balance.toString(), token?.total_supply),
-    );
-  }, [holders, token?.total_supply]);
 
   return (
     <>
@@ -205,7 +204,7 @@ function TokenInfoContent({ token }: { token: TokenMetadata }) {
         ) : (
           <InfoItem
             icon={<User className="h-4 w-4" />}
-            value={token.metrics.holder_count.toLocaleString()}
+            value={token?.metrics?.holder_count?.toLocaleString() || "0"}
             label="Holders"
           />
         )}
@@ -222,14 +221,14 @@ function TokenInfoContent({ token }: { token: TokenMetadata }) {
               <Verified
                 className={cn(
                   "h-4 w-4",
-                  token.verified ? "text-emerald-500" : "text-destructive",
+                  token?.verified ? "text-emerald-500" : "text-destructive",
                 )}
               />
             }
-            isRed={!token.verified}
-            isGreen={token.verified}
-            value={token.verified ? "Paid" : "Unpaid"}
-            label={token.verified ? "Verified" : "Unverified"}
+            isRed={!token?.verified}
+            isGreen={!!token?.verified}
+            value={token?.verified ? "Paid" : "Unpaid"}
+            label={token?.verified ? "Verified" : "Unverified"}
           />
         )}
       </div>
@@ -242,7 +241,7 @@ function TokenInfoContent({ token }: { token: TokenMetadata }) {
               variant={"outline"}
               className=""
               onClick={() => {
-                copy(token.contract_id);
+                copy(token?.contract_id || "");
                 toast.info("Address copied to clipboard");
               }}
             >
@@ -251,7 +250,7 @@ function TokenInfoContent({ token }: { token: TokenMetadata }) {
                 <span> CA:</span>
               </div>
               <span className="text-[#c8c9d1] font-light">
-                {truncateString(token.contract_id, 14, 15)}
+                {truncateString(token?.contract_id || "", 14, 15)}
               </span>
             </Button>
           </TooltipTrigger>
@@ -265,6 +264,42 @@ function TokenInfoContent({ token }: { token: TokenMetadata }) {
 export default function TokenAudit({ token }: { token: TokenMetadata }) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useMediaQuery("(max-width: 640px)");
+
+  // ✅ All hooks called here - data persists across collapsible open/close
+  const {
+    totalPoints,
+    lockedLiquidityPercentage,
+    isLoading,
+    devHoldingPercentage,
+  } = useAuditData(token?.contract_id, token);
+  const { isLoadingMetadata } = useTokenData();
+  const { data: holders, isLoading: isHoldersLoading } = useTokenHolders();
+  const [top10Holding, setTop10Holding] = useState<number>(0);
+
+  useEffect(() => {
+    if (!holders.length || !token?.total_supply) return;
+
+    const top10Holders = holders.slice(0, 10);
+    const top10Balance = top10Holders.reduce(
+      (sum, holder) => sum + Number(holder.balance),
+      0,
+    );
+    setTop10Holding(
+      calculatePercentageHolding(top10Balance.toString(), token.total_supply),
+    );
+  }, [holders, token?.total_supply]);
+
+  // Props to pass to TokenInfoContent
+  const tokenInfoProps = {
+    token,
+    top10Holding,
+    totalPoints,
+    lockedLiquidityPercentage,
+    devHoldingPercentage,
+    isLoading,
+    isLoadingMetadata,
+    isHoldersLoading,
+  };
 
   // Mobile view with drawer
   if (isMobile) {
@@ -290,7 +325,7 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
               </DrawerClose>
             </DrawerHeader>
             <div className="px-4 py-4 flex flex-col gap-4">
-              <TokenInfoContent token={token} />
+              <TokenInfoContent {...tokenInfoProps} />
             </div>
             <div className="px-4 flex gap-4 items-center">
               <div className="h-px bg-muted flex-1" />
@@ -315,7 +350,7 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-4 pt-2">
-        <TokenInfoContent token={token} />
+        <TokenInfoContent {...tokenInfoProps} />
       </CollapsibleContent>
     </Collapsible>
   );

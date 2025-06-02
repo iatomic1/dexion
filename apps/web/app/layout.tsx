@@ -36,7 +36,7 @@ export default function RootLayout({
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">
-              {/* <SiteHeader /> */}
+              <SiteHeader />
               <main className="flex-1">
                 <ClientQueryProvider>{children}</ClientQueryProvider>
               </main>

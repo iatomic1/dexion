@@ -68,7 +68,7 @@ app.get("/get_batch_locked_liquidity/:ca", async (c) => {
   return c.json(data, 200);
 });
 
-app.post("get_batch_token_data", async (c) => {
+app.post("/get_batch_token_data", async (c) => {
   try {
     const body = await c.req.json();
     const contract_ids = body.contract_ids;
@@ -89,7 +89,7 @@ app.post("get_batch_token_data", async (c) => {
 
     const results = await Promise.all(tokenDataPromises);
 
-    return c.json({ data: results });
+    return c.json(results);
   } catch (error) {
     console.error("Error in get_batch_token_data:", error);
     return c.json({ error: "Internal server error" }, 500);

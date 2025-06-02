@@ -23,7 +23,7 @@ export default function TradingPanel({
       <div className="flex flex-col p-4">
         {/* <TradingStats /> */}
         {/* <TradingInterfaceDesktop /> */}
-        <PresetTabs />
+        {/* <PresetTabs /> */}
         {/* <TradingInterface /> */}
         <TokenAudit token={token} />
         <Pools />

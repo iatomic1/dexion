@@ -563,6 +563,356 @@
                     }
                 }
             }
+        },
+        "/watchlist": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all watchlist entries for the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Get user's watchlist",
+                "responses": {
+                    "200": {
+                        "description": "User watchlist retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a contract address to user's watchlist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Create a new watchlist entry",
+                "parameters": [
+                    {
+                        "description": "Watchlist data",
+                        "name": "WatchlistRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.CreateWatchlistParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Watchlist created successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Contract already in watchlist",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/watchlist/user": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete all watchlist entries for the authenticated user",
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Delete all user watchlists",
+                "responses": {
+                    "200": {
+                        "description": "All user watchlist entries deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/watchlist/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve a specific watchlist entry by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Get watchlist entry by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Watchlist ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Watchlist entry retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Watchlist entry not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a watchlist entry's contract address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Update watchlist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Watchlist ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated watchlist data",
+                        "name": "WatchlistRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.UpdateWatchlistParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Watchlist updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Watchlist entry not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific watchlist entry by ID",
+                "tags": [
+                    "Watchlist"
+                ],
+                "summary": "Delete watchlist entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Watchlist ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Watchlist entry deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Watchlist entry not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -649,6 +999,21 @@
                 }
             }
         },
+        "backend_internal_db_repository.CreateWatchlistParams": {
+            "type": "object",
+            "required": [
+                "ca"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "backend_internal_db_repository.GetUserTrackedWalletsRow": {
             "type": "object",
             "required": [
@@ -721,6 +1086,21 @@
                 "walletAddress": {
                     "type": "string",
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                }
+            }
+        },
+        "backend_internal_db_repository.UpdateWatchlistParams": {
+            "type": "object",
+            "required": [
+                "ca"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -840,6 +1220,30 @@
                 },
                 "createdAt": {
                     "$ref": "#/definitions/pgtype.Timestamptz"
+                }
+            }
+        },
+        "backend_internal_db_repository.Watchlist": {
+            "type": "object",
+            "required": [
+                "ca"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },

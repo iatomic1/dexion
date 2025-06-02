@@ -17,6 +17,7 @@ func SetupRouter(srv *http.Server) {
 		fmt.Println("registering routes")
 		RegisterAuthRoutes(srv, api.Group("/auth"))
 		RegisterWalletRoutes(srv, api.Group("/wallets"))
+		RegisterWatchlistRoutes(srv, api.Group("/watchlist"))
 
 		RegisterDocsRoutes(api.Group("/docs"))
 	}

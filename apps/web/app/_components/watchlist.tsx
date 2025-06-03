@@ -8,20 +8,31 @@ import {
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,
-  TooltipTrigger,
   TooltipContent,
+  TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
-import { useQuery } from "@tanstack/react-query";
-import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
-import { getUserWatchlist } from "../_actions/watchlist-actions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatPrice } from "~/lib/helpers/numbers";
+import {
+  deleteWatchlistAction,
+  getUserWatchlist,
+} from "../_actions/watchlist-actions";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { getBatchTokenData } from "~/lib/queries/token-watcher";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useServerAction } from "zsa-react";
+import { HTTP_STATUS } from "~/lib/constants";
+import { revalidateTagServer } from "../_actions/revalidate";
+import { Trash2 } from "lucide-react";
 
 export const WatchLists = () => {
   const {
     data: watchlist,
     isLoading: isWatchlistLoading,
     error: watchlistError,
+    isFetching: isWatchlistFetching,
+    isInitialLoading: isWatchlistInitialLoading,
   } = useQuery({
     queryKey: ["watchlist"],
     queryFn: getUserWatchlist,
@@ -37,6 +48,7 @@ export const WatchLists = () => {
     isLoading: isTokensLoading,
     error: tokensError,
     isFetching: isTokensFetching,
+    isInitialLoading: isTokensInitialLoading,
   } = useQuery({
     queryKey: ["batch-tokens", contractAddresses],
     queryFn: () => getBatchTokenData(contractAddresses),
@@ -44,8 +56,22 @@ export const WatchLists = () => {
     staleTime: 30 * 1000, // 30 seconds - tokens change frequently
   });
 
-  // Loading state for either query
-  if (isWatchlistLoading || isTokensLoading) {
+  // Create a map of contract addresses to watchlist IDs for quick lookup
+  const watchlistMap = new Map(
+    watchlist?.data?.map((item: any) => [item.ca, item.id]) || [],
+  );
+
+  // Merge token data with watchlist IDs
+  const tokensWithWatchlistIds = tokens?.map((token: TokenMetadata) => ({
+    ...token,
+    watchlistId: watchlistMap.get(token.contract_id),
+  }));
+
+  // Only show skeleton on initial loading, not on refetch/mutations
+  const shouldShowSkeleton =
+    isWatchlistInitialLoading || isTokensInitialLoading;
+
+  if (shouldShowSkeleton) {
     return (
       <div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -75,14 +101,17 @@ export const WatchLists = () => {
 
   return (
     <div className="flex items-center flex-row gap-2 py-1 px-1 border-b border-b-border">
-      {tokens &&
-        tokens?.map((token: TokenMetadata) => (
-          <WatchListItem
-            key={token.contract_id || token.symbol}
-            token={token}
-            isRefetching={isTokensFetching}
-          />
-        ))}
+      {tokensWithWatchlistIds &&
+        tokensWithWatchlistIds?.map(
+          (token: TokenMetadata & { watchlistId?: string }) => (
+            <WatchListItem
+              key={token.contract_id || token.symbol}
+              token={token}
+              watchlistId={token?.watchlistId}
+              isRefetching={isTokensFetching}
+            />
+          ),
+        )}
     </div>
   );
 };
@@ -90,50 +119,95 @@ export const WatchLists = () => {
 const WatchListItem = ({
   token,
   isRefetching,
+  watchlistId,
 }: {
   token: TokenMetadata;
   isRefetching?: boolean;
+  watchlistId: string;
 }) => {
+  const queryClient = useQueryClient();
+
+  const { isPending: isDeletePending, execute: executeDelete } =
+    useServerAction(deleteWatchlistAction, {
+      onSuccess: async ({ data: res }) => {
+        if (res.status === HTTP_STATUS.NOT_FOUND) {
+          toast.error("You can't delete a watchlist that doesn't exist");
+          return;
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+
+        await queryClient.invalidateQueries({
+          queryKey: ["batch-tokens"],
+          exact: false,
+        });
+
+        revalidateTagServer("watchlist");
+        // toast.success("Token removed from watchlist");
+      },
+      onError: () => {
+        toast.error("Failed to remove token from watchlist");
+      },
+    });
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the Link from navigating
+    e.stopPropagation(); // Prevent event bubbling
+
+    if (!watchlistId) {
+      toast.error("Unable to delete: watchlist ID not found");
+      return;
+    }
+
+    await executeDelete({ id: watchlistId });
+  };
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`gap-1 transition-opacity ${isRefetching ? "opacity-70" : ""}`}
-        >
-          <Avatar className="h-4 w-4">
-            <AvatarImage
-              src={token.image_url || "/placeholder.svg"}
-              alt={token.symbol}
-            />
-            <AvatarFallback className="text-xs">
-              {token.symbol.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <span className="uppercase text-xs font-medium">{token.symbol}</span>
-          <span className="text-xs text-muted-foreground">
-            ${formatPrice(token.metrics.marketcap_usd)}
-          </span>
-        </Button>
+        <div className="relative">
+          <Link href={`/meme/${token.contract_id}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`gap-1 transition-opacity pr-8 ${isRefetching ? "opacity-70" : ""}`}
+            >
+              <Avatar className="h-4 w-4">
+                <AvatarImage
+                  src={token.image_url || "/placeholder.svg"}
+                  alt={token.symbol}
+                />
+                <AvatarFallback className="text-xs">
+                  {token.symbol.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="uppercase text-xs font-medium">
+                {token.symbol}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ${formatPrice(token.metrics.marketcap_usd)}
+              </span>
+            </Button>
+          </Link>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-6 bg-transparent hover:bg-destructive/10"
+                variant="ghost"
+                onClick={handleDelete}
+                disabled={isDeletePending}
+              >
+                <Trash2 className="h-3 w-3 text-destructive" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <span className="text-[11px]">Remove from watchlist</span>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </TooltipTrigger>
-      {/* <TooltipContent> */}
-      {/*   <div className="text-sm"> */}
-      {/*     <div className="font-medium">{token.name || token.symbol}</div> */}
-      {/*     <div className="text-muted-foreground"> */}
-      {/*       Market Cap: ${formatPrice(token.metrics.marketcap_usd)} */}
-      {/*     </div> */}
-      {/**/}
-      {/*     {token.metrics.price_usd && ( */}
-      {/*       <span */}
-      {/*         className="text-sm" */}
-      {/*         dangerouslySetInnerHTML={{ */}
-      {/*           __html: formatTinyDecimal(token.metrics.price_usd), */}
-      {/*         }} */}
-      {/*       /> */}
-      {/*     )} */}
-      {/*   </div> */}
-      {/* </TooltipContent> */}
     </Tooltip>
   );
 };

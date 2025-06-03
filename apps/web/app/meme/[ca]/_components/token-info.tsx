@@ -16,12 +16,23 @@ import { Socials } from "./socials";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
-import { EXPLORER_BASE_URL, PUBLIC_BASE_URL } from "~/lib/constants";
+import {
+  EXPLORER_BASE_URL,
+  HTTP_STATUS,
+  PUBLIC_BASE_URL,
+} from "~/lib/constants";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { toast } from "sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";
+import { useQueryClient } from "@tanstack/react-query";
+import { useServerAction } from "zsa-react";
+import { revalidateTagServer } from "~/app/_actions/revalidate";
+import {
+  addToWatchlistAction,
+  deleteWatchlistAction,
+} from "~/app/_actions/watchlist-actions";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -162,6 +173,31 @@ const Actions = ({
 }) => {
   const copy = useCopyToClipboard();
   const isMobile = useMediaQuery("(max-width: 640px)");
+  const queryClient = useQueryClient();
+
+  const { isPending: isAddPending, execute: executeAdd } = useServerAction(
+    addToWatchlistAction,
+    {
+      onSuccess: async ({ data: res }) => {
+        if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+          toast.error("You are unauthorized to perform this action");
+          return;
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+        await queryClient.invalidateQueries({
+          queryKey: ["batch-tokens"],
+          exact: false,
+        });
+
+        revalidateTagServer("watchlist");
+        toast.success("Added to watchlist");
+      },
+      onError: () => {
+        toast.error("Failed to remove token from watchlist");
+      },
+    },
+  );
 
   return (
     <div
@@ -189,6 +225,9 @@ const Actions = ({
           "hover:text-indigo-500 transition-colors duration-150 ease-in-out",
           isMobile && "rounded-full",
         )}
+        onClick={async () => {
+          await executeAdd({ ca: ca });
+        }}
       >
         <Star className="h-5 w-5" />
       </Button>

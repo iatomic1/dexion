@@ -37,7 +37,7 @@ export function getColumnWidth(columnId: string): string {
     case "totalUsd":
       return "100px";
     case "trader":
-      return "150px";
+      return "100%";
     default:
       return "auto";
   }
@@ -149,7 +149,7 @@ export const columns = (
       const address = wallet.address;
 
       return (
-        <div className="flex items-center gap-2 text-right self-end justify-end">
+        <div className="flex items-center gap-2 text-right justify-end">
           {ft && (
             <Tooltip>
               <TooltipTrigger>

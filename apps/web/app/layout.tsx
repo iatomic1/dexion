@@ -10,15 +10,19 @@ import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import SiteHeader from "./_components/header/site-header";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClientQueryProvider } from "./_components/query-client-provider";
-import SiteFooter from "./_components/site-footer";
+import SiteFooter from "./_components/site-footer/site-footer";
 import { WatchLists } from "./_components/watchlist";
+import { request } from "http";
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+import { auth } from "~/lib/auth";
+import { DEV } from "~/lib/constants";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",
 };
-const queryClient = new QueryClient();
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -37,12 +41,15 @@ export default function RootLayout({
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">
-              <SiteHeader />
+              {!DEV && (
+                <div className="flex w-full items-center justify-center text-center text-sm py-3 text-destructive">
+                  This website is still actively in development.
+                </div>
+              )}
+
               <ClientQueryProvider>
-                <WatchLists />
                 <main className="flex-1">{children}</main>
               </ClientQueryProvider>
-              <SiteFooter />
             </div>
           </PresetsContextProvider>
           {/* </WalletTrackerSocketProvider> */}

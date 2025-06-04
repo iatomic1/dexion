@@ -19,11 +19,11 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import Link from "next/link";
-import { authAction } from "~/app/_actions/auth-actions";
-import { useServerAction } from "zsa-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signUpSchema } from "~/app/schema";
+import { signUp } from "~/lib/auth-client";
+import { useState } from "react";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
@@ -39,25 +39,7 @@ export function SignUpModal({
   onSwitchToLogin,
 }: SignUpModalProps) {
   const router = useRouter();
-
-  const { isPending, execute } = useServerAction(authAction, {
-    onSuccess: ({ data }) => {
-      if (data?.success) {
-        toast.success("Account created successfully!");
-        setTimeout(() => {
-          onOpenChange(false);
-          // router.push("/portfolio");
-          router.refresh();
-        }, 500);
-      } else if (data?.errorMessage) {
-        toast.error(data.errorMessage);
-      }
-    },
-    onError: ({ err }) => {
-      toast.error("Failed to create account. Please try again.");
-      console.error("Auth action error:", err);
-    },
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -68,15 +50,30 @@ export function SignUpModal({
   });
 
   const onSubmit = async (values: SignUpFormValues) => {
+    setIsLoading(true);
     try {
-      await execute({
-        ...values,
-        signUp: true,
-      });
-    } catch (error) {
-      console.error("Form submission error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    }
+      const res = await signUp.email(
+        {
+          name: "John Doe",
+          email: values.email,
+          password: values.password,
+        },
+        {
+          onRequest: (ctx) => {
+            setIsLoading(true);
+          },
+          onSuccess: (ctx) => {
+            toast.success("Authenticated");
+            setIsLoading(false);
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message);
+          },
+        },
+      );
+
+      console.log("SignIn successful:", res);
+    } catch (error) {}
   };
 
   return (
@@ -135,9 +132,9 @@ export function SignUpModal({
               <Button
                 type="submit"
                 className="w-full text-sm font-medium py-5"
-                disabled={isPending}
+                disabled={isLoading}
               >
-                {isPending ? "Creating account..." : "Sign Up"}
+                {isLoading ? "Creating account..." : "Sign Up"}
               </Button>
             </form>
           </Form>

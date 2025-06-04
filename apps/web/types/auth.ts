@@ -1,6 +1,5 @@
 export type AuthSuccess = {
   accessToken: string;
-  refreshToken: string;
   userId: string;
 };
 

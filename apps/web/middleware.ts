@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { withAuth } from "./lib/session";
 export async function middleware(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
+  const { session } = await withAuth();
 
-  if (!sessionCookie) {
+  if (!session) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

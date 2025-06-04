@@ -6,7 +6,6 @@ export const withAuth = async () => {
   const headersList = await headers();
   const cookie = headersList.get("cookie");
   const url = PUBLIC_BASE_URL + "/api/auth/get-session";
-  console.log(url);
 
   const session = await fetch(url, {
     headers: {

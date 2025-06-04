@@ -18,17 +18,13 @@ import {
 } from "@repo/ui/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { saveUserTokens } from "~/lib/auth/auth";
-import { HTTP_STATUS } from "~/lib/constants";
-import { useServerAction } from "zsa-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/app/schema";
 import { z } from "zod";
-import { authAction } from "~/app/_actions/auth-actions";
-import { ApiResponse } from "~/types";
-import { AuthSuccess } from "~/types/auth";
+import { signIn } from "~/lib/auth-client";
 
+import { useState } from "react";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 interface LoginModalProps {
@@ -42,21 +38,8 @@ export function LoginModal({
   onOpenChange,
   onSwitchToSignUp,
 }: LoginModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { isPending, execute } = useServerAction(authAction, {
-    onSuccess: async ({ data }) => {
-      if (data?.success) {
-        toast.success("Authenticated");
-        setTimeout(() => {
-          onOpenChange(false);
-          // router.push("/portfolio");
-          router.refresh();
-        }, 500);
-      } else if (data?.errorMessage) {
-        toast.error(data.errorMessage);
-      }
-    },
-  });
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -68,13 +51,27 @@ export function LoginModal({
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      await execute({
-        ...values,
-        signUp: false,
-      });
-    } catch (error) {
-      console.error("Form submission error", error);
-    }
+      const res = await signIn.email(
+        {
+          email: values.email,
+          password: values.password,
+        },
+        {
+          onRequest: (ctx) => {
+            setIsLoading(true);
+          },
+          onSuccess: (ctx) => {
+            toast.success("Authenticated");
+            setIsLoading(false);
+          },
+          onError: (ctx) => {
+            toast.error(ctx.error.message);
+          },
+        },
+      );
+
+      console.log("SignIn successful:", res);
+    } catch (error) {}
   };
 
   return (
@@ -141,9 +138,9 @@ export function LoginModal({
               <Button
                 type="submit"
                 className="w-full text-sm font-medium py-5"
-                disabled={isPending}
+                disabled={isLoading}
               >
-                {isPending ? "Logging in..." : "Login"}
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
           </Form>

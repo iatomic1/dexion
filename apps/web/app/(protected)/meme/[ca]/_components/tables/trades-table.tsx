@@ -138,7 +138,7 @@ export default function TradesTable({
                   header.column.id === "totalUsd"
                     ? "text-right"
                     : header.column.id === "trader"
-                      ? "text-right"
+                      ? "text-right w-full"
                       : "text-left",
                 )}
                 style={{

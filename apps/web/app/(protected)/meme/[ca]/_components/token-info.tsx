@@ -183,6 +183,10 @@ const Actions = ({
           toast.error("You are unauthorized to perform this action");
           return;
         }
+        if (res.status === HTTP_STATUS.CONFLICT) {
+          toast.error("Already in watchlist");
+          return;
+        }
 
         await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
         await queryClient.invalidateQueries({

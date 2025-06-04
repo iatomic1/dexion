@@ -12,17 +12,17 @@ import (
 )
 
 const createWatchlist = `-- name: CreateWatchlist :one
-INSERT INTO watchlists (
-    ca, user_id
+INSERT INTO watchlist (
+   id, ca, user_id
 ) VALUES (
-    $1, $2
+   uuid_generate_v4(), $1, $2
 )
 RETURNING id, ca, user_id, updated_at, created_at
 `
 
 type CreateWatchlistParams struct {
-	Ca     string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	UserID uuid.UUID `json:"userId"`
+	Ca     string  `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+	UserID *string `json:"userId"`
 }
 
 func (q *Queries) CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error) {
@@ -39,73 +39,26 @@ func (q *Queries) CreateWatchlist(ctx context.Context, arg CreateWatchlistParams
 }
 
 const deleteWatchlist = `-- name: DeleteWatchlist :exec
-DELETE FROM watchlists
-WHERE id = $1
+DELETE FROM watchlist
+WHERE id = $1 AND user_id = $2
 `
 
-func (q *Queries) DeleteWatchlist(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteWatchlist, id)
+type DeleteWatchlistParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID *string   `json:"userId"`
+}
+
+func (q *Queries) DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error {
+	_, err := q.db.Exec(ctx, deleteWatchlist, arg.ID, arg.UserID)
 	return err
-}
-
-const deleteWatchlistsByUserId = `-- name: DeleteWatchlistsByUserId :exec
-DELETE FROM watchlists
-WHERE user_id = $1
-`
-
-func (q *Queries) DeleteWatchlistsByUserId(ctx context.Context, userID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteWatchlistsByUserId, userID)
-	return err
-}
-
-const getWatchlistById = `-- name: GetWatchlistById :one
-SELECT id, ca, user_id, updated_at, created_at FROM watchlists
-WHERE id = $1
-`
-
-func (q *Queries) GetWatchlistById(ctx context.Context, id uuid.UUID) (*Watchlist, error) {
-	row := q.db.QueryRow(ctx, getWatchlistById, id)
-	var i Watchlist
-	err := row.Scan(
-		&i.ID,
-		&i.Ca,
-		&i.UserID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return &i, err
-}
-
-const getWatchlistByUserIdAndCA = `-- name: GetWatchlistByUserIdAndCA :one
-SELECT id, ca, user_id, updated_at, created_at FROM watchlists
-WHERE user_id = $1 AND ca = $2
-`
-
-type GetWatchlistByUserIdAndCAParams struct {
-	UserID uuid.UUID `json:"userId"`
-	Ca     string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-}
-
-func (q *Queries) GetWatchlistByUserIdAndCA(ctx context.Context, arg GetWatchlistByUserIdAndCAParams) (*Watchlist, error) {
-	row := q.db.QueryRow(ctx, getWatchlistByUserIdAndCA, arg.UserID, arg.Ca)
-	var i Watchlist
-	err := row.Scan(
-		&i.ID,
-		&i.Ca,
-		&i.UserID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return &i, err
 }
 
 const getWatchlistsByUserId = `-- name: GetWatchlistsByUserId :many
-SELECT id, ca, user_id, updated_at, created_at FROM watchlists
+SELECT id, ca, user_id, updated_at, created_at FROM watchlist
 WHERE user_id = $1
-ORDER BY created_at DESC
 `
 
-func (q *Queries) GetWatchlistsByUserId(ctx context.Context, userID uuid.UUID) ([]*Watchlist, error) {
+func (q *Queries) GetWatchlistsByUserId(ctx context.Context, userID *string) ([]*Watchlist, error) {
 	rows, err := q.db.Query(ctx, getWatchlistsByUserId, userID)
 	if err != nil {
 		return nil, err
@@ -131,27 +84,40 @@ func (q *Queries) GetWatchlistsByUserId(ctx context.Context, userID uuid.UUID) (
 	return items, nil
 }
 
-const updateWatchlist = `-- name: UpdateWatchlist :one
-UPDATE watchlists
-SET ca = $2, updated_at = NOW()
-WHERE id = $1
-RETURNING id, ca, user_id, updated_at, created_at
+const hasWatchlist = `-- name: HasWatchlist :one
+SELECT EXISTS (
+  SELECT 1 FROM watchlist
+  WHERE ca = $1 AND user_id = $2
+) AS exists
 `
 
-type UpdateWatchlistParams struct {
-	ID uuid.UUID `json:"id"`
-	Ca string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+type HasWatchlistParams struct {
+	Ca     string  `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+	UserID *string `json:"userId"`
 }
 
-func (q *Queries) UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (*Watchlist, error) {
-	row := q.db.QueryRow(ctx, updateWatchlist, arg.ID, arg.Ca)
-	var i Watchlist
-	err := row.Scan(
-		&i.ID,
-		&i.Ca,
-		&i.UserID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return &i, err
+func (q *Queries) HasWatchlist(ctx context.Context, arg HasWatchlistParams) (bool, error) {
+	row := q.db.QueryRow(ctx, hasWatchlist, arg.Ca, arg.UserID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const hasWatchlistById = `-- name: HasWatchlistById :one
+SELECT EXISTS (
+  SELECT 1 FROM watchlist
+  WHERE id = $1 AND user_id = $2
+) AS exists
+`
+
+type HasWatchlistByIdParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID *string   `json:"userId"`
+}
+
+func (q *Queries) HasWatchlistById(ctx context.Context, arg HasWatchlistByIdParams) (bool, error) {
+	row := q.db.QueryRow(ctx, hasWatchlistById, arg.ID, arg.UserID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

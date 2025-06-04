@@ -3,18 +3,80 @@ package middleware
 import (
 	"backend/api/http"
 	"backend/config"
-	"backend/internal/db/repository"
-	"backend/pkg/jwt"
-	"context"
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/MicahParks/keyfunc/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
+var (
+	jwks               *keyfunc.JWKS
+	ErrInvalidIssuer   = errors.New("invalid issuer")
+	ErrInvalidAudience = errors.New("invalid audience")
+)
+
+// setupJWKS initializes the JWKS for JWT verification
+func setupJWKS(betterAuthBaseURL string) error {
+	jwksURL := fmt.Sprintf("%s/api/auth/jwks", betterAuthBaseURL)
+
+	options := keyfunc.Options{
+		RefreshInterval: 24 * time.Hour, // Cache for 24 hours as recommended
+		RefreshTimeout:  10 * time.Second,
+	}
+
+	var err error
+	jwks, err = keyfunc.Get(jwksURL, options)
+	if err != nil {
+		return fmt.Errorf("failed to get JWKS: %w", err)
+	}
+
+	return nil
+}
+
+// verifyBetterAuthJWT verifies a JWT token from better-auth
+func verifyBetterAuthJWT(tokenString string, cfg *config.Config) (*jwt.Token, error) {
+	// Initialize JWKS if not already done
+	if jwks == nil {
+		if err := setupJWKS(cfg.FrontendURL); err != nil {
+			return nil, err
+		}
+	}
+
+	// Parse and verify the token
+	token, err := jwt.Parse(tokenString, jwks.Keyfunc)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse token: %w", err)
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	// Validate claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, errors.New("invalid token claims")
+	}
+
+	// Validate issuer
+	if iss, ok := claims["iss"].(string); !ok || iss != cfg.FrontendURL {
+		return nil, ErrInvalidIssuer
+	}
+
+	// Validate audience
+	if aud, ok := claims["aud"].(string); !ok || aud != cfg.FrontendURL {
+		return nil, ErrInvalidAudience
+	}
+
+	return token, nil
+}
+
+// BetterAuthJWTMiddleware validates JWT tokens from better-auth
+func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
@@ -23,152 +85,61 @@ func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(tokenString)
-
 		tokenParts := strings.Split(tokenString, " ")
 		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-			http.SendUnauthorized(c, errors.New("Invalid authentication token"), http.WithMessage("Invalid authentication token"))
+			http.SendUnauthorized(c, errors.New("invalid authentication token"), http.WithMessage("Invalid authentication token"))
 			c.Abort()
 			return
 		}
 
 		tokenString = tokenParts[1]
-		claims, err := jwt.ValidateAccessToken(tokenString, cfg)
-		fmt.Println(claims)
+
+		// Verify the JWT token
+		token, err := verifyBetterAuthJWT(tokenString, cfg)
 		if err != nil {
-			switch err {
-			case jwt.ErrTokenExpired:
-				http.SendUnauthorized(c, err, http.WithMessage("Token has expired"))
-			case jwt.ErrInvalidTokenType:
-				http.SendUnauthorized(c, err, http.WithMessage("Invalid token type"))
-			default:
-				http.SendUnauthorized(c, err, http.WithMessage("Invalid"))
-			}
+			http.SendUnauthorized(c, err, http.WithMessage("Token validation failed"))
 			c.Abort()
 			return
 		}
 
-		userId, err := jwt.ExtractDataFromToken(claims, false)
-		if err != nil {
-			http.SendUnauthorized(c, err)
-			c.Abort()
-			return
+		// Extract user information from claims
+		claims := token.Claims.(jwt.MapClaims)
+
+		// Based on your JWT payload, extract user data
+		userID, ok := claims["id"].(string)
+		if !ok {
+			// Fallback to sub if id is not present
+			if sub, subOk := claims["sub"].(string); subOk {
+				userID = sub
+			} else {
+				http.SendUnauthorized(c, errors.New("user ID not found in token"), http.WithMessage("Invalid token payload"))
+				c.Abort()
+				return
+			}
 		}
-		fmt.Println("final", userId)
-		c.Set("userId", userId)
+
+		c.Set("userId", userID)
+
+		if name, ok := claims["name"].(string); ok {
+			c.Set("userName", name)
+		}
+
+		if email, ok := claims["email"].(string); ok {
+			c.Set("userEmail", email)
+		}
+
+		if emailVerified, ok := claims["emailVerified"].(bool); ok {
+			c.Set("userEmailVerified", emailVerified)
+		}
+
+		if image, ok := claims["image"].(string); ok && image != "null" {
+			c.Set("userImage", image)
+		}
+
+		c.Next()
 	}
 }
 
-func RefreshTokenMiddleware(srv *http.Server) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tokenString := c.GetHeader("Authorization")
-		fmt.Println("Authorization Header:", tokenString)
-
-		if tokenString == "" {
-			fmt.Println("Missing token")
-			http.SendUnauthorized(c, nil, http.WithMessage("Missing authentication token"))
-			c.Abort()
-			return
-		}
-
-		tokenParts := strings.Split(tokenString, " ")
-		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-			fmt.Println("Invalid token format:", tokenParts)
-			http.SendUnauthorized(c, errors.New("Invalid authentication token"), http.WithMessage("Invalid authentication token"))
-			c.Abort()
-			return
-		}
-
-		tokenString = tokenParts[1]
-		fmt.Println("Token to validate:", tokenString)
-
-		claims, err := jwt.ValidateRefreshToken(tokenString, srv.Config)
-		if err != nil {
-			fmt.Println("Token validation failed:", err)
-			switch err {
-			case jwt.ErrTokenExpired:
-				http.SendUnauthorized(c, err, http.WithMessage("Refresh token has expired"))
-			case jwt.ErrInvalidTokenType:
-				http.SendUnauthorized(c, err, http.WithMessage("Invalid refresh token"))
-			default:
-				http.SendUnauthorized(c, err, http.WithMessage("Invalid token"))
-			}
-			c.Abort()
-			return
-		}
-
-		fmt.Println("Token claims:", claims)
-
-		jti, ok := claims["jti"].(string)
-		if !ok {
-			fmt.Println("Missing JTI in token")
-			http.SendUnauthorized(c, errors.New("refresh token ID not found"), http.WithMessage("Invalid refresh token"))
-			c.Abort()
-			return
-		}
-
-		c.Set("refreshTokenId", jti)
-
-		ctx := context.Background()
-		tokenID, err := uuid.Parse(jti)
-		if err != nil {
-			fmt.Println("Invalid JTI format:", jti)
-			http.SendUnauthorized(c, err, http.WithMessage("Invalid refresh token ID format"))
-			c.Abort()
-			return
-		}
-
-		tx, err := srv.DB.Begin(ctx)
-		if err != nil {
-			fmt.Println("Failed to begin DB transaction:", err)
-			http.SendInternalServerError(c, err)
-			c.Abort()
-			return
-		}
-		defer tx.Rollback(ctx)
-
-		repo := repository.New(tx)
-
-		exists, err := repo.RefreshTokenExists(ctx, tokenID)
-		if err != nil {
-			fmt.Println("Error checking token existence:", err)
-			http.SendInternalServerError(c, err)
-			c.Abort()
-			return
-		}
-
-		if !exists {
-			fmt.Println("Token not found or revoked:", tokenID)
-			http.SendUnauthorized(c, errors.New("refresh token has been revoked or already used"),
-				http.WithMessage("Invalid refresh token"))
-			c.Abort()
-			return
-		}
-
-		refreshTokenId, err := jwt.ExtractDataFromToken(claims, true)
-		if err != nil {
-			fmt.Println("Failed to extract data from token:", err)
-			http.SendUnauthorized(c, err)
-			c.Abort()
-			return
-		}
-
-		id, err := uuid.Parse(refreshTokenId)
-		if err != nil {
-			fmt.Println("Failed to parse id:", err)
-			http.SendUnauthorized(c, err)
-			c.Abort()
-			return
-		}
-
-		userID, err := repo.GetRefreshTokenUserID(ctx, id)
-		fmt.Println("Failed to get userid", err)
-		if err != nil {
-			c.Abort()
-			return
-		}
-
-		fmt.Printf("Authenticated user: ID=%s\n", userID)
-		c.Set("userId", userID.String())
-	}
+func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
+	return BetterAuthJWTMiddleware(cfg)
 }

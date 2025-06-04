@@ -8,7 +8,6 @@ package repository
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -89,7 +88,7 @@ type GetUserTrackedWalletsRow struct {
 	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 }
 
-func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error) {
+func (q *Queries) GetUserTrackedWallets(ctx context.Context, userID string) ([]*GetUserTrackedWalletsRow, error) {
 	rows, err := q.db.Query(ctx, getUserTrackedWallets, userID)
 	if err != nil {
 		return nil, err
@@ -122,8 +121,8 @@ WHERE user_id = $1 AND wallet_address = $2
 `
 
 type GetUserWalletDetailsParams struct {
-	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	UserID        string `json:"userId"`
+	WalletAddress string `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 }
 
 type GetUserWalletDetailsRow struct {
@@ -194,10 +193,10 @@ WHERE wallet_address = $1
 `
 
 type GetWatchersForWalletRow struct {
-	UserID        uuid.UUID `json:"userId"`
-	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji         *string   `json:"emoji"`
-	Notifications bool      `json:"notifications"`
+	UserID        string  `json:"userId"`
+	Nickname      string  `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string `json:"emoji"`
+	Notifications bool    `json:"notifications"`
 }
 
 func (q *Queries) GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error) {
@@ -233,8 +232,8 @@ SELECT EXISTS(
 `
 
 type IsTrackingWalletParams struct {
-	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	UserID        string `json:"userId"`
+	WalletAddress string `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 }
 
 func (q *Queries) IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error) {
@@ -250,8 +249,8 @@ WHERE user_id = $1 AND wallet_address = $2
 `
 
 type UntrackWalletParams struct {
-	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	UserID        string `json:"userId"`
+	WalletAddress string `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 }
 
 func (q *Queries) UntrackWallet(ctx context.Context, arg UntrackWalletParams) error {
@@ -270,10 +269,10 @@ RETURNING user_id, wallet_address, nickname, emoji, notifications, created_at, u
 `
 
 type UpdateWalletPreferencesParams struct {
-	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
-	Notifications bool      `json:"notifications"`
-	ID            uuid.UUID `json:"id"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	Nickname      string `binding:"required" example:"iatomic" json:"nickname"`
+	Notifications bool   `json:"notifications"`
+	ID            string `json:"id"`
+	WalletAddress string `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 }
 
 func (q *Queries) UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error) {
@@ -307,10 +306,10 @@ RETURNING user_id, wallet_address, nickname, emoji, notifications, created_at, u
 `
 
 type UpsertUserWalletParams struct {
-	UserID        uuid.UUID `json:"userId"`
-	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
-	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
-	Emoji         *string   `json:"emoji"`
+	UserID        string  `json:"userId"`
+	WalletAddress string  `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
+	Nickname      string  `binding:"required" example:"iatomic" json:"nickname"`
+	Emoji         *string `json:"emoji"`
 }
 
 func (q *Queries) UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error) {

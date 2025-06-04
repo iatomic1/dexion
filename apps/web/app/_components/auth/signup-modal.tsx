@@ -20,14 +20,10 @@ import {
 } from "@repo/ui/components/ui/form";
 import Link from "next/link";
 import { authAction } from "~/app/_actions/auth-actions";
-import { saveUserTokens } from "~/lib/auth/auth";
-import { HTTP_STATUS } from "~/lib/constants";
 import { useServerAction } from "zsa-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signUpSchema } from "~/app/schema";
-import { ApiResponse } from "~/types";
-import { AuthSuccess } from "~/types/auth";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
@@ -45,8 +41,21 @@ export function SignUpModal({
   const router = useRouter();
 
   const { isPending, execute } = useServerAction(authAction, {
-    onSuccess: async ({ data: res }) => {
-      return res;
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        toast.success("Account created successfully!");
+        setTimeout(() => {
+          onOpenChange(false);
+          // router.push("/portfolio");
+          router.refresh();
+        }, 500);
+      } else if (data?.errorMessage) {
+        toast.error(data.errorMessage);
+      }
+    },
+    onError: ({ err }) => {
+      toast.error("Failed to create account. Please try again.");
+      console.error("Auth action error:", err);
     },
   });
 
@@ -60,59 +69,13 @@ export function SignUpModal({
 
   const onSubmit = async (values: SignUpFormValues) => {
     try {
-      toast.promise(
-        // @ts-expect-errorWeird err here
-        async () => {
-          const result = await execute({
-            ...values,
-            signUp: true,
-          });
-          return result[0];
-        },
-        {
-          loading: "Creating account...",
-          success: async (res: ApiResponse<AuthSuccess>) => {
-            // Handle the response based on status
-            if (
-              res.status === HTTP_STATUS.OK ||
-              res.status === HTTP_STATUS.CREATED
-            ) {
-              await saveUserTokens({
-                accessToken: res?.data.accessToken as string,
-                refreshToken: res?.data.refreshToken as string,
-                userId: res?.data.userId,
-              });
-
-              // Navigate after a small delay to ensure toast is visible
-              setTimeout(() => {
-                router.push("/portfolio");
-                router.refresh();
-              }, 500);
-
-              return "Account created successfully";
-            } else {
-              // Handle error cases but return messages instead of throwing errors
-              if (res.status === HTTP_STATUS.CONFLICT) {
-                return "User with this email already exists";
-                // throw new Error(
-                //   `User with this ${res.message?.includes("username") ? "username" : "email"} already exists`,
-                // );
-              }
-              if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-                return "Unauthorized request";
-              }
-
-              return "Failed to create account";
-            }
-          },
-          error: (err) => {
-            // Return the error message
-            return err.message || "Failed to create account";
-          },
-        },
-      );
+      await execute({
+        ...values,
+        signUp: true,
+      });
     } catch (error) {
-      console.error("Form submission error", error);
+      console.error("Form submission error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -178,6 +141,7 @@ export function SignUpModal({
               </Button>
             </form>
           </Form>
+
           <div className="mt-3 text-center text-sm text-muted-foreground">
             Or
           </div>

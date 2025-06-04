@@ -2,7 +2,6 @@ package domain
 
 import (
 	"backend/api/http"
-	"backend/internal/db/repository"
 	"backend/pkg/jwt"
 	"errors"
 	"fmt"
@@ -29,9 +28,9 @@ type AuthResponse struct {
 	UserID string `json:"userId"`
 }
 
-type RegisterRequest struct {
-	repository.RegisterUserParams
-}
+// type RegisterRequest struct {
+// 	repository.RegisterUserParams
+// }
 
 type RefreshTokenResponse struct {
 	jwt.TokenPair
@@ -52,24 +51,19 @@ func ParseIDs(id string) (uuid.UUID, error) {
 	return userId, nil
 }
 
-func GetUserIDFromContext(c *gin.Context) (uuid.UUID, error) {
+func GetUserIDFromContext(c *gin.Context) (string, error) {
 	userID, exists := c.Get("userId")
 	if !exists {
 		http.SendUnauthorized(c, nil, http.WithMessage("User ID not found in context"))
-		return uuid.Nil, errors.New("user id not found")
+		return "", errors.New("user id not found")
 	}
+	fmt.Println(userID)
 
 	userIDStr, ok := userID.(string)
 	if !ok {
 		http.SendInternalServerError(c, nil, http.WithMessage("Invalid user ID format"))
-		return uuid.Nil, errors.New("invalid user ID type")
+		return "", errors.New("invalid user ID type")
 	}
 
-	parsedID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("Failed to parse user ID"))
-		return uuid.Nil, fmt.Errorf("parse UUID: %w", err)
-	}
-
-	return parsedID, nil
+	return userIDStr, nil
 }

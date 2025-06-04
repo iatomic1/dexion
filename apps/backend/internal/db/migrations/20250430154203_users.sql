@@ -1,19 +1,25 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE user_type AS ENUM ('APP', 'TELEGRAM');
-CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT, -- tags:`binding:"required,email" example:"mosh@mail.com"
-    type user_type NOT NULL, -- tags:`binding:"required" example:"APP"
-    telegram_chat_id TEXT UNIQUE,
-    password VARCHAR(255) NOT NULL,    -- tags:binding:"required" example:"Hello"
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_at TIMESTAMPTZ DEFAULT now(),
-    CONSTRAINT email_required_for_app CHECK (
-      (type = 'APP' AND email IS NOT NULL) OR
-      (type = 'TELEGRAM' AND email IS NULL)
-    ),
-    CONSTRAINT user_email_unique UNIQUE (email)
+DO $$ BEGIN
+    CREATE TYPE user_type AS ENUM('APP', 'TELEGRAM');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+CREATE TABLE IF NOT EXISTS "users" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"email" text,
+	"email_verified" boolean NOT NULL,
+	"image" text,
+	"type" "user_type" NOT NULL,
+	"telegram_chat_id" text,
+	"created_at" timestamp with time zone NOT NULL,
+	"updated_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "users_email_unique" UNIQUE("email"),
+	CONSTRAINT "users_telegram_chat_id_unique" UNIQUE("telegram_chat_id"),
+	CONSTRAINT "user_email_unique" UNIQUE("email"),
+	CONSTRAINT "email_required_for_app" CHECK (("users"."type" = 'APP' AND "users"."email" IS NOT NULL) OR ("users"."type" = 'TELEGRAM' AND "users"."email" IS NULL))
 );
 -- +goose StatementEnd
 

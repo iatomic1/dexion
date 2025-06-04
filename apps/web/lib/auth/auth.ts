@@ -1,23 +1,40 @@
 "use server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { AuthSuccess } from "~/types/auth";
-import { accessTokenKey, refreshTokenKey, userIdKey } from "../constants";
+import {
+  accessTokenKey,
+  PUBLIC_BASE_URL,
+  refreshTokenKey,
+  userIdKey,
+} from "../constants";
+import { auth } from "../auth";
 
 export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(accessTokenKey);
-  const refreshToken = cookieStore.get(refreshTokenKey);
-  const userId = cookieStore.get(userIdKey);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!refreshToken || !userId) {
-    throw new Error("User not authenticated");
+  if (!session) {
+    throw new Error("Not authenticated");
   }
+
+  const tokenRes = await fetch(PUBLIC_BASE_URL + "/api/auth/token", {
+    headers: {
+      Authorization: `Bearer ${session.session.token}`,
+    },
+  });
+  if (!tokenRes.ok) {
+    throw new Error("Error trying to get the access token");
+  }
+
+  const tokenData: { token: string } = await tokenRes.json();
+  // console.log(tokenData.token);
 
   try {
     return {
-      accessToken: accessToken?.value as string,
-      refreshToken: refreshToken?.value as string,
-      userId: userId.value,
+      accessToken: tokenData.token as string,
+      refreshToken: "",
+      userId: session.user.id,
     };
   } catch (error) {
     console.error("Error parsing user data:", error);

@@ -20,7 +20,7 @@ func RegisterWatchlistRoutes(srv *http.Server, router *gin.RouterGroup) {
 	{
 		watchlistGroup.POST("", watchlistHandler.CreateWatchlist)
 		watchlistGroup.GET("", watchlistHandler.GetUserWatchlists)
-		watchlistGroup.PATCH("/:id", watchlistHandler.UpdateWatchlist)
-		watchlistGroup.DELETE("/:id", watchlistHandler.DeleteWatchlist)
+		// watchlistGroup.PATCH("/:id", watchlistHandler.UpdateWatchlist)
+		// watchlistGroup.DELETE("/:id", watchlistHandler.DeleteWatchlist)
 	}
 }

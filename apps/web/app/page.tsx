@@ -32,6 +32,7 @@ import {
   TabsTrigger,
 } from "@repo/ui/components/ui/tabs";
 import { Badge } from "@repo/ui/components/ui/badge";
+import AuthController from "./_components/auth/auth-controller";
 
 export default function Home() {
   return (
@@ -78,15 +79,7 @@ export default function Home() {
               FAQ
             </Link>
           </nav>
-          <div className="flex items-center gap-4">
-            <Link
-              href="#"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Sign In
-            </Link>
-            <Button>Get Started</Button>
-          </div>
+          <AuthController />
         </div>
       </header>
       <main className="flex-1">
@@ -427,153 +420,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="pricing"
-          className="w-full py-12 md:py-24 lg:py-32 bg-background"
-        >
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <Badge
-                  className="inline-flex rounded-md px-3.5 py-1.5"
-                  variant="secondary"
-                >
-                  Pricing
-                </Badge>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Choose Your Trading Power
-                </h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Flexible plans designed to scale with your trading volume and
-                  needs.
-                </p>
-              </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-3">
-              <Card className="relative overflow-hidden border-muted-foreground/20">
-                <CardHeader>
-                  <CardTitle>Starter</CardTitle>
-                  <div className="text-3xl font-bold">$29</div>
-                  <CardDescription>
-                    Perfect for beginners and casual traders.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Up to 3 exchange connections</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Basic wallet tracking</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Standard limit orders</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>5 active bots</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Email support</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Get Started</Button>
-                </CardFooter>
-              </Card>
-              <Card className="relative overflow-hidden border-primary/50 bg-muted/50">
-                <div className="absolute top-0 right-0 h-16 w-16 translate-x-1/2 -translate-y-1/2 bg-primary/10 rounded-full blur-2xl" />
-                <div className="absolute -top-1 left-0 right-0 mx-auto w-fit rounded-b-lg bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-                  Most Popular
-                </div>
-                <CardHeader>
-                  <CardTitle>Pro</CardTitle>
-                  <div className="text-3xl font-bold">$79</div>
-                  <CardDescription>
-                    For serious traders who want more power.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Unlimited exchange connections</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Advanced portfolio analytics</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Advanced order types</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>20 active bots</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Priority support</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Telegram bot integration</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Get Started</Button>
-                </CardFooter>
-              </Card>
-              <Card className="relative overflow-hidden border-muted-foreground/20">
-                <CardHeader>
-                  <CardTitle>Enterprise</CardTitle>
-                  <div className="text-3xl font-bold">$199</div>
-                  <CardDescription>
-                    For professional traders and institutions.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Everything in Pro</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Custom strategy development</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>API access</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Unlimited active bots</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>Dedicated account manager</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ChevronRight className="h-4 w-4 text-primary" />
-                      <span>White-label options</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Contact Sales</Button>
-                </CardFooter>
-              </Card>
             </div>
           </div>
         </section>

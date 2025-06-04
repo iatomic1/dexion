@@ -10,8 +10,6 @@ import { UserWatchlist } from "~/types/wallets";
 
 export async function getUserWatchlist() {
   const user = await assertUserAuthenticated();
-  console.log("called");
-  console.log(user, "from me");
 
   try {
     return await makeFetch<ApiResponse<UserWatchlist[]>>(
@@ -20,9 +18,6 @@ export async function getUserWatchlist() {
       user.accessToken,
       {
         method: "GET",
-        next: {
-          tags: ["watchlist"],
-        },
       },
     )();
   } catch (err) {
@@ -50,9 +45,6 @@ export const addToWatchlistAction = authenticatedAction
             userId: user.userId,
             ca: input.ca,
           },
-          next: {
-            tags: ["watchlist"],
-          },
         },
       )();
     } catch (err) {
@@ -75,9 +67,6 @@ export const deleteWatchlistAction = authenticatedAction
         user.accessToken,
         {
           method: "DELETE",
-          next: {
-            tags: ["watchlist"],
-          },
         },
       )();
     } catch (err) {

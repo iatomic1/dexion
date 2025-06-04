@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golodash/galidator/v2"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -87,16 +86,16 @@ func (h *WatchlistHandler) CreateWatchlist(c *gin.Context) {
 
 	// First check if user already has this contract in their watchlist
 	repo := repository.New(h.srv.DB)
-	exists, err := repo.HasWatchlist(ctx, repository.HasWatchlistParams{
+	watchlistEx, err := repo.HasWatchlist(ctx, repository.HasWatchlistParams{
 		UserID: &userID,
 		Ca:     req.Ca,
 	})
-	if exists {
-		// If no error, it means the record exists
+	fmt.Println("real truth", watchlistEx)
+	if err == nil {
 		http.SendConflict(c, fmt.Errorf("contract already in watchlist"), http.WithMessage("Contract already in watchlist"))
 		return
 	}
-
+	fmt.Println("whyyyyyy")
 	// For write operations, use our helper to get a transaction
 	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
@@ -109,6 +108,7 @@ func (h *WatchlistHandler) CreateWatchlist(c *gin.Context) {
 	txRepo := repository.New(tx)
 
 	watchlist, err := txRepo.CreateWatchlist(ctx, req)
+	fmt.Print(watchlist)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == domain.UniqueViolation {
@@ -192,10 +192,10 @@ func (h *WatchlistHandler) DeleteWatchlist(c *gin.Context) {
 		http.SendInternalServerError(c, err, http.WithMessage("error getting userID"))
 		return
 	}
+	fmt.Println(userID, "userID", idStr)
 
 	ctx := context.Background()
 
-	// For write operations, use our helper to get a transaction
 	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
@@ -205,19 +205,19 @@ func (h *WatchlistHandler) DeleteWatchlist(c *gin.Context) {
 
 	txRepo := repository.New(tx)
 
-	// First check if the watchlist entry exists
 	exists, err := txRepo.HasWatchlistById(ctx, repository.HasWatchlistByIdParams{
 		ID:     id,
 		UserID: &userID,
 	})
-	if !exists {
-		if errors.Is(err, pgx.ErrNoRows) {
-			http.SendNotFound(c, err, http.WithMessage("Watchlist entry not found"))
-			return
-		}
-		http.SendInternalServerError(c, err)
-		return
-	}
+	fmt.Print("dark truth", exists, userID, idStr)
+	// if !exists {
+	// 	if errors.Is(err, pgx.ErrNoRows) {
+	// 		http.SendNotFound(c, err, http.WithMessage("Watchlist entry not found"))
+	// 		return
+	// 	}
+	// 	http.SendInternalServerError(c, err)
+	// 	return
+	// }
 
 	err = txRepo.DeleteWatchlist(ctx, repository.DeleteWatchlistParams{ID: id, UserID: &userID})
 	if err != nil {

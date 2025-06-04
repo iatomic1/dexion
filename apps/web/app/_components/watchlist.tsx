@@ -11,7 +11,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { formatPrice } from "~/lib/helpers/numbers";
 import {
   deleteWatchlistAction,
@@ -25,6 +29,7 @@ import { useServerAction } from "zsa-react";
 import { HTTP_STATUS } from "~/lib/constants";
 import { revalidateTagServer } from "../_actions/revalidate";
 import { Trash2 } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
 
 export const WatchLists = () => {
   const {
@@ -36,7 +41,8 @@ export const WatchLists = () => {
   } = useQuery({
     queryKey: ["watchlist"],
     queryFn: getUserWatchlist,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   const contractAddresses = watchlist?.data
@@ -51,9 +57,11 @@ export const WatchLists = () => {
     isInitialLoading: isTokensInitialLoading,
   } = useQuery({
     queryKey: ["batch-tokens", contractAddresses],
+    refetchOnWindowFocus: true,
     queryFn: () => getBatchTokenData(contractAddresses),
     enabled: contractAddresses?.length > 0, // Only run if we have contract addresses
-    staleTime: 30 * 1000, // 30 seconds - tokens change frequently
+    staleTime: 60 * 1000, // 30 seconds - tokens change frequently
+    placeholderData: keepPreviousData,
   });
 
   // Create a map of contract addresses to watchlist IDs for quick lookup
@@ -68,10 +76,9 @@ export const WatchLists = () => {
   }));
 
   // Only show skeleton on initial loading, not on refetch/mutations
-  const shouldShowSkeleton =
-    isWatchlistInitialLoading || isTokensInitialLoading;
+  const isLoading = isWatchlistInitialLoading || isTokensInitialLoading;
 
-  if (shouldShowSkeleton) {
+  if (isLoading) {
     return (
       <div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -100,19 +107,22 @@ export const WatchLists = () => {
   }
 
   return (
-    <div className="flex items-center flex-row gap-2 py-1 px-1 border-b border-b-border">
-      {tokensWithWatchlistIds &&
-        tokensWithWatchlistIds?.map(
-          (token: TokenMetadata & { watchlistId?: string }) => (
-            <WatchListItem
-              key={token.contract_id || token.symbol}
-              token={token}
-              watchlistId={token?.watchlistId}
-              isRefetching={isTokensFetching}
-            />
-          ),
-        )}
-    </div>
+    <ScrollArea className="">
+      <div className="flex items-center flex-row gap-2 py-1 px-1 border-b border-b-border">
+        {tokensWithWatchlistIds &&
+          tokensWithWatchlistIds?.map(
+            (token: TokenMetadata & { watchlistId?: string }) => (
+              <WatchListItem
+                key={token.contract_id || token.symbol}
+                token={token}
+                watchlistId={token?.watchlistId as string}
+                isRefetching={isTokensFetching}
+              />
+            ),
+          )}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 

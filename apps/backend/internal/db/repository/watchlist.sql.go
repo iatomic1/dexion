@@ -88,7 +88,7 @@ const hasWatchlist = `-- name: HasWatchlist :one
 SELECT EXISTS (
   SELECT 1 FROM watchlist
   WHERE ca = $1 AND user_id = $2
-) AS exists
+)
 `
 
 type HasWatchlistParams struct {
@@ -107,7 +107,7 @@ const hasWatchlistById = `-- name: HasWatchlistById :one
 SELECT EXISTS (
   SELECT 1 FROM watchlist
   WHERE id = $1 AND user_id = $2
-) AS exists
+)
 `
 
 type HasWatchlistByIdParams struct {

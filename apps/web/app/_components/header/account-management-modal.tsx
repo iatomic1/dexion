@@ -19,6 +19,9 @@ import {
   CredenzaTrigger,
 } from "@repo/ui/components/ui/credenza";
 import { cn } from "@repo/ui/lib/utils";
+import { signOut, useSession } from "~/lib/auth-client";
+import { truncateString } from "~/lib/helpers/strings";
+import { useRouter } from "next/navigation";
 
 export function AccountSecurityModal({
   children,
@@ -26,7 +29,12 @@ export function AccountSecurityModal({
   children: React.ReactNode;
 }) {
   const copy = useCopyToClipboard();
+  const session = useSession();
+  const router = useRouter();
 
+  if (!session) {
+    return <div>Loading</div>;
+  }
   return (
     <Credenza>
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
@@ -49,11 +57,17 @@ export function AccountSecurityModal({
                 <div className="w-2 h-2 rounded-full bg-green-500 ml-1" />
               </div>
               <div className="flex items-center text-sm text-zinc-400 mt-1">
-                <span>User ID: 2c94...b2ba</span>
+                <span>
+                  User ID: {truncateString(session.data?.user.id as string)}
+                </span>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-5 w-5 ml-1 text-zinc-400"
+                  onClick={() => {
+                    copy(session.data?.user.id as string);
+                    toast.info("UserID copied to clipboard");
+                  }}
                 >
                   <Copy className="h-3 w-3" />
                 </Button>
@@ -95,6 +109,7 @@ export function AccountSecurityModal({
                 variant="secondary"
                 size="sm"
                 className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                disabled
               >
                 View Recovery Key
               </Button>
@@ -176,8 +191,13 @@ export function AccountSecurityModal({
             </div>
             <Button
               variant="destructive"
+              onClick={async () => {
+                await signOut();
+                router.push("/");
+                toast.success("Logged out");
+              }}
               size="sm"
-              className="bg-transparent hover:bg-transparent text-pink-500 hover:text-pink-400 border-none"
+              // className="bg-transparent hover:bg-transparent text-pink-500 hover:text-pink-400 border-none"
             >
               Log Out
             </Button>

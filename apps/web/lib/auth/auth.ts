@@ -28,12 +28,10 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
   }
 
   const tokenData: { token: string } = await tokenRes.json();
-  // console.log(tokenData.token);
 
   try {
     return {
       accessToken: tokenData.token as string,
-      refreshToken: "",
       userId: session.user.id,
     };
   } catch (error) {
@@ -42,28 +40,28 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
   }
 };
 
-export async function saveUserTokens(data: AuthSuccess) {
-  // console.log(data, "save");
-  const cookieStore = await cookies();
-  cookieStore.set(accessTokenKey, data.accessToken as string, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
-    // maxAge: tokens.accessTokenExpiry - Math.floor(Date.now() / 1000),
-    path: "/",
-  });
-  cookieStore.set(refreshTokenKey, data.refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
-    path: "/",
-  });
-
-  if (data.userId)
-    cookieStore.set(userIdKey, data.userId, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "strict",
-      path: "/",
-    });
-}
+// export async function saveUserTokens(data: AuthSuccess) {
+//   // console.log(data, "save");
+//   const cookieStore = await cookies();
+//   cookieStore.set(accessTokenKey, data.accessToken as string, {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV !== "development",
+//     sameSite: "strict",
+//     // maxAge: tokens.accessTokenExpiry - Math.floor(Date.now() / 1000),
+//     path: "/",
+//   });
+//   cookieStore.set(refreshTokenKey, data.refreshToken, {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV !== "development",
+//     sameSite: "strict",
+//     path: "/",
+//   });
+//
+//   if (data.userId)
+//     cookieStore.set(userIdKey, data.userId, {
+//       httpOnly: false,
+//       secure: process.env.NODE_ENV !== "development",
+//       sameSite: "strict",
+//       path: "/",
+//     });
+// }

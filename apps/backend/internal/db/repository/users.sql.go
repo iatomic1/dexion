@@ -7,12 +7,10 @@ package repository
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, type, telegram_chat_id, password, updated_at, created_at FROM "users"
+SELECT id, name, email, email_verified, image, type, telegram_chat_id, created_at, updated_at FROM "users"
 WHERE email = $1
 `
 
@@ -21,90 +19,36 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email *string) (*User, err
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
+		&i.EmailVerified,
+		&i.Image,
 		&i.Type,
 		&i.TelegramChatID,
-		&i.Password,
-		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return &i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, type, telegram_chat_id, password, updated_at, created_at FROM "users"
+SELECT id, name, email, email_verified, image, type, telegram_chat_id, created_at, updated_at FROM "users"
 WHERE id = $1
 `
 
-func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (*User, error) {
+func (q *Queries) GetUserById(ctx context.Context, id string) (*User, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
+		&i.EmailVerified,
+		&i.Image,
 		&i.Type,
 		&i.TelegramChatID,
-		&i.Password,
-		&i.UpdatedAt,
 		&i.CreatedAt,
-	)
-	return &i, err
-}
-
-const registerTelegramUser = `-- name: RegisterTelegramUser :one
-INSERT INTO "users" (
-  id, telegram_chat_id, password, type
-) VALUES (
-  uuid_generate_v4(), $1, $2, $3
-)
-RETURNING id, email, type, telegram_chat_id, password, updated_at, created_at
-`
-
-type RegisterTelegramUserParams struct {
-	TelegramChatID *string  `json:"telegramChatId"`
-	Password       string   `binding:"required" example:"Hello" json:"password"`
-	Type           UserType `binding:"required" example:"APP" json:"type"`
-}
-
-func (q *Queries) RegisterTelegramUser(ctx context.Context, arg RegisterTelegramUserParams) (*User, error) {
-	row := q.db.QueryRow(ctx, registerTelegramUser, arg.TelegramChatID, arg.Password, arg.Type)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Type,
-		&i.TelegramChatID,
-		&i.Password,
 		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return &i, err
-}
-
-const registerUser = `-- name: RegisterUser :one
-INSERT INTO "users" (
- id, email, password, type
-) VALUES ( uuid_generate_v4(), $1, $2, $3 )
-RETURNING id, email, type, telegram_chat_id, password, updated_at, created_at
-`
-
-type RegisterUserParams struct {
-	Email    *string  `binding:"required,email" example:"mosh@mail.com" json:"email"`
-	Password string   `binding:"required" example:"Hello" json:"password"`
-	Type     UserType `binding:"required" example:"APP" json:"type"`
-}
-
-func (q *Queries) RegisterUser(ctx context.Context, arg RegisterUserParams) (*User, error) {
-	row := q.db.QueryRow(ctx, registerUser, arg.Email, arg.Password, arg.Type)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Type,
-		&i.TelegramChatID,
-		&i.Password,
-		&i.UpdatedAt,
-		&i.CreatedAt,
 	)
 	return &i, err
 }

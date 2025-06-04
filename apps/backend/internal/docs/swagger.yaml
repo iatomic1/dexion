@@ -1,17 +1,5 @@
 basePath: /api/v1
 definitions:
-  api_http_handlers_auth.TelegramRegisterRequest:
-    properties:
-      password:
-        type: string
-      telegram_chat_id:
-        type: string
-      type:
-        $ref: '#/definitions/backend_internal_db_repository.UserType'
-    required:
-    - telegram_chat_id
-    - type
-    type: object
   backend_api_http.InternalServerErrorResponse:
     properties:
       errors: {}
@@ -21,15 +9,6 @@ definitions:
         example: Internal Server Error
         type: string
     type: object
-  backend_api_http.NotFoundResponse:
-    properties:
-      errors: {}
-      message:
-        type: string
-      status:
-        example: Not Found
-        type: string
-    type: object
   backend_api_http.Response:
     properties:
       data: {}
@@ -37,24 +16,6 @@ definitions:
       message:
         type: string
       status:
-        type: string
-    type: object
-  backend_api_http.SuccessResponse:
-    properties:
-      data: {}
-      message:
-        type: string
-      status:
-        example: OK
-        type: string
-    type: object
-  backend_api_http.UnauthorizedResponse:
-    properties:
-      errors: {}
-      message:
-        type: string
-      status:
-        example: Unauthorized
         type: string
     type: object
   backend_internal_db_repository.CreateWatchlistParams:
@@ -85,23 +46,6 @@ definitions:
     - address
     - nickname
     type: object
-  backend_internal_db_repository.RegisterUserParams:
-    properties:
-      email:
-        example: mosh@mail.com
-        type: string
-      password:
-        example: Hello
-        type: string
-      type:
-        allOf:
-        - $ref: '#/definitions/backend_internal_db_repository.UserType'
-        example: APP
-    required:
-    - email
-    - password
-    - type
-    type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
     properties:
       id:
@@ -117,16 +61,6 @@ definitions:
     required:
     - nickname
     - walletAddress
-    type: object
-  backend_internal_db_repository.UpdateWatchlistParams:
-    properties:
-      ca:
-        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token
-        type: string
-      id:
-        type: string
-    required:
-    - ca
     type: object
   backend_internal_db_repository.UpsertUserWalletParams:
     properties:
@@ -144,39 +78,6 @@ definitions:
     - nickname
     - walletAddress
     type: object
-  backend_internal_db_repository.User:
-    properties:
-      createdAt:
-        $ref: '#/definitions/pgtype.Timestamptz'
-      email:
-        example: mosh@mail.com
-        type: string
-      id:
-        type: string
-      password:
-        example: Hello
-        type: string
-      telegramChatId:
-        type: string
-      type:
-        allOf:
-        - $ref: '#/definitions/backend_internal_db_repository.UserType'
-        example: APP
-      updatedAt:
-        type: string
-    required:
-    - email
-    - password
-    - type
-    type: object
-  backend_internal_db_repository.UserType:
-    enum:
-    - APP
-    - TELEGRAM
-    type: string
-    x-enum-varnames:
-    - UserTypeAPP
-    - UserTypeTELEGRAM
   backend_internal_db_repository.UserWallet:
     properties:
       createdAt:
@@ -215,7 +116,7 @@ definitions:
         example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token
         type: string
       createdAt:
-        $ref: '#/definitions/pgtype.Timestamptz'
+        type: string
       id:
         type: string
       updatedAt:
@@ -224,45 +125,6 @@ definitions:
         type: string
     required:
     - ca
-    type: object
-  backend_internal_domain.AuthResponse:
-    properties:
-      accessToken:
-        type: string
-      refreshToken:
-        type: string
-      refreshTokenId:
-        description: Added to hold the refresh token ID
-        type: string
-      userId:
-        type: string
-    type: object
-  backend_internal_domain.RegisterRequest:
-    properties:
-      email:
-        example: mosh@mail.com
-        type: string
-      password:
-        example: Hello
-        type: string
-      type:
-        allOf:
-        - $ref: '#/definitions/backend_internal_db_repository.UserType'
-        example: APP
-    required:
-    - email
-    - password
-    - type
-    type: object
-  backend_pkg_jwt.TokenPair:
-    properties:
-      accessToken:
-        type: string
-      refreshToken:
-        type: string
-      refreshTokenId:
-        description: Added to hold the refresh token ID
-        type: string
     type: object
   pgtype.InfinityModifier:
     enum:
@@ -293,139 +155,6 @@ info:
   title: DEXION API
   version: "1.0"
 paths:
-  /auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Logs a user into his/her account
-      parameters:
-      - description: Login data
-        in: body
-        name: EmailAndPassword
-        required: true
-        schema:
-          $ref: '#/definitions/backend_internal_db_repository.RegisterUserParams'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Login success
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_internal_domain.AuthResponse'
-              type: object
-        "400":
-          description: Invalid request data
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      summary: Login to your account
-      tags:
-      - Auth
-  /auth/refresh:
-    get:
-      consumes:
-      - application/json
-      description: Refreshes token to get new token pair
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: TokenPair
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.SuccessResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_pkg_jwt.TokenPair'
-              type: object
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/backend_api_http.UnauthorizedResponse'
-        "404":
-          description: Profile not found
-          schema:
-            $ref: '#/definitions/backend_api_http.NotFoundResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      security:
-      - RefreshTokenBearer: []
-      summary: Refresh Token
-      tags:
-      - Auth
-  /auth/signup:
-    post:
-      consumes:
-      - application/json
-      description: Create an account on unwind
-      parameters:
-      - description: Signup data
-        in: body
-        name: EmailAndPassword
-        required: true
-        schema:
-          $ref: '#/definitions/backend_internal_domain.RegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: User created successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_internal_domain.AuthResponse'
-              type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      summary: Create an account
-      tags:
-      - Auth
-  /auth/signup/tg:
-    post:
-      consumes:
-      - application/json
-      description: Create an account on dexion
-      parameters:
-      - description: Signup data
-        in: body
-        name: EmailAndPassword
-        required: true
-        schema:
-          $ref: '#/definitions/api_http_handlers_auth.TelegramRegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: User created successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_internal_db_repository.User'
-              type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      summary: Create an account
-      tags:
-      - Auth
   /wallets:
     get:
       description: Retrieve all wallets tracked by the user
@@ -723,113 +452,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Delete watchlist entry
-      tags:
-      - Watchlist
-    get:
-      description: Retrieve a specific watchlist entry by its ID
-      parameters:
-      - description: Watchlist ID (UUID)
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Watchlist entry retrieved
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_internal_db_repository.Watchlist'
-              type: object
-        "400":
-          description: Invalid ID
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Watchlist entry not found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Get watchlist entry by ID
-      tags:
-      - Watchlist
-    put:
-      consumes:
-      - application/json
-      description: Update a watchlist entry's contract address
-      parameters:
-      - description: Watchlist ID (UUID)
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated watchlist data
-        in: body
-        name: WatchlistRequest
-        required: true
-        schema:
-          $ref: '#/definitions/backend_internal_db_repository.UpdateWatchlistParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Watchlist updated successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/backend_api_http.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/backend_internal_db_repository.Watchlist'
-              type: object
-        "400":
-          description: Invalid request data
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Watchlist entry not found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Update watchlist entry
-      tags:
-      - Watchlist
-  /watchlist/user:
-    delete:
-      description: Delete all watchlist entries for the authenticated user
-      responses:
-        "200":
-          description: All user watchlist entries deleted successfully
-          schema:
-            $ref: '#/definitions/backend_api_http.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Delete all user watchlists
       tags:
       - Watchlist
 schemes:

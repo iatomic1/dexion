@@ -31,7 +31,7 @@ export const trackWalletAction = authenticatedAction
             walletAddress: input.walletAddress,
           },
           next: {
-            tags: ["wallets"],
+            // tags: ["wallets"],
           },
         },
       )();
@@ -69,7 +69,7 @@ export const updateWalletPreferences = authenticatedAction
           method: "PATCH",
           body,
           next: {
-            tags: ["wallets"],
+            // tags: ["wallets"],
           },
         },
       )();
@@ -95,7 +95,7 @@ export const untrackWalletAction = authenticatedAction
         {
           method: "DELETE",
           next: {
-            tags: ["wallets"],
+            // tags: ["wallets"],
           },
         },
       )();

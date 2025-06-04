@@ -8,13 +8,19 @@ import {
 import BalanceSection from "./_components/balance";
 import TransactionsTable from "./_components/transactions-table";
 import Performance from "./_components/performance";
-// import { WalletValueChart } from "./_components/wallet-value-chart";
+import { headers } from "next/headers";
+import { auth } from "~/lib/auth";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Dashboard",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  console.log(session, "here");
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex flex-1">

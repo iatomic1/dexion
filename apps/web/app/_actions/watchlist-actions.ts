@@ -6,11 +6,12 @@ import makeFetch from "~/lib/helpers/fetch";
 import { authenticatedAction } from "~/lib/safe-action";
 import { ApiResponse } from "~/types";
 import { AuthSuccess } from "~/types/auth";
-import { UserWallet, UserWatchlist } from "~/types/wallets";
+import { UserWatchlist } from "~/types/wallets";
 
 export async function getUserWatchlist() {
   const user = await assertUserAuthenticated();
   console.log("called");
+  console.log(user, "from me");
 
   try {
     return await makeFetch<ApiResponse<UserWatchlist[]>>(

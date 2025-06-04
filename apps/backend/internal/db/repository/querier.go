@@ -6,37 +6,26 @@ package repository
 
 import (
 	"context"
-
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
-	AddRefreshTokenID(ctx context.Context, arg AddRefreshTokenIDParams) (*RefreshToken, error)
 	CleanupOrphanedWallet(ctx context.Context, address string) error
 	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error)
-	DeleteRefreshToken(ctx context.Context, id uuid.UUID) error
-	DeleteWatchlist(ctx context.Context, id uuid.UUID) error
-	DeleteWatchlistsByUserId(ctx context.Context, userID uuid.UUID) error
+	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	GetAllWallets(ctx context.Context) ([]*Wallet, error)
-	GetRefreshTokenUserID(ctx context.Context, id uuid.UUID) (pgtype.UUID, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)
-	GetUserById(ctx context.Context, id uuid.UUID) (*User, error)
-	GetUserTrackedWallets(ctx context.Context, userID uuid.UUID) ([]*GetUserTrackedWalletsRow, error)
+	GetUserById(ctx context.Context, id string) (*User, error)
+	GetUserTrackedWallets(ctx context.Context, userID string) ([]*GetUserTrackedWalletsRow, error)
 	GetUserWalletDetails(ctx context.Context, arg GetUserWalletDetailsParams) (*GetUserWalletDetailsRow, error)
 	GetWalletsWithWatchers(ctx context.Context) ([]*GetWalletsWithWatchersRow, error)
 	GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error)
-	GetWatchlistById(ctx context.Context, id uuid.UUID) (*Watchlist, error)
-	GetWatchlistByUserIdAndCA(ctx context.Context, arg GetWatchlistByUserIdAndCAParams) (*Watchlist, error)
-	GetWatchlistsByUserId(ctx context.Context, userID uuid.UUID) ([]*Watchlist, error)
+	GetWatchlistsByUserId(ctx context.Context, userID *string) ([]*Watchlist, error)
+	HasWatchlist(ctx context.Context, arg HasWatchlistParams) (bool, error)
+	HasWatchlistById(ctx context.Context, arg HasWatchlistByIdParams) (bool, error)
 	IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error)
-	RefreshTokenExists(ctx context.Context, id uuid.UUID) (bool, error)
-	RegisterTelegramUser(ctx context.Context, arg RegisterTelegramUserParams) (*User, error)
-	RegisterUser(ctx context.Context, arg RegisterUserParams) (*User, error)
 	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
-	UpdateWatchlist(ctx context.Context, arg UpdateWatchlistParams) (*Watchlist, error)
 	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)
 	WalletExists(ctx context.Context, address string) (bool, error)
 }

@@ -5,76 +5,26 @@
 package repository
 
 import (
-	"database/sql/driver"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type UserType string
-
-const (
-	UserTypeAPP      UserType = "APP"
-	UserTypeTELEGRAM UserType = "TELEGRAM"
-)
-
-func (e *UserType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = UserType(s)
-	case string:
-		*e = UserType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for UserType: %T", src)
-	}
-	return nil
-}
-
-type NullUserType struct {
-	UserType UserType `json:"userType"`
-	Valid    bool     `json:"valid"` // Valid is true if UserType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullUserType) Scan(value interface{}) error {
-	if value == nil {
-		ns.UserType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.UserType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullUserType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.UserType), nil
-}
-
-type RefreshToken struct {
-	ID        uuid.UUID        `json:"id"`
-	UserID    pgtype.UUID      `json:"userId"`
-	IssuedAt  pgtype.Timestamp `json:"issuedAt"`
-	ExpiresAt pgtype.Timestamp `json:"expiresAt"`
-	Revoked   *bool            `json:"revoked"`
-}
-
 type User struct {
-	ID             uuid.UUID          `json:"id"`
-	Email          *string            `binding:"required,email" example:"mosh@mail.com" json:"email"`
-	Type           UserType           `binding:"required" example:"APP" json:"type"`
+	ID             string             `json:"id"`
+	Name           string             `json:"name"`
+	Email          *string            `json:"email"`
+	EmailVerified  bool               `json:"emailVerified"`
+	Image          *string            `json:"image"`
+	Type           interface{}        `json:"type"`
 	TelegramChatID *string            `json:"telegramChatId"`
-	Password       string             `binding:"required" example:"Hello" json:"password"`
-	UpdatedAt      time.Time          `json:"updatedAt"`
 	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
+	UpdatedAt      pgtype.Timestamptz `json:"updatedAt"`
 }
 
 type UserWallet struct {
-	UserID        uuid.UUID `json:"userId"`
+	UserID        string    `json:"userId"`
 	WalletAddress string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1" json:"walletAddress"`
 	Nickname      string    `binding:"required" example:"iatomic" json:"nickname"`
 	Emoji         *string   `json:"emoji"`
@@ -89,9 +39,9 @@ type Wallet struct {
 }
 
 type Watchlist struct {
-	ID        uuid.UUID          `json:"id"`
-	Ca        string             `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	UserID    uuid.UUID          `json:"userId"`
-	UpdatedAt time.Time          `json:"updatedAt"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	ID        uuid.UUID `json:"id"`
+	Ca        string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+	UserID    *string   `json:"userId"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt"`
 }

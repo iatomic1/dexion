@@ -17,229 +17,6 @@
     "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
-        "/auth/login": {
-            "post": {
-                "description": "Logs a user into his/her account",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login to your account",
-                "parameters": [
-                    {
-                        "description": "Login data",
-                        "name": "EmailAndPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_db_repository.RegisterUserParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Login success",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_domain.AuthResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request data",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/refresh": {
-            "get": {
-                "security": [
-                    {
-                        "RefreshTokenBearer": []
-                    }
-                ],
-                "description": "Refreshes token to get new token pair",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Refresh Token",
-                "responses": {
-                    "200": {
-                        "description": "TokenPair",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_pkg_jwt.TokenPair"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.UnauthorizedResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Profile not found",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.NotFoundResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signup": {
-            "post": {
-                "description": "Create an account on unwind",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Create an account",
-                "parameters": [
-                    {
-                        "description": "Signup data",
-                        "name": "EmailAndPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_domain.RegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "User created successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_domain.AuthResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signup/tg": {
-            "post": {
-                "description": "Create an account on dexion",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Create an account",
-                "parameters": [
-                    {
-                        "description": "Signup data",
-                        "name": "EmailAndPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api_http_handlers_auth.TelegramRegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "User created successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_db_repository.User"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/wallets": {
             "get": {
                 "security": [
@@ -683,183 +460,7 @@
                 }
             }
         },
-        "/watchlist/user": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Delete all watchlist entries for the authenticated user",
-                "tags": [
-                    "Watchlist"
-                ],
-                "summary": "Delete all user watchlists",
-                "responses": {
-                    "200": {
-                        "description": "All user watchlist entries deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/watchlist/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Retrieve a specific watchlist entry by its ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Watchlist"
-                ],
-                "summary": "Get watchlist entry by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Watchlist ID (UUID)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Watchlist entry retrieved",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid ID",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Watchlist entry not found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Update a watchlist entry's contract address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Watchlist"
-                ],
-                "summary": "Update watchlist entry",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Watchlist ID (UUID)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated watchlist data",
-                        "name": "WatchlistRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_db_repository.UpdateWatchlistParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Watchlist updated successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_db_repository.Watchlist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request data",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Watchlist entry not found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -916,24 +517,6 @@
         }
     },
     "definitions": {
-        "api_http_handlers_auth.TelegramRegisterRequest": {
-            "type": "object",
-            "required": [
-                "telegram_chat_id",
-                "type"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "telegram_chat_id": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/backend_internal_db_repository.UserType"
-                }
-            }
-        },
         "backend_api_http.InternalServerErrorResponse": {
             "type": "object",
             "properties": {
@@ -947,19 +530,6 @@
                 }
             }
         },
-        "backend_api_http.NotFoundResponse": {
-            "type": "object",
-            "properties": {
-                "errors": {},
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "Not Found"
-                }
-            }
-        },
         "backend_api_http.Response": {
             "type": "object",
             "properties": {
@@ -970,32 +540,6 @@
                 },
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "backend_api_http.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "OK"
-                }
-            }
-        },
-        "backend_api_http.UnauthorizedResponse": {
-            "type": "object",
-            "properties": {
-                "errors": {},
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "Unauthorized"
                 }
             }
         },
@@ -1040,32 +584,6 @@
                 }
             }
         },
-        "backend_internal_db_repository.RegisterUserParams": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "type"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "mosh@mail.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "Hello"
-                },
-                "type": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
-                        }
-                    ],
-                    "example": "APP"
-                }
-            }
-        },
         "backend_internal_db_repository.UpdateWalletPreferencesParams": {
             "type": "object",
             "required": [
@@ -1086,21 +604,6 @@
                 "walletAddress": {
                     "type": "string",
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
-                }
-            }
-        },
-        "backend_internal_db_repository.UpdateWatchlistParams": {
-            "type": "object",
-            "required": [
-                "ca"
-            ],
-            "properties": {
-                "ca": {
-                    "type": "string",
-                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
-                },
-                "id": {
-                    "type": "string"
                 }
             }
         },
@@ -1126,55 +629,6 @@
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
                 }
             }
-        },
-        "backend_internal_db_repository.User": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "type"
-            ],
-            "properties": {
-                "createdAt": {
-                    "$ref": "#/definitions/pgtype.Timestamptz"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "mosh@mail.com"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "Hello"
-                },
-                "telegramChatId": {
-                    "type": "string"
-                },
-                "type": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
-                        }
-                    ],
-                    "example": "APP"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "backend_internal_db_repository.UserType": {
-            "type": "string",
-            "enum": [
-                "APP",
-                "TELEGRAM"
-            ],
-            "x-enum-varnames": [
-                "UserTypeAPP",
-                "UserTypeTELEGRAM"
-            ]
         },
         "backend_internal_db_repository.UserWallet": {
             "type": "object",
@@ -1234,7 +688,7 @@
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
                 },
                 "createdAt": {
-                    "$ref": "#/definitions/pgtype.Timestamptz"
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -1243,65 +697,6 @@
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "backend_internal_domain.AuthResponse": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                },
-                "refreshToken": {
-                    "type": "string"
-                },
-                "refreshTokenId": {
-                    "description": "Added to hold the refresh token ID",
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "backend_internal_domain.RegisterRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "type"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "mosh@mail.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "Hello"
-                },
-                "type": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/backend_internal_db_repository.UserType"
-                        }
-                    ],
-                    "example": "APP"
-                }
-            }
-        },
-        "backend_pkg_jwt.TokenPair": {
-            "type": "object",
-            "properties": {
-                "accessToken": {
-                    "type": "string"
-                },
-                "refreshToken": {
-                    "type": "string"
-                },
-                "refreshTokenId": {
-                    "description": "Added to hold the refresh token ID",
                     "type": "string"
                 }
             }

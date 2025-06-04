@@ -44,25 +44,16 @@ export function LoginModal({
 }: LoginModalProps) {
   const router = useRouter();
   const { isPending, execute } = useServerAction(authAction, {
-    onSuccess: async ({ data: res }) => {
-      console.log(res);
-      if (res.status === HTTP_STATUS.OK || res.status === HTTP_STATUS.CREATED) {
-        await saveUserTokens({
-          accessToken: res?.data.accessToken as string,
-          refreshToken: res?.data.refreshToken as string,
-          userId: res?.data.userId,
-        });
-        router.push("/portfolio");
-        router.refresh();
-        return res; // Return the response for the toast.promise to use
-      } else {
-        if (res.status === HTTP_STATUS.CONFLICT)
-          throw new Error(
-            `User with this ${res.message.includes("username") ? "username" : "email"} Already Exists`,
-          );
-        if (res.status === HTTP_STATUS.UNAUTHORIZED)
-          throw new Error("Invalid email or password");
-        throw new Error("Authentication failed");
+    onSuccess: async ({ data }) => {
+      if (data?.success) {
+        toast.success("Authenticated");
+        setTimeout(() => {
+          onOpenChange(false);
+          // router.push("/portfolio");
+          router.refresh();
+        }, 500);
+      } else if (data?.errorMessage) {
+        toast.error(data.errorMessage);
       }
     },
   });
@@ -77,48 +68,10 @@ export function LoginModal({
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      console.log(values);
-
-      toast.promise(
-        // @ts-expect-errorWeird err here
-        async () => {
-          const result = await execute({
-            ...values,
-            signUp: false,
-          });
-          return result[0];
-        },
-        {
-          loading: "Authenticating ",
-          success: async (res: ApiResponse<AuthSuccess>) => {
-            // Handle the response based on status
-            if (res.status === HTTP_STATUS.OK) {
-              await saveUserTokens({
-                accessToken: res?.data.accessToken as string,
-                refreshToken: res?.data.refreshToken as string,
-                userId: res?.data.userId,
-              });
-
-              setTimeout(() => {
-                router.push("/portfolio");
-                router.refresh();
-              }, 500);
-
-              return "Authenticated";
-            } else {
-              if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-                return "Invalid username or password";
-              }
-
-              return "Authentication failed";
-            }
-          },
-          error: (err) => {
-            // Return the error message
-            return err.message || "Authentication failed";
-          },
-        },
-      );
+      await execute({
+        ...values,
+        signUp: false,
+      });
     } catch (error) {
       console.error("Form submission error", error);
     }

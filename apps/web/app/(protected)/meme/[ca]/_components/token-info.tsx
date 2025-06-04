@@ -33,6 +33,7 @@ import {
   addToWatchlistAction,
   deleteWatchlistAction,
 } from "~/app/_actions/watchlist-actions";
+import { AddToWatchlist } from "~/app/_components/add-to-wactchlist";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -173,35 +174,6 @@ const Actions = ({
 }) => {
   const copy = useCopyToClipboard();
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const queryClient = useQueryClient();
-
-  const { isPending: isAddPending, execute: executeAdd } = useServerAction(
-    addToWatchlistAction,
-    {
-      onSuccess: async ({ data: res }) => {
-        if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-          toast.error("You are unauthorized to perform this action");
-          return;
-        }
-        if (res.status === HTTP_STATUS.CONFLICT) {
-          toast.error("Already in watchlist");
-          return;
-        }
-
-        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-        await queryClient.invalidateQueries({
-          queryKey: ["batch-tokens"],
-          exact: false,
-        });
-
-        revalidateTagServer("watchlist");
-        toast.success("Added to watchlist");
-      },
-      onError: () => {
-        toast.error("Failed to remove token from watchlist");
-      },
-    },
-  );
 
   return (
     <div
@@ -222,19 +194,7 @@ const Actions = ({
       >
         <Share2 className="h-5 w-5" />
       </Button>
-      <Button
-        variant={isMobile ? "secondary" : "ghost"}
-        size={"icon"}
-        className={cn(
-          "hover:text-indigo-500 transition-colors duration-150 ease-in-out",
-          isMobile && "rounded-full",
-        )}
-        onClick={async () => {
-          await executeAdd({ ca: ca });
-        }}
-      >
-        <Star className="h-5 w-5" />
-      </Button>
+      <AddToWatchlist ca={token.contract_id} isMobile={isMobile} />
     </div>
   );
 };

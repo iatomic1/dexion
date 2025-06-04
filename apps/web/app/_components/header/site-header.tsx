@@ -6,6 +6,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
 import { AccountPopover } from "./account-management";
 import AuthController from "../auth/auth-controller";
+import { SearchDialog } from "./search-dialog";
 
 export default function SiteHeader() {
   return (
@@ -80,12 +81,16 @@ export default function SiteHeader() {
         </nav>
       </div>
       <div className="flex items-center gap-4">
-        <div className="relative hidden md:block">
+        <div className="relative md:block">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search by token or CA..."
-            className="w-64 rounded-full bg-muted pl-8 text-xs"
+          <SearchDialog
+            trigger={
+              <Input
+                type="search"
+                placeholder="Search by token or CA..."
+                className="w-64 rounded-full bg-muted pl-8 text-xs"
+              />
+            }
           />
         </div>
         {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}

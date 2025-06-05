@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";
-import { AddToWatchlist } from "~/app/_components/add-to-wactchlist";
+import { ToggleWatchlist } from "~/app/_components/toggle-watchlist";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -33,21 +33,21 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={token.image_url} />
+                <AvatarImage src={token.image_url} className="object-cover" />
                 <AvatarFallback>{token.symbol.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold truncate max-w-[150px]">
-                  {token.name.length >= 12
-                    ? truncateString(token.name, 6, 4)
-                    : token.name}
+                  {token.symbol}
                 </h1>
                 <Tooltip>
                   <TooltipTrigger>
                     <span className="text-sm text-muted-foreground">
-                      {token.symbol}
+                      {token.name.length >= 12
+                        ? truncateString(token.name, 6, 4)
+                        : token.name}
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="bg-secondary">
@@ -185,7 +185,7 @@ const Actions = ({
       >
         <Share2 className="h-5 w-5" />
       </Button>
-      <AddToWatchlist ca={token.contract_id} isMobile={isMobile} />
+      <ToggleWatchlist ca={token.contract_id} isMobile={isMobile} />
     </div>
   );
 };

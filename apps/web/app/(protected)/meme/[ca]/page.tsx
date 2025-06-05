@@ -1,6 +1,6 @@
 import { validateContractAddress } from "~/lib/helpers/validateContractAddress";
-import TokenDetailPage from "./_components/token-details";
 import { notFound } from "next/navigation";
+import TokenDetailPage from "./_components/token-details/token-details";
 
 export default async function MemeTokenPage(props: {
   params: Promise<{ ca: string }>;

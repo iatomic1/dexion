@@ -9,7 +9,7 @@ export function transformToTokenMetadata(input: any): TokenMetadata {
     decimals: input.decimals,
     name: input.name,
     circulating_supply: input.supply.toString(), // Assuming circulating = total here
-    total_supply: input.supply.toString(),
+    total_supply: input?.supply?.toString(),
     image_url: input.logo_url,
     header_image_url: input.logo_url, // fallback to same if there's no separate header image
     description: input.description,

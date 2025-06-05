@@ -81,18 +81,19 @@ export default function SiteHeader() {
         </nav>
       </div>
       <div className="flex items-center gap-4">
-        <div className="relative md:block">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <SearchDialog
-            trigger={
+        <SearchDialog
+          trigger={
+            <div className="relative md:block">
+              <Search className="sm:absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search by token or CA..."
-                className="w-64 rounded-full bg-muted pl-8 text-xs"
+                className="w-64 rounded-full bg-muted pl-8 text-xs hidden sm:flex"
               />
-            }
-          />
-        </div>
+            </div>
+          }
+        />
+
         {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
         {/*   <span className="mr-2">0.157</span> */}
         {/*   <ChevronDown className="h-4 w-4" /> */}

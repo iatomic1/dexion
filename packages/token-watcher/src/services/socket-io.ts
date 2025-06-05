@@ -40,7 +40,10 @@ export const createSocketIo = (server: any) => {
       try {
         // First try to get metadata from stxcity
         console.log("Attempting to get metadata from stxcity...");
-        const stxCityMetadata = await getStxCityTokenMetadata(contractAddress);
+        const stxCityMetadata = await getStxCityTokenMetadata(
+          contractAddress,
+          true,
+        );
         console.log("Raw stxcity metadata:", stxCityMetadata);
 
         if (stxCityMetadata) {

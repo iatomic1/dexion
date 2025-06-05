@@ -2,7 +2,7 @@ import { Skeleton } from "@repo/ui/components/ui/skeleton";
 
 const SearchItemSkeleton = () => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between px-4">
       <div className="flex items-center gap-4">
         <div className="flex gap-3">
           {/* Avatar skeleton */}

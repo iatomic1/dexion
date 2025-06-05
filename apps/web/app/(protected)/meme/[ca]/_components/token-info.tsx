@@ -1,4 +1,4 @@
-import { Star, Copy, ExternalLink, Share2 } from "lucide-react";
+import { Copy, ExternalLink, Share2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,
@@ -16,23 +16,12 @@ import { Socials } from "./socials";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
-import {
-  EXPLORER_BASE_URL,
-  HTTP_STATUS,
-  PUBLIC_BASE_URL,
-} from "~/lib/constants";
+import { EXPLORER_BASE_URL, PUBLIC_BASE_URL } from "~/lib/constants";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { toast } from "sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";
-import { useQueryClient } from "@tanstack/react-query";
-import { useServerAction } from "zsa-react";
-import { revalidateTagServer } from "~/app/_actions/revalidate";
-import {
-  addToWatchlistAction,
-  deleteWatchlistAction,
-} from "~/app/_actions/watchlist-actions";
 import { AddToWatchlist } from "~/app/_components/add-to-wactchlist";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
@@ -179,7 +168,9 @@ const Actions = ({
     <div
       className={cn("flex items-center gap-0", className, isMobile && "gap-1")}
     >
-      {isMobile && <TokenAudit token={token} />}
+      <div className="sm:hidden">
+        <TokenAudit token={token} />
+      </div>
       <Button
         variant={isMobile ? "secondary" : "ghost"}
         size={"icon"}

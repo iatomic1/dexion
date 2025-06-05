@@ -26,7 +26,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { Copy, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
 import useLocalStorage from "~/hooks/useLocalStorage";
@@ -41,11 +41,9 @@ import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
 
 export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
   const [searchHistory, setSearchHistory] = useLocalStorage("searchHistory", [
-    "SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity",
-    "SP2VG7S0R4Z8PYNYCAQ04HCBX1MH75VT11VXCWQ6G.built-on-bitcoin-stxcity",
-    "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-17",
-    "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.shark-coin-stxcity",
+    "",
   ]);
+  const [filterByPlatform, setFilterByPlatform] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -90,15 +88,21 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
 
   // Determine which data to show
   const showingSearchResults = debouncedSearchTerm.length > 0;
-  const tokens = showingSearchResults
+  const rawTokens = showingSearchResults
     ? searchResults?.tokens || []
     : historyTokensData || [];
+  const tokens = useMemo(() => {
+    if (filterByPlatform === "") {
+      return rawTokens;
+    }
+    console.log(rawTokens);
+    return rawTokens.filter((token) => token.platform === filterByPlatform);
+  }, [rawTokens, filterByPlatform]);
   const isLoading = showingSearchResults ? isSearchLoading : isHistoryLoading;
   const isFetching = showingSearchResults
     ? isSearchFetching
     : isHistoryFetching;
 
-  // Clean up debounce when dialog closes
   useEffect(() => {
     if (!isOpen) {
       setSearchTerm("");
@@ -120,6 +124,10 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
             className="gap-2"
             size={"sm"}
             variant={"outline"}
+            pressed={filterByPlatform === "stxcity"}
+            onPressedChange={(pressed) => {
+              setFilterByPlatform(pressed ? "stxcity" : "");
+            }}
           >
             <Image
               src={"/platforms/stxcity.png"}
@@ -134,6 +142,7 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
             className="gap-2"
             size={"sm"}
             variant={"outline"}
+            disabled
           >
             <Image
               src={"/platforms/fakfun.png"}
@@ -164,6 +173,12 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
           <div className="flex items-center justify-between mb-2 px-4">
             <span className="text-xs text-muted-foreground">
               {showingSearchResults ? "Search Results" : "History"}
+              {filterByPlatform && (
+                <span className="ml-1 text-emerald-500">
+                  ({filterByPlatform === "stxcity" ? "Stx.City" : "Fak.fun"}{" "}
+                  only)
+                </span>
+              )}
             </span>
             {isFetching && (
               <div className="text-xs text-muted-foreground">Searching...</div>

@@ -2,6 +2,7 @@ import type { TokenMetadata } from "../types/token";
 
 export function transformToTokenMetadata(input: any): TokenMetadata {
   return {
+    platform: input?.platform,
     contract_id: input.token_contract,
     dex_contract: input.dex_contract,
     progress: input.progress,

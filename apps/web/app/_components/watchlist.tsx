@@ -1,28 +1,4 @@
 "use client";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { formatPrice } from "~/lib/helpers/numbers";
-import {
-  deleteWatchlistAction,
-  getUserWatchlist,
-} from "../_actions/watchlist-actions";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { getBatchTokenData } from "~/lib/queries/token-watcher";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
@@ -30,55 +6,32 @@ import { HTTP_STATUS } from "~/lib/constants";
 import { revalidateTagServer } from "../_actions/revalidate";
 import { Trash2 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@repo/ui/components/ui/avatar";
+import { Button } from "@repo/ui/components/ui/button";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@repo/ui/components/ui/tooltip";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useWatchlistData,
+  TokenWithWatchlistId,
+} from "~/hooks/useWatchlistData";
+import { formatPrice } from "~/lib/helpers/numbers";
+import { deleteWatchlistAction } from "../_actions/watchlist-actions";
 
 export const WatchLists = () => {
-  const {
-    data: watchlist,
-    isLoading: isWatchlistLoading,
-    error: watchlistError,
-    isFetching: isWatchlistFetching,
-    isInitialLoading: isWatchlistInitialLoading,
-  } = useQuery({
-    queryKey: ["watchlist"],
-    queryFn: getUserWatchlist,
-    refetchOnWindowFocus: false,
-    placeholderData: keepPreviousData,
-  });
+  const { tokens, isInitialLoading, hasError, isEmpty, isFetching } =
+    useWatchlistData();
 
-  const contractAddresses = watchlist?.data
-    ?.map((item: any) => item.ca)
-    .filter(Boolean);
-
-  const {
-    data: tokens = [],
-    isLoading: isTokensLoading,
-    error: tokensError,
-    isFetching: isTokensFetching,
-    isInitialLoading: isTokensInitialLoading,
-  } = useQuery({
-    queryKey: ["batch-tokens", contractAddresses],
-    refetchOnWindowFocus: true,
-    queryFn: () => getBatchTokenData(contractAddresses),
-    enabled: contractAddresses?.length > 0, // Only run if we have contract addresses
-    staleTime: 60 * 1000, // 30 seconds - tokens change frequently
-    placeholderData: keepPreviousData,
-  });
-
-  // Create a map of contract addresses to watchlist IDs for quick lookup
-  const watchlistMap = new Map(
-    watchlist?.data?.map((item: any) => [item.ca, item.id]) || [],
-  );
-
-  // Merge token data with watchlist IDs
-  const tokensWithWatchlistIds = tokens?.map((token: TokenMetadata) => ({
-    ...token,
-    watchlistId: watchlistMap.get(token.contract_id),
-  }));
-
-  // Only show skeleton on initial loading, not on refetch/mutations
-  const isLoading = isWatchlistInitialLoading || isTokensInitialLoading;
-
-  if (isLoading) {
+  // Show skeleton on initial loading
+  if (isInitialLoading) {
     return (
       <div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -89,7 +42,7 @@ export const WatchLists = () => {
   }
 
   // Error handling
-  if (watchlistError || tokensError) {
+  if (hasError) {
     return (
       <div className="text-sm text-destructive py-1 px-1 border-b border-b-border">
         Failed to load watchlist data
@@ -98,7 +51,7 @@ export const WatchLists = () => {
   }
 
   // Empty state
-  if (watchlist?.data?.length === 0) {
+  if (isEmpty) {
     return (
       <div className="text-sm text-muted-foreground py-1 px-1 border-b border-b-border">
         No tokens in watchlist
@@ -107,19 +60,16 @@ export const WatchLists = () => {
   }
 
   return (
-    <ScrollArea className="">
+    <ScrollArea className="hidden sm:flex">
       <div className="flex items-center flex-row gap-2 py-1 px-1 border-b border-b-border">
-        {tokensWithWatchlistIds &&
-          tokensWithWatchlistIds?.map(
-            (token: TokenMetadata & { watchlistId?: string }) => (
-              <WatchListItem
-                key={token.contract_id || token.symbol}
-                token={token}
-                watchlistId={token?.watchlistId as string}
-                isRefetching={isTokensFetching}
-              />
-            ),
-          )}
+        {tokens.map((token) => (
+          <WatchListItem
+            key={token.contract_id || token.symbol}
+            token={token}
+            watchlistId={token.watchlistId as string}
+            isRefetching={isFetching}
+          />
+        ))}
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>
@@ -131,7 +81,7 @@ const WatchListItem = ({
   isRefetching,
   watchlistId,
 }: {
-  token: TokenMetadata;
+  token: TokenWithWatchlistId;
   isRefetching?: boolean;
   watchlistId: string;
 }) => {
@@ -146,14 +96,12 @@ const WatchListItem = ({
         }
 
         await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-
         await queryClient.invalidateQueries({
           queryKey: ["batch-tokens"],
           exact: false,
         });
 
         revalidateTagServer("watchlist");
-        // toast.success("Token removed from watchlist");
       },
       onError: () => {
         toast.error("Failed to remove token from watchlist");
@@ -161,8 +109,8 @@ const WatchListItem = ({
     });
 
   const handleDelete = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent the Link from navigating
-    e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault();
+    e.stopPropagation();
 
     if (!watchlistId) {
       toast.error("Unable to delete: watchlist ID not found");

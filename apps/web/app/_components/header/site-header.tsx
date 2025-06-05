@@ -7,6 +7,7 @@ import siteConfig from "~/config/site";
 import { AccountPopover } from "./account-management";
 import AuthController from "../auth/auth-controller";
 import { SearchDialog } from "./search-dialog";
+import { WatchlistCredenza } from "../watchlist-credenza";
 
 export default function SiteHeader() {
   return (
@@ -93,6 +94,7 @@ export default function SiteHeader() {
             </div>
           }
         />
+        <WatchlistCredenza />
 
         {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
         {/*   <span className="mr-2">0.157</span> */}

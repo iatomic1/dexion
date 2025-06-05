@@ -90,13 +90,15 @@ func (h *WatchlistHandler) CreateWatchlist(c *gin.Context) {
 		UserID: &userID,
 		Ca:     req.Ca,
 	})
-	fmt.Println("real truth", watchlistEx)
-	if err == nil {
+	if err != nil {
+		http.SendInternalServerError(c, err, http.WithMessage("error checking if ca exists in watchlist"))
+		return
+	}
+
+	if watchlistEx {
 		http.SendConflict(c, fmt.Errorf("contract already in watchlist"), http.WithMessage("Contract already in watchlist"))
 		return
 	}
-	fmt.Println("whyyyyyy")
-	// For write operations, use our helper to get a transaction
 	tx, cleanup, err := h.beginTx(ctx)
 	if err != nil {
 		fmt.Println("")

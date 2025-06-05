@@ -12,6 +12,7 @@ import { HTTP_STATUS } from "~/lib/constants";
 import { revalidateTagServer } from "../_actions/revalidate";
 import {
   addToWatchlistAction,
+  deleteWatchlistAction,
   getUserWatchlist,
 } from "../_actions/watchlist-actions";
 
@@ -52,6 +53,27 @@ export function AddToWatchlist({
     },
   );
 
+  const { isPending: isDeletePending, execute: executeDelete } =
+    useServerAction(deleteWatchlistAction, {
+      onSuccess: async ({ data: res }) => {
+        if (res.status === HTTP_STATUS.NOT_FOUND) {
+          toast.error("You can't delete a watchlist that doesn't exist");
+          return;
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+        await queryClient.invalidateQueries({
+          queryKey: ["batch-tokens"],
+          exact: false,
+        });
+
+        revalidateTagServer("watchlist");
+      },
+      onError: () => {
+        toast.error("Failed to remove token from watchlist");
+      },
+    });
+
   const {
     data: watchlist,
     isLoading: isWatchlistLoading,
@@ -68,6 +90,7 @@ export function AddToWatchlist({
   const contractAddresses = watchlist?.data
     ?.map((item: any) => item.ca)
     .filter(Boolean);
+  const watchlistItem = watchlist?.data.find((item) => item.ca === ca);
 
   return (
     <Button
@@ -78,7 +101,16 @@ export function AddToWatchlist({
         isMobile && "rounded-full",
       )}
       onClick={async () => {
-        await executeAdd({ ca: ca });
+        console.log(contractAddresses);
+        if (watchlistItem && watchlistItem.ca === ca) {
+          console.log("using delete");
+          await executeDelete({
+            id: watchlistItem.id as string,
+          });
+        } else {
+          await executeAdd({ ca: ca });
+          console.log("using add");
+        }
       }}
     >
       <Star

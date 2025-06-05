@@ -37,7 +37,6 @@ import {
   useTokenHolders,
 } from "~/contexts/TokenWatcherSocketContext";
 import { calculatePercentageHolding } from "~/lib/utils/token";
-import { useMediaQuery } from "../trade-details";
 import {
   Drawer,
   DrawerClose,
@@ -263,7 +262,6 @@ function TokenInfoContent({
 
 export default function TokenAudit({ token }: { token: TokenMetadata }) {
   const [isOpen, setIsOpen] = useState(true);
-  const isMobile = useMediaQuery("(max-width: 640px)");
 
   // ✅ All hooks called here - data persists across collapsible open/close
   const {
@@ -301,57 +299,60 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
     isHoldersLoading,
   };
 
-  // Mobile view with drawer
-  if (isMobile) {
-    return (
-      <Drawer>
-        <DrawerTrigger asChild>
-          <Button
-            variant={"secondary"}
-            size={"icon"}
-            className="rounded-full text-emerald-500"
-          >
-            <Shield />
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <div className="w-full">
-            <DrawerHeader className="border-b pt-2 flex flex-row items-center justify-between">
-              <DrawerTitle>Token Info</DrawerTitle>
-              <DrawerClose asChild>
-                <Button variant={"ghost"} size={"icon"} className="h-7 w-7">
-                  <X />
-                </Button>
-              </DrawerClose>
-            </DrawerHeader>
-            <div className="px-4 py-4 flex flex-col gap-4">
-              <TokenInfoContent {...tokenInfoProps} />
-            </div>
-            <div className="px-4 flex gap-4 items-center">
-              <div className="h-px bg-muted flex-1" />
-              <span className="font-geist-mono text-xs">Pools</span>
-              <div className="h-px bg-muted flex-1" />
-            </div>
-            <div className="px-4 pt-2 pb-4">
-              <Pools />
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
   return (
-    <Collapsible className="mt-4" open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger asChild>
-        <Button className={cn("w-fit text-sm")} variant={"ghost"} size={"sm"}>
-          Token Info
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="flex flex-col gap-4 pt-2">
-        <TokenInfoContent {...tokenInfoProps} />
-      </CollapsibleContent>
-    </Collapsible>
+    <>
+      <div className="sm:hidden">
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button
+              variant={"secondary"}
+              size={"icon"}
+              className="rounded-full text-emerald-500"
+            >
+              <Shield />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <div className="w-full">
+              <DrawerHeader className="border-b pt-2 flex flex-row items-center justify-between">
+                <DrawerTitle>Token Info</DrawerTitle>
+                <DrawerClose asChild>
+                  <Button variant={"ghost"} size={"icon"} className="h-7 w-7">
+                    <X />
+                  </Button>
+                </DrawerClose>
+              </DrawerHeader>
+              <div className="px-4 py-4 flex flex-col gap-4">
+                <TokenInfoContent {...tokenInfoProps} />
+              </div>
+              <div className="px-4 flex gap-4 items-center">
+                <div className="h-px bg-muted flex-1" />
+                <span className="font-geist-mono text-xs">Pools</span>
+                <div className="h-px bg-muted flex-1" />
+              </div>
+              <div className="px-4 pt-2 pb-4">
+                <Pools />
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </div>
+
+      <Collapsible
+        className="mt-4 hidden sm:block"
+        open={isOpen}
+        onOpenChange={setIsOpen}
+      >
+        <CollapsibleTrigger asChild>
+          <Button className={cn("w-fit text-sm")} variant={"ghost"} size={"sm"}>
+            Token Info
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="flex flex-col gap-4 pt-2">
+          <TokenInfoContent {...tokenInfoProps} />
+        </CollapsibleContent>
+      </Collapsible>
+    </>
   );
 }

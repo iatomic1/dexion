@@ -5,7 +5,10 @@ import { createSocketIo } from "./services/socket-io";
 import axios from "axios";
 import { logger } from "hono/logger";
 import { STX_WATCH_API_KEY, STXWATCH_API_BASE_URL } from "./lib/constants";
-import { getTokenMetadata } from "./services/stxtools-api";
+import { getSearch, getTokenMetadata } from "./services/stxtools-api";
+import { validateContractAddress } from "./utils/validateContractAddress";
+import { searchStxCity } from "./services/stxcity";
+import { transformToTokenMetadata } from "./utils/transferToTokenMetadata";
 
 const PORT = process.env.PORT || 3008;
 const app = new Hono();
@@ -66,6 +69,51 @@ app.get("/get_batch_locked_liquidity/:ca", async (c) => {
     },
   );
   return c.json(data, 200);
+});
+
+app.get("/search", async (c) => {
+  const searchTerm = c.req.query("searchTerm");
+  if (!searchTerm) return c.json({ error: "Missing searchTerm" }, 400);
+
+  const isContract = validateContractAddress(searchTerm);
+
+  try {
+    const [stxtoolsTokens, stxcityRaw] = await Promise.all([
+      getSearch(searchTerm),
+      searchStxCity(searchTerm, isContract),
+    ]);
+
+    console.log(stxcityRaw);
+    const stxcityTokens = (stxcityRaw || []).map(transformToTokenMetadata);
+    const combined = [...(stxtoolsTokens || []), ...stxcityTokens];
+
+    // Use Map to track the best token for each contract_id
+    const tokenMap = new Map();
+
+    combined.forEach((token) => {
+      const id = token.contract_id;
+      const existing = tokenMap.get(id);
+
+      if (!existing) {
+        // First token with this contract_id
+        tokenMap.set(id, token);
+      } else if (
+        existing.platform === "stxcity" &&
+        token.platform !== "stxcity"
+      ) {
+        // Replace stxcity token with non-stxcity token
+        tokenMap.set(id, token);
+      }
+      // If existing is not stxcity, keep it (prefer non-stxcity over stxcity)
+    });
+
+    const filtered = Array.from(tokenMap.values());
+
+    return c.json({ tokens: filtered });
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal Server Error" }, 500);
+  }
 });
 
 app.post("/get_batch_token_data", async (c) => {

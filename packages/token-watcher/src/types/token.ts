@@ -151,3 +151,9 @@ export type FilterTokenSwapTransaction = {
     symbol: string;
   };
 };
+
+export type SearchResult = {
+  wallets: { address: string; bns: string | null }[];
+  tokens: TokenMetadata[];
+  pools: LiquidityPool[];
+};

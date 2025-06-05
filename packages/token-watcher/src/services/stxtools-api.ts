@@ -6,6 +6,7 @@ import type {
   TokenSwapTransaction,
   TokenHolder,
   LiquidityPool,
+  SearchResult,
 } from "../types/token";
 
 export const getTokenMetadata = async (
@@ -55,6 +56,23 @@ export const getPools = async (ca: string): Promise<LiquidityPool[] | null> => {
     const { data } = await axios.get(url);
 
     return data;
+  } catch (err) {
+    // console.error(err);
+    return null;
+  }
+};
+
+export const getSearch = async (
+  searchTerm: string,
+): Promise<TokenMetadata[] | null> => {
+  try {
+    const url = `${STX_TOOLS_API_BASE_URL}search?searchTerm=${searchTerm}`;
+    const { data } = await axios.get<SearchResult>(url);
+
+    return data.tokens.map((token: any) => ({
+      ...token,
+      platform: "stxtools",
+    }));
   } catch (err) {
     // console.error(err);
     return null;

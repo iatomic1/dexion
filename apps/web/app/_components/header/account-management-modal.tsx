@@ -53,7 +53,9 @@ export function AccountSecurityModal({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-1">
-                <h3 className="text-white font-medium">iatomic1</h3>
+                <h3 className="text-white font-medium">
+                  {session.data?.user.name}
+                </h3>
                 <div className="w-2 h-2 rounded-full bg-green-500 ml-1" />
               </div>
               <div className="flex items-center text-sm text-zinc-400 mt-1">

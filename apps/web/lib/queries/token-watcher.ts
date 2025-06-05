@@ -18,3 +18,18 @@ export const getBatchTokenData = async (contract_ids: string[]) => {
     throw error;
   }
 };
+
+export const getSearchResults = async (searchTerm: string) => {
+  try {
+    const url = `${TOKEN_WATCHER_API_BASE_URL}search?searchTerm=${searchTerm}`;
+    const res = await fetch(url);
+
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+
+    const data = (await res.json()) as { tokens: TokenMetadata[] };
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -16,7 +16,7 @@ import {
   getUserWatchlist,
 } from "../_actions/watchlist-actions";
 
-export function AddToWatchlist({
+export function ToggleWatchlist({
   isMobile,
   ca,
 }: {

@@ -29,6 +29,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import Enable2FADialog from "../auth/twofa/enable-2fa-dialog";
 import { useState } from "react";
 import Disable2FADialog from "../auth/twofa/disable-2fa-dialog";
+import AvatarUpload from "./avatar-upload";
 
 export function AccountSecurityModal({
   children,
@@ -66,9 +67,18 @@ export function AccountSecurityModal({
         <div className="flex flex-col">
           {/* User Profile Section */}
           <div className="p-4 flex items-start gap-3">
-            <div className="w-12 h-12 rounded-full bg-zinc-700 overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500" />
-            </div>
+            <AvatarUpload
+              currentAvatarUrl={session?.user.image}
+              onUploadSuccess={async (url, fileId) => {
+                await authClient.updateUser({
+                  image: url,
+                });
+                toast.success("Profile updated");
+              }}
+            />
+            {/* <div className="w-12 h-12 rounded-full bg-zinc-700 overflow-hidden"> */}
+            {/* <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500" /> */}
+            {/* </div> */}
             <div className="flex-1">
               <div className="flex items-center gap-1">
                 <h3 className="text-white font-medium">{session?.user.name}</h3>
@@ -250,7 +260,8 @@ export function AccountSecurityModal({
           />
           <SessionsCard
             classNames={{
-              base: "rounded-none pt-3 pb-0 border-0 border-y border-y-[1px] px-0",
+              base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0",
+              cell: "justify-between [&>*:nth-child(2)]:mr-auto",
             }}
           />
           <div className="p-4 border-t border-zinc-800 flex items-center justify-between">

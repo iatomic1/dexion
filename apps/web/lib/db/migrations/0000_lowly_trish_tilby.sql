@@ -34,6 +34,13 @@ CREATE TABLE "session" (
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
+CREATE TABLE "two_factor" (
+	"id" text PRIMARY KEY NOT NULL,
+	"secret" text NOT NULL,
+	"backup_codes" text NOT NULL,
+	"user_id" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -44,6 +51,7 @@ CREATE TABLE "users" (
 	"telegram_chat_id" text,
 	"created_at" timestamp with time zone NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL,
+	"two_factor_enabled" boolean,
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
 	CONSTRAINT "users_telegram_chat_id_unique" UNIQUE("telegram_chat_id"),
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
@@ -60,4 +68,5 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "session" ADD CONSTRAINT "session_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "session" ADD CONSTRAINT "session_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

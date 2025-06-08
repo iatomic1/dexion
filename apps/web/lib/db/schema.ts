@@ -4,11 +4,9 @@ import {
   text,
   timestamp,
   boolean,
-  integer,
   check,
   pgEnum,
   unique,
-  varchar,
 } from "drizzle-orm/pg-core";
 
 export const userTypeEnum = pgEnum("user_type", ["APP", "TELEGRAM"]);
@@ -31,6 +29,7 @@ export const user = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
+    twoFactorEnabled: boolean("two_factor_enabled"),
   },
   (table) => ({
     emailRequiredForApp: check(
@@ -91,4 +90,14 @@ export const jwks = pgTable("jwks", {
   privateKey: text("private_key").notNull(),
   createdAt: timestamp("created_at").notNull(),
 });
-export const schema = { user, session, account, verification, jwks };
+
+export const twoFactor = pgTable("two_factor", {
+  id: text("id").primaryKey(),
+  secret: text("secret").notNull(),
+  backupCodes: text("backup_codes").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const schema = { user, session, account, verification, jwks, twoFactor };

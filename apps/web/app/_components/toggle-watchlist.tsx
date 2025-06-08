@@ -24,7 +24,6 @@ export function ToggleWatchlist({
   ca: string;
 }) {
   const queryClient = useQueryClient();
-
   const { isPending: isAddPending, execute: executeAdd } = useServerAction(
     addToWatchlistAction,
     {
@@ -37,13 +36,11 @@ export function ToggleWatchlist({
           toast.error("Already in watchlist");
           return;
         }
-
         await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
         await queryClient.invalidateQueries({
           queryKey: ["batch-tokens"],
           exact: false,
         });
-
         revalidateTagServer("watchlist");
         toast.success("Added to watchlist");
       },
@@ -52,7 +49,6 @@ export function ToggleWatchlist({
       },
     },
   );
-
   const { isPending: isDeletePending, execute: executeDelete } =
     useServerAction(deleteWatchlistAction, {
       onSuccess: async ({ data: res }) => {
@@ -60,20 +56,17 @@ export function ToggleWatchlist({
           toast.error("You can't delete a watchlist that doesn't exist");
           return;
         }
-
         await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
         await queryClient.invalidateQueries({
           queryKey: ["batch-tokens"],
           exact: false,
         });
-
         revalidateTagServer("watchlist");
       },
       onError: () => {
         toast.error("Failed to remove token from watchlist");
       },
     });
-
   const {
     data: watchlist,
     isLoading: isWatchlistLoading,
@@ -87,10 +80,12 @@ export function ToggleWatchlist({
     placeholderData: keepPreviousData,
   });
 
-  const contractAddresses = watchlist?.data
-    ?.map((item: any) => item.ca)
+  // Add null checks for watchlist data
+  const watchlistData = watchlist?.data || [];
+  const contractAddresses = watchlistData
+    .map((item: any) => item.ca)
     .filter(Boolean);
-  const watchlistItem = watchlist?.data.find((item) => item.ca === ca);
+  const watchlistItem = watchlistData.find((item) => item.ca === ca);
 
   return (
     <Button

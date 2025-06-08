@@ -1,5 +1,5 @@
 {
-  "id": "72e927e1-27ca-47cd-b27c-08e9cb3657c4",
+  "id": "593f9f3c-1409-4e9f-a9cb-baebb5a707a8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -229,6 +229,57 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.two_factor": {
+      "name": "two_factor",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "secret": {
+          "name": "secret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "backup_codes": {
+          "name": "backup_codes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "two_factor_user_id_users_id_fk": {
+          "name": "two_factor_user_id_users_id_fk",
+          "tableFrom": "two_factor",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.users": {
       "name": "users",
       "schema": "",
@@ -287,6 +338,12 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "two_factor_enabled": {
+          "name": "two_factor_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

@@ -19,22 +19,38 @@ import {
   CredenzaTrigger,
 } from "@repo/ui/components/ui/credenza";
 import { cn } from "@repo/ui/lib/utils";
-import { signOut, useSession } from "~/lib/auth-client";
+
 import { truncateString } from "~/lib/helpers/strings";
 import { useRouter } from "next/navigation";
+import { authClient } from "~/lib/auth-client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import Enable2FADialog from "../auth/twofa/enable-2fa-dialog";
+import { useState } from "react";
+import Disable2FADialog from "../auth/twofa/disable-2fa-dialog";
 
 export function AccountSecurityModal({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const copy = useCopyToClipboard();
-  const session = useSession();
+  const { data: session } = authClient.useSession();
+  const { data: userSessions, isLoading } = useSuspenseQuery({
+    queryKey: ["sessions", session?.user.id],
+    queryFn: () =>
+      authClient.listSessions({
+        query: { userId: session?.user.id },
+      }),
+    // placeholderData: keepPreviousData,
+  });
+
   const router = useRouter();
 
   if (!session) {
     return <div>Loading</div>;
   }
+
   return (
     <Credenza>
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
@@ -53,21 +69,19 @@ export function AccountSecurityModal({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-1">
-                <h3 className="text-white font-medium">
-                  {session.data?.user.name}
-                </h3>
+                <h3 className="text-white font-medium">{session?.user.name}</h3>
                 <div className="w-2 h-2 rounded-full bg-green-500 ml-1" />
               </div>
               <div className="flex items-center text-sm text-zinc-400 mt-1">
                 <span>
-                  User ID: {truncateString(session.data?.user.id as string)}
+                  User ID: {truncateString(session?.user.id as string)}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-5 w-5 ml-1 text-zinc-400"
                   onClick={() => {
-                    copy(session.data?.user.id as string);
+                    copy(session?.user.id as string);
                     toast.info("UserID copied to clipboard");
                   }}
                 >
@@ -137,24 +151,87 @@ export function AccountSecurityModal({
               </Select>
             }
           />
-
           <SettingsSection
-            title="Wallets"
-            description="Add or manage your external wallet accounts"
+            title="Manage 2FA"
+            description="Manage your auth"
             // className="bg-"
             action={
-              <Button
-                variant="secondary"
-                size="sm"
-                disabled
-                className="bg-zinc-800 hover:bg-zinc-700 text-white"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Manage Wallets
-              </Button>
+              session?.user.twoFactorEnabled ? (
+                <Disable2FADialog
+                  trigger={
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                    >
+                      Disable 2FA
+                    </Button>
+                  }
+                />
+              ) : (
+                <Enable2FADialog
+                  userEmail={session.user.email}
+                  isOpen={dialogOpen}
+                  onOpenChange={setDialogOpen}
+                  authClient={authClient}
+                  trigger={
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                      onClick={() => {}}
+                    >
+                      Enable 2FA
+                    </Button>
+                  }
+                />
+              )
+              // <Switch
+              //   id="two-factor"
+              //   onCheckedChange={(c) => {
+              //     console.log(c);
+              //   }}
+              // />
             }
           />
-
+          {/* <Collapsible defaultOpen={true}> */}
+          {/*   <CollapsibleTrigger asChild> */}
+          {/*     <SettingsSection */}
+          {/*       title="Auth" */}
+          {/*       description="Manage your auth" */}
+          {/*       // className="bg-" */}
+          {/*       action={ */}
+          {/*         <Button */}
+          {/*           variant="secondary" */}
+          {/*           size="sm" */}
+          {/*           disabled */}
+          {/*           className="bg-zinc-800 hover:bg-zinc-700 text-white" */}
+          {/*         > */}
+          {/*           <ExternalLink className="h-4 w-4 mr-2" /> */}
+          {/*           Manage Sessions */}
+          {/*         </Button> */}
+          {/*       } */}
+          {/*     /> */}
+          {/*   </CollapsibleTrigger> */}
+          {/*   <CollapsibleContent className=" pb-4"> */}
+          {/*     <SettingsSection */}
+          {/*       title="Sessions" */}
+          {/*       description="Manage your sessions" */}
+          {/*       className="!px-4" */}
+          {/*       action={ */}
+          {/*         <Button */}
+          {/*           variant="secondary" */}
+          {/*           size="sm" */}
+          {/*           disabled */}
+          {/*           className="bg-zinc-800 hover:bg-zinc-700 text-white" */}
+          {/*         > */}
+          {/*           <ExternalLink className="h-4 w-4 mr-2" /> */}
+          {/*           Manage Sessions */}
+          {/*         </Button> */}
+          {/*       } */}
+          {/*     /> */}
+          {/*   </CollapsibleContent> */}
+          {/* </Collapsible> */}
           <SettingsSection
             title="Rewards"
             description="Earn free SOL. Visit the rewards page to get started"
@@ -170,22 +247,6 @@ export function AccountSecurityModal({
             }
           />
 
-          {/* <SettingsSection */}
-          {/*   title="Yields" */}
-          {/*   description="Earn passive income through Yields. Visit the Yields page to start earning" */}
-          {/*   action={ */}
-          {/*     <Button */}
-          {/*       variant="secondary" */}
-          {/*       size="sm" */}
-          {/*       className="bg-zinc-800 hover:bg-zinc-700 text-white" */}
-          {/*     > */}
-          {/*       <ExternalLink className="h-4 w-4 mr-2" /> */}
-          {/*       Enable Yield */}
-          {/*     </Button> */}
-          {/*   } */}
-          {/* /> */}
-
-          {/* Log Out Section */}
           <div className="p-4 border-t border-zinc-800 flex items-center justify-between">
             <div>
               <h3 className="text-pink-500 font-medium">Log Out</h3>
@@ -194,12 +255,16 @@ export function AccountSecurityModal({
             <Button
               variant="destructive"
               onClick={async () => {
-                await signOut();
-                router.push("/");
-                toast.success("Logged out");
+                await authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.push("/");
+                      toast.success("Logged out");
+                    },
+                  },
+                });
               }}
               size="sm"
-              // className="bg-transparent hover:bg-transparent text-pink-500 hover:text-pink-400 border-none"
             >
               Log Out
             </Button>

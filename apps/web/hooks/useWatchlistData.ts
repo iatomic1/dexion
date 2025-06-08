@@ -1,5 +1,4 @@
 "use client";
-
 import type { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { getUserWatchlist } from "~/app/_actions/watchlist-actions";
@@ -28,10 +27,11 @@ export const useWatchlistData = () => {
 
   // Memoize contract addresses to prevent unnecessary re-renders
   const contractAddresses = useMemo(() => {
-    return (
-      watchlist?.data?.map((item: UserWatchlist) => item.ca).filter(Boolean) ||
-      []
-    );
+    // Add null check here
+    if (!watchlist?.data || !Array.isArray(watchlist.data)) {
+      return [];
+    }
+    return watchlist.data.map((item: UserWatchlist) => item.ca).filter(Boolean);
   }, [watchlist?.data]);
 
   // Fetch token data for all contract addresses
@@ -52,9 +52,22 @@ export const useWatchlistData = () => {
 
   // Memoize the watchlist map and merged data
   const { watchlistMap, tokensWithWatchlistIds } = useMemo(() => {
+    // Add null check for watchlist data
+    const watchlistData = watchlist?.data;
+    if (!watchlistData || !Array.isArray(watchlistData)) {
+      return {
+        watchlistMap: new Map(),
+        tokensWithWatchlistIds:
+          tokens?.map((token: TokenMetadata) => ({
+            ...token,
+            watchlistId: undefined,
+          })) || [],
+      };
+    }
+
     // Create a map of contract addresses to watchlist IDs for quick lookup
     const map = new Map(
-      watchlist?.data?.map((item: UserWatchlist) => [item.ca, item.id]) || [],
+      watchlistData.map((item: UserWatchlist) => [item.ca, item.id]),
     );
 
     // Merge token data with watchlist IDs
@@ -80,18 +93,15 @@ export const useWatchlistData = () => {
     // Data
     watchlist: watchlist?.data || [],
     tokens: tokensWithWatchlistIds,
-
     // Loading states
     isInitialLoading,
     isFetching,
     isWatchlistLoading,
     isTokensLoading,
-
     // Error states
     hasError,
     watchlistError,
     tokensError,
-
     // Computed states
     isEmpty,
     contractAddresses,

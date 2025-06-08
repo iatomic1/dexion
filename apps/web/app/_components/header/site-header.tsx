@@ -8,6 +8,7 @@ import { AccountPopover } from "./account-management";
 import AuthController from "../auth/auth-controller";
 import { SearchDialog } from "./search-dialog";
 import { WatchlistCredenza } from "../watchlist-credenza";
+import { sendEmail } from "~/lib/email/send";
 
 export default function SiteHeader() {
   return (

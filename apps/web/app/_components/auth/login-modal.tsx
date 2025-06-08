@@ -22,21 +22,24 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/app/schema";
 import { z } from "zod";
-import { signIn } from "~/lib/auth-client";
 
 import { useState } from "react";
+import { authClient } from "~/lib/auth-client";
+import { SiGoogle } from "@icons-pack/react-simple-icons";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 interface LoginModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSwitchToSignUp: () => void;
+  onOtpTrigger: (email: string) => void;
 }
 
 export function LoginModal({
   open,
   onOpenChange,
   onSwitchToSignUp,
+  onOtpTrigger,
 }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -51,7 +54,7 @@ export function LoginModal({
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      const res = await signIn.email(
+      const res = await authClient.signIn.email(
         {
           email: values.email,
           password: values.password,
@@ -60,12 +63,46 @@ export function LoginModal({
           onRequest: (ctx) => {
             setIsLoading(true);
           },
-          onSuccess: (ctx) => {
-            toast.success("Authenticated");
-            setIsLoading(false);
+          onSuccess: async (ctx) => {
+            if (ctx.data.twoFactorRedirect) {
+              const { data, error } = await authClient.twoFactor.sendOtp();
+
+              if (error) {
+                console.error(error);
+              }
+              if (data) {
+                toast.success("OTP sent to email");
+                onOpenChange(false);
+                onOtpTrigger(values.email);
+                setIsLoading(false);
+              }
+            }
           },
-          onError: (ctx) => {
-            toast.error(ctx.error.message);
+          onError: async (ctx) => {
+            const errCode = ctx.error.code;
+            if (errCode === "EMAIL_NOT_VERIFIED") {
+              toast.info(
+                "You need to verify your email first, otp has been sent",
+              );
+              const { data, error } =
+                await authClient.emailOtp.sendVerificationOtp({
+                  email: values.email,
+                  type: "email-verification",
+                });
+
+              if (error) {
+                console.error(error);
+              }
+              console.log(data);
+              if (data?.success) {
+                toast.success("OTP sent to email");
+              }
+
+              onOpenChange(false);
+              onOtpTrigger(values.email);
+            } else {
+              toast.error(ctx.error.message);
+            }
           },
         },
       );
@@ -155,28 +192,7 @@ export function LoginModal({
               className="w-full bg-muted/50 py-5 text-sm"
               disabled
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5 mr-2"
-                aria-hidden="true"
-              >
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
-              </svg>
+              <SiGoogle size={12} title="Google Icon" />
               Continue with Google
             </Button>
 
@@ -207,3 +223,4 @@ export function LoginModal({
     </Dialog>
   );
 }
+//https://pastecodeapp.vercel.app/pastes/01974758-7537-7255-b354-0845b63c129f

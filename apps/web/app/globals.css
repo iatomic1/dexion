@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@repo/ui/globals.css";
 @source "../node_modules/@ferrucc-io/emoji-picker";
+@source "../node_modules/@daveyplate/better-auth-ui";
 
 @theme inline {
   --font-geist: var(--font-geist) /* --default-font-family: */;

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@better-auth-kit/reverify": "^1.0.3",
+    "@daveyplate/better-auth-ui": "^1.7.4",
     "@ferrucc-io/emoji-picker": "^0.0.44",
     "@icons-pack/react-simple-icons": "^12.7.0",
     "@radix-ui/react-visually-hidden": "^1.2.3",
@@ -25,6 +26,8 @@
     "better-auth": "^1.2.8",
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.44.1",
+    "imagekit": "^6.0.0",
+    "imagekitio-next": "^1.0.1",
     "jose": "^6.0.10",
     "lightweight-charts": "^5.0.5",
     "lucide-react": "^0.509.0",

@@ -10,6 +10,7 @@ export default function AuthController() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [otpMail, setOtpMail] = useState("");
   const [otpOpen, setOtpOpen] = useState(false);
+  const [type, setType] = useState("");
 
   const openSignUp = () => {
     setLoginOpen(false);
@@ -44,9 +45,10 @@ export default function AuthController() {
       <LoginModal
         open={loginOpen}
         onOpenChange={setLoginOpen}
-        onOtpTrigger={(email) => {
+        onOtpTrigger={(email, type) => {
           setOtpOpen(true);
           setOtpMail(email);
+          setType(type);
         }}
         onSwitchToSignUp={openSignUp}
       />
@@ -54,7 +56,7 @@ export default function AuthController() {
         open={otpOpen}
         onOpenChange={setOtpOpen}
         onSwitchToSignUp={openSignUp}
-        type="two-factor"
+        type={type && type !== "" ? type : "email-verification"}
         mail={otpMail}
       />
     </div>

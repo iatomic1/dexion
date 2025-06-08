@@ -32,7 +32,10 @@ interface LoginModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSwitchToSignUp: () => void;
-  onOtpTrigger: (email: string) => void;
+  onOtpTrigger: (
+    email: string,
+    type: "email-verification" | "two-factor",
+  ) => void;
 }
 
 export function LoginModal({
@@ -54,7 +57,7 @@ export function LoginModal({
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      const res = await authClient.signIn.email(
+      await authClient.signIn.email(
         {
           email: values.email,
           password: values.password,
@@ -73,10 +76,12 @@ export function LoginModal({
               if (data) {
                 toast.success("OTP sent to email");
                 onOpenChange(false);
-                onOtpTrigger(values.email);
+                onOtpTrigger(values.email, "two-factor");
                 setIsLoading(false);
               }
             }
+            toast.success("Authenticated");
+            router.push("/portfolio");
           },
           onError: async (ctx) => {
             const errCode = ctx.error.code;
@@ -99,15 +104,13 @@ export function LoginModal({
               }
 
               onOpenChange(false);
-              onOtpTrigger(values.email);
+              onOtpTrigger(values.email, "email-verification");
             } else {
               toast.error(ctx.error.message);
             }
           },
         },
       );
-
-      console.log("SignIn successful:", res);
     } catch (error) {}
   };
 

@@ -115,7 +115,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
               maxLength={6}
               value={value}
               onChange={(val) => setValue(val)}
-              disabled={true}
+              disabled={isLoading}
             >
               <InputOTPGroup>
                 {[0, 1, 2, 3, 4, 5].map((i) => (

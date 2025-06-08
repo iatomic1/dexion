@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "./lib/session";
-export async function middleware(request: NextRequest) {
-  const { session, user } = await withAuth();
-  console.log(session, "middleware", user);
+import { getSessionCookie } from "better-auth/cookies";
 
-  if (!session) {
+export async function middleware(request: NextRequest) {
+  // console.log(session, "middleware", user);
+
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
     return NextResponse.redirect(new URL("/", request.url));
   }
-
-  //   if (session && session.user.id) {
-  //   return NextResponse.redirect(new URL("/", request.url));
-  // }
 
   return NextResponse.next();
 }

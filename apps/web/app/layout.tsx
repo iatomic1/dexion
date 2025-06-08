@@ -4,19 +4,11 @@ import type React from "react";
 import type { Metadata } from "next";
 import { ThemeProvider } from "./_components/theme-provider";
 import { Toaster } from "@repo/ui/components/ui/sonner";
-import { TokenRefresher } from "./_components/token-refresher";
 import { geistMono, geistSans } from "./fonts/geist";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
-import SiteHeader from "./_components/header/site-header";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClientQueryProvider } from "./_components/query-client-provider";
-import SiteFooter from "./_components/site-footer/site-footer";
-import { WatchLists } from "./_components/watchlist";
-import { request } from "http";
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
-import { auth } from "~/lib/auth";
 import { DEV } from "~/lib/constants";
+import { AuthProviders } from "./_components/auth-providers";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",
@@ -48,7 +40,9 @@ export default async function RootLayout({
               )}
 
               <ClientQueryProvider>
-                <main className="flex-1">{children}</main>
+                <main className="flex-1">
+                  <AuthProviders>{children}</AuthProviders>
+                </main>
               </ClientQueryProvider>
             </div>
           </PresetsContextProvider>

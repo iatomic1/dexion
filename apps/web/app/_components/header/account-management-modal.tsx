@@ -1,4 +1,6 @@
 "use client";
+import { SessionsCard } from "@daveyplate/better-auth-ui";
+
 import type React from "react";
 import { Copy, ExternalLink, Info } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
@@ -246,7 +248,11 @@ export function AccountSecurityModal({
               </Button>
             }
           />
-
+          <SessionsCard
+            classNames={{
+              base: "rounded-none pt-3 pb-0 border-0 border-y border-y-[1px] px-0",
+            }}
+          />
           <div className="p-4 border-t border-zinc-800 flex items-center justify-between">
             <div>
               <h3 className="text-pink-500 font-medium">Log Out</h3>

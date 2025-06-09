@@ -30,6 +30,7 @@ import Enable2FADialog from "../auth/twofa/enable-2fa-dialog";
 import { useState } from "react";
 import Disable2FADialog from "../auth/twofa/disable-2fa-dialog";
 import AvatarUpload from "./avatar-upload";
+import { formatRelativeTime } from "~/lib/helpers/dayjs";
 
 export function AccountSecurityModal({
   children,
@@ -81,7 +82,9 @@ export function AccountSecurityModal({
             {/* </div> */}
             <div className="flex-1">
               <div className="flex items-center gap-1">
-                <h3 className="text-white font-medium">{session?.user.name}</h3>
+                <h3 className="text-white font-medium">
+                  {session?.user.email}
+                </h3>
                 <div className="w-2 h-2 rounded-full bg-green-500 ml-1" />
               </div>
               <div className="flex items-center text-sm text-zinc-400 mt-1">
@@ -109,7 +112,9 @@ export function AccountSecurityModal({
                   <Info className="h-3 w-3 ml-1 text-zinc-400" />
                 </div>
                 <div className="text-zinc-400">Last Login</div>
-                <div className="text-zinc-300">5d</div>
+                <div className="text-zinc-300">
+                  {formatRelativeTime(session?.session.createdAt)}
+                </div>
                 <div className="flex items-center text-zinc-300">
                   <span>@iatomic1</span>
                   <Button
@@ -198,52 +203,9 @@ export function AccountSecurityModal({
                   }
                 />
               )
-              // <Switch
-              //   id="two-factor"
-              //   onCheckedChange={(c) => {
-              //     console.log(c);
-              //   }}
-              // />
             }
           />
-          {/* <Collapsible defaultOpen={true}> */}
-          {/*   <CollapsibleTrigger asChild> */}
-          {/*     <SettingsSection */}
-          {/*       title="Auth" */}
-          {/*       description="Manage your auth" */}
-          {/*       // className="bg-" */}
-          {/*       action={ */}
-          {/*         <Button */}
-          {/*           variant="secondary" */}
-          {/*           size="sm" */}
-          {/*           disabled */}
-          {/*           className="bg-zinc-800 hover:bg-zinc-700 text-white" */}
-          {/*         > */}
-          {/*           <ExternalLink className="h-4 w-4 mr-2" /> */}
-          {/*           Manage Sessions */}
-          {/*         </Button> */}
-          {/*       } */}
-          {/*     /> */}
-          {/*   </CollapsibleTrigger> */}
-          {/*   <CollapsibleContent className=" pb-4"> */}
-          {/*     <SettingsSection */}
-          {/*       title="Sessions" */}
-          {/*       description="Manage your sessions" */}
-          {/*       className="!px-4" */}
-          {/*       action={ */}
-          {/*         <Button */}
-          {/*           variant="secondary" */}
-          {/*           size="sm" */}
-          {/*           disabled */}
-          {/*           className="bg-zinc-800 hover:bg-zinc-700 text-white" */}
-          {/*         > */}
-          {/*           <ExternalLink className="h-4 w-4 mr-2" /> */}
-          {/*           Manage Sessions */}
-          {/*         </Button> */}
-          {/*       } */}
-          {/*     /> */}
-          {/*   </CollapsibleContent> */}
-          {/* </Collapsible> */}
+
           <SettingsSection
             title="Rewards"
             description="Earn free SOL. Visit the rewards page to get started"

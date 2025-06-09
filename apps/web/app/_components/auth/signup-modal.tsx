@@ -1,5 +1,5 @@
 "use client";
-
+import { nanoid } from "nanoid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -54,17 +54,11 @@ export function SignUpModal({
   const onSubmit = async (values: SignUpFormValues) => {
     setIsLoading(true);
     try {
-      // const { error } = await authClient.signUp.email({
-      //   email: values.email,
-      //   password: values.password,
-      //   name: "John Doe",
-      // });
-
       await authClient.signUp.email(
         {
-          name: "John Doe",
           email: values.email,
           password: values.password,
+          name: "",
         },
         {
           onRequest: (ctx) => {

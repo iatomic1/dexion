@@ -1,5 +1,5 @@
 {
-  "id": "593f9f3c-1409-4e9f-a9cb-baebb5a707a8",
+  "id": "7d8fdb06-f68c-48e6-9484-6ad89023753c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -294,7 +294,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "email": {
           "name": "email",
@@ -323,6 +323,12 @@
         },
         "telegram_chat_id": {
           "name": "telegram_chat_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "invite_code": {
+          "name": "invite_code",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -362,6 +368,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "telegram_chat_id"
+          ]
+        },
+        "users_invite_code_unique": {
+          "name": "users_invite_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "invite_code"
           ]
         },
         "user_email_unique": {

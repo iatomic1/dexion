@@ -21,7 +21,7 @@ export const useWatchlistData = () => {
   } = useQuery({
     queryKey: ["watchlist"],
     queryFn: getUserWatchlist,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     placeholderData: keepPreviousData,
   });
 

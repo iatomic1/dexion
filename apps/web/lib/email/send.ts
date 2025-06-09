@@ -2,6 +2,7 @@
 import { Resend } from "resend";
 import { getOtpEmailHtml } from "./otp-template";
 import { getVerificationEmailHtml } from "./verify-email-template";
+import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -12,7 +13,7 @@ export const sendEmail = async (
 ) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Dexion <auth@auth.dexion.pro>",
+      from: "Dexion <no-reply@auth.dexion.pro>",
       to: [email],
       subject:
         type === "email-verification"
@@ -29,6 +30,9 @@ export const sendEmail = async (
           : type === "sign-in"
             ? getOtpEmailHtml({ username: email, otp: otp })
             : "",
+      react:
+        type === "forget-password" &&
+        ResetPasswordEmail({ resetPasswordLink: otp, userFirstname: email }),
     });
 
     if (error) {

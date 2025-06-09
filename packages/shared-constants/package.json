@@ -1,0 +1,23 @@
+{
+  "name": "@repo/shared-constants",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "version": "1.0.0",
+  "private": false,
+  "scripts": {
+    "dev": "email dev -p 8004",
+    "export": "email export"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.41",
+    "react-email": "^4.0.16"
+  },
+  "exports": {
+    "./constants.ts": "./src/constants.ts"
+  }
+}

@@ -4,11 +4,12 @@ import { serve } from "@hono/node-server";
 import { createSocketIo } from "./services/socket-io";
 import axios from "axios";
 import { logger } from "hono/logger";
-import { STX_WATCH_API_KEY, STXWATCH_API_BASE_URL } from "./lib/constants";
+import { STX_WATCH_API_KEY } from "./lib/env";
 import { getSearch, getTokenMetadata } from "./services/stxtools-api";
 import { validateContractAddress } from "./utils/validateContractAddress";
 import { searchStxCity } from "./services/stxcity";
 import { transformToTokenMetadata } from "./utils/transferToTokenMetadata";
+import { STXWATCH_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 
 const PORT = process.env.PORT || 3008;
 const app = new Hono();

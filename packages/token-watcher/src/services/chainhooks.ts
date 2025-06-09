@@ -3,10 +3,9 @@ import { nanoid } from "nanoid";
 import { getStacksInfo } from "./getStacksInfo";
 import {
   HIRO_PLATFORM_API_BASE_URL,
-  HIRO_PLATFORM_API_KEY,
   API_BASE_URL,
-  AUTHORIZATION_HEADER,
-} from "../lib/constants";
+} from "@repo/shared-constants/constants.ts";
+import { HIRO_PLATFORM_API_KEY, AUTHORIZATION_HEADER } from "../lib/env";
 
 export const createChainhook = async (txID: string) => {
   const url = `${HIRO_PLATFORM_API_BASE_URL}v1/ext/${HIRO_PLATFORM_API_KEY}/chainhooks`;

@@ -1,5 +1,5 @@
+import { STX_CITY_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import axios from "axios";
-import { STX_CITY_API_BASE_URL } from "../lib/constants";
 
 export async function getStxCityTokenMetadata(
   param: string,

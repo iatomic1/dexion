@@ -15,7 +15,7 @@ export const auth = betterAuth({
       inviteCode: {
         type: "string",
         required: false,
-        input: false,
+        input: true,
         unique: true,
         defaultValue: false,
       },

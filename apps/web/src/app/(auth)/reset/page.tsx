@@ -10,7 +10,7 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { authClient } from "~/lib/auth-client";
 
 export default function ResetPassword() {

@@ -7,7 +7,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Star } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useServerAction } from "zsa-react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import {

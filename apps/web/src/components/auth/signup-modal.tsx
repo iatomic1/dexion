@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useState } from "react";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { signUpSchema } from "~/app/schema";

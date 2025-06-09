@@ -8,14 +8,17 @@ import {
 } from "@repo/ui/components/ui/popover";
 import { AccountSecurityModal } from "./account-management-modal";
 
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { authClient } from "~/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function AccountPopover() {
   const router = useRouter();
+  const [open, setIsOpen] = useState(false);
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -25,18 +28,26 @@ export function AccountPopover() {
           <User className="h-5 w-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-60 p-2" side="bottom">
+      <PopoverContent
+        className="w-60 p-2"
+        side="bottom"
+        align="end"
+        sideOffset={20}
+      >
         <AccountSecurityModal>
           <Button
             className="w-full justify-start gap-3 bg-transparent "
             variant={"ghost"}
+            // onClick={() => {
+            //   setIsOpen(false);
+            // }}
           >
             <User className="h-4 w-4" />
             Account and Security
           </Button>
         </AccountSecurityModal>
         <Button
-          className="w-full justify-start gap-3 bg-transparent text-destructive"
+          className="w-full justify-start gap-3 bg-transparent !text-destructive"
           variant={"ghost"}
           onClick={async () => {
             await authClient.signOut({

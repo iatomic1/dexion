@@ -17,7 +17,7 @@ import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import useCopyToClipboard from "~/hooks/useCopy";
-import { toast } from "sonner";
+// import { toast } from "@repo/ui/components/ui/sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";
@@ -26,6 +26,7 @@ import {
   PUBLIC_BASE_URL,
 } from "@repo/shared-constants/constants.ts";
 import { ToggleWatchlist } from "~/components/watchlist/toggle-watchlist";
+import { toast } from "@repo/ui/components/ui/sonner";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -69,7 +70,7 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
                         className="h-6 w-6 hover:text-indigo-500 transition-colors duration-150 ease-in-out"
                         onClick={() => {
                           copy(token.contract_id);
-                          toast.info("Address copied to clipboard");
+                          toast.success("Address copied to clipboard");
                         }}
                       >
                         <Copy className="h-4 w-4" />

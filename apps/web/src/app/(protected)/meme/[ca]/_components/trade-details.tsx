@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/components/ui/hover-card";
 import { cn } from "@repo/ui/lib/utils";
 import useCopyToClipboard from "~/hooks/useCopy";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { Button } from "@repo/ui/components/ui/button";
 import { Separator } from "@repo/ui/components/ui/separator";
 import {

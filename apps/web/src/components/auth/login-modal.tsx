@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/app/schema";
 import { z } from "zod";

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useServerAction } from "zsa-react";
 import { HTTP_STATUS } from "~/lib/constants";
 import { Trash2 } from "lucide-react";

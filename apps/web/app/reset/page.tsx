@@ -54,7 +54,7 @@ export default function ResetPassword() {
               <Input
                 id="email"
                 type="email"
-                placeholder="dexion.app@gmail.com"
+                placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

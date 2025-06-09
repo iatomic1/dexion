@@ -15,7 +15,7 @@ export const user = pgTable(
   "users",
   {
     id: text("id").primaryKey(),
-    name: text("name").notNull(),
+    name: text("name"),
     email: text("email").unique(),
     emailVerified: boolean("email_verified")
       .$defaultFn(() => false)
@@ -23,6 +23,7 @@ export const user = pgTable(
     image: text("image"),
     type: userTypeEnum("type").notNull(),
     telegramChatId: text("telegram_chat_id").unique(),
+    inviteCode: text("invite_code").unique(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),

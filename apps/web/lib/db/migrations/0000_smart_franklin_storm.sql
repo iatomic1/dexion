@@ -43,17 +43,19 @@ CREATE TABLE "two_factor" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
+	"name" text,
 	"email" text,
 	"email_verified" boolean NOT NULL,
 	"image" text,
 	"type" "user_type" NOT NULL,
 	"telegram_chat_id" text,
+	"invite_code" text,
 	"created_at" timestamp with time zone NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL,
 	"two_factor_enabled" boolean,
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
 	CONSTRAINT "users_telegram_chat_id_unique" UNIQUE("telegram_chat_id"),
+	CONSTRAINT "users_invite_code_unique" UNIQUE("invite_code"),
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
 	CONSTRAINT "email_required_for_app" CHECK (("users"."type" = 'APP' AND "users"."email" IS NOT NULL) OR ("users"."type" = 'TELEGRAM' AND "users"."email" IS NULL))
 );

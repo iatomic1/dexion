@@ -5,7 +5,8 @@ import { PriceDisplay } from "./price-display";
 const getBtcAndStxPrices = async (): Promise<CryptoAsset[] | null> => {
   try {
     const res = await fetch(`${TOKEN_WATCHER_API_BASE_URL}btcstx`, {
-      next: { revalidate: 30 },
+      cache: "force-cache",
+      next: { revalidate: 60 },
     });
     if (!res.ok) {
       throw new Error("Error fetching stx and btc prices");

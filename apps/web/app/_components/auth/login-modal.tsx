@@ -78,6 +78,7 @@ export function LoginModal({
                 onOpenChange(false);
                 onOtpTrigger(values.email, "two-factor");
                 setIsLoading(false);
+                return;
               }
             }
             toast.success("Authenticated");

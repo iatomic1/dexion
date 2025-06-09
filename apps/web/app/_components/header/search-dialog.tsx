@@ -75,8 +75,15 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
     queryKey: ["search-results", debouncedSearchTerm, filterByPlatform],
     queryFn: () => getSearchResults(debouncedSearchTerm),
     enabled: debouncedSearchTerm.length > 2,
-    staleTime: 60 * 1000,
+    // staleTime: Infinity,
     placeholderData: keepPreviousData,
+    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    retry: 1,
   });
 
   // Query for history tokens when search is empty
@@ -211,7 +218,7 @@ const SearchResults = memo(
       </div>
 
       <ScrollArea className="">
-        <div className="flex max-h-[400px] flex-col gap-1">
+        <div className="flex max-h-[400px] flex-col gap-4">
           {isLoading ? (
             Array.from({ length: 4 }, (_, i) => <SearchItemSkeleton key={i} />)
           ) : tokens.length > 0 ? (
@@ -251,7 +258,7 @@ const SearchInput = memo(
         )}
         <Input
           placeholder="Search by name, ticker, or CA (⌘K)"
-          className="!border-none !pl-8 !shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="bg-transparent !border-none !pl-8 !shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           autoFocus

@@ -22,7 +22,6 @@ import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/app/schema";
 import { z } from "zod";
-
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
@@ -82,8 +81,8 @@ export function LoginModal({
                 return;
               }
             } else {
-              toast.success("Authenticated");
               router.push("/portfolio");
+              toast.success("Authenticated");
             }
           },
           onResponse(context) {

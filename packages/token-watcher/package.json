@@ -12,10 +12,10 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@repo/shared-constants": "workspace:*",
     "@hono/node-server": "^1.14.3",
+    "@repo/shared-constants": "workspace:*",
     "@stacks/blockchain-api-client": "^8.10.0",
-    "@stacks/transactions": "^7.0.6",
+    "@stacks/transactions": "^7.1.0",
     "@types/express": "^5.0.1",
     "axios": "^1.9.0",
     "express": "^5.1.0",

@@ -21,8 +21,9 @@ export const user = pgTable("user", {
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
   twoFactorEnabled: boolean("two_factor_enabled"),
-  inviteCode: text("invite_code"),
-  type: text("type").default(APP).notNull(),
+  inviteCode: text("invite_code").unique(),
+  subOrgCreated: boolean("sub_org_created"),
+  type: text("type").default("APP").notNull(),
 });
 
 export const session = pgTable("session", {

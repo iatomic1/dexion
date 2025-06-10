@@ -33,7 +33,7 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { useServerAction } from "zsa-react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import { trackWalletAction } from "~/app/actions/wallet-tracker-actions";

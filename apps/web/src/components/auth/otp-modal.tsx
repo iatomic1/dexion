@@ -15,7 +15,7 @@ import { DrawerClose } from "@repo/ui/components/ui/drawer";
 import { ArrowLeft, X } from "lucide-react";
 import { Separator } from "@repo/ui/components/ui/separator";
 import { authClient } from "~/lib/auth-client";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 
 interface OtpModalProps {

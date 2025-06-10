@@ -19,11 +19,12 @@ import {
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useState } from "react";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { signUpSchema } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
+import InputPassword from "@repo/ui/components/ui/input-password";
 
 interface SignUpModalProps {
   open: boolean;
@@ -51,7 +52,6 @@ export function SignUpModal({
   });
 
   const onSubmit = async (values: SignUpFormValues) => {
-    setIsLoading(true);
     try {
       await authClient.signUp.email(
         {
@@ -70,6 +70,9 @@ export function SignUpModal({
 
             // toast.success("Authenticated");
             // setIsLoading(false);
+          },
+          onResponse() {
+            setIsLoading(false);
           },
           onError: async (ctx) => {
             const errCode = ctx.error.code;
@@ -150,9 +153,10 @@ export function SignUpModal({
                       Password
                     </FormLabel>
                     <FormControl>
-                      <Input
+                      <InputPassword
                         type="password"
                         className="rounded-full"
+                        showLabel={false}
                         placeholder="Enter password (used after OTP)"
                         {...field}
                       />

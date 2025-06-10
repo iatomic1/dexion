@@ -12,6 +12,7 @@ export const authClient = createAuthClient({
         inviteCode: {
           type: "string",
           required: false,
+          input: true,
         },
       },
     }),

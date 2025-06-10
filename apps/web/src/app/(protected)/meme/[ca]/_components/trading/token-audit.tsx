@@ -27,7 +27,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";

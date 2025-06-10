@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/components/ui/form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "~/app/schema";
 import { z } from "zod";
@@ -26,6 +26,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
+import InputPassword from "@repo/ui/components/ui/input-password";
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 interface LoginModalProps {
@@ -80,9 +81,13 @@ export function LoginModal({
                 setIsLoading(false);
                 return;
               }
+            } else {
+              toast.success("Authenticated");
+              router.push("/portfolio");
             }
-            toast.success("Authenticated");
-            router.push("/portfolio");
+          },
+          onResponse(context) {
+            setIsLoading(false);
           },
           onError: async (ctx) => {
             const errCode = ctx.error.code;
@@ -157,14 +162,15 @@ export function LoginModal({
                         Password
                       </FormLabel>
                       <Link
-                        href="/forgot-password"
+                        href="/reset"
                         className="text-xs text-primary hover:underline"
                       >
                         Forgot password?
                       </Link>
                     </div>
                     <FormControl>
-                      <Input
+                      <InputPassword
+                        showLabel={false}
                         type="password"
                         placeholder="Enter password"
                         className="bg-muted/50"

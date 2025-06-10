@@ -27,7 +27,7 @@ import { Copy, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect, useMemo, memo, useCallback } from "react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import useCopyToClipboard from "~/hooks/useCopy";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import useDebounce from "~/hooks/useDebounce";

@@ -15,7 +15,7 @@ export const auth = betterAuth({
       inviteCode: {
         type: "string",
         required: false,
-        input: false,
+        input: true,
         unique: true,
         defaultValue: false,
       },
@@ -40,6 +40,12 @@ export const auth = betterAuth({
     minPasswordLength: 4,
     sendResetPassword: async ({ user, url }) => {
       await sendEmail(user.email, "forget-password", url);
+    },
+  },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    onEmailVerification(user, request) {
+      console.log(user, request, "from onEmailVerification");
     },
   },
 

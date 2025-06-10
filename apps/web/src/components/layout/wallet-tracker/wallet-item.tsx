@@ -8,7 +8,7 @@ import {
   TooltipContent,
 } from "@repo/ui/components/ui/tooltip";
 import { useRef, useState, useEffect } from "react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { useServerAction } from "zsa-react";
 import useCopyToClipboard from "~/hooks/useCopy";
 import useHover from "~/hooks/useHover";

@@ -10,7 +10,7 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { authClient } from "~/lib/auth-client";
 
 export default function ResetPassword() {
@@ -24,7 +24,7 @@ export default function ResetPassword() {
       "If you have an account with us, check your email for a link to reset your password.",
     );
 
-    const { data, error } = await authClient.forgetPassword({
+    const { data, error } = await authClient.requestPasswordReset({
       email,
       redirectTo: "/recover-account",
     });

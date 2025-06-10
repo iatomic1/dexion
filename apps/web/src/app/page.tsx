@@ -32,7 +32,7 @@ import {
   TabsTrigger,
 } from "@repo/ui/components/ui/tabs";
 import { Badge } from "@repo/ui/components/ui/badge";
-import AuthController from "./_components/auth/auth-controller";
+import AuthController from "~/components/auth/auth-controller";
 
 export default function Home() {
   return (

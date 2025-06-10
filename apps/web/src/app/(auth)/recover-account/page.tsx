@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { XCircleIcon, CheckCircle2Icon } from "lucide-react";
 import { authClient } from "~/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "@repo/ui/components/ui/sonner";
 
 export default function RecoverAccountPage() {
   const [password, setPassword] = useState("");
@@ -63,8 +64,10 @@ export default function RecoverAccountPage() {
           token: token as string,
         },
         {
-          onSuccess(ctx) {
+          async onSuccess(ctx) {
+            await authClient.revokeSessions();
             setIsSuccess(true);
+            toast.success("Password updated");
             router.push("/");
           },
         },
@@ -159,8 +162,12 @@ export default function RecoverAccountPage() {
               </div>
             )}
           </CardContent>
-          <CardFooter className="mt-2">
-            <Button size={"sm"} className="rounded-full w-full">
+          <CardFooter className="my-2">
+            <Button
+              size={"sm"}
+              className="rounded-full w-full"
+              disabled={isSubmitting}
+            >
               Reset Password
             </Button>
           </CardFooter>

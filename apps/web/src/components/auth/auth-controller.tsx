@@ -28,9 +28,9 @@ export default function AuthController() {
       <Button variant="outline" onClick={openLogin}>
         Login
       </Button>
-      <Button variant="outline" onClick={() => setOtpOpen(true)}>
-        OTP
-      </Button>
+      {/* <Button variant="outline" onClick={() => setOtpOpen(true)}> */}
+      {/*   OTP */}
+      {/* </Button> */}
 
       <SignUpModal
         open={signUpOpen}

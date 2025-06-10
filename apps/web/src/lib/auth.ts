@@ -42,6 +42,12 @@ export const auth = betterAuth({
       await sendEmail(user.email, "forget-password", url);
     },
   },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    onEmailVerification(user, request) {
+      console.log(user, request, "from onEmailVerification");
+    },
+  },
 
   plugins: [
     openAPI(),

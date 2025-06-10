@@ -24,7 +24,7 @@ export default function ResetPassword() {
       "If you have an account with us, check your email for a link to reset your password.",
     );
 
-    const { data, error } = await authClient.forgetPassword({
+    const { data, error } = await authClient.requestPasswordReset({
       email,
       redirectTo: "/recover-account",
     });

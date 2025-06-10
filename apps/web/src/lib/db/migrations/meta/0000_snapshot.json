@@ -1,5 +1,5 @@
 {
-  "id": "7d8fdb06-f68c-48e6-9484-6ad89023753c",
+  "id": "e92abd17-2249-494e-bb6a-cd4cc8ec3412",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -333,11 +333,36 @@
           "primaryKey": false,
           "notNull": false
         },
+        "sub_org_id": {
+          "name": "sub_org_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wallet_id": {
+          "name": "wallet_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wallet_address": {
+          "name": "wallet_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "sub_org_created": {
+          "name": "sub_org_created",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -375,6 +400,20 @@
           "nullsNotDistinct": false,
           "columns": [
             "invite_code"
+          ]
+        },
+        "users_sub_org_id_unique": {
+          "name": "users_sub_org_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "sub_org_id"
+          ]
+        },
+        "users_wallet_id_unique": {
+          "name": "users_wallet_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "wallet_id"
           ]
         },
         "user_email_unique": {

@@ -214,7 +214,7 @@ export function SignUpModal({
           </div>
 
           <div className="mt-4 text-xs text-center text-muted-foreground">
-            By creating an account, you agree to Axiom's{" "}
+            By creating an account, you agree to Dexion's{" "}
             <Link href="#" className="text-primary hover:underline">
               Privacy Policy
             </Link>{" "}

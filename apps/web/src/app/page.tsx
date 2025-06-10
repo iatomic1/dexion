@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,7 +22,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/ui/card";
@@ -33,6 +33,7 @@ import {
 } from "@repo/ui/components/ui/tabs";
 import { Badge } from "@repo/ui/components/ui/badge";
 import AuthController from "~/components/auth/auth-controller";
+import { createSubOrganization } from "~/lib/turnkey/service";
 
 export default function Home() {
   return (
@@ -80,6 +81,17 @@ export default function Home() {
             </Link>
           </nav>
           <AuthController />
+          <Button
+            onClick={async () => {
+              const res = await createSubOrganization({
+                id: "hello",
+                email: "mail@gmail.com",
+              });
+              console.log(JSON.stringify(res, null, 2));
+            }}
+          >
+            Create Sub Org
+          </Button>
         </div>
       </header>
       <main className="flex-1">

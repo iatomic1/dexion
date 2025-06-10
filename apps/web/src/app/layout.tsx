@@ -1,4 +1,5 @@
 // import "@repo/ui/globals.css";
+import { TurnkeyProvider } from "@turnkey/sdk-react";
 import "./globals.css";
 import type React from "react";
 import type { Metadata } from "next";
@@ -9,6 +10,7 @@ import { DEV } from "~/lib/constants";
 import { AuthProvider } from "~/components/providers/auth-providers";
 import { ClientQueryProvider } from "~/components/providers/query-client-provider";
 import { ThemeProvider } from "~/components/providers/theme-provider";
+import { turnkeyConfig } from "~/config/turnkey";
 
 export const metadata: Metadata = {
   title: "DEXION Pro - Cryptocurrency Trading Platform",
@@ -41,7 +43,11 @@ export default async function RootLayout({
 
               <ClientQueryProvider>
                 <main className="flex-1">
-                  <AuthProvider>{children}</AuthProvider>
+                  <AuthProvider>
+                    <TurnkeyProvider config={turnkeyConfig}>
+                      {children}
+                    </TurnkeyProvider>
+                  </AuthProvider>
                 </main>
               </ClientQueryProvider>
             </div>

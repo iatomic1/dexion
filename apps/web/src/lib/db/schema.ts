@@ -7,6 +7,7 @@ import {
   check,
   pgEnum,
   unique,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const userTypeEnum = pgEnum("user_type", ["APP", "TELEGRAM"]);
@@ -24,9 +25,13 @@ export const user = pgTable(
     type: userTypeEnum("type").notNull(),
     telegramChatId: text("telegram_chat_id").unique(),
     inviteCode: text("invite_code").unique(),
+    subOrganizationId: varchar("sub_org_id", { length: 255 }).unique(),
+    walletId: varchar("wallet_id", { length: 255 }).unique(),
+    walletAddress: text("wallet_address"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
+    subOrgCreated: boolean("sub_org_created").default(false),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -40,6 +45,21 @@ export const user = pgTable(
     userEmailUnique: unique("user_email_unique").on(table.email),
   }),
 );
+
+// export const turnkey = pgTable("turnkey", {
+//   userId: text("user_id")
+//     .notNull()
+//     .references(() => user.id, { onDelete: "cascade" }),
+//   subOrgId: varchar("sub_org_id", { length: 255 }).notNull(),
+//   walletId: varchar("wallet_id", { length: 255 }).notNull(),
+//   address: text("address").notNull(),
+//   createdAt: timestamp("created_at", { withTimezone: true })
+//     .$defaultFn(() => new Date())
+//     .notNull(),
+//   updatedAt: timestamp("updated_at", { withTimezone: true })
+//     .$defaultFn(() => new Date())
+//     .notNull(),
+// });
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
@@ -101,4 +121,11 @@ export const twoFactor = pgTable("two_factor", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const schema = { user, session, account, verification, jwks, twoFactor };
+export const schema = {
+  user,
+  session,
+  account,
+  verification,
+  jwks,
+  twoFactor,
+};

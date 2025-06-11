@@ -241,7 +241,7 @@ function TokenInfoContent({
               className=""
               onClick={() => {
                 copy(token?.contract_id || "");
-                toast.info("Address copied to clipboard");
+                toast.copy("Address copied to clipboard");
               }}
             >
               <div className="text-muted-foreground text-sm flex items-center gap-0.5">

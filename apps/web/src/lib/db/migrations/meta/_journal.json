@@ -8,6 +8,13 @@
       "when": 1749585495083,
       "tag": "0000_numerous_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749588965554,
+      "tag": "0001_military_namor",
+      "breakpoints": true
     }
   ]
 }

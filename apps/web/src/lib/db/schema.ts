@@ -28,6 +28,7 @@ export const user = pgTable(
     subOrganizationId: varchar("sub_org_id", { length: 255 }).unique(),
     walletId: varchar("wallet_id", { length: 255 }).unique(),
     walletAddress: text("wallet_address"),
+    walletPublicKey: text("wallet_public_key"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),

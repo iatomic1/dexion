@@ -18,6 +18,7 @@ import { getAddressFromPublicKey } from "@stacks/transactions";
 
 export const auth = betterAuth({
   appName: "Dexion Pro",
+  trustedOrigins: [],
   user: {
     additionalFields: {
       inviteCode: {
@@ -58,6 +59,14 @@ export const auth = betterAuth({
         input: false,
         returned: true,
       },
+      walletPublicKey: {
+        type: "string",
+        required: false,
+        defaultValue: false,
+        input: false,
+        returned: true,
+      },
+
       type: {
         type: "string",
         fieldName: "type",
@@ -75,9 +84,9 @@ export const auth = betterAuth({
       )
         return;
       console.log(ctx.context.newSession, "from session");
-      const { id, walletCreated } = ctx.context.newSession.user;
+      const { emailVerified, id, walletCreated } = ctx.context.newSession.user;
 
-      if (!walletCreated) {
+      if (emailVerified && !walletCreated) {
         const res = await createSubOrganization(ctx.context.newSession.user);
 
         await db
@@ -89,10 +98,17 @@ export const auth = betterAuth({
             walletAddress: getAddressFromPublicKey(
               res.wallet?.addresses[0] as string,
             ),
+            walletPublicKey: res.wallet?.addresses[0] as string,
           })
           .where(eq(user.id, id));
       }
     }),
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // Cache duration in seconds
+    },
   },
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -107,6 +123,8 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => {
       await sendEmail(user.email, "forget-password", url);
     },
+    revokeSessionsOnPasswordReset: true,
+    resetPasswordTokenExpiresIn: 10 * 60,
   },
   emailVerification: {
     autoSignInAfterVerification: true,

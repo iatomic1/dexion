@@ -37,6 +37,7 @@ interface RootCredenzaProps extends BaseProps {
 interface CredenzaProps extends BaseProps {
   className?: string;
   asChild?: true;
+  showCloseIcon?: boolean; // Add the showCloseIcon prop type here
 }
 
 const CredenzaContext = React.createContext<{ isMobile: boolean }>({

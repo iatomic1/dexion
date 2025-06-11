@@ -42,15 +42,6 @@ export function AccountSecurityModal({
   const [dialogOpen, setDialogOpen] = useState(false);
   const copy = useCopyToClipboard();
   const { data: session } = authClient.useSession();
-  const { data: userSessions, isLoading } = useSuspenseQuery({
-    queryKey: ["sessions", session?.user.id],
-    queryFn: () =>
-      authClient.listSessions({
-        query: { userId: session?.user.id },
-      }),
-    // placeholderData: keepPreviousData,
-  });
-
   const router = useRouter();
 
   return (
@@ -70,6 +61,7 @@ export function AccountSecurityModal({
               <>
                 <AvatarUpload
                   currentAvatarUrl={session?.user.image}
+                  email={session?.user.email}
                   onUploadSuccess={async (url, fileId) => {
                     await authClient.updateUser({
                       image: url,
@@ -96,7 +88,7 @@ export function AccountSecurityModal({
                       className="h-5 w-5 ml-1 text-zinc-400"
                       onClick={() => {
                         copy(session?.user.id as string);
-                        toast.info("UserID copied to clipboard");
+                        toast.copy("UserID copied to clipboard");
                       }}
                     >
                       <Copy className="h-3 w-3" />
@@ -123,7 +115,7 @@ export function AccountSecurityModal({
                           className="h-5 w-5 ml-1 text-zinc-400"
                           onClick={() => {
                             copy("iatomic1");
-                            toast.info("Referral link copied to clipboard");
+                            toast.copy("Referral link copied to clipboard");
                           }}
                         >
                           <Copy className="h-3 w-3" />

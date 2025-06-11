@@ -10,17 +10,10 @@ import {
   InfoIcon,
   AlertTriangleIcon,
   TriangleAlert,
+  Clipboard,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "./button";
-
-// Define types for our custom toast components
-type ToastData = {
-  id: string | number;
-  title?: ReactNode;
-  description?: ReactNode;
-  message?: string;
-};
 
 type BaseToastProps = {
   data: { id: string | number };
@@ -42,7 +35,7 @@ const BaseToast = ({
   iconColor,
   defaultMessage,
 }: BaseToastProps) => (
-  <div className="bg-background rounded-md border px-4 py-4 shadow-lg">
+  <div className="bg-background rounded-xl border px-4 py-4 shadow-lg z-[99999999999999999999999999999999999999999999999999999]">
     <div className="flex gap-2">
       <p className="grow text-sm">
         <Icon
@@ -76,6 +69,11 @@ const toastVariants = {
     icon: CircleCheckIcon,
     iconColor: "text-emerald-500",
     defaultMessage: "Completed successfully!",
+  },
+  copy: {
+    icon: Clipboard,
+    iconColor: "text-emerald-500",
+    defaultMessage: "Copied successfully",
   },
   error: {
     icon: AlertTriangleIcon,
@@ -144,6 +142,22 @@ const customToast = Object.assign({}, toast, {
       options,
     );
   },
+  copy: (message: string, options?: any) => {
+    const variant = toastVariants.copy;
+    return toast.custom(
+      (data) => (
+        <BaseToast
+          data={data}
+          title={message}
+          onDismiss={() => toast.dismiss(data.id)}
+          icon={variant.icon}
+          iconColor={variant.iconColor}
+          defaultMessage={variant.defaultMessage}
+        />
+      ),
+      options,
+    );
+  },
   warning: (message: string, options?: any) => {
     const variant = toastVariants.warning;
     return toast.custom(
@@ -172,6 +186,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         style: {
           maxWidth: "400px",
+          zIndex: 99999999999999999999999999999999999999999999999999999,
         },
         className: "w-full max-w-[400px]",
       }}

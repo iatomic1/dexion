@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, Wallet2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
@@ -8,8 +8,12 @@ import { SearchDialog } from "./search-dialog";
 import AuthController from "~/components/auth/auth-controller";
 import { WatchlistCredenza } from "~/components/watchlist/watchlist-credenza";
 import { AccountPopover } from "./account/account-management";
+import { sendStacksWithTurnkey } from "~/lib/turnkey/service";
+import { authClient } from "~/lib/auth-client";
+import Balance from "./wallet/balance";
 
 export default function SiteHeader() {
+  const { data } = authClient.useSession();
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4">
       <div className="flex items-center gap-6">
@@ -107,6 +111,29 @@ export default function SiteHeader() {
         <Button variant="default" size="sm" className="rounded-full">
           Deposit
         </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="rounded-full"
+          onClick={async () => {
+            const user = data?.user;
+            console.log(user);
+            await sendStacksWithTurnkey(
+              user?.walletPublicKey,
+              user?.walletAddress,
+              "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+              user?.subOrganizationId,
+            );
+          }}
+        >
+          Test Send
+        </Button>
+
+        <Balance>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <Wallet2 className="h-5 w-5" />
+          </Button>
+        </Balance>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
         </Button>

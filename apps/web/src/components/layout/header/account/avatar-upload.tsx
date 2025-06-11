@@ -10,12 +10,7 @@ import {
   AvatarFallback,
 } from "@repo/ui/components/ui/avatar";
 import { Button } from "@repo/ui/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+import { DialogTitle } from "@repo/ui/components/ui/dialog";
 import {
   Credenza,
   CredenzaContent,
@@ -25,11 +20,13 @@ import {
 interface AvatarUploadProps {
   onUploadSuccess?: (url: string, fileId: string) => void;
   currentAvatarUrl?: string;
+  email: string;
 }
 
 export default function AvatarUpload({
   onUploadSuccess,
   currentAvatarUrl,
+  email,
 }: AvatarUploadProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>(currentAvatarUrl || "");
@@ -158,7 +155,7 @@ export default function AvatarUpload({
         onClick={() => setIsOpen(true)}
       >
         <AvatarImage
-          src={avatarUrl || "/placeholder.svg"}
+          src={avatarUrl}
           alt="User avatar"
           className="object-cover"
         />
@@ -167,7 +164,7 @@ export default function AvatarUpload({
         </AvatarFallback>
       </Avatar>
 
-      <Credenza open={isOpen} onOpenChange={setIsOpen} modal={true}>
+      <Credenza open={isOpen} onOpenChange={setIsOpen}>
         <CredenzaContent
           className="sm:max-w-md px-0 pt-0 sm:pt-4"
           showCloseIcon={false}

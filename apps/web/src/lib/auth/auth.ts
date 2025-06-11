@@ -1,5 +1,5 @@
 "use server";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { AuthSuccess } from "~/types/auth";
 
 import { auth } from "../auth";

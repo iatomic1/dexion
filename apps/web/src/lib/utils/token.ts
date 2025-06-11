@@ -7,6 +7,10 @@ import { formatPrice } from "../helpers/numbers";
 import { TokenLockedLiquidity } from "~/types/stxwatch";
 import { AddressBalanceResponse } from "~/types/hiro/balance";
 
+export const formatTokenBalance = (balance: string, decimal: number) => {
+  return Number(balance) / 10 ** decimal;
+};
+
 export const calculateMarketCap = (token: TokenMetadata, price: number) => {
   const cs =
     token.progress && token.progress >= 100

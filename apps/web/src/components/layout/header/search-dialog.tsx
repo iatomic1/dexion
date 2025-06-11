@@ -328,7 +328,7 @@ const HistoryItem = ({
       e.preventDefault();
       e.stopPropagation();
       copy(token.contract_id);
-      toast.success("Address copied to clipboard");
+      toast.copy("Address copied to clipboard");
     },
     [copy, token.contract_id],
   );

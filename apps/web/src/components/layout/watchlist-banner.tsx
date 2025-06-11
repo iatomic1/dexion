@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { useServerAction } from "zsa-react";
-import { HTTP_STATUS } from "~/lib/constants";
 import { Trash2 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
 import {
@@ -25,6 +24,7 @@ import {
 import { formatPrice } from "~/lib/helpers/numbers";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import { deleteWatchlistAction } from "~/app/actions/watchlist-actions";
+import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
 
 export const WatchListBanner = () => {
   const { tokens, isInitialLoading, hasError, isEmpty, isFetching } =

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "~/lib/auth";
 import SiteHeader from "~/components/layout/header/site-header";
 import SiteFooter from "~/components/layout/site-footer/site-footer";
+import { WatchListBanner } from "~/components/layout/watchlist-banner";
 
 export default async function ProtectedLayout({
   children,
@@ -21,7 +22,9 @@ export default async function ProtectedLayout({
   return (
     <>
       <SiteHeader />
-      <div className="hidden sm:block">{/* <WatchLists /> */}</div>
+      <div className="hidden sm:block">
+        <WatchListBanner />
+      </div>
       {children}
       <SiteFooter />
     </>

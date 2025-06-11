@@ -44,6 +44,8 @@
     "react-dom": "19.1.0",
     "react-draggable": "^4.4.6",
     "react-qr-code": "^2.0.15",
+    "react-qrcode-logo": "^3.0.0",
+    "react-qrcode-pretty": "^3.1.0",
     "resend": "^4.5.2",
     "sonner": "^2.0.3",
     "tailwindcss": "4.1.5",

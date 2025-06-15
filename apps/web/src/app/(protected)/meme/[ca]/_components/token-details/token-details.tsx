@@ -8,13 +8,9 @@ import siteConfig from "~/config/site";
 import type { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { memo } from "react";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
-import { useMediaQuery } from "../trade-details";
 import DesktopLayout from "./desktop-layout";
 import MobileLayout from "./mobile-layout";
-
-// Separate mobile and desktop components for better code splitting
-// const MobileLayout = lazy(() => import("./mobile-layout"));
-// const DesktopLayout = lazy(() => import("./desktop-layout"));
+import useMediaQuery from "~/hooks/useMediaQuery";
 
 interface TokenDetailPageProps {
   ca: string;
@@ -22,9 +18,11 @@ interface TokenDetailPageProps {
 
 export default function TokenDetailPage({ ca }: TokenDetailPageProps) {
   const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
-  const isMobile = useMediaQuery("(max-width: 640px)");
+  const isMobile = useMediaQuery("(max-width: 640px)", {
+    defaultValue: true, // Assume mobile-first
+    initializeWithValue: true,
+  });
 
-  // Memoize document title to prevent unnecessary updates
   const documentTitle = useMemo(() => {
     if (!tokenData?.symbol || !tokenData?.metrics?.marketcap_usd) {
       return siteConfig.title;
@@ -34,7 +32,6 @@ export default function TokenDetailPage({ ca }: TokenDetailPageProps) {
 
   useDocumentTitle(documentTitle);
 
-  // Memoized filter state management
   const [filterBy, setFilterBy] = useState("");
 
   const handleFilterChange = useCallback((newFilter: string) => {
@@ -55,16 +52,6 @@ export default function TokenDetailPage({ ca }: TokenDetailPageProps) {
     [handleFilterChange, handleToggleFilter, filterBy],
   );
 
-  // Early return for loading state
-  // if (isLoadingMetadata) {
-  //   return (
-  //     <div className="flex flex-col h-full">
-  //       <TokenInfoSkeleton />
-  //       <div className="flex-1 animate-pulse bg-muted/20" />
-  //     </div>
-  //   );
-  // }
-
   // Conditional rendering - only render the layout we need
   return (
     <Suspense fallback={<TokenInfoSkeleton />}>
@@ -75,7 +62,7 @@ export default function TokenDetailPage({ ca }: TokenDetailPageProps) {
           isLoadingMetadata={isLoadingMetadata}
         />
       ) : (
-        <DesktopLayoutComponent tokenData={tokenData} />
+        <DesktopLayout tokenData={tokenData} />
       )}
     </Suspense>
   );

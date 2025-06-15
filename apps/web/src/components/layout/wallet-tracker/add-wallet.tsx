@@ -76,58 +76,50 @@ export default function AddWalletModal() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     try {
-      toast.promise(
-        async () => {
-          const response = await execute({
-            walletAddress: values.address,
-            nickname: values.name,
-            emoji: selectedEmoji,
-          });
+      const trackWalletPromise = execute({
+        walletAddress: values.address,
+        nickname: values.name,
+        emoji: selectedEmoji,
+      }).then((response) => {
+        if (!response || !response[0]) {
+          throw new Error("No response received");
+        }
+        console.log("response", response);
+        const result = response[0];
+        console.log("result", result);
+        // Only return successfully if status is CREATED
+        if (result.status === HTTP_STATUS.CREATED) {
+          return result;
+        }
+        // For any other status, throw an error with the status code
+        throw {
+          status: result.status,
+          message: result.message || "Failed to track wallet",
+        };
+      });
 
-          if (!response || !response[0]) {
-            throw new Error("No response received");
-          }
-
-          console.log("response", response);
-          const result = response[0];
-          console.log("result", result);
-
-          // Only return successfully if status is CREATED
-          if (result.status === HTTP_STATUS.CREATED) {
-            return result;
-          }
-
-          // For any other status, throw an error with the status code
-          throw {
-            status: result.status,
-            message: result.message || "Failed to track wallet",
-          };
+      toast.promise(trackWalletPromise, {
+        richColors: true,
+        loading: "Tracking Wallet...",
+        success: () => {
+          setTimeout(() => {
+            form.reset();
+            setSelectedEmoji("🤣");
+            setIsDialogOpen(false);
+          }, 500);
+          revalidateTagServer("wallets");
+          return "Wallet tracked successfully";
         },
-        {
-          richColors: true,
-          loading: "Tracking Wallet...",
-          success: () => {
-            // Handle only successful case
-            setTimeout(() => {
-              form.reset();
-              setSelectedEmoji("🤣");
-              setIsDialogOpen(false);
-            }, 500);
-            revalidateTagServer("wallets");
-            return "Wallet tracked successfully";
-          },
-          error: (err) => {
-            if (err.status === HTTP_STATUS.CONFLICT) {
-              return "This wallet is already being tracked";
-            }
-            if (err.status === HTTP_STATUS.UNAUTHORIZED) {
-              return "Unauthorized request";
-            }
-
-            return err.message || "Failed to track wallet";
-          },
+        error: (err) => {
+          if (err.status === HTTP_STATUS.CONFLICT) {
+            return "This wallet is already being tracked";
+          }
+          if (err.status === HTTP_STATUS.UNAUTHORIZED) {
+            return "Unauthorized request";
+          }
+          return err.message || "Failed to track wallet";
         },
-      );
+      });
     } catch (err) {
       console.error(err);
     }

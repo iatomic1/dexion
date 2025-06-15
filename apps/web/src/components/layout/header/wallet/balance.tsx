@@ -30,6 +30,7 @@ import { authClient } from "~/lib/auth-client";
 import { getBalance } from "~/lib/queries/hiro";
 import { formatTokenBalance } from "~/lib/utils/token";
 import Exchange from "./exchange";
+import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTransactions";
 
 interface BalanceContentProps {
   isPending: boolean;
@@ -149,13 +150,23 @@ export default function Balance({ children }: { children: React.ReactNode }) {
   const { data, isPending } = authClient.useSession();
   const copy = useCopyToClipboard();
   const isMobile = useMediaQuery("(max-width: 640px)");
+  const walletAddress = data?.user.walletAddress;
 
-  const { data: balanceData, isLoading } = useQuery({
+  const {
+    data: balanceData,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: [`balance-${data?.user.walletAddress}`],
     queryFn: () => getBalance(data?.user.walletAddress as string),
     enabled: !!data?.user.walletAddress,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
+  });
+
+  useSubscribeAddressTransactions(walletAddress as string, () => {
+    // toast.message("New transaction detected. Refreshing balance...");
+    refetch();
   });
 
   const handleCopyAddress = () => {

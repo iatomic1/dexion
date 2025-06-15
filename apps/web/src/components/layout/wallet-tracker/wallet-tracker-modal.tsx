@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@repo/ui/components/ui/button";
 import { Separator } from "@repo/ui/components/ui/separator";
-import { X } from "lucide-react";
+import { Wallet2, X } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -53,8 +53,8 @@ export default function WalletTrackerModal({
     <Tabs defaultValue="manager" value={activeTab} onValueChange={setActiveTab}>
       <DraggableDialog
         trigger={
-          <Button size={"sm"} variant={"ghost"}>
-            Wallet Tracker
+          <Button size={"xs"} variant={"ghost"} className="">
+            <Wallet2 /> <span>Wallet Tracker</span>
           </Button>
         }
         header={

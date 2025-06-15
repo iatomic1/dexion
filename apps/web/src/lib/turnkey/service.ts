@@ -5,6 +5,7 @@ import {
   UnsignedTokenTransferOptions,
   createMessageSignature,
   validateStacksAddress,
+  AnchorMode,
 } from "@stacks/transactions";
 import { User } from "better-auth";
 import { turnkeyServer } from "./api-client";
@@ -44,6 +45,65 @@ export const createSubOrganization = async (userInfo: User) => {
   return response;
 };
 
+export async function sendStacksWithTurnkeyTxSigning(
+  walletPubKey: string,
+  walletAddr: string,
+  recipient: string,
+  subOrgId: string,
+) {
+  try {
+    // Build the transaction
+    const txOptions: UnsignedTokenTransferOptions = {
+      recipient: recipient,
+      amount: 1n,
+      publicKey: walletPubKey,
+      fee: 200n,
+      network: "mainnet",
+      memo: "Test payment",
+      anchorMode: AnchorMode.Any,
+    };
+
+    const unsignedTx = await makeUnsignedSTXTokenTransfer(txOptions);
+
+    // Serialize the transaction
+    const serializedTx = unsignedTx.serialize();
+    const txHex = serializedTx.toString("hex");
+
+    // Use Turnkey's transaction signing endpoint
+    const signRes = await turnkeyServer.signTransaction({
+      timestampMs: Date.now().toString(),
+      organizationId: subOrgId,
+      signWith: walletAddr,
+      unsignedTransaction: txHex,
+      type: "TRANSACTION_TYPE_BITCOIN", // Stacks uses similar format to Bitcoin
+    });
+
+    // The signed transaction should be ready to broadcast
+    const signedTxHex =
+      signRes.activity.result.signTransactionResult.signedTransaction;
+
+    // Deserialize and broadcast
+    const signedTx = StacksTransaction.deserialize(
+      Buffer.from(signedTxHex, "hex"),
+    );
+    const broadcastRes = await broadcastTransaction(signedTx, "mainnet");
+    console.log(broadcastRes);
+
+    return {
+      success: true,
+      txid: broadcastRes.txid,
+      message: "Transaction sent successfully",
+    };
+  } catch (error) {
+    console.error("Error in sendStacksWithTurnkeyTxSigning:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+      txid: null,
+    };
+  }
+}
+
 export async function sendStacksWithTurnkey(
   walletPubKey: string,
   walletAddr: string,
@@ -64,11 +124,12 @@ export async function sendStacksWithTurnkey(
     console.log("Building unsigned STX transfer...");
     const txOptions: UnsignedTokenTransferOptions = {
       recipient: recipient,
-      amount: 10n,
+      amount: 1n,
       publicKey: walletPubKey,
       fee: 200n,
       network: "mainnet",
       memo: "Test payment",
+      anchorMode: AnchorMode.Any,
     };
 
     let unsignedTx;
@@ -100,7 +161,7 @@ export async function sendStacksWithTurnkey(
       signRes = await turnkeyServer.signRawPayload({
         timestampMs: Date.now().toString(),
         organizationId: subOrgId,
-        signWith: walletPubKey,
+        signWith: walletAddr,
         payload: sighashHex,
         encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
         hashFunction: "HASH_FUNCTION_NO_OP", // Hash is already computed
@@ -157,7 +218,8 @@ export async function sendStacksWithTurnkey(
     console.log("Broadcasting transaction...");
     let broadcastRes;
     try {
-      broadcastRes = await broadcastTransaction({ transaction: signedTx });
+      broadcastRes = await broadcastTransaction(signedTx, "mainnet");
+      console.log(broadcastRes);
     } catch (error) {
       throw new Error(
         `Failed to broadcast transaction: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -168,7 +230,10 @@ export async function sendStacksWithTurnkey(
       throw new Error("Invalid broadcast response: missing transaction ID");
     }
 
-    console.log("Transaction broadcast successfully, TXID:", broadcastRes.txid);
+    console.log(
+      "Transaction broadcasted successfully, TXID:",
+      broadcastRes.txid,
+    );
     return {
       success: true,
       txid: broadcastRes.txid,
@@ -176,7 +241,6 @@ export async function sendStacksWithTurnkey(
     };
   } catch (error) {
     console.error("Error in sendStacksWithTurnkey:", error);
-
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
@@ -184,24 +248,3 @@ export async function sendStacksWithTurnkey(
     };
   }
 }
-
-// export async function signStacksTransaction(
-//   unsignedTxHex: string,
-//   signerAddress: string,
-//   orgId: string
-// ) {
-//   try {
-//     const signResult = await turnkeyServer.signRawPayload({
-//       organizationId: orgId,
-//       signWith: signerAddress,
-//       payload: unsignedTxHex,
-//       encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
-//       hashFunction: "HASH_FUNCTION_SHA256", // Stacks typically uses SHA256
-//     });
-//
-//     return signResult;
-//   } catch (error) {
-//     console.error("Error signing Stacks transaction:", error);
-//     throw error;
-//   }
-// }

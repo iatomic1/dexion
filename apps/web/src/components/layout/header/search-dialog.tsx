@@ -346,7 +346,8 @@ const HistoryItem = ({
               <AvatarImage
                 src={token.image_url}
                 className="object-cover"
-                fetchPriority="high"
+                loading="lazy"
+                // fetchPriority="high"
               />
               <AvatarFallback>{token.symbol.charAt(0)}</AvatarFallback>
             </Avatar>

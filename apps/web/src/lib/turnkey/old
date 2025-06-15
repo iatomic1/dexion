@@ -1,0 +1,202 @@
+
+"use server";
+import { Buffer } from "buffer";
+import crypto from "crypto"; // Node.js crypto module
+
+import {
+  makeUnsignedSTXTokenTransfer,
+  broadcastTransaction,
+  createMessageSignature,
+  validateStacksAddress,
+  publicKeyToAddress,
+} from "@stacks/transactions";
+import { User } from "better-auth";
+import { turnkeyServer } from "./api-client";
+
+export const createSubOrganization = async (userInfo: User) => {
+  const response = await turnkeyServer.createSubOrganization({
+    subOrganizationName: `User ${userInfo.id}`,
+    rootUsers: [
+      {
+        userName: userInfo.email.split("@")[0] as string,
+        userEmail: userInfo.email,
+        authenticators: [],
+        apiKeys: [
+          {
+            apiKeyName: `DexBot-${userInfo.id}`,
+            publicKey: process.env.TURNKEY_API_PUBLIC_KEY as string,
+            curveType: "API_KEY_CURVE_SECP256K1",
+          },
+        ],
+        oauthProviders: [],
+      },
+    ],
+    rootQuorumThreshold: 1,
+    wallet: {
+      walletName: "Default Stacks Wallet",
+      accounts: [
+        {
+          curve: "CURVE_SECP256K1",
+          pathFormat: "PATH_FORMAT_BIP32",
+          path: "m/44'/5757'/0'/0/0",
+          addressFormat: "ADDRESS_FORMAT_COMPRESSED",
+        },
+      ],
+    },
+  });
+
+  return response;
+};
+
+export async function sendStacksWithTurnkey(
+  walletPubKey: string,
+  walletAddr: string,
+  recipient: string,
+  subOrgId: string,
+) {
+  try {
+    // **Input Validation**
+    if (!walletPubKey || !walletAddr || !recipient || !subOrgId) {
+      throw new Error("Missing required parameters");
+    }
+    if (
+      !validateStacksAddress(recipient) ||
+      !validateStacksAddress(walletAddr)
+    ) {
+      throw new Error("Invalid Stacks address");
+    }
+
+    const derivedAddress = publicKeyToAddress(walletPubKey, "mainnet");
+    if (derivedAddress !== walletAddr) {
+      throw new Error("Public key does not match wallet address");
+    }
+
+    // **Create Unsigned Transaction**
+    const unsignedTx = await makeUnsignedSTXTokenTransfer({
+      recipient,
+      amount: 10n, // 10 microSTX; adjust as needed
+      publicKey: walletPubKey,
+      fee: 200n, // 200 microSTX; adjust based on network conditions
+      network: "mainnet", // Switch to 'testnet' if necessary
+      memo: "Test payment",
+      nonce: 1,
+    });
+
+    console.log("Nonce:", unsignedTx.auth.spendingCondition.nonce.toString());
+    console.log("Fee:", unsignedTx.auth.spendingCondition.fee.toString());
+    // console.log(
+    //   "Spender address:",
+    //   unsignedTx.auth.spendingCondition.address.toString(),
+    // );
+
+    // **Compute Presign-Sighash (SIP-005)**
+    const sighash = unsignedTx.signBegin(); // Initial sighash
+    const authType = 0x04; // Single-sig P2PKH
+    const fee = unsignedTx.auth.spendingCondition.fee;
+    const nonce = unsignedTx.auth.spendingCondition.nonce;
+    const presignSighash = crypto
+      .createHash("sha256")
+      .update(
+        Buffer.concat([
+          sighash,
+          Buffer.from([authType]),
+          uintToBuffer(fee, 8),
+          uintToBuffer(nonce, 8),
+        ]),
+      )
+      .digest();
+    const presignSighashHex = presignSighash.toString("hex");
+
+    // **Sign with Turnkey**
+    const signRes = await turnkeyServer.signRawPayload({
+      timestampMs: Date.now().toString(),
+      organizationId: subOrgId,
+      signWith: walletPubKey,
+      payload: presignSighashHex as any, // Assumes hex string; verify with Turnkey docs
+      encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
+      hashFunction: "HASH_FUNCTION_SHA256",
+    });
+
+    const { r, s, v } = signRes?.activity?.result?.signRawPayloadResult ?? {};
+    if (!r || !s || v === undefined) {
+      throw new Error("Invalid signature response from Turnkey");
+    }
+
+    // **Process Signature**
+    const rBuf = Buffer.from(r, "hex");
+    const sBuf = Buffer.from(s, "hex");
+    let recoveryByte = typeof v === "string" ? parseInt(v, 10) : v;
+    console.log("Raw recovery byte (v):", v); // Log to inspect Turnkey’s output
+
+    // Adjust recovery byte based on Turnkey’s format
+    // Stacks expects 0 or 1 (sometimes 2/3 for compressed keys); Ethereum uses 27/28
+    if (recoveryByte > 3) {
+      recoveryByte -= 27; // Adjust if Turnkey returns Ethereum-style v
+    }
+    console.log("Adjusted recovery byte:", recoveryByte);
+
+    // Validate signature components
+    if (rBuf.length !== 32 || sBuf.length !== 32) {
+      throw new Error("Invalid r or s length; expected 32 bytes each");
+    }
+    const sigBuf = Buffer.concat([rBuf, sBuf, Buffer.from([recoveryByte])]);
+    const messageSig = createMessageSignature(sigBuf.toString("hex"));
+
+    // **Set Signature**
+    const spendingCondition = unsignedTx.auth.spendingCondition;
+    if ("signature" in spendingCondition) {
+      spendingCondition.signature = messageSig;
+    } else {
+      throw new Error("Multisig not supported in this implementation");
+    }
+
+    // **Verify Signature**
+    if (!unsignedTx.verifyOrigin()) {
+      throw new Error("Signature verification failed");
+    }
+    console.log("Signature verified successfully");
+
+    // **Broadcast Transaction**
+    const broadcastRes = await broadcastTransaction({
+      transaction: unsignedTx,
+      network: "mainnet", // Match network above
+    });
+    console.log("Broadcast response:", broadcastRes);
+
+    if (!broadcastRes?.txid) {
+      throw new Error("Broadcast failed: no txid returned");
+    }
+
+    console.log("Transaction sent successfully. Txid:", broadcastRes.txid);
+
+    // **Post-Broadcast Instruction**
+    console.log(
+      "Next step: Check txid status using Stacks API (e.g., https://api.mainnet.hiro.so/v2/transactions/{txid})",
+    );
+
+    return {
+      success: true,
+      txid: broadcastRes.txid,
+      message: "Transaction broadcasted successfully",
+    };
+  } catch (error) {
+    console.error("Error in sendStacksWithTurnkey:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      txid: null,
+    };
+  }
+}
+
+/**
+ * Converts a bigint to a big-endian Buffer of specified size.
+ * @param num Number to convert
+ * @param size Buffer size in bytes
+ * @returns Buffer
+ */
+function uintToBuffer(num: bigint, size: number): Buffer {
+  const buf = Buffer.alloc(size);
+  buf.writeBigUInt64BE(BigInt(num));
+  return buf;
+}

@@ -11,6 +11,8 @@ import { AccountPopover } from "./account/account-management";
 import { sendStacksWithTurnkey } from "~/lib/turnkey/service";
 import { authClient } from "~/lib/auth-client";
 import Balance from "./wallet/balance";
+import { transferSTX, transferSTXManual } from "~/lib/turnkey/test";
+import { sendStxWithTurnKey } from "~/lib/turnkey/test3";
 
 export default function SiteHeader() {
   const { data } = authClient.useSession();
@@ -108,9 +110,9 @@ export default function SiteHeader() {
         {/*   <span className="mr-2">8.715</span> */}
         {/*   <ChevronDown className="h-4 w-4" /> */}
         {/* </Button> */}
-        <Button variant="default" size="sm" className="rounded-full">
-          Deposit
-        </Button>
+        {/* <Button variant="default" size="sm" className="rounded-full"> */}
+        {/*   Deposit */}
+        {/* </Button> */}
         <Button
           variant="secondary"
           size="sm"
@@ -118,12 +120,19 @@ export default function SiteHeader() {
           onClick={async () => {
             const user = data?.user;
             console.log(user);
-            await sendStacksWithTurnkey(
+            await sendStxWithTurnKey(
               user?.walletPublicKey,
               user?.walletAddress,
               "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
               user?.subOrganizationId,
             );
+
+            // await transferSTXManual({
+            //   walletPubKey: user?.walletPublicKey,
+            //   walletAddr: user?.walletAddress,
+            //   recipient: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+            //   subOrgId: user?.subOrganizationId,
+            // });
           }}
         >
           Test Send

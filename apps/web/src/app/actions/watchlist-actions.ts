@@ -33,7 +33,6 @@ export const addToWatchlistAction = authenticatedAction
     }),
   )
   .handler(async ({ input, ctx: { user } }) => {
-    console.log(user, input);
     try {
       return await makeFetch<ApiResponse<UserWatchlist>>(
         "dexion",

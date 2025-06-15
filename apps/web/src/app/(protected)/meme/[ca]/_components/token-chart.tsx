@@ -80,18 +80,18 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
       <div className="flex-1 relative">
         <div ref={containerRef} className="h-full w-full" />
         <div className="absolute bottom-4 left-4 z-10">
-          <Tabs
-            defaultValue="1D"
-            value={timeframe}
-            onValueChange={setTimeframe}
-          >
-            <TabsList>
-              <TabsTrigger value="3M">3M</TabsTrigger>
-              <TabsTrigger value="1M">1M</TabsTrigger>
-              <TabsTrigger value="5D">5D</TabsTrigger>
-              <TabsTrigger value="1D">1D</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {/* <Tabs */}
+          {/*   defaultValue="1D" */}
+          {/*   value={timeframe} */}
+          {/*   onValueChange={setTimeframe} */}
+          {/* > */}
+          {/*   <TabsList> */}
+          {/*     <TabsTrigger value="3M">3M</TabsTrigger> */}
+          {/*     <TabsTrigger value="1M">1M</TabsTrigger> */}
+          {/*     <TabsTrigger value="5D">5D</TabsTrigger> */}
+          {/*     <TabsTrigger value="1D">1D</TabsTrigger> */}
+          {/*   </TabsList> */}
+          {/* </Tabs> */}
         </div>
       </div>
     </div>

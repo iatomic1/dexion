@@ -35,7 +35,9 @@ export const useTwoFA = (authClient: any, userEmail: string) => {
 
   const handleMethodSelection = async () => {
     updateState({ isLoading: true, error: "" });
-
+    const { data, error } = await authClient.twoFactor.enable({
+      password: state.password,
+    });
     try {
       if (state.selectedMethod === "authenticator") {
         // For TOTP: Call enable with password to get totpURI and backupCodes

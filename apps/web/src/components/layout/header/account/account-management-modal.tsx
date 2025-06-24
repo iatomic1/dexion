@@ -25,7 +25,6 @@ import { cn } from "@repo/ui/lib/utils";
 import { truncateString } from "~/lib/helpers/strings";
 import { useRouter } from "next/navigation";
 import { authClient } from "~/lib/auth-client";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import AvatarUpload from "./avatar-upload";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
@@ -72,9 +71,7 @@ export function AccountSecurityModal({
                 <div className="flex-1">
                   <div className="flex items-center gap-1">
                     <h3 className="text-white font-medium">
-                      {session?.user.inviteCode
-                        ? session?.user.inviteCode
-                        : session?.user.email}
+                      {session?.user.inviteCode ?? session?.user.email}
                     </h3>
                     <div className="w-2 h-2 rounded-full bg-green-500 ml-1" />
                   </div>
@@ -114,7 +111,7 @@ export function AccountSecurityModal({
                           size="icon"
                           className="h-5 w-5 ml-1 text-zinc-400"
                           onClick={() => {
-                            copy("iatomic1");
+                            copy("@" + session.user.inviteCode);
                             toast.copy("Referral link copied to clipboard");
                           }}
                         >
@@ -123,7 +120,7 @@ export function AccountSecurityModal({
                       </div>
                     ) : (
                       <SetInviteCode>
-                        <button>Set Referral Code</button>
+                        <button>Set Referral Code +</button>
                       </SetInviteCode>
                     )}
                   </div>

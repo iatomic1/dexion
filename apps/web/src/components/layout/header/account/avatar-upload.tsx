@@ -16,6 +16,7 @@ import {
   CredenzaContent,
   CredenzaHeader,
 } from "@repo/ui/components/ui/credenza";
+import { toast } from "@repo/ui/components/ui/sonner";
 
 interface AvatarUploadProps {
   onUploadSuccess?: (url: string, fileId: string) => void;
@@ -58,11 +59,11 @@ export default function AvatarUpload({
 
   const validateFile = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
-      alert("File must be less than 5MB in size.");
+      toast.error("File must be less than 5MB in size.");
       return false;
     }
     if (!file.type.startsWith("image/")) {
-      alert("File must be an image.");
+      toast.error("File must be an image.");
       return false;
     }
     return true;

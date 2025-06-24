@@ -295,13 +295,31 @@ export function AccountSecurityModal({
                 </div>
                 <Button
                   variant="destructive"
-                  onClick={async () => {
-                    await authClient.signOut({
-                      fetchOptions: {
-                        onSuccess: () => {
-                          router.push("/");
-                          toast.success("Logged out");
+                  onClick={() => {
+                    const signOutPromise = new Promise((resolve, reject) => {
+                      authClient.signOut({
+                        fetchOptions: {
+                          onSuccess: () => {
+                            resolve(true);
+                          },
+                          onError: (error) => {
+                            reject(error);
+                          },
                         },
+                      });
+                    });
+
+                    toast.promise(signOutPromise, {
+                      loading: "Logging out...",
+                      success: () => {
+                        // Navigate after successful logout
+                        setTimeout(() => {
+                          router.push("/");
+                        }, 500);
+                        return "Logged out successfully";
+                      },
+                      error: (error) => {
+                        return error?.message || "Failed to log out";
                       },
                     });
                   }}

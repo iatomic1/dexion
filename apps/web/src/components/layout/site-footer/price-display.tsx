@@ -28,7 +28,7 @@ export function PriceDisplay({ prices }: PriceDisplayProps) {
       {prices.map((asset) => (
         <Tooltip key={asset.symbol}>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-1">
+            <Button variant="ghost" size="xs" className="gap-1">
               <Image
                 src={`/icons/${asset.symbol}.svg`}
                 height={18}

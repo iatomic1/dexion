@@ -24,49 +24,13 @@ export function ToggleWatchlist({
   ca: string;
 }) {
   const queryClient = useQueryClient();
-  const { isPending: isAddPending, execute: executeAdd } = useServerAction(
-    addToWatchlistAction,
-    {
-      onSuccess: async ({ data: res }) => {
-        if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-          toast.error("You are unauthorized to perform this action");
-          return;
-        }
-        if (res.status === HTTP_STATUS.CONFLICT) {
-          toast.error("Already in watchlist");
-          return;
-        }
-        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-        await queryClient.invalidateQueries({
-          queryKey: ["batch-tokens"],
-          exact: false,
-        });
-        revalidateTagServer("watchlist");
-        toast.success("Added to watchlist");
-      },
-      onError: () => {
-        toast.error("Failed to remove token from watchlist");
-      },
-    },
-  );
+
+  const { isPending: isAddPending, execute: executeAdd } =
+    useServerAction(addToWatchlistAction);
+
   const { isPending: isDeletePending, execute: executeDelete } =
-    useServerAction(deleteWatchlistAction, {
-      onSuccess: async ({ data: res }) => {
-        if (res.status === HTTP_STATUS.NOT_FOUND) {
-          toast.error("You can't delete a watchlist that doesn't exist");
-          return;
-        }
-        await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-        await queryClient.invalidateQueries({
-          queryKey: ["batch-tokens"],
-          exact: false,
-        });
-        revalidateTagServer("watchlist");
-      },
-      onError: () => {
-        toast.error("Failed to remove token from watchlist");
-      },
-    });
+    useServerAction(deleteWatchlistAction);
+
   const {
     data: watchlist,
     isLoading: isWatchlistLoading,
@@ -87,6 +51,69 @@ export function ToggleWatchlist({
     .filter(Boolean);
   const watchlistItem = watchlistData.find((item) => item.ca === ca);
 
+  const handleWatchlistToggle = async () => {
+    const isRemoving = watchlistItem && watchlistItem.ca === ca;
+
+    const promise = isRemoving
+      ? executeDelete({ id: watchlistItem.id as string }).then((data) => {
+          const res = data[0];
+
+          if (!res) {
+            throw new Error("Error occured when removing from watchlist");
+          }
+
+          if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+            throw new Error("You are unauthorized to perform this action");
+          }
+          if (res.status === HTTP_STATUS.NOT_FOUND) {
+            throw new Error("You can't delete a watchlist that doesn't exist");
+          }
+          return res;
+        })
+      : executeAdd({ ca: ca }).then((data) => {
+          const res = data[0];
+
+          if (!res) {
+            throw new Error("Error occured when adding to watchlist");
+          }
+
+          if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+            throw new Error("You are unauthorized to perform this action");
+          }
+          if (res.status === HTTP_STATUS.CONFLICT) {
+            throw new Error("Already in watchlist");
+          }
+          return res;
+        });
+
+    toast.promise(promise, {
+      loading: isRemoving
+        ? "Removing from watchlist..."
+        : "Adding to watchlist...",
+      success: () => {
+        // Invalidate queries and revalidate after successful operation
+        setTimeout(async () => {
+          await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+          await queryClient.invalidateQueries({
+            queryKey: ["batch-tokens"],
+            exact: false,
+          });
+          revalidateTagServer("watchlist");
+        }, 0);
+
+        return isRemoving ? "Removed from watchlist" : "Added to watchlist";
+      },
+      error: (error) => {
+        return (
+          error.message ||
+          (isRemoving
+            ? "Failed to remove from watchlist"
+            : "Failed to add to watchlist")
+        );
+      },
+    });
+  };
+
   return (
     <Button
       variant={isMobile ? "secondary" : "ghost"}
@@ -95,18 +122,8 @@ export function ToggleWatchlist({
         "hover:text-indigo-500 transition-colors duration-150 ease-in-out",
         isMobile && "rounded-full",
       )}
-      onClick={async () => {
-        console.log(contractAddresses);
-        if (watchlistItem && watchlistItem.ca === ca) {
-          console.log("using delete");
-          await executeDelete({
-            id: watchlistItem.id as string,
-          });
-        } else {
-          await executeAdd({ ca: ca });
-          console.log("using add");
-        }
-      }}
+      onClick={handleWatchlistToggle}
+      disabled={isAddPending || isDeletePending}
     >
       <Star
         className={cn(

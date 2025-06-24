@@ -21,30 +21,45 @@ export default function SetInviteCode({
 }) {
   const [referralCode, setReferralCode] = useState("dexion");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      console.log(referralCode);
-      await authClient.updateUser(
+
+    const updatePromise = new Promise((resolve, reject) => {
+      authClient.updateUser(
         { inviteCode: referralCode },
         {
           onSuccess(ctx) {
-            toast.success("Invite code set successfully");
+            resolve(ctx);
           },
           onError(ctx) {
-            console.log(ctx.error);
-            // toast.error(ctx.error.message);
+            reject(ctx.error);
           },
         },
       );
-    } catch (err) {
-      console.error(err);
-    }
+    });
+
+    toast.promise(updatePromise, {
+      loading: "Setting referral code...",
+      success: () => {
+        // Close dialog and reset loading state after success
+        setTimeout(() => {
+          setIsDialogOpen(false);
+          setIsLoading(false);
+        }, 500);
+        return "Referral code set successfully!";
+      },
+      error: (error) => {
+        setIsLoading(false);
+        return error.message || "Failed to set referral code";
+      },
+    });
   };
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-sm px-0" showCloseIcon>
         <DialogHeader>
@@ -73,8 +88,9 @@ export default function SetInviteCode({
             className="rounded-full w-full mt-4 font-bold text-sm"
             size={"lg"}
             disabled={isLoading}
+            type="submit"
           >
-            Set
+            {isLoading ? "Setting..." : "Set"}
           </Button>
         </form>
         <Separator />

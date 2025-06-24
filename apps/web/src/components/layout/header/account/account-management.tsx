@@ -50,12 +50,30 @@ export function AccountPopover() {
           className="w-full justify-start gap-3 bg-transparent !text-destructive"
           variant={"ghost"}
           onClick={async () => {
-            await authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  router.push("/");
-                  toast.success("Logged out");
+            const signOutPromise = new Promise((resolve, reject) => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    resolve(true);
+                  },
+                  onError: (error) => {
+                    reject(error);
+                  },
                 },
+              });
+            });
+
+            toast.promise(signOutPromise, {
+              loading: "Logging out...",
+              success: () => {
+                // Navigate after successful logout
+                setTimeout(() => {
+                  router.push("/");
+                }, 500);
+                return "Logged out successfully";
+              },
+              error: (error) => {
+                return error?.message || "Failed to log out";
               },
             });
           }}

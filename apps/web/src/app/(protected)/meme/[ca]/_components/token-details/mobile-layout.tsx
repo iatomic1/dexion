@@ -24,10 +24,12 @@ import TokenInfo from "../token-info";
 import TradesTable from "../tables/trades-table";
 import FilterByAddressModal from "../filter-by-address-modal";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
+import TradingInterfaceMobile from "../trading/trading-interface-mobile";
+import TokenTabsMobile from "../token-tabs-mobile";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
+// import TokenChart from "../token-chart";
 
 const TokenChart = lazy(() => import("../token-chart"));
-const TokenTabs = lazy(() => import("../token-tabs"));
-const TokenTabsMobile = lazy(() => import("../token-tabs-mobile"));
 
 interface MobileLayoutProps {
   tokenData: TokenMetadata | null;
@@ -88,13 +90,20 @@ const MobileLayout = memo(
             {isLoadingMetadata || !tokenData ? (
               <TokenInfoSkeleton />
             ) : (
-              <TokenInfo token={tokenData} />
+              <>
+                <TokenInfo token={tokenData} />
+                {/* <TokenInfoSkeleton /> */}
+              </>
             )}
           </div>
           <TabsContent value="tab-1" className="flex flex-col h-full">
-            <div className="!h-[65%] overflow-hidden">
-              <TokenChart tokenSymbol={tokenData?.symbol} />
+            <div className="!h-[65%] px-4">
+              <Skeleton className="w-full h-[135px]" />
+              {/* <Suspense fallback={<Skeleton className="w-full h-[135px]" />}> */}
+              {/*   <TokenChart tokenSymbol={tokenData?.symbol} /> */}
+              {/* </Suspense> */}
             </div>
+            <TradingInterfaceMobile />
           </TabsContent>
           <TabsContent value="tab-2">
             <div className="flex items-center justify-between mb-2 px-2">

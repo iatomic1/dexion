@@ -31,7 +31,13 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster position="top-center" richColors />
+          <Toaster
+            position="top-center"
+            // richColors
+            theme="light"
+            visibleToasts={1}
+            expand={true}
+          />
           {/* <WalletTrackerSocketProvider> */}
           <PresetsContextProvider>
             <div className="flex min-h-screen flex-col font-geist">

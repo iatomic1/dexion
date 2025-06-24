@@ -17,7 +17,6 @@ import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import useCopyToClipboard from "~/hooks/useCopy";
-// import { toast } from "@repo/ui/components/ui/sonner";
 import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";

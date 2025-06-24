@@ -22,9 +22,7 @@ export default async function ProtectedLayout({
   return (
     <>
       <SiteHeader />
-      <div className="hidden sm:block">
-        <WatchListBanner />
-      </div>
+      <div className="hidden sm:block">{/* <WatchListBanner /> */}</div>
       {children}
       <SiteFooter />
     </>

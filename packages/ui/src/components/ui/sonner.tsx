@@ -11,6 +11,7 @@ import {
   AlertTriangleIcon,
   TriangleAlert,
   Clipboard,
+  LoaderIcon,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "./button";
@@ -23,6 +24,7 @@ type BaseToastProps = {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   iconColor: string;
   defaultMessage: string;
+  isLoading?: boolean;
 };
 
 // Base toast component that handles all variants
@@ -34,12 +36,13 @@ const BaseToast = ({
   icon: Icon,
   iconColor,
   defaultMessage,
+  isLoading = false,
 }: BaseToastProps) => (
   <div className="bg-background rounded-xl border px-4 py-4 shadow-lg z-[99999999999999999999999999999999999999999999999999999]">
     <div className="flex gap-2">
       <p className="grow text-sm">
         <Icon
-          className={`me-3 -mt-0.5 inline-flex ${iconColor}`}
+          className={`me-3 -mt-0.5 inline-flex ${iconColor} ${isLoading ? "animate-spin" : ""}`}
           size={16}
           aria-hidden="true"
         />
@@ -90,7 +93,20 @@ const toastVariants = {
     iconColor: "text-amber-500",
     defaultMessage: "Some information is missing!",
   },
+  loading: {
+    icon: LoaderIcon,
+    iconColor: "text-blue-500",
+    defaultMessage: "Loading...",
+  },
 } as const;
+
+// Promise toast options
+type PromiseToastOptions<T> = {
+  loading?: string;
+  success?: string | ((data: T) => string);
+  error?: string | ((error: any) => string);
+  duration?: number;
+};
 
 // Create a custom toast function that overrides the default render
 const customToast = Object.assign({}, toast, {
@@ -174,6 +190,104 @@ const customToast = Object.assign({}, toast, {
       options,
     );
   },
+  loading: (message: string, options?: any) => {
+    const variant = toastVariants.loading;
+    return toast.custom(
+      (data) => (
+        <BaseToast
+          data={data}
+          title={message}
+          onDismiss={() => toast.dismiss(data.id)}
+          icon={variant.icon}
+          iconColor={variant.iconColor}
+          defaultMessage={variant.defaultMessage}
+          isLoading={true}
+        />
+      ),
+      options,
+    );
+  },
+  promise: <T,>(
+    promise: Promise<T>,
+    options: PromiseToastOptions<T>,
+  ): Promise<T> => {
+    const {
+      loading = "Loading...",
+      success: successMessage = "Success!",
+      error: errorMessage = "Something went wrong!",
+      duration = 4000,
+    } = options;
+
+    // Show loading toast
+    const loadingVariant = toastVariants.loading;
+    const toastId = toast.custom(
+      (data) => (
+        <BaseToast
+          data={data}
+          title={loading}
+          onDismiss={() => toast.dismiss(data.id)}
+          icon={loadingVariant.icon}
+          iconColor={loadingVariant.iconColor}
+          defaultMessage={loadingVariant.defaultMessage}
+          isLoading={true}
+        />
+      ),
+      { duration: Infinity },
+    );
+
+    // Handle promise resolution
+    promise
+      .then((data) => {
+        const successVariant = toastVariants.success;
+        const message =
+          typeof successMessage === "function"
+            ? successMessage(data)
+            : successMessage;
+
+        toast.custom(
+          (toastData) => (
+            <BaseToast
+              data={toastData}
+              title={message}
+              onDismiss={() => toast.dismiss(toastData.id)}
+              icon={successVariant.icon}
+              iconColor={successVariant.iconColor}
+              defaultMessage={successVariant.defaultMessage}
+            />
+          ),
+          {
+            id: toastId,
+            duration,
+          },
+        );
+      })
+      .catch((error) => {
+        const errorVariant = toastVariants.error;
+        const message =
+          typeof errorMessage === "function"
+            ? errorMessage(error)
+            : errorMessage;
+
+        toast.custom(
+          (toastData) => (
+            <BaseToast
+              data={toastData}
+              title={message}
+              onDismiss={() => toast.dismiss(toastData.id)}
+              icon={errorVariant.icon}
+              iconColor={errorVariant.iconColor}
+              defaultMessage={errorVariant.defaultMessage}
+            />
+          ),
+          {
+            id: toastId,
+            duration,
+          },
+        );
+      });
+
+    return promise;
+  },
 });
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -187,6 +301,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         style: {
           maxWidth: "400px",
           zIndex: 99999999999999999999999999999999999999999999999999999,
+          top: "45px",
         },
         className: "w-full max-w-[400px]",
       }}

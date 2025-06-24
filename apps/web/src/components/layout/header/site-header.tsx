@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Search, Bell, Wallet2 } from "lucide-react";
+import { Search, Bell, Wallet2, ChevronDown } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
@@ -102,37 +102,34 @@ export default function SiteHeader() {
         />
         <WatchlistCredenza />
 
-        {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
-        {/*   <span className="mr-2">0.157</span> */}
-        {/*   <ChevronDown className="h-4 w-4" /> */}
-        {/* </Button> */}
-        {/* <Button variant="outline" size="sm" className="hidden md:flex"> */}
-        {/*   <span className="mr-2">8.715</span> */}
-        {/*   <ChevronDown className="h-4 w-4" /> */}
-        {/* </Button> */}
-        {/* <Button variant="default" size="sm" className="rounded-full"> */}
-        {/*   Deposit */}
-        {/* </Button> */}
+        <Button variant="default" size="sm" className="rounded-full">
+          Deposit
+        </Button>
         <Button
           variant="secondary"
           size="sm"
           className="rounded-full"
           onClick={async () => {
             const user = data?.user;
-            console.log(user);
-            await sendStxWithTurnKey(
-              user?.walletPublicKey,
-              user?.walletAddress,
-              "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
-              user?.subOrganizationId,
-            );
-
-            // await transferSTXManual({
-            //   walletPubKey: user?.walletPublicKey,
-            //   walletAddr: user?.walletAddress,
-            //   recipient: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
-            //   subOrgId: user?.subOrganizationId,
-            // });
+            if (
+              user &&
+              user.walletPublicKey &&
+              user.walletAddress &&
+              user.subOrganizationId
+            ) {
+              await sendStxWithTurnKey(
+                user?.walletPublicKey as string,
+                user?.walletAddress as string,
+                "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+                user?.subOrganizationId,
+              );
+              await transferSTXManual({
+                walletPubKey: user?.walletPublicKey,
+                walletAddr: user?.walletAddress,
+                recipient: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+                subOrgId: user?.subOrganizationId,
+              });
+            }
           }}
         >
           Test Send

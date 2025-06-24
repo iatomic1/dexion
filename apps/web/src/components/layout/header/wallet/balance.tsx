@@ -24,6 +24,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";
+import { useState } from "react";
 import { useMediaQuery } from "~/app/(protected)/meme/[ca]/_components/trade-details";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
@@ -39,6 +40,7 @@ interface BalanceContentProps {
   walletAddress: string;
   isMobile: boolean;
   onCopyAddress: () => void;
+  onClose: () => void;
 }
 
 function BalanceContent({
@@ -48,6 +50,7 @@ function BalanceContent({
   walletAddress,
   isMobile,
   onCopyAddress,
+  onClose,
 }: BalanceContentProps) {
   const formattedBalance = formatTokenBalance(
     balanceData?.stx.balance as string,
@@ -102,6 +105,7 @@ function BalanceContent({
         mode="deposit"
         stxBalance={formattedBalance.toString()}
         stxAddress={walletAddress}
+        onClose={onClose}
       >
         <Button className="rounded-full w-full" size="sm" variant={"secondary"}>
           Deposit
@@ -111,6 +115,7 @@ function BalanceContent({
         mode="withdraw"
         stxBalance={formattedBalance.toString()}
         stxAddress={walletAddress}
+        onClose={onClose}
       >
         <Button className="rounded-full w-full" size="sm" variant={"secondary"}>
           Withdraw
@@ -152,6 +157,10 @@ export default function Balance({ children }: { children: React.ReactNode }) {
   const isMobile = useMediaQuery("(max-width: 640px)");
   const walletAddress = data?.user.walletAddress;
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClose = () => setIsOpen(false);
+
   const {
     data: balanceData,
     isLoading,
@@ -181,10 +190,11 @@ export default function Balance({ children }: { children: React.ReactNode }) {
     walletAddress: data?.user.walletAddress as string,
     isMobile,
     onCopyAddress: handleCopyAddress,
+    onClose: handleClose,
   };
 
   return isMobile ? (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <BalanceContent {...contentProps} />
@@ -192,7 +202,7 @@ export default function Balance({ children }: { children: React.ReactNode }) {
     </Drawer>
   ) : (
     <TooltipProvider>
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>{children}</PopoverTrigger>
         <PopoverContent className="flex flex-col p-0" align="end">
           <BalanceContent {...contentProps} />

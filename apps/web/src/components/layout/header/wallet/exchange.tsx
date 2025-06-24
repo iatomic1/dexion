@@ -23,18 +23,40 @@ export default function Exchange({
   mode,
   stxBalance,
   stxAddress,
+  onClose,
 }: {
   mode: "convert" | "deposit" | "withdraw";
   children: ReactNode;
   stxBalance: string;
   stxAddress: string;
+  onClose?: () => void;
 }) {
   const [activeTab, setActiveTab] = useState(mode);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (open: boolean) => {
+    if (open && onClose) {
+      onClose();
+    }
+  };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent showCloseIcon={false} className="p-0 max-w-[330px]">
+    <Dialog
+    // open={open}
+    // onOpenChange={(open) => {
+    //   handleOpenChange(open);
+    //   setOpen(!open);
+    // }}
+    >
+      <DialogTrigger
+        asChild
+        // onClick={() => {
+        //   setOpen(!open);
+        // }}
+      >
+        {children}
+      </DialogTrigger>
+      <DialogContent showCloseIcon={false} className="p-0 !max-w-sm">
         <DialogHeader className="px-4 border-b py-3 flex items-center flex-row justify-between">
           <DialogTitle className="text-base">Exchange</DialogTitle>
           <DialogClose asChild>
@@ -49,7 +71,6 @@ export default function Exchange({
               <TabsTrigger
                 value="withdraw"
                 className="bg-background !border-none rounded-md capitalize"
-                // onClick={() => setActiveTab(tab.value.toLowerCase())}
               >
                 withdraw
               </TabsTrigger>
@@ -59,12 +80,6 @@ export default function Exchange({
               >
                 deposit
               </TabsTrigger>
-              {/* <TabsTrigger */}
-              {/*   value="tab-3" */}
-              {/*   className="group bg-background !border-none rounded-md" */}
-              {/* > */}
-              {/*   Packages */}
-              {/* </TabsTrigger> */}
             </TabsList>
             <div className="py-4">
               <TabsContent value="deposit">
@@ -74,7 +89,7 @@ export default function Exchange({
           </Tabs>
         </div>
         <DialogFooter className="border-t border-t-border px-4 py-3 -mt-2">
-          <Button size={"lg"} className="rounded-full">
+          <Button size={"lg"} className="rounded-full w-full">
             Copy Address
           </Button>
         </DialogFooter>

@@ -36,7 +36,8 @@ export function PriceDisplay({ prices }: PriceDisplayProps) {
                 alt={`${asset.symbol} icon`}
               />
               <span className="text-sm">
-                ${formatPrice(asset.current_price)}
+                {/* {asset.current_price.toFixed(2)} */}$
+                {formatPrice(asset.current_price)}
               </span>
             </Button>
           </TooltipTrigger>

@@ -81,17 +81,6 @@ export default function Home() {
             </Link>
           </nav>
           <AuthController />
-          <Button
-            onClick={async () => {
-              const res = await createSubOrganization({
-                id: "hello",
-                email: "mail@gmail.com",
-              });
-              console.log(JSON.stringify(res, null, 2));
-            }}
-          >
-            Create Sub Org
-          </Button>
         </div>
       </header>
       <main className="flex-1">

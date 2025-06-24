@@ -1,5 +1,6 @@
 import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { BondingDataResult } from "@repo/token-watcher/stxcity.ts";
 import { TokenPoints, TokenLockedLiquidity } from "~/types/stxwatch";
 
 export const getBatchTokenData = async (contract_ids: string[]) => {
@@ -58,6 +59,21 @@ export const getLockedLiquidity = async (ca: string) => {
     if (!res.ok) throw new Error(`Failed: ${res.status}`);
 
     const data = (await res.json()) as TokenLockedLiquidity[];
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getPulse = async () => {
+  try {
+    const url = `${TOKEN_WATCHER_API_BASE_URL}pulse`;
+    const res = await fetch(url);
+
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+
+    const data = (await res.json()) as BondingDataResult;
     return data;
   } catch (error) {
     console.error(error);

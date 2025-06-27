@@ -1,17 +1,22 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
-import { createSocketIo } from "./services/socket-io";
-import axios from "axios";
 import { logger } from "hono/logger";
 import { STX_WATCH_API_KEY } from "./lib/env";
-import { getSearch, getTokenMetadata } from "./services/stxtools-api";
-import { validateContractAddress } from "./utils/validateContractAddress";
-import { searchStxCity } from "./services/stxcity";
-import { transformToTokenMetadata } from "./utils/transferToTokenMetadata";
+import {
+  getSearch,
+  getTokenMetadata,
+  getStxcityBondingData,
+  searchStxCity,
+} from "@repo/tokens/services";
+import {
+  validateContractAddress,
+  transformToTokenMetadata,
+} from "@repo/tokens/utils";
 import { STXWATCH_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import axios from "axios";
 
-const PORT = process.env.PORT || 3008;
+const PORT = 3008;
 const app = new Hono();
 
 app.use(logger());
@@ -75,9 +80,13 @@ app.get("/get_batch_locked_liquidity/:ca", async (c) => {
 app.get("/search", async (c) => {
   const searchTerm = c.req.query("searchTerm");
   if (!searchTerm) return c.json({ error: "Missing searchTerm" }, 400);
-
-  const isContract = validateContractAddress(searchTerm);
-
+  let isContract;
+  try {
+    isContract = validateContractAddress(searchTerm);
+  } catch (err) {
+    console.error(err);
+    isContract = false;
+  }
   try {
     const [stxtoolsTokens, stxcityRaw] = await Promise.all([
       getSearch(searchTerm),
@@ -88,7 +97,6 @@ app.get("/search", async (c) => {
     const stxcityTokens = (stxcityRaw || []).map(transformToTokenMetadata);
     const combined = [...(stxtoolsTokens || []), ...stxcityTokens];
 
-    // Use Map to track the best token for each contract_id
     const tokenMap = new Map();
 
     combined.forEach((token) => {
@@ -126,7 +134,6 @@ app.post("/get_batch_token_data", async (c) => {
       return c.json({ error: "contract_ids must be an array" }, 400);
     }
 
-    // Process all contracts in parallel
     const tokenDataPromises = contract_ids.map(async (contractId) => {
       try {
         return await getTokenMetadata(contractId);
@@ -145,8 +152,49 @@ app.post("/get_batch_token_data", async (c) => {
   }
 });
 
+app.get("/pulse", async (c) => {
+  try {
+    const bondingData = await getStxcityBondingData();
+    const completedRaw = bondingData?.completed?.slice(0, 12) ?? [];
+    const trendingRaw = bondingData?.trending ?? [];
+
+    const completedRawPromises = completedRaw.map(async (token) => {
+      try {
+        return transformToTokenMetadata(token);
+      } catch (err: any) {
+        console.error(
+          `Failed to get metadata for ${token.token_contract}:`,
+          err,
+        );
+        return { token: token.token_contract, error: err.message };
+      }
+    });
+
+    const trendingRawPromises = trendingRaw.map(async (token) => {
+      try {
+        return transformToTokenMetadata(token);
+      } catch (err: any) {
+        console.error(
+          `Failed to get metadata for ${token.token_contract}:`,
+          err,
+        );
+        return { token: token.token_contract, error: err.message };
+      }
+    });
+
+    const finalData = {
+      completed: await Promise.all(completedRawPromises),
+      trending: await Promise.all(trendingRawPromises),
+    };
+
+    return c.json(finalData, 200);
+  } catch (err) {
+    console.error(err);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
 const server = serve(app);
-const { io, emitTxToContractSubscribers } = createSocketIo(server);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

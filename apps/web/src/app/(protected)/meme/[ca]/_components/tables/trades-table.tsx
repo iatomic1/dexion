@@ -58,6 +58,9 @@ export default function TradesTable({
     queryFn: () => getFilterTrades(filterBy, velarPoolId as string),
     enabled: !!token && !!filterBy && !!velarPoolId,
   });
+  useEffect(() => {
+    console.log(JSON.stringify(trades, null, 2));
+  }, [isTradesLoading]);
 
   const displayTrades =
     filterBy && !isFilterLoading && filteredTrades ? filteredTrades : trades;

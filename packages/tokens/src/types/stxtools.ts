@@ -119,13 +119,6 @@ export type LiquidityPool = {
   };
 };
 
-type Token = {
-  contract_id: string;
-  decimals: number;
-  image_url: string;
-  symbol: string;
-};
-
 export type FilterTokenSwapTransaction = {
   tx_id: string;
   pool_id: string;

@@ -19,7 +19,6 @@ import {
   FilterIcon as Funnel,
   User2,
 } from "lucide-react";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
 import TokenInfo from "../token-info";
 import TradesTable from "../tables/trades-table";
 import FilterByAddressModal from "../filter-by-address-modal";
@@ -27,9 +26,7 @@ import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
 import TradingInterfaceMobile from "../trading/trading-interface-mobile";
 import TokenTabsMobile from "../token-tabs-mobile";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-// import TokenChart from "../token-chart";
-
-const TokenChart = lazy(() => import("../token-chart"));
+import { TokenMetadata } from "@repo/tokens/types";
 
 interface MobileLayoutProps {
   tokenData: TokenMetadata | null;
@@ -103,7 +100,7 @@ const MobileLayout = memo(
               {/*   <TokenChart tokenSymbol={tokenData?.symbol} /> */}
               {/* </Suspense> */}
             </div>
-            <TradingInterfaceMobile />
+            {/* <TradingInterfaceMobile /> */}
           </TabsContent>
           <TabsContent value="tab-2">
             <div className="flex items-center justify-between mb-2 px-2">

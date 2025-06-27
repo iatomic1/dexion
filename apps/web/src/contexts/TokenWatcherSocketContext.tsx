@@ -1,107 +1,129 @@
 "use client";
+
 import {
   createContext,
   useContext,
-  useEffect,
   useState,
   useMemo,
   useCallback,
 } from "react";
 import { usePathname } from "next/navigation";
-import { getSocket } from "~/lib/token-socket";
+import usePartySocket from "partysocket/react";
 import {
-  LiquidityPool,
-  TokenHolder,
   TokenMetadata,
   TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+  TokenHolder,
+  LiquidityPool,
+} from "@repo/tokens/types";
 
 // Original TxPayload type for socket data
 type TxPayload = {
   type: string;
   contract: string;
-  txId: string;
-  tokenMetadata: TokenMetadata;
+  txId?: string;
+  tokenMetadata?: TokenMetadata;
+  trades?: TokenSwapTransaction[];
+  holders?: TokenHolder[];
+  pools?: LiquidityPool[];
+  devTokens?: TokenMetadata[];
+  error?: string;
+};
+
+// Combined context for all token data
+type TokenDataContextType = {
+  // Data
+  metadata: TokenMetadata | null;
   trades: TokenSwapTransaction[];
   holders: TokenHolder[];
   pools: LiquidityPool[];
   devTokens: TokenMetadata[];
+
+  // Loading states
+  isLoadingMetadata: boolean;
+  isLoadingTrades: boolean;
+  isLoadingHolders: boolean;
+  isLoadingPools: boolean;
+  isLoadingDevTokens: boolean;
+
+  // Raw socket data (for compatibility)
+  lastMessage: TxPayload | null;
 };
 
-// Split contexts by data domain
-const MetadataContext = createContext<{
-  data: TokenMetadata | null;
-  isLoading: boolean;
-}>({
-  data: null,
-  isLoading: true,
+const TokenDataContext = createContext<TokenDataContextType>({
+  metadata: null,
+  trades: [],
+  holders: [],
+  pools: [],
+  devTokens: [],
+  isLoadingMetadata: true,
+  isLoadingTrades: true,
+  isLoadingHolders: true,
+  isLoadingPools: true,
+  isLoadingDevTokens: true,
+  lastMessage: null,
 });
-
-const TradesContext = createContext<{
-  data: TokenSwapTransaction[];
-  isLoading: boolean;
-}>({
-  data: [],
-  isLoading: true,
-});
-
-const HoldersContext = createContext<{
-  data: TokenHolder[];
-  isLoading: boolean;
-}>({
-  data: [],
-  isLoading: true,
-});
-
-const PoolsContext = createContext<{
-  data: LiquidityPool[];
-  isLoading: boolean;
-}>({
-  data: [],
-  isLoading: true,
-});
-
-const DevTokensContext = createContext<{
-  data: TokenMetadata[];
-  isLoading: boolean;
-}>({
-  data: [],
-  isLoading: true,
-});
-
-// Raw socket context (kept for compatibility)
-const TokenSocketContext = createContext<TxPayload | null>(null);
 
 // Custom hooks for accessing specific data
-export const useTokenMetadata = () => useContext(MetadataContext);
-export const useTokenTrades = () => useContext(TradesContext);
-export const useTokenHolders = () => useContext(HoldersContext);
-export const useTokenPools = () => useContext(PoolsContext);
-export const useDevTokens = () => useContext(DevTokensContext);
-export const useTokenSocket = () => useContext(TokenSocketContext);
+export const useTokenMetadata = () => {
+  const context = useContext(TokenDataContext);
+  return {
+    data: context.metadata,
+    isLoading: context.isLoadingMetadata,
+  };
+};
+
+export const useTokenTrades = () => {
+  const context = useContext(TokenDataContext);
+  return {
+    data: context.trades,
+    isLoading: context.isLoadingTrades,
+  };
+};
+
+export const useTokenHolders = () => {
+  const context = useContext(TokenDataContext);
+  return {
+    data: context.holders,
+    isLoading: context.isLoadingHolders,
+  };
+};
+
+export const useTokenPools = () => {
+  const context = useContext(TokenDataContext);
+  return {
+    data: context.pools,
+    isLoading: context.isLoadingPools,
+  };
+};
+
+export const useDevTokens = () => {
+  const context = useContext(TokenDataContext);
+  return {
+    data: context.devTokens,
+    isLoading: context.isLoadingDevTokens,
+  };
+};
+
+export const useTokenSocket = () => {
+  const context = useContext(TokenDataContext);
+  return context.lastMessage;
+};
 
 // Backwards compatibility hook that combines all data
 export const useTokenData = () => {
-  const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
-  const { data: tradesData, isLoading: isLoadingTrades } = useTokenTrades();
-  const { data: holdersData, isLoading: isLoadingHolders } = useTokenHolders();
-  const { data: poolsData, isLoading: isLoadingPools } = useTokenPools();
-  const { data: devTokensData, isLoading: isDevTokensLoading } = useDevTokens();
-
-  const tx = useTokenSocket();
-
+  const context = useContext(TokenDataContext);
   return {
-    tx,
-    tokenData,
-    tradesData,
-    holdersData,
-    poolsData,
-    isLoadingMetadata,
-    isLoadingTrades,
-    isLoadingHolders,
-    isLoadingPools,
-    devTokensData,
-    isDevTokensLoading,
+    tx: context.lastMessage,
+    tokenData: context.metadata,
+    tradesData: context.trades,
+    holdersData: context.holders,
+    poolsData: context.pools,
+    devTokensData: context.devTokens,
+    isLoadingMetadata: context.isLoadingMetadata,
+    isLoadingTrades: context.isLoadingTrades,
+    isLoadingHolders: context.isLoadingHolders,
+    isLoadingPools: context.isLoadingPools,
+    isDevTokensLoading: context.isLoadingDevTokens,
   };
 };
 
@@ -110,126 +132,177 @@ export const TokenSocketProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [tx, setTx] = useState<TxPayload | null>(null);
-  const [tokenData, setTokenData] = useState<TokenMetadata | null>(null);
-  const [tradesData, setTradesData] = useState<TokenSwapTransaction[]>([]);
-  const [holdersData, setHoldersData] = useState<TokenHolder[]>([]);
-  const [poolsData, setPoolsData] = useState<LiquidityPool[]>([]);
-  const [devTokensData, setDevTokensData] = useState<TokenMetadata[]>([]);
-  const [isDevTokensLoading, setIsDevTokensLoading] = useState(true);
+  const [metadata, setMetadata] = useState<TokenMetadata | null>(null);
+  const [trades, setTrades] = useState<TokenSwapTransaction[]>([]);
+  const [holders, setHolders] = useState<TokenHolder[]>([]);
+  const [pools, setPools] = useState<LiquidityPool[]>([]);
+  const [devTokens, setDevTokens] = useState<TokenMetadata[]>([]);
+  const [lastMessage, setLastMessage] = useState<TxPayload | null>(null);
+
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(true);
   const [isLoadingTrades, setIsLoadingTrades] = useState(true);
   const [isLoadingHolders, setIsLoadingHolders] = useState(true);
   const [isLoadingPools, setIsLoadingPools] = useState(true);
+  const [isLoadingDevTokens, setIsLoadingDevTokens] = useState(true);
 
   const pathname = usePathname();
 
-  const handleSocketEvent = useCallback((data: TxPayload, ca: string) => {
-    if (data.contract !== ca) return;
-
-    setTx(data);
-
-    switch (data.type) {
-      case "metadata":
-        setTokenData(data.tokenMetadata);
-        setIsLoadingMetadata(false);
-        break;
-      case "trades":
-        // console.log("trades emitted", data);
-        setTradesData(data.trades);
-        setIsLoadingTrades(false);
-        break;
-      case "holders":
-        setHoldersData(data.holders);
-        setIsLoadingHolders(false);
-        break;
-      case "pools":
-        setPoolsData(data.pools);
-        setIsLoadingPools(false);
-        break;
-      case "devTokens":
-        setDevTokensData(data.devTokens);
-        setIsDevTokensLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
+  // Extract contract address from pathname
+  const contractAddress = useMemo(() => {
     const match = pathname?.match(/\/meme\/(.+)/);
-    const ca = match?.[1];
-    if (!ca) return;
+    return match?.[1] || null;
+  }, [pathname]);
 
-    // Reset states when contract address changes
+  const handleSocketMessage = useCallback(
+    (data: TxPayload) => {
+      if (!contractAddress || data.contract !== contractAddress) return;
+
+      setLastMessage(data);
+
+      switch (data.type) {
+        case "metadata":
+          console.log("!!!!", JSON.stringify(data.tokenMetadata, null, 2));
+          if (data.tokenMetadata) {
+            setMetadata(data.tokenMetadata);
+            setIsLoadingMetadata(false);
+          }
+          break;
+        case "trades":
+          if (data.trades) {
+            setTrades(data.trades);
+            setIsLoadingTrades(false);
+          }
+          break;
+        case "holders":
+          if (data.holders) {
+            setHolders(data.holders);
+            setIsLoadingHolders(false);
+          }
+          break;
+        case "pools":
+          if (data.pools) {
+            setPools(data.pools);
+            setIsLoadingPools(false);
+          }
+          break;
+        case "devTokens":
+          if (data.devTokens) {
+            setDevTokens(data.devTokens);
+            setIsLoadingDevTokens(false);
+          }
+          break;
+        case "error":
+          console.error(`Socket error for ${contractAddress}:`, data.error);
+          // Set all loading states to false on error
+          setIsLoadingMetadata(false);
+          setIsLoadingTrades(false);
+          setIsLoadingHolders(false);
+          setIsLoadingPools(false);
+          setIsLoadingDevTokens(false);
+          break;
+      }
+    },
+    [contractAddress],
+  );
+
+  // Reset loading states when contract address changes
+  const resetLoadingStates = useCallback(() => {
     setIsLoadingMetadata(true);
     setIsLoadingTrades(true);
     setIsLoadingHolders(true);
-    setIsDevTokensLoading(true);
     setIsLoadingPools(true);
+    setIsLoadingDevTokens(true);
+    setMetadata(null);
+    setTrades([]);
+    setHolders([]);
+    setPools([]);
+    setDevTokens([]);
+    setLastMessage(null);
+  }, []);
 
-    const socket = getSocket();
-    socket.emit("subscribe", ca);
+  // Use the PartySocket React hook
+  const ws = usePartySocket({
+    host: "localhost:3003",
+    room: contractAddress || "",
+    onOpen() {
+      console.log("PartySocket connected");
+      if (contractAddress) {
+        // Send subscription message when socket opens
+        ws?.send(
+          JSON.stringify({
+            type: "subscribe",
+            payload: { contractAddress },
+          }),
+        );
+      }
+    },
+    onMessage(event) {
+      try {
+        const data: TxPayload = JSON.parse(event.data);
+        handleSocketMessage(data);
+      } catch (error) {
+        console.error("Error parsing socket message:", error);
+      }
+    },
+    onClose() {
+      console.log("PartySocket closed");
+    },
+    onError(error) {
+      console.error("PartySocket error:", error);
+      // Set all loading states to false on connection error
+      setIsLoadingMetadata(false);
+      setIsLoadingTrades(false);
+      setIsLoadingHolders(false);
+      setIsLoadingPools(false);
+      setIsLoadingDevTokens(false);
+    },
+  });
 
-    socket.on("tx", (data: TxPayload) => handleSocketEvent(data, ca));
+  // Reset states when contract address changes
+  useMemo(() => {
+    if (contractAddress) {
+      resetLoadingStates();
+    }
+  }, [contractAddress, resetLoadingStates]);
 
-    return () => {
-      socket.emit("unsubscribe", ca);
-      socket.off("tx");
-    };
-  }, [pathname, handleSocketEvent]);
-
-  // Memoize context values to prevent unnecessary rerenders
-  const metadataValue = useMemo(
+  // Memoize the context value to prevent unnecessary rerenders
+  const contextValue = useMemo(
     () => ({
-      data: tokenData,
-      isLoading: isLoadingMetadata,
+      metadata,
+      trades,
+      holders,
+      pools,
+      devTokens,
+      isLoadingMetadata,
+      isLoadingTrades,
+      isLoadingHolders,
+      isLoadingPools,
+      isLoadingDevTokens,
+      lastMessage,
     }),
-    [tokenData, isLoadingMetadata],
+    [
+      metadata,
+      trades,
+      holders,
+      pools,
+      devTokens,
+      isLoadingMetadata,
+      isLoadingTrades,
+      isLoadingHolders,
+      isLoadingPools,
+      isLoadingDevTokens,
+      lastMessage,
+    ],
   );
 
-  const tradesValue = useMemo(
-    () => ({
-      data: tradesData,
-      isLoading: isLoadingTrades,
-    }),
-    [tradesData, isLoadingTrades],
-  );
-
-  const holdersValue = useMemo(
-    () => ({
-      data: holdersData,
-      isLoading: isLoadingHolders,
-    }),
-    [holdersData, isLoadingHolders],
-  );
-
-  const poolsValue = useMemo(
-    () => ({
-      data: poolsData,
-      isLoading: isLoadingPools,
-    }),
-    [poolsData, isLoadingPools],
-  );
-
-  const devTokensValue = useMemo(
-    () => ({
-      data: devTokensData,
-      isLoading: isDevTokensLoading,
-    }),
-    [devTokensData, isDevTokensLoading],
-  );
+  // Don't render anything if there's no contract address
+  if (!contractAddress) {
+    return <>{children}</>;
+  }
 
   return (
-    <TokenSocketContext.Provider value={tx}>
-      <MetadataContext.Provider value={metadataValue}>
-        <TradesContext.Provider value={tradesValue}>
-          <HoldersContext.Provider value={holdersValue}>
-            <PoolsContext.Provider value={poolsValue}>
-              <DevTokensContext value={devTokensValue}>
-                {children}
-              </DevTokensContext>
-            </PoolsContext.Provider>
-          </HoldersContext.Provider>
-        </TradesContext.Provider>
-      </MetadataContext.Provider>
-    </TokenSocketContext.Provider>
+    <TokenDataContext.Provider value={contextValue}>
+      {children}
+    </TokenDataContext.Provider>
   );
 };

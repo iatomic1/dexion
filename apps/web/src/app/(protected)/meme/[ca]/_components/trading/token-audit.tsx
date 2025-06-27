@@ -1,5 +1,4 @@
 "use client";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Collapsible,
@@ -46,6 +45,7 @@ import {
   DrawerTrigger,
 } from "@repo/ui/components/ui/drawer";
 import Pools from "./pools";
+import { TokenMetadata } from "@repo/tokens/types";
 
 interface InfoItemProps {
   icon: React.ReactNode;
@@ -325,14 +325,19 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
               <div className="px-4 py-4 flex flex-col gap-4">
                 <TokenInfoContent {...tokenInfoProps} />
               </div>
-              <div className="px-4 flex gap-4 items-center">
-                <div className="h-px bg-muted flex-1" />
-                <span className="font-geist-mono text-xs">Pools</span>
-                <div className="h-px bg-muted flex-1" />
-              </div>
-              <div className="px-4 pt-2 pb-4">
-                <Pools />
-              </div>
+
+              {tokenInfoProps.token?.progress === 100 && (
+                <>
+                  <div className="px-4 flex gap-4 items-center">
+                    <div className="h-px bg-muted flex-1" />
+                    <span className="font-geist-mono text-xs">Pools</span>
+                    <div className="h-px bg-muted flex-1" />
+                  </div>
+                  <div className="px-4 pt-2 pb-4">
+                    <Pools />
+                  </div>
+                </>
+              )}
             </div>
           </DrawerContent>
         </Drawer>

@@ -10,7 +10,7 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, email_verified, image, created_at, updated_at FROM "users"
+SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled FROM "users"
 WHERE email = $1
 `
 
@@ -23,14 +23,21 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email *string) (*User, err
 		&i.Email,
 		&i.EmailVerified,
 		&i.Image,
+		&i.InviteCode,
+		&i.SubOrgID,
+		&i.WalletID,
+		&i.WalletAddress,
+		&i.WalletPublicKey,
 		&i.CreatedAt,
+		&i.SubOrgCreated,
 		&i.UpdatedAt,
+		&i.TwoFactorEnabled,
 	)
 	return &i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, email, email_verified, image, created_at, updated_at FROM "users"
+SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled FROM "users"
 WHERE id = $1
 `
 
@@ -43,8 +50,15 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (*User, error) {
 		&i.Email,
 		&i.EmailVerified,
 		&i.Image,
+		&i.InviteCode,
+		&i.SubOrgID,
+		&i.WalletID,
+		&i.WalletAddress,
+		&i.WalletPublicKey,
 		&i.CreatedAt,
+		&i.SubOrgCreated,
 		&i.UpdatedAt,
+		&i.TwoFactorEnabled,
 	)
 	return &i, err
 }

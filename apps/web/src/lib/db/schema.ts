@@ -1,16 +1,11 @@
-import { sql } from "drizzle-orm";
 import {
+  boolean,
   pgTable,
   text,
   timestamp,
-  boolean,
-  check,
-  pgEnum,
   unique,
   varchar,
 } from "drizzle-orm/pg-core";
-
-export const userTypeEnum = pgEnum("user_type", ["APP", "TELEGRAM"]);
 
 export const user = pgTable(
   "users",
@@ -22,8 +17,6 @@ export const user = pgTable(
       .$defaultFn(() => false)
       .notNull(),
     image: text("image"),
-    type: userTypeEnum("type").notNull(),
-    telegramChatId: text("telegram_chat_id").unique(),
     inviteCode: text("invite_code").unique(),
     subOrganizationId: varchar("sub_org_id", { length: 255 }).unique(),
     walletId: varchar("wallet_id", { length: 255 }).unique(),
@@ -39,10 +32,6 @@ export const user = pgTable(
     twoFactorEnabled: boolean("two_factor_enabled"),
   },
   (table) => ({
-    emailRequiredForApp: check(
-      "email_required_for_app",
-      sql`(${table.type} = 'APP' AND ${table.email} IS NOT NULL) OR (${table.type} = 'TELEGRAM' AND ${table.email} IS NULL)`,
-    ),
     userEmailUnique: unique("user_email_unique").on(table.email),
   }),
 );

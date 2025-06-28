@@ -14,10 +14,12 @@ import (
 const cleanupOrphanedWallet = `-- name: CleanupOrphanedWallet :exec
 DELETE FROM wallets
 WHERE address = $1
-AND NOT EXISTS (
-  SELECT 1 FROM user_wallets
-  WHERE wallet_address = $1
-)
+  AND NOT EXISTS (SELECT 1
+                  FROM user_wallets
+                  WHERE wallet_address = $1)
+  AND NOT EXISTS (SELECT 1
+                  FROM telegram_user_wallets
+                  WHERE wallet_address = $1)
 `
 
 func (q *Queries) CleanupOrphanedWallet(ctx context.Context, address string) error {

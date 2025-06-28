@@ -1,8 +1,7 @@
+INSERT INTO telegram_users (chat_id, username)
 -- name: CreateTelegramUser :one
-INSERT INTO telegram_users (chat_id, first_name, username)
-VALUES ($1, $2, $3)
+VALUES ($1, $2)
 ON CONFLICT (chat_id) DO UPDATE SET
-  first_name = EXCLUDED.first_name,
   username = EXCLUDED.username
 RETURNING *;
 
@@ -30,3 +29,17 @@ SELECT EXISTS(
   SELECT 1 FROM telegram_user_wallets
   WHERE chat_id = $1 AND wallet_address = $2
 );
+
+-- name: UpsertTelegramUserWallet :one
+WITH wallet AS (
+  INSERT INTO wallets (address)
+  VALUES ($2)
+  ON CONFLICT (address) DO NOTHING
+  RETURNING address
+)
+INSERT INTO telegram_user_wallets (chat_id, wallet_address, nickname)
+VALUES ($1, $2, $3)
+ON CONFLICT (chat_id, wallet_address)
+DO UPDATE SET
+  nickname = EXCLUDED.nickname
+RETURNING *;

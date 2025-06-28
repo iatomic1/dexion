@@ -1,14 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS telegram_users (
-    chat_id BIGINT PRIMARY KEY, -- Telegram's unique chat ID is the perfect primary key
-    first_name TEXT,
+    chat_id TEXT PRIMARY KEY, -- Telegram's unique chat ID is the perfect primary key
     username TEXT, -- Telegram username, can be null
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS telegram_user_wallets (
-    chat_id BIGINT REFERENCES telegram_users(chat_id) ON DELETE CASCADE,
+    chat_id TEXT REFERENCES telegram_users(chat_id) ON DELETE CASCADE,
     wallet_address TEXT REFERENCES wallets(address) ON DELETE CASCADE,
     nickname TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT now(),

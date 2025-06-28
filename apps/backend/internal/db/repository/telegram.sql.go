@@ -12,46 +12,34 @@ import (
 )
 
 const createTelegramUser = `-- name: CreateTelegramUser :one
-INSERT INTO telegram_users (chat_id, first_name, username)
-VALUES ($1, $2, $3)
+INSERT INTO telegram_users (chat_id, username)
+VALUES ($1, $2)
 ON CONFLICT (chat_id) DO UPDATE SET
-  first_name = EXCLUDED.first_name,
   username = EXCLUDED.username
-RETURNING chat_id, first_name, username, created_at
+RETURNING chat_id, username, created_at
 `
 
 type CreateTelegramUserParams struct {
-	ChatID    int64   `json:"chatId"`
-	FirstName *string `json:"firstName"`
-	Username  *string `json:"username"`
+	ChatID   string  `json:"chatId"`
+	Username *string `json:"username"`
 }
 
 func (q *Queries) CreateTelegramUser(ctx context.Context, arg CreateTelegramUserParams) (*TelegramUser, error) {
-	row := q.db.QueryRow(ctx, createTelegramUser, arg.ChatID, arg.FirstName, arg.Username)
+	row := q.db.QueryRow(ctx, createTelegramUser, arg.ChatID, arg.Username)
 	var i TelegramUser
-	err := row.Scan(
-		&i.ChatID,
-		&i.FirstName,
-		&i.Username,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.ChatID, &i.Username, &i.CreatedAt)
 	return &i, err
 }
 
 const getTelegramUser = `-- name: GetTelegramUser :one
-SELECT chat_id, first_name, username, created_at FROM telegram_users
+SELECT chat_id, username, created_at FROM telegram_users
 WHERE chat_id = $1
 `
 
-func (q *Queries) GetTelegramUser(ctx context.Context, chatID int64) (*TelegramUser, error) {
+func (q *Queries) GetTelegramUser(ctx context.Context, chatID string) (*TelegramUser, error) {
 	row := q.db.QueryRow(ctx, getTelegramUser, chatID)
 	var i TelegramUser
-	err := row.Scan(
-		&i.ChatID,
-		&i.FirstName,
-		&i.Username,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.ChatID, &i.Username, &i.CreatedAt)
 	return &i, err
 }
 
@@ -68,7 +56,7 @@ type GetTrackedWalletsTelegramRow struct {
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
-func (q *Queries) GetTrackedWalletsTelegram(ctx context.Context, chatID int64) ([]*GetTrackedWalletsTelegramRow, error) {
+func (q *Queries) GetTrackedWalletsTelegram(ctx context.Context, chatID string) ([]*GetTrackedWalletsTelegramRow, error) {
 	rows, err := q.db.Query(ctx, getTrackedWalletsTelegram, chatID)
 	if err != nil {
 		return nil, err
@@ -96,7 +84,7 @@ SELECT EXISTS(
 `
 
 type IsTrackingWalletTelegramParams struct {
-	ChatID        int64  `json:"chatId"`
+	ChatID        string `json:"chatId"`
 	WalletAddress string `json:"walletAddress"`
 }
 
@@ -114,7 +102,7 @@ RETURNING chat_id, wallet_address, nickname, created_at
 `
 
 type TrackWalletTelegramParams struct {
-	ChatID        int64  `json:"chatId"`
+	ChatID        string `json:"chatId"`
 	WalletAddress string `json:"walletAddress"`
 	Nickname      string `json:"nickname"`
 }
@@ -137,11 +125,44 @@ WHERE chat_id = $1 AND wallet_address = $2
 `
 
 type UntrackWalletTelegramParams struct {
-	ChatID        int64  `json:"chatId"`
+	ChatID        string `json:"chatId"`
 	WalletAddress string `json:"walletAddress"`
 }
 
 func (q *Queries) UntrackWalletTelegram(ctx context.Context, arg UntrackWalletTelegramParams) error {
 	_, err := q.db.Exec(ctx, untrackWalletTelegram, arg.ChatID, arg.WalletAddress)
 	return err
+}
+
+const upsertTelegramUserWallet = `-- name: UpsertTelegramUserWallet :one
+WITH wallet AS (
+  INSERT INTO wallets (address)
+  VALUES ($2)
+  ON CONFLICT (address) DO NOTHING
+  RETURNING address
+)
+INSERT INTO telegram_user_wallets (chat_id, wallet_address, nickname)
+VALUES ($1, $2, $3)
+ON CONFLICT (chat_id, wallet_address)
+DO UPDATE SET
+  nickname = EXCLUDED.nickname
+RETURNING chat_id, wallet_address, nickname, created_at
+`
+
+type UpsertTelegramUserWalletParams struct {
+	ChatID        string `json:"chatId"`
+	WalletAddress string `json:"walletAddress"`
+	Nickname      string `json:"nickname"`
+}
+
+func (q *Queries) UpsertTelegramUserWallet(ctx context.Context, arg UpsertTelegramUserWalletParams) (*TelegramUserWallet, error) {
+	row := q.db.QueryRow(ctx, upsertTelegramUserWallet, arg.ChatID, arg.WalletAddress, arg.Nickname)
+	var i TelegramUserWallet
+	err := row.Scan(
+		&i.ChatID,
+		&i.WalletAddress,
+		&i.Nickname,
+		&i.CreatedAt,
+	)
+	return &i, err
 }

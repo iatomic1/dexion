@@ -12,27 +12,33 @@ import (
 )
 
 type TelegramUser struct {
-	ChatID    int64              `json:"chatId"`
-	FirstName *string            `json:"firstName"`
+	ChatID    string             `json:"chatId"`
 	Username  *string            `json:"username"`
 	CreatedAt pgtype.Timestamptz `json:"createdAt"`
 }
 
 type TelegramUserWallet struct {
-	ChatID        int64              `json:"chatId"`
+	ChatID        string             `json:"chatId"`
 	WalletAddress string             `json:"walletAddress"`
 	Nickname      string             `json:"nickname"`
 	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
 }
 
 type User struct {
-	ID            string             `json:"id"`
-	Name          string             `json:"name"`
-	Email         *string            `json:"email"`
-	EmailVerified bool               `json:"emailVerified"`
-	Image         *string            `json:"image"`
-	CreatedAt     pgtype.Timestamptz `json:"createdAt"`
-	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
+	ID               string             `json:"id"`
+	Name             *string            `json:"name"`
+	Email            *string            `json:"email"`
+	EmailVerified    bool               `json:"emailVerified"`
+	Image            *string            `json:"image"`
+	InviteCode       *string            `json:"inviteCode"`
+	SubOrgID         *string            `json:"subOrgId"`
+	WalletID         *string            `json:"walletId"`
+	WalletAddress    *string            `json:"walletAddress"`
+	WalletPublicKey  *string            `json:"walletPublicKey"`
+	CreatedAt        pgtype.Timestamptz `json:"createdAt"`
+	SubOrgCreated    *bool              `json:"subOrgCreated"`
+	UpdatedAt        pgtype.Timestamptz `json:"updatedAt"`
+	TwoFactorEnabled *bool              `json:"twoFactorEnabled"`
 }
 
 type UserWallet struct {

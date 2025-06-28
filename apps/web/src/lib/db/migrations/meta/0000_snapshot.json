@@ -1,5 +1,5 @@
 {
-  "id": "e92abd17-2249-494e-bb6a-cd4cc8ec3412",
+  "id": "798b1a11-3c87-44b7-8ada-d9bfb92bb6f0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -314,19 +314,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "type": {
-          "name": "type",
-          "type": "user_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "telegram_chat_id": {
-          "name": "telegram_chat_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "invite_code": {
           "name": "invite_code",
           "type": "text",
@@ -347,6 +334,12 @@
         },
         "wallet_address": {
           "name": "wallet_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wallet_public_key": {
+          "name": "wallet_public_key",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -388,13 +381,6 @@
             "email"
           ]
         },
-        "users_telegram_chat_id_unique": {
-          "name": "users_telegram_chat_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "telegram_chat_id"
-          ]
-        },
         "users_invite_code_unique": {
           "name": "users_invite_code_unique",
           "nullsNotDistinct": false,
@@ -425,12 +411,7 @@
         }
       },
       "policies": {},
-      "checkConstraints": {
-        "email_required_for_app": {
-          "name": "email_required_for_app",
-          "value": "(\"users\".\"type\" = 'APP' AND \"users\".\"email\" IS NOT NULL) OR (\"users\".\"type\" = 'TELEGRAM' AND \"users\".\"email\" IS NULL)"
-        }
-      },
+      "checkConstraints": {},
       "isRLSEnabled": false
     },
     "public.verification": {
@@ -483,16 +464,7 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {
-    "public.user_type": {
-      "name": "user_type",
-      "schema": "public",
-      "values": [
-        "APP",
-        "TELEGRAM"
-      ]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "roles": {},

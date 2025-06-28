@@ -49,10 +49,12 @@ WHERE user_id = $1 AND wallet_address = $2;
 -- name: CleanupOrphanedWallet :exec
 DELETE FROM wallets
 WHERE address = $1
-AND NOT EXISTS (
-  SELECT 1 FROM user_wallets
-  WHERE wallet_address = $1
-);
+  AND NOT EXISTS (SELECT 1
+                  FROM user_wallets
+                  WHERE wallet_address = $1)
+  AND NOT EXISTS (SELECT 1
+                  FROM telegram_user_wallets
+                  WHERE wallet_address = $1);
 
 -- name: GetWatchersForWallet :many
 SELECT user_id, nickname, emoji, notifications

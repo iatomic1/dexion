@@ -1,4 +1,3 @@
-CREATE TYPE "public"."user_type" AS ENUM('APP', 'TELEGRAM');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
 	"account_id" text NOT NULL,
@@ -47,23 +46,20 @@ CREATE TABLE "users" (
 	"email" text,
 	"email_verified" boolean NOT NULL,
 	"image" text,
-	"type" "user_type" NOT NULL,
-	"telegram_chat_id" text,
 	"invite_code" text,
 	"sub_org_id" varchar(255),
 	"wallet_id" varchar(255),
 	"wallet_address" text,
+	"wallet_public_key" text,
 	"created_at" timestamp with time zone NOT NULL,
 	"sub_org_created" boolean DEFAULT false,
 	"updated_at" timestamp with time zone NOT NULL,
 	"two_factor_enabled" boolean,
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
-	CONSTRAINT "users_telegram_chat_id_unique" UNIQUE("telegram_chat_id"),
 	CONSTRAINT "users_invite_code_unique" UNIQUE("invite_code"),
 	CONSTRAINT "users_sub_org_id_unique" UNIQUE("sub_org_id"),
 	CONSTRAINT "users_wallet_id_unique" UNIQUE("wallet_id"),
-	CONSTRAINT "user_email_unique" UNIQUE("email"),
-	CONSTRAINT "email_required_for_app" CHECK (("users"."type" = 'APP' AND "users"."email" IS NOT NULL) OR ("users"."type" = 'TELEGRAM' AND "users"."email" IS NULL))
+	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "verification" (

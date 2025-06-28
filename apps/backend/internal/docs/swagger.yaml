@@ -18,6 +18,13 @@ definitions:
       status:
         type: string
     type: object
+  backend_internal_db_repository.CreateTelegramUserParams:
+    properties:
+      chatId:
+        type: string
+      username:
+        type: string
+    type: object
   backend_internal_db_repository.CreateWatchlistParams:
     properties:
       ca:
@@ -27,6 +34,18 @@ definitions:
         type: string
     required:
     - ca
+    type: object
+  backend_internal_db_repository.GetTrackedWalletsTelegramRow:
+    properties:
+      address:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1
+        type: string
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      nickname:
+        type: string
+    required:
+    - address
     type: object
   backend_internal_db_repository.GetUserTrackedWalletsRow:
     properties:
@@ -46,21 +65,21 @@ definitions:
     - address
     - nickname
     type: object
+  backend_internal_db_repository.TelegramUser:
+    properties:
+      chatId:
+        type: string
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      username:
+        type: string
+    type: object
   backend_internal_db_repository.TelegramUserWallet:
     properties:
       chatId:
-        type: integer
+        type: string
       createdAt:
         $ref: '#/definitions/pgtype.Timestamptz'
-      nickname:
-        type: string
-      walletAddress:
-        type: string
-    type: object
-  backend_internal_db_repository.TrackWalletTelegramParams:
-    properties:
-      chatId:
-        type: integer
       nickname:
         type: string
       walletAddress:
@@ -81,6 +100,15 @@ definitions:
     required:
     - nickname
     - walletAddress
+    type: object
+  backend_internal_db_repository.UpsertTelegramUserWalletParams:
+    properties:
+      chatId:
+        type: string
+      nickname:
+        type: string
+      walletAddress:
+        type: string
     type: object
   backend_internal_db_repository.UpsertUserWalletParams:
     properties:
@@ -380,7 +408,7 @@ paths:
         name: WalletRequest
         required: true
         schema:
-          $ref: '#/definitions/backend_internal_db_repository.TrackWalletTelegramParams'
+          $ref: '#/definitions/backend_internal_db_repository.UpsertTelegramUserWalletParams'
       produces:
       - application/json
       responses:
@@ -410,6 +438,117 @@ paths:
           schema:
             $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
       summary: Track a new wallet for a telegram user
+      tags:
+      - WalletsTelegram
+  /wallets/telegram/{chat_id}:
+    get:
+      description: Retrieve all wallets tracked by a telegram user
+      parameters:
+      - description: Telegram Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wallets retrieved
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.GetTrackedWalletsTelegramRow'
+                  type: array
+              type: object
+        "400":
+          description: Invalid chat ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Get tracked wallets for a telegram user
+      tags:
+      - WalletsTelegram
+  /wallets/telegram/{chat_id}/{address}:
+    delete:
+      description: Remove a wallet from a telegram user's tracking list
+      parameters:
+      - description: Telegram Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: string
+      - description: Wallet Address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Wallet untracked
+        "400":
+          description: Invalid chat ID or address
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Wallet not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Untrack wallet for a telegram user
+      tags:
+      - WalletsTelegram
+  /wallets/telegram/users:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new telegram user or updates an existing one's information
+      parameters:
+      - description: User creation/update data
+        in: body
+        name: UserRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.CreateTelegramUserParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created or updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.TelegramUser'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Create or update a telegram user
       tags:
       - WalletsTelegram
   /watchlist:

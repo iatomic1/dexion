@@ -197,7 +197,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/backend_internal_db_repository.TrackWalletTelegramParams"
+                            "$ref": "#/definitions/backend_internal_db_repository.UpsertTelegramUserWalletParams"
                         }
                     }
                 ],
@@ -231,6 +231,183 @@
                     },
                     "409": {
                         "description": "Wallet already tracked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/telegram/users": {
+            "post": {
+                "description": "Creates a new telegram user or updates an existing one's information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletsTelegram"
+                ],
+                "summary": "Create or update a telegram user",
+                "parameters": [
+                    {
+                        "description": "User creation/update data",
+                        "name": "UserRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.CreateTelegramUserParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created or updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.TelegramUser"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/telegram/{chat_id}": {
+            "get": {
+                "description": "Retrieve all wallets tracked by a telegram user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletsTelegram"
+                ],
+                "summary": "Get tracked wallets for a telegram user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Telegram Chat ID",
+                        "name": "chat_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wallets retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.GetTrackedWalletsTelegramRow"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid chat ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallets/telegram/{chat_id}/{address}": {
+            "delete": {
+                "description": "Remove a wallet from a telegram user's tracking list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletsTelegram"
+                ],
+                "summary": "Untrack wallet for a telegram user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Telegram Chat ID",
+                        "name": "chat_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Wallet Address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Wallet untracked"
+                    },
+                    "400": {
+                        "description": "Invalid chat ID or address",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Wallet not found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -613,6 +790,17 @@
                 }
             }
         },
+        "backend_internal_db_repository.CreateTelegramUserParams": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "backend_internal_db_repository.CreateWatchlistParams": {
             "type": "object",
             "required": [
@@ -624,6 +812,24 @@
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.GetTrackedWalletsTelegramRow": {
+            "type": "object",
+            "required": [
+                "address"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "nickname": {
                     "type": "string"
                 }
             }
@@ -654,28 +860,28 @@
                 }
             }
         },
-        "backend_internal_db_repository.TelegramUserWallet": {
+        "backend_internal_db_repository.TelegramUser": {
             "type": "object",
             "properties": {
                 "chatId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "createdAt": {
                     "$ref": "#/definitions/pgtype.Timestamptz"
                 },
-                "nickname": {
-                    "type": "string"
-                },
-                "walletAddress": {
+                "username": {
                     "type": "string"
                 }
             }
         },
-        "backend_internal_db_repository.TrackWalletTelegramParams": {
+        "backend_internal_db_repository.TelegramUserWallet": {
             "type": "object",
             "properties": {
                 "chatId": {
-                    "type": "integer"
+                    "type": "string"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
                 },
                 "nickname": {
                     "type": "string"
@@ -705,6 +911,20 @@
                 "walletAddress": {
                     "type": "string",
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                }
+            }
+        },
+        "backend_internal_db_repository.UpsertTelegramUserWalletParams": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "walletAddress": {
+                    "type": "string"
                 }
             }
         },

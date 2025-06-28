@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -9,6 +8,7 @@ import {
 import { formatPrice } from "~/lib/helpers/numbers";
 import type { CryptoAsset } from "~/types/xverse";
 import Image from "next/image";
+import { Button } from "@repo/ui/components/ui/button";
 
 interface PriceDisplayProps {
   prices: CryptoAsset[] | null;
@@ -37,7 +37,9 @@ export function PriceDisplay({ prices }: PriceDisplayProps) {
               />
               <span className="text-sm">
                 {/* {asset.current_price.toFixed(2)} */}$
-                {formatPrice(asset.current_price)}
+                {asset.symbol === "btc"
+                  ? formatPrice(asset.current_price)
+                  : asset.current_price.toFixed(2)}
               </span>
             </Button>
           </TooltipTrigger>

@@ -11,7 +11,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/ui/avatar";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { Socials } from "./socials";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { cn } from "@repo/ui/lib/utils";
@@ -26,6 +25,7 @@ import {
 } from "@repo/shared-constants/constants.ts";
 import { ToggleWatchlist } from "~/components/watchlist/toggle-watchlist";
 import { toast } from "@repo/ui/components/ui/sonner";
+import { TokenMetadata } from "@repo/tokens/types";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
   const copy = useCopyToClipboard();
@@ -142,7 +142,13 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
             }
           />
           {token.progress && token.progress < 100 && (
-            <MetricItem label="B%" value={token.progress.toString()} />
+            <MetricItem
+              label="B%"
+              value={token.progress.toFixed(2).toString() + "%"}
+              valueClassName={cn(
+                token.progress < 50 ? "text-destructive" : "text-emerald-500",
+              )}
+            />
           )}
         </div>
       </div>
@@ -197,10 +203,12 @@ const MetricItem = ({
   label,
   value,
   className,
+  valueClassName,
 }: {
   label: string;
   value: string;
   className?: string;
+  valueClassName?: string;
 }) => {
   return (
     <div
@@ -210,12 +218,15 @@ const MetricItem = ({
       )}
     >
       <span className="text-muted-foreground text-[11px] sm:hidden capitalize">
-        {label === "MC" ? label : label.charAt(0)}
+        {label === "MC" || label === "B%" ? label : label.charAt(0)}
       </span>
       <span className="text-muted-foreground hidden sm:flex text-xs capitalize">
         {label}
       </span>
-      <span className="text-sm" dangerouslySetInnerHTML={{ __html: value }} />
+      <span
+        className={cn("text-sm", valueClassName)}
+        dangerouslySetInnerHTML={{ __html: value }}
+      />
     </div>
   );
 };

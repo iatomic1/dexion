@@ -1,4 +1,4 @@
-import type { TokenSwapTransaction } from "../types/token";
+import type { TokenSwapTransaction } from "../types/stxtools";
 
 type InputTransaction = {
   txId: string;

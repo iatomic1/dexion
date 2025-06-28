@@ -1,4 +1,8 @@
 import axios from "axios";
+import {
+  STX_TOOLS_API_BASE_URL,
+  HIRO_API_BASE_URL,
+} from "@repo/shared-constants/constants.ts";
 import type {
   TokenMetadata,
   ApiRes,
@@ -6,11 +10,7 @@ import type {
   TokenHolder,
   LiquidityPool,
   SearchResult,
-} from "../types/token";
-import {
-  STX_TOOLS_API_BASE_URL,
-  HIRO_API_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
+} from "../types";
 
 export const getTokenMetadata = async (
   ca: string,

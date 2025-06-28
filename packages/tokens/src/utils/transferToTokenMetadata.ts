@@ -1,8 +1,8 @@
-import type { TokenMetadata } from "../types/token";
+import type { TokenMetadata } from "../types";
 
 export function transformToTokenMetadata(input: any): TokenMetadata {
   return {
-    platform: input?.platform,
+    bc: "stxcity",
     contract_id: input.token_contract,
     dex_contract: input.dex_contract,
     progress: input.progress,
@@ -12,7 +12,7 @@ export function transformToTokenMetadata(input: any): TokenMetadata {
     circulating_supply: input.supply.toString(), // Assuming circulating = total here
     total_supply: input?.supply?.toString(),
     image_url: input.logo_url,
-    header_image_url: input.logo_url, // fallback to same if there's no separate header image
+    header_image_url: null, // fallback to same if there's no separate header image
     description: input.description,
     verified: true, // Assuming active = verified
     socials: [
@@ -26,7 +26,7 @@ export function transformToTokenMetadata(input: any): TokenMetadata {
       holder_count: input.holders,
       swap_count: input.txs_count,
       transfer_count: null, // No data provided
-      price_usd: 0, // Placeholder
+      price_usd: 0,
       price_change_1d: 0,
       price_change_7d: 0,
       price_change_30d: 0,

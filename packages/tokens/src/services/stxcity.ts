@@ -1,5 +1,6 @@
-import { STX_CITY_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import axios from "axios";
+import type { BondingDataResult } from "../types/stxcity";
+import { STX_CITY_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 
 export async function getStxCityTokenMetadata(
   param: string,
@@ -8,7 +9,7 @@ export async function getStxCityTokenMetadata(
   try {
     const url = `${STX_CITY_API_BASE_URL}searchTokens?token_contract=${param}`;
     const { data } = await axios.get(url);
-    console.log(data, "from func");
+    // console.log(data, "from func");
 
     return data.bonding_curve[0];
   } catch (err) {
@@ -46,5 +47,16 @@ export async function getStxCityTokenTrades(
     return data;
   } catch (err) {
     console.error(err);
+  }
+}
+export async function getStxcityBondingData(): Promise<BondingDataResult | null> {
+  try {
+    const url = `${STX_CITY_API_BASE_URL}fetchFrontEnd/bondingData?page=1&limit=12&trending_limit=12`;
+    const { data } = await axios.get(url);
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
   }
 }

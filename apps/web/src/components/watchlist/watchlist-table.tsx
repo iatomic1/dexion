@@ -18,8 +18,8 @@ import {
 } from "@tanstack/react-table";
 import { Button } from "@repo/ui/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { useWatchlistData } from "~/hooks/useWatchlistData";
+import { TokenMetadata } from "@repo/tokens/types";
 
 export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
   {
@@ -69,7 +69,7 @@ export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
       return (
         <div className="">
           <span className="text-xs font-geist-mono text-muted-foreground">
-            ${formatPrice(Number(t.metrics.marketcap_usd))}
+            ${formatPrice(Number(t.metrics.volume_1d_usd))}
           </span>
         </div>
       );

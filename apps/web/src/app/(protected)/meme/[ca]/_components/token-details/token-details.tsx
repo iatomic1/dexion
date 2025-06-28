@@ -1,16 +1,16 @@
 "use client";
 
-import { lazy, Suspense, useState, useCallback, useMemo } from "react";
+import { Suspense, useState, useCallback, useMemo } from "react";
 import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 import useDocumentTitle from "~/hooks/useDocumentTitle";
 import { formatPrice } from "~/lib/helpers/numbers";
 import siteConfig from "~/config/site";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { memo } from "react";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
 import DesktopLayout from "./desktop-layout";
 import MobileLayout from "./mobile-layout";
 import useMediaQuery from "~/hooks/useMediaQuery";
+import { TokenMetadata } from "@repo/tokens/types";
 
 interface TokenDetailPageProps {
   ca: string;
@@ -96,9 +96,7 @@ const MobileLayoutComponent = memo(
 // Memoized desktop layout component
 const DesktopLayoutComponent = memo(
   ({ tokenData }: { tokenData: TokenMetadata | null }) => (
-    <Suspense fallback={<div className="h-full animate-pulse bg-muted/20" />}>
-      <DesktopLayout tokenData={tokenData} />
-    </Suspense>
+    <DesktopLayout tokenData={tokenData} />
   ),
 );
 

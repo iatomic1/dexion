@@ -1,26 +1,32 @@
-import type { CryptoAsset } from "~/types/xverse";
+"use client";
+
+import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import { PriceDisplay } from "./price-display";
-import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { Skeleton } from "@repo/ui/components/ui/skeleton";
 
-const getBtcAndStxPrices = async (): Promise<CryptoAsset[] | null> => {
-  try {
-    const res = await fetch(`${TOKEN_WATCHER_API_BASE_URL}btcstx`, {
-      cache: "force-cache",
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) {
-      throw new Error("Error fetching stx and btc prices");
-    }
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error(err);
-    return null;
+function PriceDisplaySkeleton() {
+  return (
+    <>
+      <Skeleton className="h-[27px] w-[85px]" />
+      <Skeleton className="h-[27px] w-[85px]" />
+    </>
+  );
+}
+
+export default function PriceDisplayContainer() {
+  const { prices, isLoading, isError } = useBtcStxPriceContext();
+
+  if (isLoading) {
+    return <PriceDisplaySkeleton />;
   }
-};
 
-export default async function PriceDisplayContainer() {
-  const prices = await getBtcAndStxPrices();
+  if (isError) {
+    return (
+      <div className="flex items-center gap-0.5 text-xs text-muted-foreground">
+        <span>Price data unavailable</span>
+      </div>
+    );
+  }
 
-  return <PriceDisplay prices={prices} />;
+  return <PriceDisplay prices={prices || null} />;
 }

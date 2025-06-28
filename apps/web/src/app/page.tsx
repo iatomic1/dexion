@@ -1,6 +1,4 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   BarChart3,
@@ -16,7 +14,10 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
+import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Card,
@@ -31,9 +32,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/components/ui/tabs";
-import { Badge } from "@repo/ui/components/ui/badge";
 import AuthController from "~/components/auth/auth-controller";
-import { createSubOrganization } from "~/lib/turnkey/service";
 
 export default function Home() {
   return (

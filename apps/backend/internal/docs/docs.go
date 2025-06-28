@@ -179,6 +179,76 @@ const docTemplate = `{
                 }
             }
         },
+        "/wallets/telegram": {
+            "post": {
+                "description": "Add a wallet to a telegram user's tracking list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletsTelegram"
+                ],
+                "summary": "Track a new wallet for a telegram user",
+                "parameters": [
+                    {
+                        "description": "Wallet tracking data",
+                        "name": "WalletRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.TrackWalletTelegramParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Wallet tracked successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.TelegramUserWallet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Wallet already tracked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/{address}": {
             "delete": {
                 "security": [
@@ -583,6 +653,37 @@ const docTemplate = `{
                 },
                 "notifications": {
                     "type": "boolean"
+                }
+            }
+        },
+        "backend_internal_db_repository.TelegramUserWallet": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "walletAddress": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.TrackWalletTelegramParams": {
+            "type": "object",
+            "properties": {
+                "chatId": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "walletAddress": {
+                    "type": "string"
                 }
             }
         },

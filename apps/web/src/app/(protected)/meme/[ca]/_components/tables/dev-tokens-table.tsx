@@ -8,8 +8,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { cn } from "@repo/ui/lib/utils";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+
 import { useDevTokens } from "~/contexts/TokenWatcherSocketContext";
 import {
   Avatar,
@@ -18,6 +18,7 @@ import {
 } from "@repo/ui/components/ui/avatar";
 import { formatPrice } from "~/lib/helpers/numbers";
 import Link from "next/link";
+import { TokenMetadata } from "@repo/tokens/types";
 
 export const tableColumns = (isMobile: boolean): ColumnDef<TokenMetadata>[] => [
   {
@@ -101,6 +102,9 @@ export default function DevTokensTable() {
   const { data, isLoading } = useDevTokens();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
+  useEffect(() => {
+    console.log(data, "dev tokens");
+  }, [isLoading]);
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -144,7 +148,7 @@ export default function DevTokensTable() {
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full" orientation="both">
+        <ScrollArea className="h-full w-full">
           <div className={cn(isMobile ? "min-w-[800px]" : "")}>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (

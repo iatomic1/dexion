@@ -191,6 +191,86 @@
                 }
             }
         },
+        "/wallets/telegram": {
+            "post": {
+                "description": "Add a wallet to a telegram user's tracking list",
+                "tags": [
+                    "WalletsTelegram"
+                ],
+                "summary": "Track a new wallet for a telegram user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/backend_internal_db_repository.TrackWalletTelegramParams"
+                            }
+                        }
+                    },
+                    "description": "Wallet tracking data",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wallet tracked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/backend_internal_db_repository.TelegramUserWallet"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Wallet already tracked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/wallets/{address}": {
             "delete": {
                 "security": [
@@ -699,6 +779,37 @@
                     },
                     "notifications": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "backend_internal_db_repository.TelegramUserWallet": {
+                "type": "object",
+                "properties": {
+                    "chatId": {
+                        "type": "integer"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/pgtype.Timestamptz"
+                    },
+                    "nickname": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string"
+                    }
+                }
+            },
+            "backend_internal_db_repository.TrackWalletTelegramParams": {
+                "type": "object",
+                "properties": {
+                    "chatId": {
+                        "type": "integer"
+                    },
+                    "nickname": {
+                        "type": "string"
+                    },
+                    "walletAddress": {
+                        "type": "string"
                     }
                 }
             },

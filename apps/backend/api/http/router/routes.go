@@ -13,6 +13,7 @@ func SetupRouter(srv *http.Server) {
 	api := router.Group(srv.Config.ApiPrefixStr)
 	{
 		RegisterWalletRoutes(srv, api.Group("/wallets"))
+		RegisterTelegramWalletRoutes(srv, api.Group("/wallets/telegram"))
 		RegisterWatchlistRoutes(srv, api.Group("/watchlist"))
 
 		RegisterDocsRoutes(api.Group("/docs"))

@@ -326,18 +326,19 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
                 <TokenInfoContent {...tokenInfoProps} />
               </div>
 
-              {tokenInfoProps.token?.progress === 100 && (
-                <>
-                  <div className="px-4 flex gap-4 items-center">
-                    <div className="h-px bg-muted flex-1" />
-                    <span className="font-geist-mono text-xs">Pools</span>
-                    <div className="h-px bg-muted flex-1" />
-                  </div>
-                  <div className="px-4 pt-2 pb-4">
-                    <Pools />
-                  </div>
-                </>
-              )}
+              {tokenInfoProps.token?.progress === 100 ||
+                (!tokenInfoProps.token.progress && (
+                  <>
+                    <div className="px-4 flex gap-4 items-center">
+                      <div className="h-px bg-muted flex-1" />
+                      <span className="font-geist-mono text-xs">Pools</span>
+                      <div className="h-px bg-muted flex-1" />
+                    </div>
+                    <div className="px-4 pt-2 pb-4">
+                      <Pools />
+                    </div>
+                  </>
+                ))}
             </div>
           </DrawerContent>
         </Drawer>

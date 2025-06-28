@@ -1,65 +1,66 @@
 "use client";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { io, Socket } from "socket.io-client";
-import { WALLET_TRACKER_SOCKET_URL } from "~/lib/constants";
+import React, { createContext, useContext, ReactNode } from "react";
+import usePartySocket from "partysocket/react";
+import { toast } from "sonner";
+import { authClient } from "~/lib/auth-client";
 
-export interface SocketContextType {
-  socket: Socket | null;
+const PARTYKIT_HOST = "http://127.0.0.1:4002";
+
+export interface WalletTrackerSocketContextType {
   isConnected: boolean;
+  lastMessage: MessageEvent<any> | null;
 }
 
-const SocketContext = createContext<SocketContextType | undefined>(undefined);
+const WalletTrackerContext = createContext<
+  WalletTrackerSocketContextType | undefined
+>(undefined);
 
 export const WalletTrackerSocketProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const { data: session, isPending } = authClient.useSession();
+  const userId = !isPending && session?.user?.id ? session.user.id : null;
 
-  useEffect(() => {
-    const newSocket = io(WALLET_TRACKER_SOCKET_URL, {
-      transports: ["websocket"],
-      query: { userId: "3cb4239c-a495-4c73-a7c9-6e3f85b0c9e9" },
-    });
-    setSocket(newSocket);
+  // Only create socket connection when userId is available
+  const socket = usePartySocket({
+    host: PARTYKIT_HOST,
+    room: userId || "anno", // Pass undefined instead of empty string
+    onOpen: () => console.log("Connected to PartyKit"),
+    onMessage: (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("📣 Notification received:", data);
+        toast.success(data.message || "New wallet activity!");
+      } catch (error) {
+        console.error("Failed to parse message:", error);
+      }
+    },
+    onClose: () => console.log("Disconnected from PartyKit"),
+    onError: (error) => console.error("PartyKit error:", error),
+    // Disable connection until we have a valid userId
+    options: {
+      startClosed: !userId,
+    },
+  });
 
-    newSocket.on("connect", () => setIsConnected(true));
-    newSocket.on("disconnect", () => {
-      setIsConnected(false);
-    });
-
-    newSocket.on("wallet-alert", (data) => {
-      // console.log("📣 Notification received:", data);
-      // toast.success("Received");
-      // trigger UI, toast, etc.
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  const contextValue: WalletTrackerSocketContextType = {
+    isConnected: userId ? socket.readyState === WebSocket.OPEN : false,
+    lastMessage: socket.lastMessage,
+  };
 
   return (
-    <SocketContext.Provider
-      value={{
-        socket,
-        isConnected,
-      }}
-    >
+    <WalletTrackerContext.Provider value={contextValue}>
       {children}
-    </SocketContext.Provider>
+    </WalletTrackerContext.Provider>
   );
 };
 
-export const useSocketContext = () => {
-  const context = useContext(SocketContext);
-  if (!context)
-    throw new Error("useSocketContext must be used within SocketProvider");
+export const useWalletTrackerSocket = () => {
+  const context = useContext(WalletTrackerContext);
+  if (!context) {
+    throw new Error(
+      "useWalletTrackerSocket must be used within a WalletTrackerSocketProvider",
+    );
+  }
   return context;
 };

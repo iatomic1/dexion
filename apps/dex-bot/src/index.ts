@@ -25,7 +25,7 @@ bot.command("track", async (ctx) => {
     return ctx.reply("Usage: /track <wallet_address> <nickname>");
   }
   if (!validateStacksAddress(walletAddress)) {
-    return ctx.reply("Stacks Address is not correct");
+    return ctx.reply("Invalid stacks address");
   }
   try {
     await api.trackWallet(ctx.chat.id.toString(), walletAddress, nickname);

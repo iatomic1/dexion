@@ -8,6 +8,7 @@ import SiteHeader from "~/components/layout/header/site-header";
 import SiteFooter from "~/components/layout/site-footer/site-footer";
 import { WatchListBanner } from "~/components/layout/watchlist-banner";
 import { BtcStxPriceProvider } from "~/contexts/BtcStxPriceContext";
+import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
 
 export default async function ProtectedLayout({
   children,
@@ -28,7 +29,9 @@ export default async function ProtectedLayout({
       <div className="hidden sm:block">
         <WatchListBanner />
       </div>
-      <PresetsContextProvider>{children}</PresetsContextProvider>
+      <PresetsContextProvider>
+        <WalletTrackerSocketProvider>{children}</WalletTrackerSocketProvider>
+      </PresetsContextProvider>
       <SiteFooter />
     </BtcStxPriceProvider>
   );

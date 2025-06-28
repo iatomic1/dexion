@@ -1,0 +1,19 @@
+{
+  "name": "@repo/wallet-tracker",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "bunx partykit dev --port 4002 & bun run src/index.ts"
+  },
+  "dependencies": {
+    "@stacks/blockchain-api-client": "^8.11.2",
+    "ioredis": "^5.6.1",
+    "partykit": "^0.0.115",
+    "partysocket": "^1.1.4"
+  }
+}

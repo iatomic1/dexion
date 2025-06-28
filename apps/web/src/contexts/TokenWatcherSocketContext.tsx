@@ -186,10 +186,8 @@ export const TokenSocketProvider = ({
           }
           break;
         case "devTokens":
-          if (data.devTokens) {
-            setDevTokens(data.devTokens);
-            setIsLoadingDevTokens(false);
-          }
+          setDevTokens(data?.devTokens?.length > 0 ? data.devTokens : null);
+          setIsLoadingDevTokens(false);
           break;
         case "error":
           console.error(`Socket error for ${contractAddress}:`, data.error);

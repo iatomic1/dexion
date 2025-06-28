@@ -102,9 +102,6 @@ export default function SiteHeader() {
         />
         <WatchlistCredenza />
 
-        <Button variant="default" size="sm" className="rounded-full">
-          Deposit
-        </Button>
         <Button
           variant="secondary"
           size="sm"

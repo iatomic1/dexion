@@ -10,10 +10,13 @@ import (
 
 type Querier interface {
 	CleanupOrphanedWallet(ctx context.Context, address string) error
+	CreateTelegramUser(ctx context.Context, arg CreateTelegramUserParams) (*TelegramUser, error)
 	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error)
 	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	GetAllWallets(ctx context.Context) ([]*Wallet, error)
+	GetTelegramUser(ctx context.Context, chatID int64) (*TelegramUser, error)
+	GetTrackedWalletsTelegram(ctx context.Context, chatID int64) ([]*GetTrackedWalletsTelegramRow, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)
 	GetUserById(ctx context.Context, id string) (*User, error)
 	GetUserTrackedWallets(ctx context.Context, userID string) ([]*GetUserTrackedWalletsRow, error)
@@ -24,7 +27,10 @@ type Querier interface {
 	HasWatchlist(ctx context.Context, arg HasWatchlistParams) (bool, error)
 	HasWatchlistById(ctx context.Context, arg HasWatchlistByIdParams) (bool, error)
 	IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error)
+	IsTrackingWalletTelegram(ctx context.Context, arg IsTrackingWalletTelegramParams) (bool, error)
+	TrackWalletTelegram(ctx context.Context, arg TrackWalletTelegramParams) (*TelegramUserWallet, error)
 	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
+	UntrackWalletTelegram(ctx context.Context, arg UntrackWalletTelegramParams) error
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
 	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)
 	WalletExists(ctx context.Context, address string) (bool, error)

@@ -46,6 +46,26 @@ definitions:
     - address
     - nickname
     type: object
+  backend_internal_db_repository.TelegramUserWallet:
+    properties:
+      chatId:
+        type: integer
+      createdAt:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      nickname:
+        type: string
+      walletAddress:
+        type: string
+    type: object
+  backend_internal_db_repository.TrackWalletTelegramParams:
+    properties:
+      chatId:
+        type: integer
+      nickname:
+        type: string
+      walletAddress:
+        type: string
+    type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
     properties:
       id:
@@ -349,6 +369,49 @@ paths:
       summary: Get all wallets
       tags:
       - Wallets
+  /wallets/telegram:
+    post:
+      consumes:
+      - application/json
+      description: Add a wallet to a telegram user's tracking list
+      parameters:
+      - description: Wallet tracking data
+        in: body
+        name: WalletRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.TrackWalletTelegramParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Wallet tracked successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.TelegramUserWallet'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Wallet already tracked
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Track a new wallet for a telegram user
+      tags:
+      - WalletsTelegram
   /watchlist:
     get:
       description: Retrieve all watchlist entries for the authenticated user

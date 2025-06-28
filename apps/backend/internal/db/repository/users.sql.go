@@ -10,7 +10,7 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, email_verified, image, type, telegram_chat_id, created_at, updated_at FROM "users"
+SELECT id, name, email, email_verified, image, created_at, updated_at FROM "users"
 WHERE email = $1
 `
 
@@ -23,8 +23,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email *string) (*User, err
 		&i.Email,
 		&i.EmailVerified,
 		&i.Image,
-		&i.Type,
-		&i.TelegramChatID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -32,7 +30,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email *string) (*User, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, email, email_verified, image, type, telegram_chat_id, created_at, updated_at FROM "users"
+SELECT id, name, email, email_verified, image, created_at, updated_at FROM "users"
 WHERE id = $1
 `
 
@@ -45,8 +43,6 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (*User, error) {
 		&i.Email,
 		&i.EmailVerified,
 		&i.Image,
-		&i.Type,
-		&i.TelegramChatID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

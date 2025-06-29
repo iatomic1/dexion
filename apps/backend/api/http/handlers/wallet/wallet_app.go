@@ -197,39 +197,26 @@ func (h *NewWalletHandler) GetAllWallets(c *gin.Context) {
 
 	repo := repository.New(conn)
 
-	wallets, err := repo.GetAllWallets(ctx)
+	wallets, err := repo.GetAllWalletsAndWatchers(ctx)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
 	}
 
-	var combined []map[string]interface{}
-
+	// We need to manually construct the response to get the desired JSON structure
+	var responseWallets []gin.H
 	for _, w := range wallets {
-		watchers, err := repo.GetWatchersForWallet(ctx, w.Address)
-		if err != nil {
-			http.SendInternalServerError(c, err)
-			return
-		}
-
-		var formattedWatchers []map[string]interface{}
-		for _, watcher := range watchers {
-			formattedWatchers = append(formattedWatchers, map[string]interface{}{
-				"userId":        watcher.UserID,
-				"nickname":      watcher.Nickname,
-				"emoji":         watcher.Emoji,
-				"notifications": watcher.Notifications,
-			})
-		}
-
-		combined = append(combined, map[string]interface{}{
-			"wallet_address": w.Address,
-			"watchers":       formattedWatchers,
-			"created_at":     w.CreatedAt,
+		responseWallets = append(responseWallets, gin.H{
+			"address":    w.Address,
+			"created_at": w.CreatedAt,
+			"watchers": gin.H{
+				"app":      w.AppWatchers,
+				"telegram": w.TelegramWatchers,
+			},
 		})
 	}
 
-	http.SendSuccess(c, combined)
+	http.SendSuccess(c, responseWallets)
 }
 
 // GetWalletWatchers godoc

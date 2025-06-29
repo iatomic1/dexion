@@ -15,6 +15,7 @@ type Querier interface {
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error)
 	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	GetAllWallets(ctx context.Context) ([]*Wallet, error)
+	GetAllWalletsAndWatchers(ctx context.Context) ([]*GetAllWalletsAndWatchersRow, error)
 	GetTelegramUser(ctx context.Context, chatID string) (*TelegramUser, error)
 	GetTrackedWalletsTelegram(ctx context.Context, chatID string) ([]*GetTrackedWalletsTelegramRow, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)

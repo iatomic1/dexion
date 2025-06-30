@@ -1027,6 +1027,9 @@
                     "createdAt": {
                         "$ref": "#/components/schemas/pgtype.Timestamptz"
                     },
+                    "notificationPreference": {
+                        "type": "string"
+                    },
                     "username": {
                         "type": "string"
                     }

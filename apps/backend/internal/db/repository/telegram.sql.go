@@ -16,7 +16,7 @@ INSERT INTO telegram_users (chat_id, username)
 VALUES ($1, $2)
 ON CONFLICT (chat_id) DO UPDATE SET
   username = EXCLUDED.username
-RETURNING chat_id, username, created_at
+RETURNING chat_id, username, created_at, notification_preference
 `
 
 type CreateTelegramUserParams struct {
@@ -27,19 +27,29 @@ type CreateTelegramUserParams struct {
 func (q *Queries) CreateTelegramUser(ctx context.Context, arg CreateTelegramUserParams) (*TelegramUser, error) {
 	row := q.db.QueryRow(ctx, createTelegramUser, arg.ChatID, arg.Username)
 	var i TelegramUser
-	err := row.Scan(&i.ChatID, &i.Username, &i.CreatedAt)
+	err := row.Scan(
+		&i.ChatID,
+		&i.Username,
+		&i.CreatedAt,
+		&i.NotificationPreference,
+	)
 	return &i, err
 }
 
 const getTelegramUser = `-- name: GetTelegramUser :one
-SELECT chat_id, username, created_at FROM telegram_users
+SELECT chat_id, username, created_at, notification_preference FROM telegram_users
 WHERE chat_id = $1
 `
 
 func (q *Queries) GetTelegramUser(ctx context.Context, chatID string) (*TelegramUser, error) {
 	row := q.db.QueryRow(ctx, getTelegramUser, chatID)
 	var i TelegramUser
-	err := row.Scan(&i.ChatID, &i.Username, &i.CreatedAt)
+	err := row.Scan(
+		&i.ChatID,
+		&i.Username,
+		&i.CreatedAt,
+		&i.NotificationPreference,
+	)
 	return &i, err
 }
 
@@ -132,6 +142,30 @@ type UntrackWalletTelegramParams struct {
 func (q *Queries) UntrackWalletTelegram(ctx context.Context, arg UntrackWalletTelegramParams) error {
 	_, err := q.db.Exec(ctx, untrackWalletTelegram, arg.ChatID, arg.WalletAddress)
 	return err
+}
+
+const updateTelegramUserPreference = `-- name: UpdateTelegramUserPreference :one
+UPDATE telegram_users
+SET notification_preference = $2
+WHERE chat_id = $1
+RETURNING chat_id, username, created_at, notification_preference
+`
+
+type UpdateTelegramUserPreferenceParams struct {
+	ChatID                 string `json:"chatId"`
+	NotificationPreference string `json:"notificationPreference"`
+}
+
+func (q *Queries) UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error) {
+	row := q.db.QueryRow(ctx, updateTelegramUserPreference, arg.ChatID, arg.NotificationPreference)
+	var i TelegramUser
+	err := row.Scan(
+		&i.ChatID,
+		&i.Username,
+		&i.CreatedAt,
+		&i.NotificationPreference,
+	)
+	return &i, err
 }
 
 const upsertTelegramUserWallet = `-- name: UpsertTelegramUserWallet :one

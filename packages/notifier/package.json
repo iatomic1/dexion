@@ -1,0 +1,33 @@
+{
+    "name": "@repo/notifier",
+    "version": "0.0.0",
+    "type": "module",
+    "private": true,
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "lint": "eslint src/",
+        "check-types": "tsc --noEmit",
+        "test": "jest",
+        "clean": "rm -rf node_modules"
+    },
+    "jest": {
+        "preset": "@repo/jest-presets/node"
+    },
+    "devDependencies": {
+        "@jest/globals": "^29.7.0",
+        "@repo/eslint-config": "workspace:*",
+        "@repo/jest-presets": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^22.14.0",
+        "eslint": "^9.24.0",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.3.0",
+        "typescript": "5.8.2"
+    },
+    "dependencies": {
+        "telegraf": "^4.16.3"
+    }
+}

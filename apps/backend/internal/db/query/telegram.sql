@@ -18,6 +18,12 @@ RETURNING *;
 DELETE FROM telegram_user_wallets
 WHERE chat_id = $1 AND wallet_address = $2;
 
+-- name: UpdateTelegramUserPreference :one
+UPDATE telegram_users
+SET notification_preference = $2
+WHERE chat_id = $1
+RETURNING *;
+
 -- name: GetTrackedWalletsTelegram :many
 SELECT w.address, tuw.nickname, w.created_at
 FROM telegram_user_wallets tuw

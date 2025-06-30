@@ -1,6 +1,7 @@
+import type { MempoolTransaction } from "@stacks/blockchain-api-client";
 import { initializeRedis } from "./initRedis";
 import { setupMempoolSubscription } from "./mempoolTracker";
-
+type PC = MempoolTransaction["post_conditions"];
 async function main() {
   try {
     await initializeRedis();

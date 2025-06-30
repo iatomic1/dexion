@@ -871,6 +871,9 @@ const docTemplate = `{
                 "createdAt": {
                     "$ref": "#/definitions/pgtype.Timestamptz"
                 },
+                "notificationPreference": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }

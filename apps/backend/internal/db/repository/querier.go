@@ -32,6 +32,7 @@ type Querier interface {
 	TrackWalletTelegram(ctx context.Context, arg TrackWalletTelegramParams) (*TelegramUserWallet, error)
 	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
 	UntrackWalletTelegram(ctx context.Context, arg UntrackWalletTelegramParams) error
+	UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error)
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
 	UpsertTelegramUserWallet(ctx context.Context, arg UpsertTelegramUserWalletParams) (*TelegramUserWallet, error)
 	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)

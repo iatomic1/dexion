@@ -30,3 +30,13 @@ export const getTrackedWallets = (chatId: number) => {
 export const untrackWallet = (chatId: number, walletAddress: string) => {
   return apiClient.delete(`/wallets/telegram/${chatId}/${walletAddress}`);
 };
+
+export const setWalletPreference = (
+  chatId: number,
+  preference: string,
+) => {
+  return apiClient.post("/wallets/telegram/preference", {
+    chatId: chatId.toString(),
+    preference,
+  });
+};

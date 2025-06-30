@@ -3,11 +3,18 @@ import { API_BASE_URL } from "./constants";
 
 export const redis = new Redis(); // configure if needed
 
+interface Watcher {
+  user_id?: string;
+  chat_id?: string;
+  nickname: string;
+  preference: string | boolean;
+}
+
 interface Wallet {
   address: string;
   watchers: {
-    app: string | null; // base64 encoded array of strings
-    telegram: string | null; // base64 encoded array of strings
+    app: string | null; // base64 encoded array of Watcher objects
+    telegram: string | null; // base64 encoded array of Watcher objects
   };
 }
 
@@ -19,15 +26,15 @@ async function fetchWalletData(): Promise<{ data: Wallet[] }> {
   return res.json();
 }
 
-function decodeBase64(encoded: string | null): string[] {
+function decodeWatchers(encoded: string | null): Watcher[] {
   if (!encoded) {
     return [];
   }
   try {
-    const decodedString = Buffer.from(encoded, "base64").toString("utf-8");
-    return JSON.parse(decodedString);
+    const decoded = Buffer.from(encoded, "base64").toString("utf-8");
+    return JSON.parse(decoded);
   } catch (e) {
-    console.error("Failed to decode or parse base64 string:", encoded, e);
+    console.error("Failed to decode or parse watcher string:", encoded, e);
     return [];
   }
 }
@@ -48,13 +55,25 @@ export async function initializeRedis() {
 
     for (const wallet of wallets) {
       const key = `wallet_watchers:${wallet.address}`;
-      const appWatchers = decodeBase64(wallet.watchers.app);
-      const telegramWatchers = decodeBase64(wallet.watchers.telegram);
-      const watchers = [...appWatchers, ...telegramWatchers];
-
       pipeline.del(key); // Always clear previous watchers for the key
-      if (watchers.length > 0) {
-        pipeline.sadd(key, ...watchers);
+
+      const appWatchers = decodeWatchers(wallet.watchers.app);
+      const telegramWatchers = decodeWatchers(wallet.watchers.telegram);
+
+      const allWatchers = [...appWatchers, ...telegramWatchers];
+
+      if (allWatchers.length > 0) {
+        const watcherData: Record<string, string> = {};
+        for (const watcher of allWatchers) {
+          const id = watcher.user_id
+            ? `app:${watcher.user_id}`
+            : `telegram:${watcher.chat_id}`;
+          watcherData[id] = JSON.stringify({
+            nickname: watcher.nickname,
+            preference: watcher.preference,
+          });
+        }
+        pipeline.hset(key, watcherData);
       }
     }
 

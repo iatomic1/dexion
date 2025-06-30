@@ -15,6 +15,7 @@ func RegisterTelegramWalletRoutes(srv *http.Server, router *gin.RouterGroup) {
 		walletGroup.POST("/users", walletHandler.CreateTelegramUser)
 		walletGroup.POST("", walletHandler.TrackWalletTelegram)
 		walletGroup.GET("/:chat_id", walletHandler.GetTrackedWalletsTelegram)
+		walletGroup.POST("/preference", walletHandler.UpdateTelegramUserPreference)
 		walletGroup.DELETE("/:chat_id/:address", walletHandler.UntrackWalletTelegram)
 	}
 }

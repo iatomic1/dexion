@@ -12,9 +12,10 @@ import (
 )
 
 type TelegramUser struct {
-	ChatID    string             `json:"chatId"`
-	Username  *string            `json:"username"`
-	CreatedAt pgtype.Timestamptz `json:"createdAt"`
+	ChatID                 string             `json:"chatId"`
+	Username               *string            `json:"username"`
+	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
+	NotificationPreference string             `json:"notificationPreference"`
 }
 
 type TelegramUserWallet struct {

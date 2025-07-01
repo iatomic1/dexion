@@ -1,0 +1,23 @@
+{
+  "name": "@dexion/partykit",
+  "version": "1.0.0",
+  "description": "Unified PartyKit service for Dexion",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "bun src/server.ts",
+    "dev": "bun --watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@repo/tokens": "*",
+    "@repo/ui": "*",
+    "partysocket": "^0.0.10",
+    "redis": "^4.6.15"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
+  }
+}

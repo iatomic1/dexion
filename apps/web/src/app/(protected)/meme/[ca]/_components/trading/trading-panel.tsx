@@ -25,7 +25,7 @@ export default function TradingPanel({
         {/* <TradingInterfaceDesktop /> */}
         {/* <PresetTabs /> */}
         {/* <TradingInterface /> */}
-        <TokenAudit token={token} />
+        {/* <TokenAudit token={token} /> */}
         <Pools />
         {/* <SimilarTokens token={token} /> */}
         <DexBanner bannerUrl={token?.header_image_url} />

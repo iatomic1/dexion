@@ -177,9 +177,7 @@ const Actions = ({
     <div
       className={cn("flex items-center gap-0", className, isMobile && "gap-1")}
     >
-      <div className="sm:hidden">
-        <TokenAudit token={token} />
-      </div>
+      <div className="sm:hidden">{/* <TokenAudit token={token} /> */}</div>
       <Button
         variant={isMobile ? "secondary" : "ghost"}
         size={"icon"}

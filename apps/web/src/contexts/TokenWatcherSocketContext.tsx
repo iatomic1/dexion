@@ -220,8 +220,8 @@ export const TokenSocketProvider = ({
 
   // Use the PartySocket React hook
   const ws = usePartySocket({
-    host: "localhost:3003",
-    room: contractAddress || "",
+    host: "localhost:1999",
+    room: contractAddress ? `token:${contractAddress}` : "",
     onOpen() {
       console.log("PartySocket connected");
       if (contractAddress) {

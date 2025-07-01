@@ -4,7 +4,7 @@ export class PartyKitSender implements IChannelSender {
     private partyUrl: string;
 
     constructor(partyUrl?: string) {
-        this.partyUrl = partyUrl || 'http://127.0.0.1:4002/party';
+        this.partyUrl = partyUrl || 'http://127.0.0.1:1999/party';
     }
 
     isReady(): boolean {

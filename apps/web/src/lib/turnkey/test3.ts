@@ -1,18 +1,16 @@
 "use server";
+import { bytesToHex } from "@stacks/common";
 import {
   AnchorMode,
   broadcastTransaction,
+  createMessageSignature,
+  getAddressFromPublicKey,
+  isSingleSig,
   makeUnsignedSTXTokenTransfer,
   TransactionSigner,
-  isSingleSig,
-  createMessageSignature,
-  AddressVersion,
-  publicKeyToAddress,
-  getAddressFromPublicKey,
 } from "@stacks/transactions";
-import { turnkeyServer } from "./api-client";
 import { Buffer } from "buffer";
-import { bytesToHex } from "@stacks/common";
+import { turnkeyServer } from "./api-client";
 
 export const sendStxWithTurnKey = async (
   walletPubKey: string,

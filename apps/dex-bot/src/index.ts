@@ -9,6 +9,32 @@ dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN || "");
 
+const myChatId = process.env.MY_CHAT_ID;
+
+bot.use(async (ctx, next) => {
+  const chatId = ctx.chat?.id.toString();
+
+  if (chatId === myChatId) {
+    return next();
+  }
+
+  if (!myChatId) {
+    console.error(
+      "MY_CHAT_ID is not set. The bot will not respond to any user.",
+    );
+    return;
+  }
+
+  if (chatId) {
+    try {
+      await ctx.reply(messages.DEV_MODE_MESSAGE);
+    } catch (e) {
+      console.error(`Error replying to chat ${chatId}`, e);
+    }
+  }
+  // For non-chat updates, we just don't call next(), so they are ignored.
+});
+
 bot.start(async (ctx) => {
   try {
     await api.createUser(ctx.chat.id.toString(), ctx.from.username);
@@ -33,10 +59,10 @@ bot.command("track", async (ctx) => {
     await api.trackWallet(ctx.chat.id.toString(), walletAddress, nickname);
     ctx.reply(messages.WALLET_TRACK_SUCCESS(walletAddress, nickname));
 
-    ctx.reply(
-      messages.NOTIFICATION_PREFERENCE_MESSAGE(nickname),
-      { ...messages.preferenceKeyboard(walletAddress), parse_mode: "Markdown" },
-    );
+    ctx.reply(messages.NOTIFICATION_PREFERENCE_MESSAGE(nickname), {
+      ...messages.preferenceKeyboard(walletAddress),
+      parse_mode: "Markdown",
+    });
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(error.response?.data);
@@ -56,7 +82,6 @@ bot.command("list", async (ctx) => {
 
     const message = messages.getWalletListMessage(wallets);
     ctx.replyWithHTML(message, messages.listKeyboard);
-
   } catch (error) {
     console.error(error);
     ctx.reply(messages.GENERIC_ERROR_MESSAGE);
@@ -78,10 +103,10 @@ bot.command("untrack", async (ctx) => {
 });
 
 bot.command("settings", async (ctx) => {
-  ctx.reply(
-    messages.GLOBAL_NOTIFICATION_PREFERENCE_MESSAGE,
-    { ...messages.globalSettingsKeyboard, parse_mode: "Markdown" },
-  );
+  ctx.reply(messages.GLOBAL_NOTIFICATION_PREFERENCE_MESSAGE, {
+    ...messages.globalSettingsKeyboard,
+    parse_mode: "Markdown",
+  });
 });
 
 bot.action("add_wallet", (ctx) => {
@@ -116,10 +141,9 @@ bot.action(/set_preference_(.+)/, async (ctx) => {
   const preference = ctx.match[1];
   try {
     await api.setWalletPreference(ctx.chat.id, preference);
-    ctx.editMessageText(
-      messages.PREFERENCE_SET_SUCCESS(preference),
-      { parse_mode: "Markdown" },
-    );
+    ctx.editMessageText(messages.PREFERENCE_SET_SUCCESS(preference), {
+      parse_mode: "Markdown",
+    });
   } catch (error) {
     console.error(error);
     ctx.reply(messages.GENERIC_ERROR_MESSAGE);

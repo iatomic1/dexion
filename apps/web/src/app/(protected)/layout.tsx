@@ -30,7 +30,8 @@ export default async function ProtectedLayout({
         <WatchListBanner />
       </div>
       <PresetsContextProvider>
-        <WalletTrackerSocketProvider>{children}</WalletTrackerSocketProvider>
+        {children}
+        {/* <WalletTrackerSocketProvider>{children}</WalletTrackerSocketProvider> */}
       </PresetsContextProvider>
       <SiteFooter />
     </BtcStxPriceProvider>

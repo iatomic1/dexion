@@ -4,7 +4,7 @@ import usePartySocket from "partysocket/react";
 import { toast } from "sonner";
 import { authClient } from "~/lib/auth-client";
 
-const PARTYKIT_HOST = "http://127.0.0.1:4002";
+const PARTYKIT_HOST = "http://127.0.0.1:1999";
 
 export interface WalletTrackerSocketContextType {
   isConnected: boolean;
@@ -24,7 +24,7 @@ export const WalletTrackerSocketProvider: React.FC<{ children: ReactNode }> = ({
   // Only create socket connection when userId is available
   const socket = usePartySocket({
     host: PARTYKIT_HOST,
-    room: userId || "anno", // Pass undefined instead of empty string
+    room: userId ? `wallet:${userId}` : "anno", // Pass undefined instead of empty string
     onOpen: () => console.log("Connected to PartyKit"),
     onMessage: (event) => {
       try {

@@ -1,26 +1,45 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
-import { logger } from "hono/logger";
-import { STX_WATCH_API_KEY } from "./lib/env";
+import { STXWATCH_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import {
   getSearch,
-  getTokenMetadata,
   getStxcityBondingData,
+  getTokenMetadata,
   searchStxCity,
 } from "@repo/tokens/services";
 import {
-  validateContractAddress,
   transformToTokenMetadata,
+  validateContractAddress,
 } from "@repo/tokens/utils";
-import { STXWATCH_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import axios from "axios";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { createClient } from "redis";
+import { STX_WATCH_API_KEY } from "./lib/env";
+import { updateTokenSources } from "./update-sources";
 
 const PORT = 3008;
 const app = new Hono();
+const redisClient = createClient({
+  url: process.env.REDIS_URL || "redis://localhost:6379",
+});
+redisClient.connect();
+
+updateTokenSources(redisClient);
+setInterval(() => updateTokenSources(redisClient), 5 * 60 * 1000);
 
 app.use(logger());
 app.use("/*", cors());
+
+app.get("/source/:contractId", async (c) => {
+  const contractId = c.req.param("contractId");
+  const source = await redisClient.get(`source:${contractId}`);
+  if (source) {
+    return c.json({ source });
+  } else {
+    return c.json({ error: "Source not found" }, 404);
+  }
+});
 
 app.get("/tokens/:address", async (c) => {
   const address = c.req.param("address");

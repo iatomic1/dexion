@@ -20,6 +20,7 @@ export const PREFERENCE_SET_SUCCESS = (preference: string) =>
   `Notification preference set to *${preference}*.`;
 export const ADD_WALLET_PROMPT = "Please use the /track command to add a new wallet.";
 export const DELETE_WALLET_PROMPT = "Please use the /untrack command to delete a wallet.";
+export const DEV_MODE_MESSAGE = "this bot is still in dev";
 export const BACK_TO_MAIN_MESSAGE = "What would you like to do next?";
 
 

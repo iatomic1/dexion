@@ -16,7 +16,8 @@
     "@repo/shared-constants": "workspace:*",
     "@repo/tokens": "workspace:*",
     "axios": "^1.10.0",
-    "hono": "^4.7.8"
+    "hono": "^4.7.8",
+    "redis": "^4.6.15"
   },
   "packageManager": "bun@1.0.18"
 }

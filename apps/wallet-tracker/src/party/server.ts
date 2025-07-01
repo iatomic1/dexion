@@ -5,9 +5,9 @@ export default class Server implements Party.Server {
 
   onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
     console.log(
-      `Connected: id: ${conn.id} room: ${this.room.id} url: ${new URL(
-        ctx.request.url
-      ).pathname}`
+      `Connected: id: ${conn.id} room: ${this.room.id} url: ${
+        new URL(ctx.request.url).pathname
+      }`,
     );
   }
 

@@ -28,6 +28,7 @@ export const setupMempoolSubscription = async () => {
     // console.log(mempoolTx.sender_address);
     const watchers = await getWatchers(mempoolTx.sender_address);
     if (Object.keys(watchers).length > 0) {
+      console.log("yes");
       const structuredMessage = generateTransactionMessage(mempoolTx);
       console.log(structuredMessage);
       if (!structuredMessage) return;
@@ -40,39 +41,40 @@ export const setupMempoolSubscription = async () => {
       const results = await Promise.allSettled(
         Object.entries(watchers).map(([watcherId, watcherData]) => {
           const { preference, nickname } = JSON.parse(watcherData);
-          if (preference === "mempool") {
-            const [watcherType, id] = watcherId.split(":");
-            if (watcherType === "telegram") {
-              const message = generateTelegramMessage(
-                structuredMessage,
-                nickname,
-              );
-              const buttons: NotificationButton[][] = [];
-              if (structuredMessage.action === "Swap") {
-                buttons.push([
-                  {
-                    text: "Trade on Dexion",
-                    url: `https://dexion.io/swap/${structuredMessage.details.sent.contractId}/${structuredMessage.details.received.contractId}`,
-                  },
-                  {
-                    text: "View on STXWatch",
-                    url: `https://stxwatch.com/txid/${structuredMessage.txId}`,
-                  },
-                ]);
-              }
-              return notifier.send("telegram", {
-                message,
-                recipient: { id },
-                buttons,
-                parseMode: "HTML",
-              });
-            } else {
-              return notifier.send("partykit", {
-                message: alert,
-                recipient: { id },
-              });
+          // if (preference === "mempool") {
+          const [watcherType, id] = watcherId.split(":");
+          if (watcherType === "telegram") {
+            const message = generateTelegramMessage(
+              structuredMessage,
+              nickname,
+            );
+            const buttons: NotificationButton[][] = [];
+            if (structuredMessage.action === "Swap") {
+              buttons.push([
+                {
+                  text: "Trade on Dexion",
+                  url: `https://dexion.io/swap/${structuredMessage.details.sent.contractId}/${structuredMessage.details.received.contractId}`,
+                },
+                {
+                  text: "View on STXWatch",
+                  url: `https://stxwatch.com/txid/${structuredMessage.txId}`,
+                },
+              ]);
             }
+            return notifier.send("telegram", {
+              message,
+              recipient: { id },
+              buttons,
+              parseMode: "HTML",
+            });
           }
+          // else {
+          //   return notifier.send("partykit", {
+          //     message: alert,
+          //     recipient: { id },
+          //   });
+          // }
+          // }
         }),
       );
 

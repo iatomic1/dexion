@@ -23,6 +23,18 @@ export const DELETE_WALLET_PROMPT = "Please use the /untrack command to delete a
 export const DEV_MODE_MESSAGE = "this bot is still in dev";
 export const BACK_TO_MAIN_MESSAGE = "What would you like to do next?";
 
+// Price Alert Messages
+export const ALERT_USAGE_MESSAGE =
+  "Usage: /alert <contract_address> <above|below> <price>";
+export const ALERT_SET_SUCCESS = (
+  contractAddress: string,
+  direction: string,
+  price: number,
+) => `✅ Alert set: ${contractAddress} ${direction} ${price}.`;
+export const NO_ALERTS_MESSAGE = "You have no active price alerts.";
+export const DELETE_ALERT_PROMPT = "Please use /deletealert <alert_id> to remove an alert.";
+
+
 
 // Notification Preference Message
 export const NOTIFICATION_PREFERENCE_MESSAGE = (nickname: string) =>

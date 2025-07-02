@@ -7,10 +7,7 @@ import TokenTabs from "../token-tabs";
 import TradingPanel from "../trading/trading-panel";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
 import { TokenMetadata } from "@repo/tokens/types";
-import {
-  useTokenData,
-  useTokenMetadata,
-} from "~/contexts/TokenWatcherSocketContext";
+import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 
 interface DesktopLayoutProps {
   tokenData: TokenMetadata | null;

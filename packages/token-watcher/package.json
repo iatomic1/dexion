@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.14.3",
+    "@repo/notifier": "workspace:*",
     "@repo/shared-constants": "workspace:*",
     "@repo/tokens": "workspace:*",
     "axios": "^1.10.0",

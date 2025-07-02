@@ -4,6 +4,8 @@ import * as dotenv from "dotenv";
 import { Telegraf } from "telegraf";
 import * as api from "./api";
 import * as messages from "./messages";
+import redisClient from "./redis";
+import { nanoid } from "nanoid";
 
 dotenv.config();
 
@@ -107,6 +109,105 @@ bot.command("settings", async (ctx) => {
     ...messages.globalSettingsKeyboard,
     parse_mode: "Markdown",
   });
+});
+
+bot.command("alert", async (ctx) => {
+  const [_, contractAddress, direction, priceStr] = ctx.message.text.split(" ");
+  const price = parseFloat(priceStr);
+
+  if (!contractAddress || !direction || !price) {
+    return ctx.reply(messages.ALERT_USAGE_MESSAGE);
+  }
+
+  if (direction !== "above" && direction !== "below") {
+    return ctx.reply(messages.ALERT_USAGE_MESSAGE);
+  }
+
+  try {
+    const alertId = nanoid();
+    const alert = {
+      id: alertId,
+      chatId: ctx.chat.id.toString(),
+      contractAddress,
+      direction,
+      price,
+    };
+
+    // Add to redis
+    const redisKey = `price-alerts:${contractAddress}`;
+    const redisValue = JSON.stringify({
+      alertId: alert.id,
+      userId: ctx.chat.id.toString(),
+      direction,
+    });
+    await redisClient.zAdd(redisKey, [{ score: price, value: redisValue }]);
+    await redisClient.hSet(`alert-details:${alertId}`, alert as any);
+
+    ctx.reply(
+      messages.ALERT_SET_SUCCESS(contractAddress, direction, price),
+    );
+  } catch (error) {
+    console.error(error);
+    ctx.reply(messages.GENERIC_ERROR_MESSAGE);
+  }
+});
+
+bot.command("alerts", async (ctx) => {
+  try {
+    const alertKeys = await redisClient.keys("alert-details:*");
+    if (alertKeys.length === 0) {
+      return ctx.reply(messages.NO_ALERTS_MESSAGE);
+    }
+
+    const userAlerts = [];
+    for (const key of alertKeys) {
+      const alert = await redisClient.hGetAll(key);
+      if (alert.chatId === ctx.chat.id.toString()) {
+        userAlerts.push(alert);
+      }
+    }
+
+    if (userAlerts.length === 0) {
+      return ctx.reply(messages.NO_ALERTS_MESSAGE);
+    }
+
+    let message = "<b>Your Price Alerts:</b>\n";
+    userAlerts.forEach((alert: any) => {
+      message += `\n- <b>${alert.contractAddress}</b> ${alert.direction} ${alert.price} (ID: <code>${alert.id}</code>)`;
+    });
+    ctx.replyWithHTML(message);
+  } catch (error) {
+    console.error(error);
+    ctx.reply(messages.GENERIC_ERROR_MESSAGE);
+  }
+});
+
+bot.command("deletealert", async (ctx) => {
+  const [_, alertId] = ctx.message.text.split(" ");
+  if (!alertId) {
+    return ctx.reply(messages.DELETE_ALERT_PROMPT);
+  }
+  try {
+    const alert = await redisClient.hGetAll(`alert-details:${alertId}`);
+    if (!alert.id || alert.chatId !== ctx.chat.id.toString()) {
+      return ctx.reply("Alert not found or you do not own this alert.");
+    }
+
+    const redisKey = `price-alerts:${alert.contractAddress}`;
+    const redisValue = JSON.stringify({
+      alertId: alert.id,
+      userId: alert.chatId,
+      direction: alert.direction,
+    });
+
+    await redisClient.zRem(redisKey, redisValue);
+    await redisClient.del(`alert-details:${alertId}`);
+
+    ctx.reply(`✅ Alert ${alertId} deleted.`);
+  } catch (error) {
+    console.error(error);
+    ctx.reply(messages.GENERIC_ERROR_MESSAGE);
+  }
 });
 
 bot.action("add_wallet", (ctx) => {

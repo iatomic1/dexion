@@ -8,7 +8,6 @@ import SiteHeader from "~/components/layout/header/site-header";
 import SiteFooter from "~/components/layout/site-footer/site-footer";
 import { WatchListBanner } from "~/components/layout/watchlist-banner";
 import { BtcStxPriceProvider } from "~/contexts/BtcStxPriceContext";
-import { WalletTrackerSocketProvider } from "~/contexts/WalletTrackerSocketContext";
 
 export default async function ProtectedLayout({
   children,

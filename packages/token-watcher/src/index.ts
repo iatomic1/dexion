@@ -14,19 +14,18 @@ import axios from "axios";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { createClient } from "redis";
 import { STX_WATCH_API_KEY } from "./lib/env";
+import { startPriceChecker } from "./price-checker";
+import redisClient from "./redis";
 import { updateTokenSources } from "./update-sources";
 
 const PORT = 3008;
 const app = new Hono();
-const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
-});
-redisClient.connect();
 
 updateTokenSources(redisClient);
 setInterval(() => updateTokenSources(redisClient), 5 * 60 * 1000);
+
+startPriceChecker();
 
 app.use(logger());
 app.use("/*", cors());
@@ -39,11 +38,6 @@ app.get("/source/:contractId", async (c) => {
   } else {
     return c.json({ error: "Source not found" }, 404);
   }
-});
-
-app.get("/tokens/:address", async (c) => {
-  const address = c.req.param("address");
-  return c.json({ address }, 200);
 });
 
 app.get("/btcstx", async (c) => {

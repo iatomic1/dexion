@@ -16,24 +16,16 @@ import TradesTable from "./tables/trades-table";
 import HoldersTable from "./tables/holders-table";
 import { Funnel, User2 } from "lucide-react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
-import { useMediaQuery } from "./skeleton/trades-table-skeleton";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import DevTokensTable from "./tables/dev-tokens-table";
 
 export default function TokenTabs() {
-  const {
-    tokenData,
-    isLoadingMetadata,
-    holdersData,
-    tradesData,
-    isLoadingTrades,
-    isLoadingHolders,
-  } = useTokenData();
+  const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
+    useTokenData();
   const [activeTab, setActiveTab] = useState("trades");
   const [filterBy, setFilterBy] = useState("");
-  const isMobile = useMediaQuery("(max-width: 640px)");
 
   // Handle filter changes from TradesTable component
   const handleFilterChange = (newFilter: string) => {

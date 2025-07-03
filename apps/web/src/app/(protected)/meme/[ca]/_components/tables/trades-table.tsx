@@ -8,18 +8,15 @@ import {
 } from "@tanstack/react-table";
 import { cn } from "@repo/ui/lib/utils";
 import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
-import type {
-  TokenMetadata,
-  TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+import type { TokenMetadata, TokenSwapTransaction } from "@repo/tokens/types";
 import { columns, getColumnWidth } from "./trades-table-columns";
 
 import TradesTableSkeleton from "../skeleton/trades-table-skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { getFilterTrades } from "~/lib/queries/stxtools";
 import { Button } from "@repo/ui/components/ui/button";
 import { truncateString } from "~/lib/helpers/strings";
 import { useTokenTrades } from "~/contexts/TokenWatcherSocketContext";
+import { getFilterTrades } from "~/lib/queries/token-watcher";
 
 // Custom hook for media queries (borrowed from HoldersTable)
 export function useMediaQuery(query: string): boolean {
@@ -45,7 +42,7 @@ export default function TradesTable({
   initialFilterValue = "",
 }: {
   token: TokenMetadata;
-  onFilterChange: (filterValue: string) => void;
+  onFilterChange: (_filterValue: string) => void;
   initialFilterValue?: string;
 }) {
   const { data: trades, isLoading: isTradesLoading } = useTokenTrades();
@@ -58,23 +55,29 @@ export default function TradesTable({
     queryFn: () => getFilterTrades(filterBy, velarPoolId as string),
     enabled: !!token && !!filterBy && !!velarPoolId,
   });
+
   useEffect(() => {
     console.log(JSON.stringify(trades, null, 2));
   }, [isTradesLoading]);
 
-  const displayTrades =
-    filterBy && !isFilterLoading && filteredTrades ? filteredTrades : trades;
-  const [tableData, setTableData] =
-    useState<TokenSwapTransaction[]>(displayTrades);
+  const [tableData, setTableData] = useState<TokenSwapTransaction[]>([]);
 
   useEffect(() => {
-    const currentData =
-      filterBy && !isFilterLoading && filteredTrades?.data?.length > 0
-        ? filteredTrades?.data
-        : trades;
-    setTableData([...currentData]);
-  }, [trades, filteredTrades, isFilterLoading, filterBy]);
+    let currentData: TokenSwapTransaction[] = [];
 
+    if (filterBy && !isFilterLoading && filteredTrades?.data) {
+      currentData = filteredTrades.data as TokenSwapTransaction[];
+    } else if (trades) {
+      currentData = trades;
+    }
+
+    setTableData(currentData);
+  }, [trades, filteredTrades, isFilterLoading, filterBy]);
+  useEffect(() => {
+    if (filteredTrades?.data) {
+      console.log("filteredTrades.data structure:", filteredTrades.data);
+    }
+  }, [filteredTrades]);
   // Set initial filter value when it changes from parent
   useEffect(() => {
     if (initialFilterValue !== filterBy) {
@@ -92,9 +95,7 @@ export default function TradesTable({
     const allColumns = columns(token, handleFilterClick);
     // If mobile, filter out 'type' and 'amount' columns
     return isMobile
-      ? allColumns.filter(
-          (col) => col.accessorKey !== "type" && col.accessorKey !== "amount",
-        )
+      ? allColumns.filter((col) => col.id !== "type" && col.id !== "amount")
       : allColumns;
   };
 
@@ -113,10 +114,10 @@ export default function TradesTable({
 
   return (
     <div className="flex h-full w-full flex-col border-t">
-      {filterBy && filteredTrades?.rowCount > 0 && (
+      {filterBy && filteredTrades?.rowCount && filteredTrades.rowCount > 0 && (
         <div className="flex items-center justify-between pl-4 py-1">
           <span className="text-xs font-geist-mono text-muted-foreground">
-            Showing {filteredTrades?.data.length} transactions of maker{" "}
+            Showing {filteredTrades?.data?.length || 0} transactions of maker{" "}
             {truncateString(filterBy, 10, 4)}
           </span>
           <Button

@@ -36,7 +36,7 @@ const DesktopLayout = memo(({ tokenData }: DesktopLayoutProps) => {
                       <div className="h-full animate-pulse bg-muted/20" />
                     }
                   >
-                    <TokenChart tokenSymbol={tokenData?.symbol} />
+                    <TokenChart tokenSymbol={tokenData?.symbol as string} />
                   </Suspense>
                 </div>
 
@@ -58,7 +58,7 @@ const DesktopLayout = memo(({ tokenData }: DesktopLayoutProps) => {
           <Suspense
             fallback={<div className="h-full animate-pulse bg-muted/20" />}
           >
-            <TradingPanel token={tokenData} />
+            {tokenData && <TradingPanel token={tokenData} />}
           </Suspense>
         </div>
       </div>

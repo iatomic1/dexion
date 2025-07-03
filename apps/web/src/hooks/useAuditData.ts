@@ -1,4 +1,4 @@
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { getBalance } from "~/lib/queries/hiro";

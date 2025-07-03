@@ -176,7 +176,7 @@ export const WatchListTable = () => {
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full" orientation="both">
+        <ScrollArea className="h-full w-full">
           {isInitialLoading && (
             <div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
               {Array.from({ length: 4 }).map((_, i) => (

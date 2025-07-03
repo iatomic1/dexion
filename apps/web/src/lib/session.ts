@@ -1,6 +1,6 @@
 "use server";
+import { PUBLIC_BASE_URL } from "@repo/shared-constants/constants.ts";
 import { headers } from "next/headers";
-import { PUBLIC_BASE_URL } from "./constants";
 
 export const withAuth = async () => {
   const headersList = await headers();

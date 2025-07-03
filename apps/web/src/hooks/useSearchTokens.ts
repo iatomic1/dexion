@@ -44,17 +44,10 @@ export const useSearchTokens = ({
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  // Query for history tokens (when not searching)
-  const historyQuery = useQuery({
-    queryKey: ["history-tokens"],
-    queryFn: getBatchTokensFromHistory,
-    enabled: enabled && !isSearching,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  
 
   // Determine which query to use
-  const activeQuery = isSearching ? searchQuery : historyQuery;
+  const activeQuery = searchQuery;
 
   return {
     data: activeQuery.data?.tokens || [],
@@ -64,7 +57,7 @@ export const useSearchTokens = ({
     isSearching,
     // Additional useful states
     isSearchLoading: searchQuery.isLoading,
-    isHistoryLoading: historyQuery.isLoading,
+    isHistoryLoading: false,
     refetch: activeQuery.refetch,
   };
 };

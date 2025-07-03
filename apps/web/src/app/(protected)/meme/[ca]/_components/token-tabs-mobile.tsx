@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import type React from "react";
 
 import {
@@ -18,7 +17,6 @@ import DevTokensTable from "./tables/dev-tokens-table";
 export default function TokenTabsMobile() {
   const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
     useTokenData();
-  const [activeTab, setActiveTab] = useState("holders");
 
   const tabs = [
     {
@@ -65,7 +63,7 @@ export default function TokenTabsMobile() {
                   "w-full capitalize items-center",
                   "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none",
                 )}
-                onClick={() => setActiveTab(tab.value.toLowerCase())}
+                // onClick={() => setActiveTab(tab.value.toLowerCase())}
               >
                 {tab.value === "holders" ? (
                   <>

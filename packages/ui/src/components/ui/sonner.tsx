@@ -17,7 +17,6 @@ import type { ReactNode } from "react";
 import { Button } from "./button";
 
 type BaseToastProps = {
-  data: { id: string | number };
   title?: ReactNode;
   description?: ReactNode;
   onDismiss: () => void;
@@ -29,7 +28,6 @@ type BaseToastProps = {
 
 // Base toast component that handles all variants
 const BaseToast = ({
-  data,
   title,
   description,
   onDismiss,
@@ -113,11 +111,10 @@ const customToast = Object.assign({}, toast, {
   success: (message: string, options?: any) => {
     const variant = toastVariants.success;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -129,11 +126,10 @@ const customToast = Object.assign({}, toast, {
   error: (message: string, options?: any) => {
     const variant = toastVariants.error;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -145,11 +141,10 @@ const customToast = Object.assign({}, toast, {
   info: (message: string, options?: any) => {
     const variant = toastVariants.info;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -161,11 +156,10 @@ const customToast = Object.assign({}, toast, {
   copy: (message: string, options?: any) => {
     const variant = toastVariants.copy;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -177,11 +171,10 @@ const customToast = Object.assign({}, toast, {
   warning: (message: string, options?: any) => {
     const variant = toastVariants.warning;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -193,11 +186,10 @@ const customToast = Object.assign({}, toast, {
   loading: (message: string, options?: any) => {
     const variant = toastVariants.loading;
     return toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={message}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={variant.icon}
           iconColor={variant.iconColor}
           defaultMessage={variant.defaultMessage}
@@ -221,11 +213,10 @@ const customToast = Object.assign({}, toast, {
     // Show loading toast
     const loadingVariant = toastVariants.loading;
     const toastId = toast.custom(
-      (data) => (
+      (id) => (
         <BaseToast
-          data={data}
           title={loading}
-          onDismiss={() => toast.dismiss(data.id)}
+          onDismiss={() => toast.dismiss(id)}
           icon={loadingVariant.icon}
           iconColor={loadingVariant.iconColor}
           defaultMessage={loadingVariant.defaultMessage}
@@ -245,11 +236,10 @@ const customToast = Object.assign({}, toast, {
             : successMessage;
 
         toast.custom(
-          (toastData) => (
+          (id) => (
             <BaseToast
-              data={toastData}
               title={message}
-              onDismiss={() => toast.dismiss(toastData.id)}
+              onDismiss={() => toast.dismiss(id)}
               icon={successVariant.icon}
               iconColor={successVariant.iconColor}
               defaultMessage={successVariant.defaultMessage}
@@ -269,11 +259,10 @@ const customToast = Object.assign({}, toast, {
             : errorMessage;
 
         toast.custom(
-          (toastData) => (
+          (id) => (
             <BaseToast
-              data={toastData}
               title={message}
-              onDismiss={() => toast.dismiss(toastData.id)}
+              onDismiss={() => toast.dismiss(id)}
               icon={errorVariant.icon}
               iconColor={errorVariant.iconColor}
               defaultMessage={errorVariant.defaultMessage}

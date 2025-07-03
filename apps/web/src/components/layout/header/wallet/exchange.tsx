@@ -66,7 +66,18 @@ export default function Exchange({
           </DialogClose>
         </DialogHeader>
         <div className="px-4">
-          <Tabs defaultValue={mode} onValueChange={setActiveTab}>
+          <Tabs
+            defaultValue={mode}
+            onValueChange={(value) => {
+              if (
+                value === "convert" ||
+                value === "deposit" ||
+                value === "withdraw"
+              ) {
+                setActiveTab(value);
+              }
+            }}
+          >
             <TabsList className="w-full bg-transparent border">
               <TabsTrigger
                 value="withdraw"

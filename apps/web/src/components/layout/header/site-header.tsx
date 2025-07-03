@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Search, Bell, Wallet2, ChevronDown } from "lucide-react";
+import { Search, Bell, Wallet2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import siteConfig from "~/config/site";
@@ -8,11 +8,9 @@ import { SearchDialog } from "./search-dialog";
 import AuthController from "~/components/auth/auth-controller";
 import { WatchlistCredenza } from "~/components/watchlist/watchlist-credenza";
 import { AccountPopover } from "./account/account-management";
-import { sendStacksWithTurnkey } from "~/lib/turnkey/service";
 import { authClient } from "~/lib/auth-client";
 import Balance from "./wallet/balance";
-import { transferSTX, transferSTXManual } from "~/lib/turnkey/test";
-import { sendStxWithTurnKey } from "~/lib/turnkey/test3";
+import { sendStxWithTurnKey } from "~/lib/turnkey/signing";
 
 export default function SiteHeader() {
   const { data } = authClient.useSession();
@@ -120,12 +118,6 @@ export default function SiteHeader() {
                 "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
                 user?.subOrganizationId,
               );
-              await transferSTXManual({
-                walletPubKey: user?.walletPublicKey,
-                walletAddr: user?.walletAddress,
-                recipient: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
-                subOrgId: user?.subOrganizationId,
-              });
             }
           }}
         >

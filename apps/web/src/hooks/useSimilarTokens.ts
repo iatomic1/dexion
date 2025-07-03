@@ -1,4 +1,4 @@
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { searchTokens, getTransactions } from "~/lib/queries/hiro";
@@ -100,7 +100,7 @@ export const useSimilarTokens = (
       const metadata = metadataQueries.data[i];
       const txData = transactionQueries.data[i];
 
-      if (metadata && txData?.results?.length > 0) {
+      if (metadata && txData && txData.results && txData.results.length > 0) {
         const lastTxDate = txData.results[0]?.tx?.block_time_iso || "";
         similarTokens.push({
           token: metadata,

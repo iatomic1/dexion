@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, memo, Suspense } from "react";
+import { memo } from "react";
 import {
   Tabs,
   TabsContent,
@@ -23,7 +23,6 @@ import TokenInfo from "../token-info";
 import TradesTable from "../tables/trades-table";
 import FilterByAddressModal from "../filter-by-address-modal";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
-import TradingInterfaceMobile from "../trading/trading-interface-mobile";
 import TokenTabsMobile from "../token-tabs-mobile";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { TokenMetadata } from "@repo/tokens/types";
@@ -32,8 +31,8 @@ interface MobileLayoutProps {
   tokenData: TokenMetadata | null;
   isLoadingMetadata: boolean;
   filterHandlers: {
-    handleFilterChange: (newFilter: string) => void;
-    handleToggleFilter: (value: string) => void;
+    handleFilterChange: (_newFilter: string) => void;
+    handleToggleFilter: (_value: string) => void;
     filterBy: string;
   };
 }

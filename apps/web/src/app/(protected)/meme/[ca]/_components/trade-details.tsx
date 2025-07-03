@@ -28,7 +28,7 @@ import {
 } from "@repo/ui/components/ui/tooltip";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
-import { TokenSwapTransaction } from "@repo/token-watcher/token.ts";
+import { TokenSwapTransaction } from "@repo/tokens/types";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { useEffect, useState } from "react";

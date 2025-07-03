@@ -61,7 +61,7 @@ export function AccountSecurityModal({
                 <AvatarUpload
                   currentAvatarUrl={session?.user.image}
                   email={session?.user.email}
-                  onUploadSuccess={async (url, fileId) => {
+                  onUploadSuccess={async (url) => {
                     await authClient.updateUser({
                       image: url,
                     });

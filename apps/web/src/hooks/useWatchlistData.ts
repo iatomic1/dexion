@@ -1,10 +1,10 @@
 "use client";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { getBatchTokenData } from "~/lib/queries/token-watcher";
-import type { UserWatchlist } from "~/types/wallets";
+import type { TokenMetadata } from "@repo/tokens/types";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getUserWatchlist } from "~/app/actions/watchlist-actions";
+import { getBatchTokenData } from "~/lib/queries/token-watcher";
+import type { UserWatchlist } from "~/types/wallets";
 
 export interface TokenWithWatchlistId extends TokenMetadata {
   watchlistId?: string;

@@ -1,6 +1,5 @@
 "use client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
 import {
   Avatar,
   AvatarImage,
@@ -38,6 +37,7 @@ import {
 } from "~/lib/queries/token-watcher";
 import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { TokenMetadata } from "@repo/tokens/types";
 type Platform = "stxcity" | "fakfun" | "";
 
 const MAX_HISTORY_ITEMS = 10;
@@ -107,9 +107,7 @@ export function SearchDialog({ trigger }: { trigger: React.ReactNode }) {
       ? searchResults?.tokens || []
       : historyTokensData || [];
 
-    if (filterByPlatform === "") return rawTokens;
-
-    return rawTokens.filter((token) => token.platform === filterByPlatform);
+    return rawTokens;
   }, [searchResults, historyTokensData, filterByPlatform, debouncedSearchTerm]);
 
   const { isLoading, isFetching, showingSearchResults } = useMemo(

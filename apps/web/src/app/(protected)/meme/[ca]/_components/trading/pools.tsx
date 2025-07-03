@@ -1,5 +1,5 @@
 "use client";
-import { LiquidityPool, TokenMetadata } from "@repo/token-watcher/token.ts";
+import { LiquidityPool } from "@repo/tokens/types";
 import {
   Avatar,
   AvatarImage,
@@ -25,7 +25,7 @@ import { useTokenPools } from "~/contexts/TokenWatcherSocketContext";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import { useMediaQuery } from "../trade-details";
 
-export default function Pools({}: {}) {
+export default function Pools() {
   const [isOpen, setIsOpen] = useState(true);
   const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 

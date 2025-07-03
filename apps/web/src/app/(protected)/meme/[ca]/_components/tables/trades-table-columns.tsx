@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  TokenMetadata,
-  TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+import type { TokenMetadata, TokenSwapTransaction } from "@repo/tokens/types";
 import {
   Tooltip,
   TooltipTrigger,
@@ -207,6 +204,5 @@ export const columns = (
         </div>
       );
     },
-    accessorFn: (row) => row.wallet.bns || row.wallet.address,
   },
 ];

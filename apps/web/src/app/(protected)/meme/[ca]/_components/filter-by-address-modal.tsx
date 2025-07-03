@@ -3,8 +3,6 @@ import { useForm } from "react-hook-form";
 import {
   Credenza,
   CredenzaContent,
-  CredenzaHeader,
-  CredenzaTitle,
   CredenzaTrigger,
   CredenzaFooter,
 } from "@repo/ui/components/ui/credenza";
@@ -14,7 +12,6 @@ import {
   FormLabel,
   FormControl,
   FormField,
-  FormDescription,
   FormMessage,
 } from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";

@@ -9,19 +9,18 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import { HouseIcon, PanelsTopLeftIcon, Edit, Check } from "lucide-react";
 import { useState } from "react";
-import useLocalStorage from "~/hooks/useLocalStorage";
+// import useLocalStorage from "~/hooks/useLocalStorage";
 import { usePresetsSettings } from "~/contexts/PresetsContext";
-import { selectRowsFn } from "@tanstack/react-table";
 import Image from "next/image";
 import ChangeTradingMode from "./change-trading-mode";
 
-type TradeMode = "market" | "instant" | "limit";
+// type TradeMode = "market" | "instant" | "limit";
 
 export default function TradingInterfaceMobile() {
-  const [tradeMode, setTradeMode] = useLocalStorage<TradeMode>(
-    "tradeMode",
-    "market",
-  );
+  // const [tradeMode, setTradeMode] = useLocalStorage<TradeMode>(
+  //   "tradeMode",
+  //   "market",
+  // );
   const [isEditing, setIsEditing] = useState(false);
   const { switchTab } = usePresetsSettings();
 
@@ -47,7 +46,9 @@ export default function TradingInterfaceMobile() {
           </Button>
         </div>
         <div className="flex items-center gap-4">
-          <ChangeTradingMode selected="market" />
+          <ChangeTradingMode selected="market">
+            <div></div>
+          </ChangeTradingMode>
           <TabsList className="">
             <TabsTrigger value="tab-1">
               <HouseIcon

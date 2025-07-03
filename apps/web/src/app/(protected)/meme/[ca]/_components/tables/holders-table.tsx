@@ -12,7 +12,7 @@ import type {
   TokenHolder,
   TokenMetadata,
   TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+} from "@repo/tokens/types";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { truncateString } from "~/lib/helpers/strings";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
@@ -77,7 +77,7 @@ export const tableColumns = (
             {/* Wallet address */}
             <CryptoHoverCard
               address={address}
-              bns={bns}
+              bns={bns as string}
               ft={ft as TokenSwapTransaction["wallet"]["fungible_tokens"][0]}
               decimals={token.decimals}
               valueUsd={calculateTokenValue(ft?.balance as string, token)}
@@ -121,7 +121,7 @@ export const tableColumns = (
   {
     accessorKey: "balance",
     header: "STX Balance",
-    cell: ({ row }) => {
+    cell: () => {
       return (
         <div className="text-xs font-geist-mono text-right xl:text-left">
           1.23k
@@ -292,7 +292,7 @@ export default function HoldersTable({
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full" orientation="both">
+        <ScrollArea className="h-full w-full">
           <div className={cn(isMobile ? "min-w-[800px]" : "")}>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (

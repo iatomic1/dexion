@@ -1,5 +1,5 @@
 "use client";
-import type { TokenMetadata } from "@repo/token-watcher/token.ts";
+import type { TokenMetadata } from "@repo/tokens/types";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import {
   Tooltip,
@@ -8,7 +8,6 @@ import {
 } from "@repo/ui/components/ui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
-import Image from "next/image";
 import { memo, useMemo } from "react";
 import { truncateString } from "~/lib/helpers/strings";
 import { getPulse } from "~/lib/queries/token-watcher";

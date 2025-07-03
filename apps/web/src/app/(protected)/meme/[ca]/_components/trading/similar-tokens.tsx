@@ -1,5 +1,5 @@
 "use client";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import {
   Avatar,
   AvatarImage,
@@ -18,7 +18,7 @@ import { formatRelativeTime } from "~/lib/helpers/dayjs";
 import { formatPrice } from "~/lib/helpers/numbers";
 
 export default function SimilarTokens({ token }: { token: TokenMetadata }) {
-  const { similarTokens, isLoading, isError } = useSimilarTokens(token);
+  const { similarTokens } = useSimilarTokens(token);
 
   const [isOpen, setIsOpen] = useState(true);
 

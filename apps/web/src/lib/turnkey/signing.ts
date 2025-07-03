@@ -112,6 +112,7 @@ export const sendStxWithTurnKey = async (
   }
 
   if (isSingleSig(unsignedTx.auth.spendingCondition)) {
+    // @ts-expect-error would fix later
     unsignedTx.auth.spendingCondition.signature = msgSig;
   } else {
     throw new Error("Only single-sig transactions are supported");

@@ -323,7 +323,19 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
                 </DrawerClose>
               </DrawerHeader>
               <div className="px-4 py-4 flex flex-col gap-4">
-                <TokenInfoContent {...tokenInfoProps} />
+                // @ts-expect-error Would fix later
+                <TokenInfoContent
+                  devHoldingPercentage={tokenInfoProps.devHoldingPercentage}
+                  isHoldersLoading={tokenInfoProps.isHoldersLoading}
+                  isLoading={tokenInfoProps.isLoading}
+                  isLoadingMetadata={tokenInfoProps.isLoadingMetadata}
+                  lockedLiquidityPercentage={
+                    tokenInfoProps.lockedLiquidityPercentage
+                  }
+                  token={tokenInfoProps.token}
+                  top10Holding={tokenInfoProps.top10Holding}
+                  totalPoints={tokenInfoProps.totalPoints as number}
+                />
               </div>
 
               {tokenInfoProps.token?.progress === 100 ||
@@ -356,7 +368,17 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col gap-4 pt-2">
-          <TokenInfoContent {...tokenInfoProps} />
+          <TokenInfoContent
+            // {...tokenInfoProps}
+            devHoldingPercentage={tokenInfoProps.devHoldingPercentage}
+            isHoldersLoading={tokenInfoProps.isHoldersLoading}
+            isLoading={tokenInfoProps.isLoading}
+            isLoadingMetadata={tokenInfoProps.isLoadingMetadata}
+            lockedLiquidityPercentage={tokenInfoProps.lockedLiquidityPercentage}
+            token={tokenInfoProps.token}
+            top10Holding={tokenInfoProps.top10Holding}
+            totalPoints={tokenInfoProps.totalPoints as number}
+          />
         </CollapsibleContent>
       </Collapsible>
     </>

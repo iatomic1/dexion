@@ -1,8 +1,8 @@
 "use server";
+import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
 import { Resend } from "resend";
 import { getOtpEmailHtml } from "./otp-template";
 import { getVerificationEmailHtml } from "./verify-email-template";
-import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -31,8 +31,9 @@ export const sendEmail = async (
             ? getOtpEmailHtml({ username: email, otp: otp })
             : "",
       react:
-        type === "forget-password" &&
-        ResetPasswordEmail({ resetPasswordLink: otp, userFirstname: email }),
+        type === "forget-password"
+          ? ResetPasswordEmail({ resetPasswordLink: otp, userFirstname: email })
+          : null,
     });
 
     if (error) {

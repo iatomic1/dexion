@@ -1,7 +1,6 @@
 "use server";
 import { bytesToHex } from "@stacks/common";
 import {
-  AnchorMode,
   broadcastTransaction,
   createMessageSignature,
   getAddressFromPublicKey,
@@ -43,7 +42,6 @@ export const sendStxWithTurnKey = async (
   const unsignedTx = await makeUnsignedSTXTokenTransfer({
     recipient: recipient,
     amount: 1n,
-    anchorMode: AnchorMode.Any,
     publicKey: walletPubKey,
     network: "mainnet",
   });
@@ -112,13 +110,15 @@ export const sendStxWithTurnKey = async (
   }
 
   if (isSingleSig(unsignedTx.auth.spendingCondition)) {
-    // @ts-expect-error would fix later
     unsignedTx.auth.spendingCondition.signature = msgSig;
   } else {
     throw new Error("Only single-sig transactions are supported");
   }
 
-  const txId = await broadcastTransaction(unsignedTx, "mainnet");
+  const txId = await broadcastTransaction({
+    transaction: unsignedTx,
+    network: "mainnet",
+  });
   console.log("Broadcasted TX ID:", txId);
   return txId;
 };

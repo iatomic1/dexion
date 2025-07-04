@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
-
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "~/lib/auth";
@@ -28,10 +27,7 @@ export default async function ProtectedLayout({
       <div className="hidden sm:block">
         <WatchListBanner />
       </div>
-      <PresetsContextProvider>
-        {children}
-        {/* <WalletTrackerSocketProvider>{children}</WalletTrackerSocketProvider> */}
-      </PresetsContextProvider>
+      <PresetsContextProvider>{children}</PresetsContextProvider>
       <SiteFooter />
     </BtcStxPriceProvider>
   );

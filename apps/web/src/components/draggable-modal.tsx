@@ -108,7 +108,6 @@ export function DraggableDialog({
         style={{ pointerEvents: "none" }}
       >
         <Draggable
-          // @ts-expect-error Lib Error
           nodeRef={nodeRef}
           handle=".drag-handle"
           bounds={bounds}

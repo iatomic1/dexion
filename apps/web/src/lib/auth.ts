@@ -1,4 +1,4 @@
-import { reverify } from "@better-auth-kit/reverify";
+// import { reverify } from "@better-auth-kit/reverify";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
@@ -139,7 +139,7 @@ export const auth = betterAuth({
 
   plugins: [
     openAPI(),
-    reverify(),
+    // reverify(),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         console.log(`Sending OTP ${otp} to ${email} for ${type}`);

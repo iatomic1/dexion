@@ -1,8 +1,19 @@
-import type * as Party from "partykit/server";
-import { getDevTokens, getHolders, getPools, getStxCityTokenMetadata, getStxCityTokenTrades, getTokenMetadata, getTrades } from "@repo/tokens/services";
-import { convertTransaction, transformToTokenMetadata } from "@repo/tokens/utils";
-import { getSocketClient } from "./socket";
+import {
+  getDevTokens,
+  getHolders,
+  getPools,
+  getStxCityTokenMetadata,
+  getStxCityTokenTrades,
+  getTokenMetadata,
+  getTrades,
+} from "@repo/tokens/services";
+import {
+  convertTransaction,
+  transformToTokenMetadata,
+} from "@repo/tokens/utils";
 import axios from "axios";
+import type * as Party from "partykit/server";
+import { getSocketClient } from "./socket";
 
 interface TokenData {
   token_y_contract: string;
@@ -25,7 +36,9 @@ export default class Server implements Party.Server {
       const sc = getSocketClient();
       const contractAddress = this.room.id.split(":")[1];
       sc.subscribeAddressTransactions(contractAddress, async (address, tx) => {
-        console.log(`Transaction update for room ${this.room.id}. Refetching and broadcasting.`);
+        console.log(
+          `Transaction update for room ${this.room.id}. Refetching and broadcasting.`,
+        );
         this.fetchAndSendData(contractAddress);
       });
     } catch (err) {
@@ -34,7 +47,9 @@ export default class Server implements Party.Server {
   }
 
   async onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
-    console.log(`Connected: id: ${conn.id} room: ${this.room.id} url: ${new URL(ctx.request.url).pathname}`);
+    console.log(
+      `Connected: id: ${conn.id} room: ${this.room.id} url: ${new URL(ctx.request.url).pathname}`,
+    );
     if (this.room.id.startsWith("token:")) {
       const contractAddress = this.room.id.split(":")[1];
       this.fetchAndSendData(contractAddress, conn);
@@ -60,47 +75,57 @@ export default class Server implements Party.Server {
   }
 
   async fetchAndSendData(contractAddress: string, conn?: Party.Connection) {
+    console.log("fetching and sending data");
     try {
-      const sourceResponse = await axios.get(`http://localhost:3008/source/${contractAddress}`);
+      const sourceResponse = await axios.get(
+        `http://localhost:3008/tokens/source/${contractAddress}`,
+      );
+      console.log(sourceResponse);
       const source = sourceResponse.data.source;
+      console.log(source);
 
-      if (source === 'stxcity') {
+      if (source === "stxcity") {
         const metadata = await getStxCityTokenMetadata(contractAddress, true);
         if (metadata) {
-            await this.handleStxCityToken(contractAddress, metadata, conn);
+          await this.handleStxCityToken(contractAddress, metadata, conn);
         } else {
-            this.sendError(contractAddress, "No metadata found", conn);
+          this.sendError(contractAddress, "No metadata found", conn);
         }
-      } else if (source === 'stxtools') {
+      } else if (source === "stxtools") {
         const metadata = await getTokenMetadata(contractAddress);
         if (metadata) {
-            await this.handleRegularToken(contractAddress, conn, metadata);
+          await this.handleRegularToken(contractAddress, conn, metadata);
         } else {
-            this.sendError(contractAddress, "No metadata found", conn);
+          this.sendError(contractAddress, "No metadata found", conn);
         }
       } else {
         // Fallback logic if source is not found
         let metadata = await getStxCityTokenMetadata(contractAddress, true);
         if (!metadata) {
-            metadata = await getTokenMetadata(contractAddress);
+          metadata = await getTokenMetadata(contractAddress);
         }
 
         if (metadata) {
-            if ("progress" in metadata) {
-                await this.handleStxCityToken(contractAddress, metadata, conn);
-            } else {
-                await this.handleRegularToken(contractAddress, conn, metadata);
-            }
+          if ("progress" in metadata) {
+            await this.handleStxCityToken(contractAddress, metadata, conn);
+          } else {
+            await this.handleRegularToken(contractAddress, conn, metadata);
+          }
         } else {
-            this.sendError(contractAddress, "No metadata found", conn);
+          this.sendError(contractAddress, "No metadata found", conn);
         }
       }
     } catch (err: any) {
+      console.log(err);
       this.sendError(contractAddress, err.message, conn);
     }
   }
 
-  private async handleStxCityToken(contractAddress: string, stxCityMetadata: any, conn?: Party.Connection) {
+  private async handleStxCityToken(
+    contractAddress: string,
+    stxCityMetadata: any,
+    conn?: Party.Connection,
+  ) {
     const token = transformToTokenMetadata(stxCityMetadata);
     if (stxCityMetadata.progress === 100) {
       await this.handleCompletedStxCityToken(contractAddress, token, conn);
@@ -109,7 +134,11 @@ export default class Server implements Party.Server {
     }
   }
 
-  private async handleCompletedStxCityToken(contractAddress: string, token: any, conn?: Party.Connection) {
+  private async handleCompletedStxCityToken(
+    contractAddress: string,
+    token: any,
+    conn?: Party.Connection,
+  ) {
     const tokenMetadata = await getTokenMetadata(contractAddress);
     const metadataToSend = tokenMetadata || token;
     this.sendMetadata(contractAddress, metadataToSend, conn);
@@ -118,20 +147,34 @@ export default class Server implements Party.Server {
     }
   }
 
-  private async handleIncompleteStxCityToken(contractAddress: string, token: any, conn?: Party.Connection) {
+  private async handleIncompleteStxCityToken(
+    contractAddress: string,
+    token: any,
+    conn?: Party.Connection,
+  ) {
     this.sendMetadata(contractAddress, token, conn);
     try {
-      const res = await getStxCityTokenTrades(token.dex_contract as string, token.contract_id);
+      const res = await getStxCityTokenTrades(
+        token.dex_contract as string,
+        token.contract_id,
+      );
       if (res.swapTXs?.length > 0) {
         const trades = this.transformStxCityTrades(res, token);
         this.sendTrades(contractAddress, trades, conn);
       }
     } catch (error) {
-      console.warn(`Failed to fetch STX City trades for ${contractAddress}:`, error);
+      console.warn(
+        `Failed to fetch STX City trades for ${contractAddress}:`,
+        error,
+      );
     }
   }
 
-  private async handleRegularToken(contractAddress: string, conn: Party.Connection | undefined, tokenMetadata: any) {
+  private async handleRegularToken(
+    contractAddress: string,
+    conn: Party.Connection | undefined,
+    tokenMetadata: any,
+  ) {
     if (tokenMetadata) {
       this.sendMetadata(contractAddress, tokenMetadata, conn);
       this.sendAllTokenData(contractAddress, conn);
@@ -186,7 +229,10 @@ export default class Server implements Party.Server {
       });
   }
 
-  private fetchAndSendHolders(contractAddress: string, conn?: Party.Connection) {
+  private fetchAndSendHolders(
+    contractAddress: string,
+    conn?: Party.Connection,
+  ) {
     getHolders(contractAddress)
       .then((holders) => {
         if (holders?.data) {
@@ -223,7 +269,11 @@ export default class Server implements Party.Server {
     }
   }
 
-  private sendMetadata(contract: string, tokenMetadata: any, conn?: Party.Connection) {
+  private sendMetadata(
+    contract: string,
+    tokenMetadata: any,
+    conn?: Party.Connection,
+  ) {
     this.sendMessage({ type: "metadata", contract, tokenMetadata }, conn);
   }
 
@@ -239,7 +289,11 @@ export default class Server implements Party.Server {
     this.sendMessage({ type: "holders", contract, holders }, conn);
   }
 
-  private sendDevTokens(contract: string, devTokens: any, conn?: Party.Connection) {
+  private sendDevTokens(
+    contract: string,
+    devTokens: any,
+    conn?: Party.Connection,
+  ) {
     this.sendMessage({ type: "devTokens", contract, devTokens }, conn);
   }
 

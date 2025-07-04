@@ -1,17 +1,21 @@
+import {
+  STX_CITY_API_BASE_URL,
+  STX_TOOLS_API_BASE_URL,
+} from "@repo/shared-constants/constants.ts";
 import axios from "axios";
-import { RedisClientType } from "redis";
-
-const STXTOOLS_API = "https://api.stxtools.io/tokens?page=0&size=4000";
-const STXCITY_API =
-  "https://stx.city/api/fetchFrontEnd/bondingData?page=1&limit=1000";
+import { type RedisClientType } from "redis";
 
 async function fetchStxToolsTokens() {
-  const response = await axios.get(STXTOOLS_API);
+  const response = await axios.get(
+    `${STX_TOOLS_API_BASE_URL}tokens?page=0&size=4000`,
+  );
   return response.data.data.map((token: any) => token.contract_id);
 }
 
 async function fetchStxCityTokens() {
-  const response = await axios.get(STXCITY_API);
+  const response = await axios.get(
+    `${STX_CITY_API_BASE_URL}fetchFrontEnd/bondingData?page=1&limit=1000`,
+  );
   return response.data.all;
 }
 

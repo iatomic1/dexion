@@ -1,5 +1,4 @@
 "use client";
-
 import { AuthUIProvider } from "@daveyplate/better-auth-ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -1,7 +1,7 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@repo/ui"],
-  reactStrictMode: false,
+  reactStrictMode: true,
+
   images: {
     remotePatterns: [
       {

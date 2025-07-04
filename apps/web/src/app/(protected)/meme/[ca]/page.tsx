@@ -11,5 +11,5 @@ export default async function MemeTokenPage(props: {
     notFound();
   }
 
-  return <TokenDetailPage ca={ca} />;
+  return <TokenDetailPage />;
 }

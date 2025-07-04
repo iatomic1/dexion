@@ -1,11 +1,24 @@
 import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
-import { BondingDataResult } from "@repo/token-watcher/stxcity.ts";
-import { TokenPoints, TokenLockedLiquidity } from "~/types/stxwatch";
+import {
+  ApiRes,
+  FilterTokenSwapTransaction,
+  TokenMetadata,
+} from "@repo/tokens/types";
+import { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
+
+type PulseResponse = {
+  trending: TokenMetadata[];
+  all: TokenMetadata[];
+  completed: TokenMetadata[];
+  limit: number;
+  new: TokenMetadata[];
+  page: number;
+  total: number;
+};
 
 export const getBatchTokenData = async (contract_ids: string[]) => {
   try {
-    const url = `${TOKEN_WATCHER_API_BASE_URL}get_batch_token_data`;
+    const url = `${TOKEN_WATCHER_API_BASE_URL}tokens/get_batch_token_data`;
     const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify({ contract_ids: contract_ids }),
@@ -73,7 +86,23 @@ export const getPulse = async () => {
 
     if (!res.ok) throw new Error(`Failed: ${res.status}`);
 
-    const data = (await res.json()) as BondingDataResult;
+    const data = (await res.json()) as PulseResponse;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getFilterTrades = async (address: string, poolId: string) => {
+  try {
+    const targetUrl = `${TOKEN_WATCHER_API_BASE_URL}tokens/pools/${poolId}/swaps?address=${address}`;
+
+    const res = await fetch(targetUrl);
+
+    if (!res.ok) throw new Error(`Failed: ${res.status}`);
+
+    const data = (await res.json()) as ApiRes<FilterTokenSwapTransaction>;
     return data;
   } catch (error) {
     console.error(error);

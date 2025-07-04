@@ -10,7 +10,9 @@ export default function AuthController() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [otpMail, setOtpMail] = useState("");
   const [otpOpen, setOtpOpen] = useState(false);
-  const [type, setType] = useState("");
+  const [type, setType] = useState<"email-verification" | "two-factor">(
+    "email-verification",
+  );
 
   const openSignUp = () => {
     setLoginOpen(false);
@@ -56,7 +58,7 @@ export default function AuthController() {
         open={otpOpen}
         onOpenChange={setOtpOpen}
         onSwitchToSignUp={openSignUp}
-        type={type && type !== "" ? type : "email-verification"}
+        type={type}
         mail={otpMail}
       />
     </div>

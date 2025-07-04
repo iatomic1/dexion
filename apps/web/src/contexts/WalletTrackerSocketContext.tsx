@@ -8,7 +8,6 @@ const PARTYKIT_HOST = "http://127.0.0.1:1999";
 
 export interface WalletTrackerSocketContextType {
   isConnected: boolean;
-  lastMessage: MessageEvent<any> | null;
 }
 
 const WalletTrackerContext = createContext<
@@ -38,14 +37,10 @@ export const WalletTrackerSocketProvider: React.FC<{ children: ReactNode }> = ({
     onClose: () => console.log("Disconnected from PartyKit"),
     onError: (error) => console.error("PartyKit error:", error),
     // Disable connection until we have a valid userId
-    options: {
-      startClosed: !userId,
-    },
   });
 
   const contextValue: WalletTrackerSocketContextType = {
     isConnected: userId ? socket.readyState === WebSocket.OPEN : false,
-    lastMessage: socket.lastMessage,
   };
 
   return (

@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 
 interface OtpModalProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (_open: boolean) => void;
   onSwitchToSignUp: () => void;
   mail: string;
   type: "email-verification" | "two-factor";

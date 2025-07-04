@@ -186,7 +186,9 @@ export const TokenSocketProvider = ({
           }
           break;
         case "devTokens":
-          setDevTokens(data?.devTokens?.length > 0 ? data.devTokens : null);
+          setDevTokens(
+            data?.devTokens && data.devTokens.length > 0 ? data.devTokens : [],
+          );
           setIsLoadingDevTokens(false);
           break;
         case "error":

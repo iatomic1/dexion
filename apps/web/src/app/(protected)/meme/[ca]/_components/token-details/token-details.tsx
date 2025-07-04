@@ -12,11 +12,7 @@ import MobileLayout from "./mobile-layout";
 import useMediaQuery from "~/hooks/useMediaQuery";
 import { TokenMetadata } from "@repo/tokens/types";
 
-interface TokenDetailPageProps {
-  ca: string;
-}
-
-export default function TokenDetailPage({ ca }: TokenDetailPageProps) {
+export default function TokenDetailPage() {
   const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
   const isMobile = useMediaQuery("(max-width: 640px)", {
     defaultValue: true, // Assume mobile-first

@@ -16,7 +16,7 @@ export default function useTimeoutFn(
   ms: number = 0,
 ): UseTimeoutFnReturn {
   const ready = useRef<boolean | null>(false);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(null);
   const callback = useRef(fn);
 
   const isReady = useCallback(() => ready.current, []);
@@ -27,7 +27,7 @@ export default function useTimeoutFn(
 
     timeout.current = setTimeout(() => {
       ready.current = true;
-      callback.current();
+      callback.current({});
     }, ms);
   }, [ms]);
 

@@ -20,14 +20,13 @@ import { toast } from "@repo/ui/components/ui/sonner";
 
 interface AvatarUploadProps {
   onUploadSuccess?: (url: string, fileId: string) => void;
-  currentAvatarUrl?: string;
+  currentAvatarUrl?: string | null;
   email: string;
 }
 
 export default function AvatarUpload({
   onUploadSuccess,
   currentAvatarUrl,
-  email,
 }: AvatarUploadProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>(currentAvatarUrl || "");
@@ -53,7 +52,7 @@ export default function AvatarUpload({
       const { signature, expire, token } = data;
       return { signature, expire, token };
     } catch (error) {
-      throw new Error(`Authentication request failed: ${error.message}`);
+      throw new Error(`Authentication request failed: ${(error as any).message}`);
     }
   };
 

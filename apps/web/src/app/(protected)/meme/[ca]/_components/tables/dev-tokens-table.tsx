@@ -41,7 +41,7 @@ export const tableColumns = (isMobile: boolean): ColumnDef<TokenMetadata>[] => [
   {
     accessorKey: "migrated",
     header: "Migrated",
-    cell: ({ row }) => {
+    cell: () => {
       return <div className="text-xs font-geist-mono xl:text-left">TBD</div>;
     },
   },

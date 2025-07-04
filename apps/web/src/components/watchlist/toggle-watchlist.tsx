@@ -15,6 +15,8 @@ import {
   deleteWatchlistAction,
   getUserWatchlist,
 } from "~/app/actions/watchlist-actions";
+import { ApiResponse } from "~/types";
+import { UserWatchlist } from "~/types/wallets";
 
 export function ToggleWatchlist({
   isMobile,
@@ -33,10 +35,10 @@ export function ToggleWatchlist({
 
   const {
     data: watchlist,
-    isLoading: isWatchlistLoading,
-    error: watchlistError,
-    isFetching: isWatchlistFetching,
-    isInitialLoading: isWatchlistInitialLoading,
+    // isLoading: isWatchlistLoading,
+    // error: watchlistError,
+    // isFetching: isWatchlistFetching,
+    // isInitialLoading: isWatchlistInitialLoading,
   } = useQuery({
     queryKey: ["watchlist"],
     queryFn: getUserWatchlist,
@@ -54,37 +56,41 @@ export function ToggleWatchlist({
   const handleWatchlistToggle = async () => {
     const isRemoving = watchlistItem && watchlistItem.ca === ca;
 
-    const promise = isRemoving
-      ? executeDelete({ id: watchlistItem.id as string }).then((data) => {
-          const res = data[0];
+    const promise = (
+      isRemoving
+        ? executeDelete({ id: watchlistItem.id as string }).then((data) => {
+            const res = data[0];
 
-          if (!res) {
-            throw new Error("Error occured when removing from watchlist");
-          }
+            if (!res) {
+              throw new Error("Error occured when removing from watchlist");
+            }
 
-          if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-            throw new Error("You are unauthorized to perform this action");
-          }
-          if (res.status === HTTP_STATUS.NOT_FOUND) {
-            throw new Error("You can't delete a watchlist that doesn't exist");
-          }
-          return res;
-        })
-      : executeAdd({ ca: ca }).then((data) => {
-          const res = data[0];
+            if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+              throw new Error("You are unauthorized to perform this action");
+            }
+            if (res.status === HTTP_STATUS.NOT_FOUND) {
+              throw new Error(
+                "You can't delete a watchlist that doesn't exist",
+              );
+            }
+            return res;
+          })
+        : executeAdd({ ca: ca }).then((data) => {
+            const res = data[0];
 
-          if (!res) {
-            throw new Error("Error occured when adding to watchlist");
-          }
+            if (!res) {
+              throw new Error("Error occured when adding to watchlist");
+            }
 
-          if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-            throw new Error("You are unauthorized to perform this action");
-          }
-          if (res.status === HTTP_STATUS.CONFLICT) {
-            throw new Error("Already in watchlist");
-          }
-          return res;
-        });
+            if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+              throw new Error("You are unauthorized to perform this action");
+            }
+            if (res.status === HTTP_STATUS.CONFLICT) {
+              throw new Error("Already in watchlist");
+            }
+            return res;
+          })
+    ) as Promise<ApiResponse<UserWatchlist>>;
 
     toast.promise(promise, {
       loading: isRemoving

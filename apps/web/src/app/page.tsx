@@ -14,8 +14,8 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";

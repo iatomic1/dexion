@@ -1,5 +1,5 @@
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import { Button } from "@repo/ui/components/ui/button";
 import {
   Tooltip,

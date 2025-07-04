@@ -17,7 +17,6 @@ import { cn } from "@repo/ui/lib/utils";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { useMediaQuery } from "./trade-details";
-import TokenAudit from "./trading/token-audit";
 import { truncateString } from "~/lib/helpers/strings";
 import {
   EXPLORER_BASE_URL,
@@ -134,7 +133,7 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
           <MetricItem
             label="c. supply"
             value={
-              token.bc === "stxcity" && token.progress < 100
+              token.bc === "stxcity" && (token?.progress ?? 0) < 100
                 ? formatPrice(Number(token.circulating_supply))
                 : formatPrice(
                     Number(token.circulating_supply) / 10 ** token.decimals,

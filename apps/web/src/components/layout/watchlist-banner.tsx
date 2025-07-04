@@ -64,7 +64,7 @@ export const WatchListBanner = () => {
       <div className="flex items-center flex-row gap-2 py-1 px-1 border-b border-b-border">
         {tokens.map((token) => (
           <WatchListItem
-            key={token.contract_id || token.symbol}
+            key={token.contract_id || token.symbol || token.watchlistId}
             token={token}
             watchlistId={token.watchlistId as string}
             isRefetching={isFetching}
@@ -120,11 +120,17 @@ const WatchListItem = ({
     await executeDelete({ id: watchlistId });
   };
 
+  // Safe access to token properties
+  const contractId = token?.contract_id;
+  const symbol = token?.symbol;
+  const imageUrl = token?.image_url;
+  const marketcap = token?.metrics?.marketcap_usd || 0;
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="relative">
-          <Link href={`/meme/${token.contract_id}`}>
+          <Link href={`/meme/${contractId}`}>
             <Button
               variant="ghost"
               size="sm"
@@ -132,18 +138,18 @@ const WatchListItem = ({
             >
               <Avatar className="h-4 w-4">
                 <AvatarImage
-                  src={token.image_url || "/placeholder.svg"}
-                  alt={token.symbol}
+                  src={imageUrl || "/placeholder.svg"}
+                  alt={symbol || "Token"}
                 />
                 <AvatarFallback className="text-xs">
-                  {token.symbol.charAt(0).toUpperCase()}
+                  {symbol?.charAt(0).toUpperCase() || "?"}
                 </AvatarFallback>
               </Avatar>
               <span className="uppercase text-xs font-medium">
-                {token.symbol}
+                {symbol || "Unknown"}
               </span>
               <span className="text-xs text-muted-foreground">
-                ${formatPrice(token.metrics.marketcap_usd)}
+                ${formatPrice(marketcap)}
               </span>
             </Button>
           </Link>

@@ -1,9 +1,9 @@
+import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import { useQuery } from "@tanstack/react-query";
 import type { CryptoAsset } from "~/types/xverse";
-import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 
 const fetchBtcAndStxPrices = async (): Promise<CryptoAsset[]> => {
-  const res = await fetch(`${TOKEN_WATCHER_API_BASE_URL}btcstx`);
+  const res = await fetch(`${TOKEN_WATCHER_API_BASE_URL}market/btcstx`);
 
   if (!res.ok) {
     throw new Error("Error fetching stx and btc prices");

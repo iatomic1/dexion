@@ -7,7 +7,7 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT as string,
 });
 
-export async function GET(request) {
+export async function GET() {
   const authParams = imagekit.getAuthenticationParameters();
   return NextResponse.json(authParams);
 }

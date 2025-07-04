@@ -1,11 +1,8 @@
 "use client";
 
-import TokenAudit from "./token-audit";
-import PresetTabs from "./preset-tabs";
 import { DexBanner } from "./dex-banner";
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 import Pools from "./pools";
-import TradingInterfaceDesktop from "./trading-interface-desktop";
 
 interface TradingPanelProps {
   token: TokenMetadata;

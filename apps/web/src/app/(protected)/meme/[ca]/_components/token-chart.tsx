@@ -1,11 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
 
 declare global {
-  interface Window {
-    TradingView: any;
-  }
+  // interface Window {
+  //   TradingView: any;
+  // }
 }
 
 interface TokenChartProps {
@@ -14,7 +13,7 @@ interface TokenChartProps {
 
 export default function TokenChart({ tokenSymbol }: TokenChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [timeframe, setTimeframe] = useState("1D");
+  // const [timeframe, setTimeframe] = useState("1D");
   const [widgetInstance, setWidgetInstance] = useState<any>(null);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
         const widget = new window.TradingView.widget({
           autosize: true,
           symbol: `BINANCE:BTCUSDT`, // In a real app, use the actual token symbol
-          interval: timeframe,
+          // interval: timeframe,
           timezone: "Etc/UTC",
           theme: "dark",
           style: "1",
@@ -73,7 +72,7 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
         // TradingView handles cleanup
       }
     };
-  }, [tokenSymbol, timeframe]);
+  }, [tokenSymbol]);
 
   return (
     <div className="flex h-full flex-col">

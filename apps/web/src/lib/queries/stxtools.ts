@@ -3,7 +3,7 @@ import {
   ApiRes,
   FilterTokenSwapTransaction,
   TokenMetadata,
-} from "@repo/token-watcher/token.ts";
+} from "@repo/tokens/types";
 
 export const getTokenMetadata = async (
   ca: string,

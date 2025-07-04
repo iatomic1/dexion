@@ -48,7 +48,7 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
           <div className="text-center">
             <div className="mx-auto mb-4 inline-block rounded-lg p-4">
               {state.totpUri ? (
-                <QRCode value={state.totpUri} size={180} />
+                <QRCode title="QRCODE" value={state.totpUri} size={180} />
               ) : (
                 <div className="h-40 w-40 flex items-center justify-center bg-gray-100">
                   <span className="text-sm text-gray-500">

@@ -1,8 +1,4 @@
-import {
-  TokenHolder,
-  TokenMetadata,
-  TokenSwapTransaction,
-} from "@repo/token-watcher/token.ts";
+import { TokenMetadata, TokenSwapTransaction, TokenHolder } from "@repo/tokens/types";
 import { formatPrice } from "../helpers/numbers";
 import { TokenLockedLiquidity } from "~/types/stxwatch";
 import { AddressBalanceResponse } from "~/types/hiro/balance";

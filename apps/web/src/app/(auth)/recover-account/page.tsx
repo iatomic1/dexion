@@ -50,21 +50,21 @@ export default function RecoverAccountPage() {
       return;
     }
 
-    // Validate password length
-    if (password.length < 4) {
+    // Validate password length - Fixed: should be 8 characters, not 4
+    if (password.length < 8) {
       setError("Password must be at least 8 characters long");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const { data, error: resetError } = await authClient.resetPassword(
+      const { error: resetError } = await authClient.resetPassword(
         {
           newPassword: password,
           token: token as string,
         },
         {
-          async onSuccess(ctx) {
+          async onSuccess() {
             await authClient.revokeSessions();
             setIsSuccess(true);
             toast.success("Password updated");
@@ -129,7 +129,7 @@ export default function RecoverAccountPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={4}
+                minLength={8}
                 aria-invalid={error ? "true" : "false"}
                 className="rounded-full"
               />
@@ -140,7 +140,7 @@ export default function RecoverAccountPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                minLength={4}
+                minLength={8}
                 aria-invalid={error ? "true" : "false"}
                 className="rounded-full"
               />

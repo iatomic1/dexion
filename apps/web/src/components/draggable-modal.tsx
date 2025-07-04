@@ -25,7 +25,6 @@ export function DraggableDialog({
 }: DraggableDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
-  // Fix: Use HTMLDivElement instead of HTMLElement | null
   const nodeRef = React.useRef<HTMLDivElement>(null);
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const [bounds, setBounds] = React.useState({
@@ -108,7 +107,6 @@ export function DraggableDialog({
         style={{ pointerEvents: "none" }}
       >
         <Draggable
-          // @ts-expect-error Lib Error
           nodeRef={nodeRef}
           handle=".drag-handle"
           bounds={bounds}

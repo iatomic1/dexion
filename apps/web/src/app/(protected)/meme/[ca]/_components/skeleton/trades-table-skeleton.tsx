@@ -89,7 +89,7 @@ export default function TradesTableSkeleton() {
 
       {/* Body */}
       <div className="relative flex-1 overflow-hidden">
-        <ScrollArea className="h-full w-full" orientation="both">
+        <ScrollArea className="h-full w-full">
           <div className={cn(isMobile ? "min-w-[800px]" : "")}>
             {skeletonRows.map((_, index) => (
               <div

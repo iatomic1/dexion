@@ -1,4 +1,4 @@
-import { TokenMetadata } from "@repo/token-watcher/token.ts";
+import { TokenMetadata } from "@repo/tokens/types";
 
 /**
  * Describes all transaction types on Stacks 2.0 blockchain

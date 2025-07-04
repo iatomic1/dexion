@@ -5,7 +5,7 @@ import { useEffect } from "react";
  * @param {string} title - new title
  */
 export default function useDocumentTitle(title: string) {
-  useEffect(() => {
-    document.title = title;
-  }, [title]);
+	useEffect(() => {
+		document.title = title;
+	}, [title]);
 }

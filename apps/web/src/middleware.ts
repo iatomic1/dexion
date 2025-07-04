@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
-  if (!sessionCookie) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+	const sessionCookie = getSessionCookie(request);
+	if (!sessionCookie) {
+		return NextResponse.redirect(new URL("/", request.url));
+	}
 
-  return NextResponse.next();
+	return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/meme/:path*", "/portfolio"],
+	matcher: ["/meme/:path*", "/portfolio"],
 };

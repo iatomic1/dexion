@@ -1,3 +1,3 @@
 export default function openInNewPage(url: string) {
-  window.open(url, "_blank", "noopener,noreferrer");
+	window.open(url, "_blank", "noopener,noreferrer");
 }

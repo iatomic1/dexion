@@ -21,6 +21,9 @@ import { useTimer } from "react-timer-hook";
 import useLocalStorage from "~/hooks/useLocalStorage"; // Adjust path as needed
 import { authClient } from "~/lib/auth-client";
 
+// Extract timeout constant
+const RESEND_TIMEOUT_SECONDS = 48;
+
 interface OtpModalProps {
 	open: boolean;
 	onOpenChange: (_open: boolean) => void;
@@ -45,7 +48,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 	const getExpiryTimestamp = () => {
 		if (timerStartTime) {
 			const elapsed = (Date.now() - timerStartTime) / 1000;
-			const remaining = Math.max(0, 48 - elapsed);
+			const remaining = Math.max(0, RESEND_TIMEOUT_SECONDS - elapsed);
 
 			if (remaining > 0) {
 				// Return future timestamp
@@ -55,10 +58,10 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 		// No saved time or expired, start fresh
 		const newStartTime = Date.now();
 		setTimerStartTime(newStartTime);
-		return new Date(Date.now() + 48 * 1000);
+		return new Date(Date.now() + RESEND_TIMEOUT_SECONDS * 1000);
 	};
 
-	const { totalSeconds, pause, restart } = useTimer({
+	const { seconds, minutes, pause, restart } = useTimer({
 		expiryTimestamp: getExpiryTimestamp(),
 		onExpire: () => {
 			console.log("Timer expired");
@@ -67,6 +70,8 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 		autoStart: true,
 	});
 
+	// Calculate total seconds from minutes and seconds
+	const totalSeconds = minutes * 60 + seconds;
 	const canResend = totalSeconds <= 0;
 
 	const handleResend = async () => {
@@ -119,7 +124,9 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 			if (success) {
 				const newStartTime = Date.now();
 				setTimerStartTime(newStartTime);
-				const newExpiryTime = new Date(Date.now() + 48 * 1000);
+				const newExpiryTime = new Date(
+					Date.now() + RESEND_TIMEOUT_SECONDS * 1000,
+				);
 				restart(newExpiryTime);
 				setValue(""); // Clear current input
 			}
@@ -156,7 +163,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 	useEffect(() => {
 		if (open && timerStartTime) {
 			const elapsed = (Date.now() - timerStartTime) / 1000;
-			const remaining = Math.max(0, 48 - elapsed);
+			const remaining = Math.max(0, RESEND_TIMEOUT_SECONDS - elapsed);
 
 			if (remaining > 0) {
 				const newExpiryTime = new Date(Date.now() + remaining * 1000);

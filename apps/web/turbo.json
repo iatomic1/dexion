@@ -1,0 +1,30 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "passThroughEnv": [
+        "ACCESS_JWT_KEY",
+        "JWT_SECRET",
+        "NEXT_PUBLIC_BASE_URL",
+        "REFRESH_JWT_KEY",
+        "STX_WATCH_API_KEY",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "DB_URL",
+        "RESEND_API_KEY",
+        "NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY",
+        "NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT",
+        "IMAGEKIT_PRIVATE_KEY",
+        "NEXT_PUBLIC_ORGANIZATION_ID",
+        "TURNKEY_API_PUBLIC_KEY",
+        "TURNKEY_API_PRIVATE_KEY",
+        "NEXT_PUBLIC_BASE_URL",
+        "TEST_WALLET_ID",
+        "TEST_SUB_ORG_ID",
+        "TEST_WALLET_ADDRESS",
+        "TEST_WALLET_PUBLIC_KEY",
+        "TEST_EMAIL"
+      ]
+    }
+  }
+}

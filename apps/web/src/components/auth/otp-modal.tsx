@@ -1,5 +1,4 @@
-// First install: bun add react-timer-hook
-
+"use client";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Dialog,
@@ -19,6 +18,7 @@ import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
+import useLocalStorage from "~/hooks/useLocalStorage"; // Adjust path as needed
 import { authClient } from "~/lib/auth-client";
 
 interface OtpModalProps {
@@ -37,12 +37,14 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 
 	const timerKey = `otp_timer_${mail}_${type}`;
 
+	// Use the custom hook for localStorage
+	const [timerStartTime, setTimerStartTime, removeTimerStartTime] =
+		useLocalStorage<number | null>(timerKey, null);
+
 	// Get persisted timer or create new one
 	const getExpiryTimestamp = () => {
-		const savedTime = localStorage.getItem(timerKey);
-		if (savedTime) {
-			const startTime = Number.parseInt(savedTime);
-			const elapsed = (Date.now() - startTime) / 1000;
+		if (timerStartTime) {
+			const elapsed = (Date.now() - timerStartTime) / 1000;
 			const remaining = Math.max(0, 48 - elapsed);
 
 			if (remaining > 0) {
@@ -52,7 +54,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 		}
 		// No saved time or expired, start fresh
 		const newStartTime = Date.now();
-		localStorage.setItem(timerKey, newStartTime.toString());
+		setTimerStartTime(newStartTime);
 		return new Date(Date.now() + 48 * 1000);
 	};
 
@@ -60,7 +62,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 		expiryTimestamp: getExpiryTimestamp(),
 		onExpire: () => {
 			console.log("Timer expired");
-			localStorage.removeItem(timerKey);
+			removeTimerStartTime();
 		},
 		autoStart: true,
 	});
@@ -116,7 +118,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 			// Only restart timer and clear input if API call was successful
 			if (success) {
 				const newStartTime = Date.now();
-				localStorage.setItem(timerKey, newStartTime.toString());
+				setTimerStartTime(newStartTime);
 				const newExpiryTime = new Date(Date.now() + 48 * 1000);
 				restart(newExpiryTime);
 				setValue(""); // Clear current input
@@ -152,20 +154,16 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 
 	// Initialize timer when modal opens
 	useEffect(() => {
-		if (open) {
-			const savedTime = localStorage.getItem(timerKey);
-			if (savedTime) {
-				const startTime = Number.parseInt(savedTime);
-				const elapsed = (Date.now() - startTime) / 1000;
-				const remaining = Math.max(0, 48 - elapsed);
+		if (open && timerStartTime) {
+			const elapsed = (Date.now() - timerStartTime) / 1000;
+			const remaining = Math.max(0, 48 - elapsed);
 
-				if (remaining > 0) {
-					const newExpiryTime = new Date(Date.now() + remaining * 1000);
-					restart(newExpiryTime);
-				}
+			if (remaining > 0) {
+				const newExpiryTime = new Date(Date.now() + remaining * 1000);
+				restart(newExpiryTime);
 			}
 		}
-	}, [open]);
+	}, [open, timerStartTime, restart]);
 
 	const handleSubmit = async () => {
 		try {
@@ -177,7 +175,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 					{
 						onSuccess: () => {
 							toast.success("Authenticated");
-							localStorage.removeItem(timerKey);
+							removeTimerStartTime();
 							pause(); // Stop timer
 							onOpenChange(false);
 						},
@@ -197,7 +195,7 @@ export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
 					{
 						onSuccess() {
 							toast.success("Authenticated");
-							localStorage.removeItem(timerKey);
+							removeTimerStartTime();
 							pause(); // Stop timer
 							router.push("/portfolio");
 						},

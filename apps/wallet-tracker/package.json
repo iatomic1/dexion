@@ -13,6 +13,7 @@
   "dependencies": {
     "@stacks/blockchain-api-client": "^8.11.2",
     "@repo/notifier": "workspace:*",
+    "@repo/tokens": "workspace:*",
     "@repo/shared-constants": "workspace:*",
     "ioredis": "^5.6.1",
     "partykit": "^0.0.115",

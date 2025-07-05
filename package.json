@@ -3,7 +3,7 @@
   "packageManager": "bun@1.2.12",
   "version": "1.4.3",
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
+    "@biomejs/biome": "2.0.0",
     "@repo/typescript-config": "workspace:*",
     "prettier": "^3.3.3",
     "turbo": "2.1.1"
@@ -17,7 +17,6 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ui": "bun --filter @repo/ui ui"
   },
   "workspaces": [

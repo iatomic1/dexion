@@ -1,38 +1,38 @@
 export interface TokenPoints {
-  total_points: number;
-  price_points: number;
-  volume_points: number;
-  social_points: number;
-  swap_points: number;
-  holder_points: number;
-  liquidity_rating_points: number;
-  holder_concentration_points: number;
-  holder_distribution_points: number;
-  wallet_diversity_points: number;
-  verification_points: number;
-  holder_networth_points: number;
-  holder_change_points: number;
-  diamondHands_points: number;
-  repeatBuyers_points: number;
-  loyalHolders_points: number;
-  paperHands_points: number;
-  holdersAtProfit_points: number;
-  holdersAtLoss_points: number;
-  bnsHolders_points: number;
-  top100_reach_points: number;
-  top250_reach_points: number;
-  top500_reach_points: number;
-  all_reach_points: number;
-  locked_liquidity_points: number;
-  wallet_diversity_points_all: number;
+	total_points: number;
+	price_points: number;
+	volume_points: number;
+	social_points: number;
+	swap_points: number;
+	holder_points: number;
+	liquidity_rating_points: number;
+	holder_concentration_points: number;
+	holder_distribution_points: number;
+	wallet_diversity_points: number;
+	verification_points: number;
+	holder_networth_points: number;
+	holder_change_points: number;
+	diamondHands_points: number;
+	repeatBuyers_points: number;
+	loyalHolders_points: number;
+	paperHands_points: number;
+	holdersAtProfit_points: number;
+	holdersAtLoss_points: number;
+	bnsHolders_points: number;
+	top100_reach_points: number;
+	top250_reach_points: number;
+	top500_reach_points: number;
+	all_reach_points: number;
+	locked_liquidity_points: number;
+	wallet_diversity_points_all: number;
 }
 
 export interface TokenLockedLiquidity {
-  contract_id: string;
-  locked_velar: number;
-  locked_evil: number;
-  locked_alex: number;
-  total_liquidity: number;
+	contract_id: string;
+	locked_velar: number;
+	locked_evil: number;
+	locked_alex: number;
+	total_liquidity: number;
 }
 // export interface {
 //     "total_points": 47,

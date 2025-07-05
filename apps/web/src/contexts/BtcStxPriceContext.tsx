@@ -1,44 +1,45 @@
 "use client";
-import React, { createContext, useContext, ReactNode } from "react";
+import type React from "react";
+import { createContext, type ReactNode, useContext } from "react";
 import { usePrices } from "~/hooks/useBtcStxPrices";
 import type { CryptoAsset } from "~/types/xverse";
 
 interface PriceContextType {
-  prices: CryptoAsset[] | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  error: Error | null;
-  refetch: () => void;
+	prices: CryptoAsset[] | undefined;
+	isLoading: boolean;
+	isError: boolean;
+	error: Error | null;
+	refetch: () => void;
 }
 
 const PriceContext = createContext<PriceContextType | undefined>(undefined);
 
 interface PriceProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 export const BtcStxPriceProvider: React.FC<PriceProviderProps> = ({
-  children,
+	children,
 }) => {
-  const { data: prices, isLoading, isError, error, refetch } = usePrices();
+	const { data: prices, isLoading, isError, error, refetch } = usePrices();
 
-  const value = {
-    prices,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  };
+	const value = {
+		prices,
+		isLoading,
+		isError,
+		error,
+		refetch,
+	};
 
-  return (
-    <PriceContext.Provider value={value}>{children}</PriceContext.Provider>
-  );
+	return (
+		<PriceContext.Provider value={value}>{children}</PriceContext.Provider>
+	);
 };
 
 export const useBtcStxPriceContext = () => {
-  const context = useContext(PriceContext);
-  if (context === undefined) {
-    throw new Error("usePriceContext must be used within a PriceProvider");
-  }
-  return context;
+	const context = useContext(PriceContext);
+	if (context === undefined) {
+		throw new Error("usePriceContext must be used within a PriceProvider");
+	}
+	return context;
 };

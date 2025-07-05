@@ -1,4 +1,4 @@
 const siteConfig = {
-  title: "Dexion",
+	title: "Dexion",
 };
 export default siteConfig;

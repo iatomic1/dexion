@@ -41,14 +41,14 @@ export const generateTelegramMessage = async (
 			if (received.asset === "STX") {
 				const sentTokenData = await getTokenMetadata(sentContractID);
 				title = `🔴 <a href="${EXPLORER_BASE_URL}txid/${structuredMessage.txId}">SELL</a> <a href="${STX_TOOLS_API_BASE_URL}/tokens/${sent.contractId}">${sent.asset}</a> on ${protocol}`;
-				action = `${nicknameLink} swapped ~${sent.amount} <a href="${STX_TOOLS_API_BASE_URL}/tokens/${sent.contractId}">${sent.asset}</a> for ~${received.amount} ${received.asset}
+				action = `${nicknameLink} swapped ~${sent.amount} <a href="${STX_TOOLS_API_BASE_URL}/tokens/${sent.contractId}">${sent.asset}</a> for ~${received.amount} ${received.asset}\n
 <a href="${STX_TOOLS_API_BASE_URL}/tokens/${sent.contractId}">${sent.asset}</a> | <b>MC</b> $${formatPrice(sentTokenData?.metrics.marketcap_usd)} | <a href="https://dexion.pro/meme/${sent.contractId}">DEXION</a>
 <code>${sent.contractId}</code>
 				`;
 			} else if (sent.asset === "STX") {
 				const receivedTokenData = await getTokenMetadata(receiveContractID);
 				title = `🟢 <a href="${EXPLORER_BASE_URL}txid/${structuredMessage.txId}">BUY</a> <a href="${STX_TOOLS_API_BASE_URL}/tokens/${received.contractId}">${received.asset}</a> on ${protocol}`;
-				action = `${nicknameLink} swapped ~${sent.amount} ${sent.asset} for ~${received.amount} <a href="${STX_TOOLS_API_BASE_URL}/tokens/${received.contractId}">${received.asset}</a>
+				action = `${nicknameLink} swapped ~${sent.amount} ${sent.asset} for ~${received.amount} <a href="${STX_TOOLS_API_BASE_URL}/tokens/${received.contractId}">${received.asset}</a>\n
 <a href="${STX_TOOLS_API_BASE_URL}/tokens/${received.contractId}">${received.asset}</a> | <b>MC</b> $${formatPrice(receivedTokenData?.metrics.marketcap_usd)} | <a href="https://dexion.pro/meme/${received.contractId}">DEXION</a>
 <code>${received.contractId}</code>
 				`;

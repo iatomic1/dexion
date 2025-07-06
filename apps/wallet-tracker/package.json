@@ -9,7 +9,8 @@
 	},
 	"scripts": {
 		"dev": "bun run src/index.ts",
-		"lint": "bunx biome check ./"
+		"lint": "bunx biome check ./",
+		"test": "bun test"
 	},
 	"dependencies": {
 		"@stacks/blockchain-api-client": "^8.11.2",

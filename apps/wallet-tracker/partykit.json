@@ -1,6 +1,0 @@
-{
-  "name": "wallet-tracker",
-  "main": "src/party/server.ts",
-  "port": 4002,
-  "compatibilityDate": "2025-06-17"
-}

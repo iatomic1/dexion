@@ -3,7 +3,7 @@ import {
 	STX_TOOLS_API_BASE_URL,
 } from "@repo/shared-constants/constants.ts";
 import { getTokenMetadata } from "@repo/tokens/services";
-import { formatPrice } from "./utils";
+import { formatPrice } from "../common/utils";
 
 const shortAddress = (address: string) => {
 	return `${address.substring(0, 6)}...${address.substring(

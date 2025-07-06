@@ -6,7 +6,16 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/node_modules/**",
+      "!**/coverage/**",
+      "!**/temp/**",
+      "!**/migrations/**"
+    ]
   },
   "formatter": {
     "enabled": true,

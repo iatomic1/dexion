@@ -36,6 +36,17 @@ pre-push:
           echo '🔨❌ Push blocked! Fix linting errors before pushing. 🔨❌'
           exit 1
         fi
+    lint-wallet-tracker:
+      glob: "apps/wallet-tracker/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: |
+        bunx biome check --write --diagnostic-level=error {staged_files}
+        if [ $? -eq 0 ]; then
+          echo '🎉 No error found: committing this now.... ✨🚀🏄‍♂️🍻'
+        else
+          echo '🔨❌ Yoo, you have a problem in your code. Check linter 🔨❌'
+          echo '          Run bunx biome check --write --diagnostic-level=error, add changes and try commit again.'
+          exit 1
+        fi
 
     build:
       glob: "apps/web/**/*"

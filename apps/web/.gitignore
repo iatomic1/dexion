@@ -1,2 +1,4 @@
 .vercel
 extract-env-keys.ts
+
+.trigger

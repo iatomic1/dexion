@@ -1,12 +1,14 @@
 "use server";
 import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
 import { Resend } from "resend";
-import type { EmailType, ResendEmailData, ResendError } from "~/types/email";
+import type { EmailType } from "~/types/email";
 import { getOtpEmailHtml } from "./otp-template";
 import { getVerificationEmailHtml } from "./verify-email-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
+export interface ResendEmailData {
+	id: string;
+}
 export const sendEmail = async (
 	email: string,
 	type: EmailType,

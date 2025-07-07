@@ -23,6 +23,7 @@
         "TEST_SUB_ORG_ID",
         "TEST_WALLET_ADDRESS",
         "TEST_WALLET_PUBLIC_KEY",
+        "TRIGGER_SECRET_KEY",
         "TEST_EMAIL"
       ]
     }

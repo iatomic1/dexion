@@ -11,9 +11,11 @@ import {
 	twoFactor,
 } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
+import { sendEmailWithTrigger } from "~/trigger/send-email";
+import { EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
-import { sendEmail } from "./email/send";
+import { handleEmailSendingImmediate } from "./utils/email";
 
 export const auth = betterAuth({
 	appName: "Dexion Pro",
@@ -50,7 +52,6 @@ export const auth = betterAuth({
 				returned: true,
 				unique: true,
 			},
-
 			walletAddress: {
 				type: "string",
 				required: false,
@@ -76,7 +77,6 @@ export const auth = betterAuth({
 				return;
 			console.log(ctx.context.newSession, "from session");
 			const { emailVerified, id, email } = ctx.context.newSession.user;
-
 			if (emailVerified) {
 				// Use Created values for testing for now
 				if (email === process.env.TEST_EMAIL) {
@@ -91,7 +91,6 @@ export const auth = betterAuth({
 						})
 						.where(eq(user.id, id));
 				}
-
 				// const res = await createSubOrganization(ctx.context.newSession.user);
 				// await db
 				//   .update(user)
@@ -125,7 +124,13 @@ export const auth = betterAuth({
 		autoSignIn: true,
 		minPasswordLength: 4,
 		sendResetPassword: async ({ user, url }) => {
-			await sendEmail(user.email, "forget-password", url);
+			try {
+				await handleEmailSendingImmediate(user.email, "forget-password", url);
+			} catch (error) {
+				console.error("Failed to send reset password email:", error);
+				// Re-throw to let better-auth handle the error
+				throw new Error("Failed to send reset password email");
+			}
 		},
 		revokeSessionsOnPasswordReset: true,
 		resetPasswordTokenExpiresIn: 10 * 60,
@@ -136,14 +141,19 @@ export const auth = betterAuth({
 			console.log(user, request, "from onEmailVerification");
 		},
 	},
-
 	plugins: [
 		openAPI(),
 		// reverify(),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				console.log(`Sending OTP ${otp} to ${email} for ${type}`);
-				await sendEmail(email, type, otp);
+				try {
+					await handleEmailSendingImmediate(email, type, otp);
+				} catch (error) {
+					console.error("Failed to send verification OTP:", error);
+					// Re-throw to let better-auth handle the error
+					throw new Error("Failed to send verification OTP");
+				}
 			},
 			expiresIn: 300,
 			otpLength: 6,
@@ -160,7 +170,13 @@ export const auth = betterAuth({
 			otpOptions: {
 				async sendOTP(data) {
 					const user = data.user;
-					await sendEmail(user.email, "sign-in", data.otp);
+					try {
+						await handleEmailSendingImmediate(user.email, "sign-in", data.otp);
+					} catch (error) {
+						console.error("Failed to send 2FA OTP:", error);
+						// Re-throw to let better-auth handle the error
+						throw new Error("Failed to send 2FA OTP");
+					}
 				},
 				digits: 6,
 			},

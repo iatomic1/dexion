@@ -32,7 +32,12 @@ interface OtpModalProps {
 	type: "email-verification" | "two-factor";
 }
 
-export function OtpModal({ open, onOpenChange, mail, type }: OtpModalProps) {
+export default function OtpModal({
+	open,
+	onOpenChange,
+	mail,
+	type,
+}: OtpModalProps) {
 	const [value, setValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [isResending, setIsResending] = useState(false);

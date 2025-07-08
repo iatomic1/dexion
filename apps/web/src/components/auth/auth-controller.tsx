@@ -1,9 +1,12 @@
 "use client";
 import { Button } from "@repo/ui/components/ui/button";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { LoginModal } from "./login-modal";
-import { OtpModal } from "./otp-modal";
+// import { OtpModal } from "./otp-modal";
 import { SignUpModal } from "./signup-modal";
+
+const OtpModal = dynamic(() => import("./otp-modal"), { ssr: false });
 
 export default function AuthController() {
 	const [signUpOpen, setSignUpOpen] = useState(false);

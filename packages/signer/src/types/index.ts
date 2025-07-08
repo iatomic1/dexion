@@ -11,9 +11,9 @@ export interface SignerConfig {
 }
 
 export interface TransactionTypeMap {
-	contractCall: UnsignedContractCallOptions;
-	tokenTransfer: UnsignedTokenTransferOptions;
-	smartContract: UnsignedContractDeployOptions;
+	contractCall: Omit<UnsignedContractCallOptions, "network" | "publicKey">;
+	tokenTransfer: Omit<UnsignedTokenTransferOptions, "network" | "publicKey">;
+	smartContract: Omit<UnsignedContractDeployOptions, "network" | "publicKey">;
 }
 
 export interface WalletConfig {

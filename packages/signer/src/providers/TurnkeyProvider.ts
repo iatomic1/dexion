@@ -7,11 +7,7 @@ import { type Session } from "@turnkey/sdk-types";
 // import { turnkeyConfig } from "../config";
 import { TurnkeyError } from "../errors";
 import type { SignerConfig } from "../types";
-import type {
-	SigningResult,
-	TurnkeyAccount,
-	TurnkeyWallet,
-} from "../types/turnkey";
+import type { SigningResult } from "../types/turnkey";
 
 export class TurnkeyProvider {
 	private turnkey: TurnkeyApiClient;
@@ -30,14 +26,17 @@ export class TurnkeyProvider {
 		return this.userConfig;
 	}
 
-	async signRawPayload(
+	async signTX(
 		payload: string,
-		address: string,
+		pubKey: string,
+		organizationId: string,
 	): Promise<SigningResult> {
 		try {
+			console.log("signing with pubKey", pubKey);
 			const signature = await this.turnkey.signRawPayload({
 				payload,
-				signWith: address,
+				organizationId,
+				signWith: pubKey,
 				encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
 				hashFunction: "HASH_FUNCTION_NO_OP",
 			});

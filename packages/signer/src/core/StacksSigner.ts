@@ -47,6 +47,7 @@ export class StacksSigner extends BaseSigner {
 			this.validateParams(type, params);
 
 			const account = await this.turnkeyProvider.getAccount();
+			console.log(account);
 			if (!account) {
 				throw new SigningError("No Ethereum account found");
 			}
@@ -60,9 +61,10 @@ export class StacksSigner extends BaseSigner {
 			);
 			const payload = `0x${preSignSigHash}`;
 
-			const signature = await this.turnkeyProvider.signRawPayload(
+			const signature = await this.turnkeyProvider.signTX(
 				payload,
-				account.wallet.address,
+				account.wallet.publicKey,
+				account.subOrgID,
 			);
 			const nextSig = `${signature!.v}${signature!.r}${signature!.s}`;
 

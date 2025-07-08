@@ -1,6 +1,10 @@
-import { Turnkey, TurnkeyApiClient } from "@turnkey/sdk-server";
+import {
+	Turnkey,
+	TurnkeyApiClient,
+	type TurnkeySDKServerConfig,
+} from "@turnkey/sdk-server";
 import { type Session } from "@turnkey/sdk-types";
-import { turnkeyConfig } from "../config";
+// import { turnkeyConfig } from "../config";
 import { TurnkeyError } from "../errors";
 import type { SignerConfig } from "../types";
 import type {
@@ -11,16 +15,19 @@ import type {
 
 export class TurnkeyProvider {
 	private turnkey: TurnkeyApiClient;
-	private config: SignerConfig["walletConfig"];
+	private userConfig: SignerConfig["walletConfig"];
 
-	constructor(config: SignerConfig["walletConfig"]) {
+	constructor(
+		userConfig: SignerConfig["walletConfig"],
+		turnkeyConfig: TurnkeySDKServerConfig,
+	) {
 		const turnkeyServerClient = new Turnkey(turnkeyConfig).apiClient();
 		this.turnkey = turnkeyServerClient;
-		this.config = config;
+		this.userConfig = userConfig;
 	}
 
 	async getAccount() {
-		return this.config;
+		return this.userConfig;
 	}
 
 	async signRawPayload(

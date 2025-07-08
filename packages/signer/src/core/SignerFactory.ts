@@ -36,7 +36,10 @@ export class SignerFactory {
 			throw new ValidationError("Missing turnkey config");
 		}
 
-		const turnkeyProvider = new TurnkeyProvider(config.walletConfig);
+		const turnkeyProvider = new TurnkeyProvider(
+			config.walletConfig,
+			turnkeyConfig,
+		);
 
 		return new StacksSigner({
 			network: config.network,

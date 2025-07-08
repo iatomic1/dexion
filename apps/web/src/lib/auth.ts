@@ -1,5 +1,3 @@
-// import { reverify } from "@better-auth-kit/reverify";
-
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -13,6 +11,7 @@ import {
 	twoFactor,
 } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
+import { createClient } from "redis";
 import { sendEmailWithTrigger } from "~/trigger/send-email";
 import type { EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
@@ -20,8 +19,25 @@ import { schema, user } from "./db/schema";
 import { createSubOrganization } from "./turnkey/service";
 import { handleEmailSendingImmediate } from "./utils/email";
 
+const redis = createClient();
+await redis.connect();
+const REDIS_PREFIX = "auth-";
+
 export const auth = betterAuth({
 	appName: "Dexion Pro",
+	secondaryStorage: {
+		get: async (key) => {
+			const value = await redis.get(REDIS_PREFIX + key);
+			return value ? value : null;
+		},
+		set: async (key, value, ttl) => {
+			if (ttl) await redis.set(REDIS_PREFIX + key, value, { EX: ttl });
+			else await redis.set(key, value);
+		},
+		delete: async (key) => {
+			await redis.del(REDIS_PREFIX + key);
+		},
+	},
 	user: {
 		additionalFields: {
 			inviteCode: {
@@ -147,7 +163,6 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		openAPI(),
-		// reverify(),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				console.log(`Sending OTP ${otp} to ${email} for ${type}`);
@@ -155,7 +170,6 @@ export const auth = betterAuth({
 					await handleEmailSendingImmediate(email, type, otp);
 				} catch (error) {
 					console.error("Failed to send verification OTP:", error);
-					// Re-throw to let better-auth handle the error
 					throw new Error("Failed to send verification OTP");
 				}
 			},

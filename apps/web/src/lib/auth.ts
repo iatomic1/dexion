@@ -12,7 +12,7 @@ import {
 } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { sendEmailWithTrigger } from "~/trigger/send-email";
-import { EmailType } from "~/types/email";
+import { type EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
 import { handleEmailSendingImmediate } from "./utils/email";

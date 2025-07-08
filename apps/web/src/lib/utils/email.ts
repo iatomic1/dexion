@@ -1,5 +1,5 @@
 import { sendEmailWithTrigger } from "~/trigger/send-email";
-import { EmailType } from "~/types/email";
+import type { EmailType } from "~/types/email";
 
 export const handleEmailSendingImmediate = async (
 	email: string,

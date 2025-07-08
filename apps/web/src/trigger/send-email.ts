@@ -1,6 +1,6 @@
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { sendEmail } from "~/lib/email/send";
-import { EmailPayload, EmailResponse } from "~/types/email";
+import type { EmailPayload, EmailResponse } from "~/types/email";
 
 export const sendEmailWithTrigger = task({
 	id: "send-react-email",

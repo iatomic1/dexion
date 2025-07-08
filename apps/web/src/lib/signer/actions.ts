@@ -1,6 +1,12 @@
 "use server";
 
-import { SignerError, SigningError, ValidationError } from "@repo/signer";
+import {
+	type SignedTransaction,
+	SignerError,
+	SigningError,
+	type StacksSigner,
+	ValidationError,
+} from "@repo/signer";
 import z from "zod";
 import { authenticatedAction } from "../safe-action";
 import { getSigner } from "./getSigner";
@@ -15,7 +21,7 @@ export const transferStx = authenticatedAction
 	)
 	.handler(async ({ input, ctx: { user } }) => {
 		try {
-			let signer;
+			let signer: StacksSigner;
 			try {
 				signer = await getSigner(user.session.user);
 			} catch (error) {
@@ -26,7 +32,7 @@ export const transferStx = authenticatedAction
 				);
 			}
 
-			let tx;
+			let tx: SignedTransaction;
 			try {
 				tx = await signer.signTransaction("tokenTransfer", { ...input });
 			} catch (error) {

@@ -5,6 +5,7 @@ import {
 } from "@repo/shared-constants/constants.ts";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
 interface NextJsOptions {
 	revalidate?: number | false;
 	tags?: string[];
@@ -24,12 +25,23 @@ export default function makeFetch<T>(
 ): () => Promise<T> {
 	return async () => {
 		let API_URL: string;
-		if (service === "dexion") API_URL = API_BASE_URL;
-		else if (service === "hiro") API_URL = HIRO_API_BASE_URL;
-		else if (service === "stxwatch") API_URL = STXWATCH_API_BASE_URL;
+
+		// Fix: Use switch statement or provide default case
+		switch (service) {
+			case "dexion":
+				API_URL = API_BASE_URL;
+				break;
+			case "hiro":
+				API_URL = HIRO_API_BASE_URL;
+				break;
+			case "stxwatch":
+				API_URL = STXWATCH_API_BASE_URL;
+				break;
+			default:
+				throw new Error(`Unknown service: ${service}`);
+		}
 
 		const { method = "GET", body, next, ...restOptions } = options;
-
 		const shouldAddContentType =
 			["POST", "PUT", "PATCH"].includes(method) && body;
 
@@ -60,6 +72,7 @@ export default function makeFetch<T>(
 		if (contentType?.includes("application/json")) {
 			return (await res.json()) as T;
 		}
+
 		return (await res.text()) as unknown as T;
 	};
 }

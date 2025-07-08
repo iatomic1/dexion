@@ -27,6 +27,7 @@ export default function makeFetch<T>(
 		if (service === "dexion") API_URL = API_BASE_URL;
 		else if (service === "hiro") API_URL = HIRO_API_BASE_URL;
 		else if (service === "stxwatch") API_URL = STXWATCH_API_BASE_URL;
+
 		const { method = "GET", body, next, ...restOptions } = options;
 
 		const shouldAddContentType =

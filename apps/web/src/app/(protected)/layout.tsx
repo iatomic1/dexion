@@ -9,26 +9,26 @@ import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { auth } from "~/lib/auth";
 
 export default async function ProtectedLayout({
-	children,
+  children,
 }: {
-	children: ReactNode;
+  children: ReactNode;
 }) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-	if (!session) {
-		redirect("/");
-	}
+  if (!session) {
+    redirect("/");
+  }
 
-	return (
-		<BtcStxPriceProvider>
-			<SiteHeader />
-			<div className="hidden sm:block">
-				<WatchListBanner />
-			</div>
-			<PresetsContextProvider>{children}</PresetsContextProvider>
-			<SiteFooter />
-		</BtcStxPriceProvider>
-	);
+  return (
+    <BtcStxPriceProvider>
+      <SiteHeader />
+      <div className="hidden sm:block">
+        <WatchListBanner />
+      </div>
+      <PresetsContextProvider>{children}</PresetsContextProvider>
+      <SiteFooter />
+    </BtcStxPriceProvider>
+  );
 }

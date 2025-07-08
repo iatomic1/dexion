@@ -19,25 +19,25 @@ import { schema, user } from "./db/schema";
 import { createSubOrganization } from "./turnkey/service";
 import { handleEmailSendingImmediate } from "./utils/email";
 
-const redis = createClient();
-await redis.connect();
-const REDIS_PREFIX = "auth-";
+// const redis = createClient();
+// await redis.connect();
+// const REDIS_PREFIX = "auth-";
 
 export const auth = betterAuth({
 	appName: "Dexion Pro",
-	secondaryStorage: {
-		get: async (key) => {
-			const value = await redis.get(REDIS_PREFIX + key);
-			return value ? value : null;
-		},
-		set: async (key, value, ttl) => {
-			if (ttl) await redis.set(REDIS_PREFIX + key, value, { EX: ttl });
-			else await redis.set(key, value);
-		},
-		delete: async (key) => {
-			await redis.del(REDIS_PREFIX + key);
-		},
-	},
+	// secondaryStorage: {
+	// 	get: async (key) => {
+	// 		const value = await redis.get(REDIS_PREFIX + key);
+	// 		return value ? value : null;
+	// 	},
+	// 	set: async (key, value, ttl) => {
+	// 		if (ttl) await redis.set(REDIS_PREFIX + key, value, { EX: ttl });
+	// 		else await redis.set(key, value);
+	// 	},
+	// 	delete: async (key) => {
+	// 		await redis.del(REDIS_PREFIX + key);
+	// 	},
+	// },
 	user: {
 		additionalFields: {
 			inviteCode: {

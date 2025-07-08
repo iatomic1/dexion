@@ -32,7 +32,6 @@ export class TurnkeyProvider {
 		organizationId: string,
 	): Promise<SigningResult> {
 		try {
-			console.log("signing with pubKey", pubKey);
 			const signature = await this.turnkey.signRawPayload({
 				payload,
 				organizationId,

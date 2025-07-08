@@ -47,7 +47,6 @@ export class StacksSigner extends BaseSigner {
 			this.validateParams(type, params);
 
 			const account = await this.turnkeyProvider.getAccount();
-			console.log(account);
 			if (!account) {
 				throw new SigningError("No Ethereum account found");
 			}

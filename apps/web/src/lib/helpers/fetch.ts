@@ -23,7 +23,7 @@ export default function makeFetch<T>(
 	options: FetchOptions = {},
 ): () => Promise<T> {
 	return async () => {
-		let API_URL;
+		let API_URL: string;
 		if (service === "dexion") API_URL = API_BASE_URL;
 		else if (service === "hiro") API_URL = HIRO_API_BASE_URL;
 		else if (service === "stxwatch") API_URL = STXWATCH_API_BASE_URL;

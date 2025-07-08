@@ -99,19 +99,23 @@ export function useMediaQuery(query: string): boolean {
 
 export default function DevTokensTable() {
 	const { data, isLoading } = useDevTokens();
-
 	const isMobile = useMediaQuery("(max-width: 768px)");
-	useEffect(() => {
-		console.log(data, "dev tokens");
-	}, [isLoading]);
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+
+	// Move useReactTable hook before any conditional returns
 	const table = useReactTable({
-		data,
+		data: data || [], // Provide empty array as fallback
 		columns: tableColumns(isMobile),
 		getCoreRowModel: getCoreRowModel(),
 	});
+
+	useEffect(() => {
+		console.log(data, "dev tokens");
+	}, [data, isLoading]);
+
+	// Now you can safely return early after all hooks are called
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<div className="flex h-full w-full flex-col border-t">

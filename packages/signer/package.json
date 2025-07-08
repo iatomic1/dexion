@@ -1,5 +1,5 @@
 {
-  "name": "@repo/token-watcher",
+  "name": "@repo/signer",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
@@ -13,13 +13,12 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.3",
-    "@repo/notifier": "workspace:*",
-    "@repo/shared-constants": "workspace:*",
+    "@stacks/transactions": "^7.1.0",
     "@repo/tokens": "workspace:*",
-    "axios": "^1.10.0",
-    "hono": "^4.7.8",
-    "redis": "^4.6.15"
+    "@turnkey/sdk-server": "^4.2.2"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   },
   "packageManager": "bun@1.0.18"
 }

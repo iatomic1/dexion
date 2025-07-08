@@ -33,7 +33,11 @@ export default function SimilarTokens({ token }: { token: TokenMetadata }) {
 
 			<CollapsibleContent className="space-y-2">
 				{similarTokens.map((item, _index) => (
-					<TokenListItem token={item.token} lastTx={item.lastTx} />
+					<TokenListItem
+						key={item.token.contract_id}
+						token={item.token}
+						lastTx={item.lastTx}
+					/>
 				))}
 			</CollapsibleContent>
 		</Collapsible>

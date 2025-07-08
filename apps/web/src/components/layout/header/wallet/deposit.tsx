@@ -60,7 +60,7 @@ export default function Deposit({
 					size={137}
 					divider
 				/>
-				<button className="bottom-3 right-3 absolute">
+				<button type="button" className="bottom-3 right-3 absolute">
 					<Copy size={16} />
 				</button>
 				<div className="flex flex-col gap-2 text-xs py-4 px-4 select-none">

@@ -118,7 +118,7 @@ export function AccountSecurityModal({
 											</div>
 										) : (
 											<SetInviteCode>
-												<button>Set Referral Code +</button>
+												<button type="button">Set Referral Code +</button>
 											</SetInviteCode>
 										)}
 									</div>

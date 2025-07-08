@@ -27,11 +27,12 @@ pre-commit:
       stage_fixed: true
 
 pre-push:
+  parallel: false
   commands:
     lint-web:
       glob: "apps/web/src/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: |
-        bunx biome check --diagnostic-level=error {all_files}
+        bunx biome check --diagnostic-level=error {push_files}
         if [ $? -ne 0 ]; then
           echo '🔨❌ Push blocked! Fix linting errors before pushing. 🔨❌'
           exit 1
@@ -39,7 +40,7 @@ pre-push:
     lint-wallet-tracker:
       glob: "apps/wallet-tracker/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: |
-        bunx biome check --write --diagnostic-level=error {staged_files}
+        bunx biome check --write --diagnostic-level=error {push_files}
         if [ $? -eq 0 ]; then
           echo '🎉 No error found: committing this now.... ✨🚀🏄‍♂️🍻'
         else

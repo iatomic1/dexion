@@ -28,6 +28,7 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
 		return {
 			accessToken: tokenData.token as string,
 			userId: session.user.id,
+			session: session,
 		};
 	} catch (error) {
 		console.error("Error parsing user data:", error);

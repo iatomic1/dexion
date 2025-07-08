@@ -33,7 +33,7 @@ export type ContractCallParams = UnsignedContractCallOptions;
 
 export interface SignedTransaction {
 	transaction: any;
-	// txId: string;
+	txId: string;
 }
 
 export interface BroadcastResult {

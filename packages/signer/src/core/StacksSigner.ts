@@ -64,7 +64,7 @@ export class StacksSigner extends BaseSigner {
 				payload,
 				account.wallet.address,
 			);
-			const nextSig = `${signature.v}${signature.r}${signature.s}`;
+			const nextSig = `${signature!.v}${signature!.r}${signature!.s}`;
 
 			const nextSigHash = this.generatePostSignSigHash(
 				account.wallet.publicKey,
@@ -79,6 +79,7 @@ export class StacksSigner extends BaseSigner {
 
 			return {
 				transaction: stacksTransaction,
+				txId: nextSigHash,
 				// txId: txidFromData(stacksTransaction.serialize())),
 			};
 		} catch (error) {

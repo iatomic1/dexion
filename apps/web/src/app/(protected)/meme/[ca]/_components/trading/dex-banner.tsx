@@ -15,7 +15,7 @@ export function DexBanner({ bannerUrl }: { bannerUrl: string | null }) {
 		<Collapsible className="mt-2" open={isOpen} onOpenChange={setIsOpen}>
 			<CollapsibleTrigger asChild>
 				<Button className="w-fit" variant={"ghost"} size={"sm"}>
-					<span className="text-sm">Dex banner</span>
+					<span className="text-sm">Token banner</span>
 					<ChevronDown className="h-4 w-4" />
 				</Button>
 			</CollapsibleTrigger>

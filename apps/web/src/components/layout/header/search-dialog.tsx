@@ -234,6 +234,7 @@ const SearchResults = memo(
 					)}
 				</div>
 				<ScrollBar orientation="vertical" />
+				<ScrollBar orientation="horizontal" />
 			</ScrollArea>
 		</div>
 	),
@@ -258,7 +259,7 @@ const SearchInput = memo(
 				)}
 				<Input
 					placeholder="Search by name, ticker, or CA (⌘K)"
-					className="bg-transparent !border-none !pl-8 !shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+					className="!bg-transparent !border-none !pl-8 !shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					value={searchTerm}
 					onChange={(e) => onSearchChange(e.target.value)}
 					autoFocus

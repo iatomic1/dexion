@@ -45,7 +45,7 @@ export function AccountPopover() {
 					</Button>
 				</AccountSecurityModal>
 				<Button
-					className="w-full justify-start gap-3 bg-transparent !text-destructive"
+					className="w-full justify-start gap-3 bg-transparent "
 					variant={"ghost"}
 					onClick={async () => {
 						const signOutPromise = new Promise((resolve, reject) => {

@@ -60,7 +60,7 @@ function BalanceContent({
 	const HeaderContent = () => (
 		<div className="flex justify-between flex-row">
 			<div className="flex gap-2 flex-col">
-				<span className="text-xs text-muted-foreground">Total Value</span>
+				<span className="text-xs">Total Value</span>
 				{isPending || isLoading ? (
 					<Skeleton className="h-7 w-24" />
 				) : isMobile ? (
@@ -107,7 +107,7 @@ function BalanceContent({
 				stxAddress={walletAddress}
 				onClose={onClose}
 			>
-				<Button className="rounded-full w-full" size="sm" variant={"secondary"}>
+				<Button className="rounded-full w-full" size="sm" variant={"default"}>
 					Deposit
 				</Button>
 			</Exchange>
@@ -117,7 +117,7 @@ function BalanceContent({
 				stxAddress={walletAddress}
 				onClose={onClose}
 			>
-				<Button className="rounded-full w-full" size="sm" variant={"secondary"}>
+				<Button className="rounded-full w-full" size="sm" variant={"default"}>
 					Withdraw
 				</Button>
 			</Exchange>

@@ -136,33 +136,33 @@ export default function SiteHeader() {
 								Rewards
 							</Link>
 						</li>
-						<AuthController />
+						{/* <AuthController /> */}
 					</ul>
 				</nav>
 			</div>
-			<div className="flex items-center gap-4">
+			<div className="flex items-center gap-2 lg:gap-4">
 				<SearchDialog
 					trigger={
 						<div className="relative md:block">
-							<Search className="sm:absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+							<Search className="lg:absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 							<Input
 								type="search"
 								placeholder="Search by token or CA..."
-								className="w-64 rounded-full bg-muted pl-8 text-xs hidden sm:flex"
+								className="w-64 rounded-full bg-muted pl-8 text-xs hidden lg:flex"
 							/>
 						</div>
 					}
 				/>
 				<WatchlistCredenza />
 
-				<Button
+				{/* <Button
 					variant="secondary"
 					size="sm"
 					className="rounded-full"
 					onClick={handleTokenTransfer}
 				>
 					Test Send
-				</Button>
+				</Button> */}
 
 				<Balance>
 					<Button variant="ghost" size="icon" className="rounded-full">

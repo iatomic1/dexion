@@ -117,8 +117,7 @@ export default function WalletTrackerModal({
 							)}
 						</ScrollArea>
 
-						<Separator className="mt-3" />
-						<div className="flex justify-between pt-3 pb-4 px-3">
+						<div className="flex justify-between pt-3 pb-4 px-3 border-t border-t-border">
 							<div className="flex items-center gap-3">
 								<Button
 									variant="secondary"

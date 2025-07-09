@@ -36,7 +36,7 @@ export const getBatchTokenData = async (contract_ids: string[]) => {
 
 export const getSearchResults = async (searchTerm: string) => {
 	try {
-		const url = `${TOKEN_WATCHER_API_BASE_URL}search?searchTerm=${searchTerm}`;
+		const url = `${TOKEN_WATCHER_API_BASE_URL}tokens/search?searchTerm=${searchTerm}`;
 		const res = await fetch(url);
 
 		if (!res.ok) throw new Error(`Failed: ${res.status}`);

@@ -2,14 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import {
 	EmojiPicker,
 	EmojiPickerContent,
 	EmojiPickerFooter,
@@ -37,15 +29,15 @@ import * as z from "zod";
 import { useServerAction } from "zsa-react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import { trackWalletAction } from "~/app/actions/wallet-tracker-actions";
+import { AppDialog } from "~/components/app-dialog";
 
 export default function AddWalletModal() {
 	const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 	const [selectedEmoji, setSelectedEmoji] = useState("🤣");
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+
 	const { isPending, execute } = useServerAction(trackWalletAction, {
-		onSuccess: async ({ data: res }) => {
-			return res;
-		},
+		onSuccess: async ({ data: res }) => res,
 	});
 
 	const formSchema = z.object({
@@ -56,7 +48,7 @@ export default function AddWalletModal() {
 				(address) => {
 					try {
 						return validateStacksAddress(address);
-					} catch (_error) {
+					} catch {
 						return false;
 					}
 				},
@@ -65,7 +57,6 @@ export default function AddWalletModal() {
 		name: z.string().min(1, "Wallet name is required"),
 	});
 
-	// Initialize the form
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -81,17 +72,10 @@ export default function AddWalletModal() {
 				nickname: values.name,
 				emoji: selectedEmoji,
 			}).then((response) => {
-				if (!response || !response[0]) {
-					throw new Error("No response received");
-				}
-				console.log("response", response);
+				if (!response?.[0]) throw new Error("No response received");
 				const result = response[0];
-				console.log("result", result);
-				// Only return successfully if status is CREATED
-				if (result.status === HTTP_STATUS.CREATED) {
-					return result;
-				}
-				// For any other status, throw an error with the status code
+
+				if (result.status === HTTP_STATUS.CREATED) return result;
 				throw {
 					status: result.status,
 					message: result.message || "Failed to track wallet",
@@ -125,27 +109,59 @@ export default function AddWalletModal() {
 		}
 	};
 
-	return (
-		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-			<DialogTrigger asChild>
-				<Button className="">Add Wallet</Button>
-			</DialogTrigger>
-			<DialogContent className="w-sm">
-				<DialogHeader>
-					<DialogTitle>Add Wallet</DialogTitle>
-				</DialogHeader>
-				<Separator />
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-						<div className="grid gap-4 py-3 mb-28">
+	const dialogBody = (
+		<>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-0">
+					<div className="grid gap-4 mb-20">
+						<FormField
+							control={form.control}
+							name="address"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											placeholder="Wallet Address"
+											className="placeholder:text-xs"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage className="text-xs" />
+								</FormItem>
+							)}
+						/>
+						<div className="flex gap-3">
+							<Popover
+								onOpenChange={setIsEmojiPickerOpen}
+								open={isEmojiPickerOpen}
+							>
+								<PopoverTrigger asChild>
+									<Button size="icon" variant="secondary">
+										{selectedEmoji}
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className="w-80 p-0">
+									<EmojiPicker
+										className="h-[342px]"
+										onEmojiSelect={({ emoji }) => {
+											setIsEmojiPickerOpen(false);
+											setSelectedEmoji(emoji);
+										}}
+									>
+										<EmojiPickerSearch />
+										<EmojiPickerContent />
+										<EmojiPickerFooter />
+									</EmojiPicker>
+								</PopoverContent>
+							</Popover>
 							<FormField
 								control={form.control}
-								name="address"
+								name="name"
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex-1">
 										<FormControl>
 											<Input
-												placeholder="Wallet Address"
+												placeholder="Wallet Name"
 												className="placeholder:text-xs"
 												{...field}
 											/>
@@ -154,56 +170,29 @@ export default function AddWalletModal() {
 									</FormItem>
 								)}
 							/>
-							<div className="flex gap-3">
-								<Popover
-									onOpenChange={setIsEmojiPickerOpen}
-									open={isEmojiPickerOpen}
-								>
-									<PopoverTrigger asChild>
-										<Button size={"icon"} variant={"secondary"}>
-											{selectedEmoji}
-										</Button>
-									</PopoverTrigger>
-									<PopoverContent className="w-80 p-0">
-										<EmojiPicker
-											className="h-[342px]"
-											onEmojiSelect={({ emoji }) => {
-												setIsEmojiPickerOpen(false);
-												setSelectedEmoji(emoji);
-											}}
-										>
-											<EmojiPickerSearch />
-											<EmojiPickerContent />
-											<EmojiPickerFooter />
-										</EmojiPicker>
-									</PopoverContent>
-								</Popover>
-								<FormField
-									control={form.control}
-									name="name"
-									render={({ field }) => (
-										<FormItem className="flex-1">
-											<FormControl>
-												<Input
-													placeholder="Wallet Name"
-													className="placeholder:text-xs"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage className="text-xs" />
-										</FormItem>
-									)}
-								/>
-							</div>
 						</div>
-						<DialogFooter className="w-full">
-							<Button type="submit" className="w-full" disabled={isPending}>
-								{isPending ? "Adding..." : "Add Wallet"}
-							</Button>
-						</DialogFooter>
-					</form>
-				</Form>
-			</DialogContent>
-		</Dialog>
+					</div>
+				</form>
+			</Form>
+		</>
+	);
+
+	return (
+		<AppDialog
+			dialogTitle="Add Wallet"
+			dialogMain={dialogBody}
+			dialogFooter={
+				<Button
+					type="submit"
+					className="w-full"
+					disabled={isPending}
+					onClick={form.handleSubmit(onSubmit)}
+				>
+					{isPending ? "Adding..." : "Add Wallet"}
+				</Button>
+			}
+		>
+			<Button onClick={() => setIsDialogOpen(true)}>Add Wallet</Button>
+		</AppDialog>
 	);
 }

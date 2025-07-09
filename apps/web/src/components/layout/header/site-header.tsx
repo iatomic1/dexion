@@ -155,14 +155,14 @@ export default function SiteHeader() {
 				/>
 				<WatchlistCredenza />
 
-				<Button
+				{/* <Button
 					variant="secondary"
 					size="sm"
 					className="rounded-full"
 					onClick={handleTokenTransfer}
 				>
 					Test Send
-				</Button>
+				</Button> */}
 
 				<Balance>
 					<Button variant="ghost" size="icon" className="rounded-full">

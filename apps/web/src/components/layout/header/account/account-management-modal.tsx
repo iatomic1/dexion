@@ -44,7 +44,7 @@ export function AccountSecurityModal({
 	return (
 		<Credenza>
 			<CredenzaTrigger asChild>{children}</CredenzaTrigger>
-			<CredenzaContent className="sm:max-w-2xl bg-zinc-900 border-zinc-800 text-white p-0 overflow-hidden">
+			<CredenzaContent className="sm:max-w-2xl border-zinc-800 text-white p-0 overflow-hidden">
 				<CredenzaHeader className="p-4 border-b border-zinc-800 flex flex-row items-center justify-between">
 					<CredenzaTitle className="text-white">
 						Account and Security
@@ -277,7 +277,7 @@ export function AccountSecurityModal({
 						<>
 							<SessionsCard
 								classNames={{
-									base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0",
+									base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0 bg-transparent",
 									cell: "justify-between [&>*:nth-child(2)]:mr-auto",
 								}}
 							/>

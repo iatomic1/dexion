@@ -280,6 +280,7 @@ export function AccountSecurityModal({
 									base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0 bg-transparent",
 									cell: "justify-between [&>*:nth-child(2)]:mr-auto",
 								}}
+								// sessions={}
 							/>
 							<div className="p-4 border-t border-zinc-800 flex items-center justify-between">
 								<div>

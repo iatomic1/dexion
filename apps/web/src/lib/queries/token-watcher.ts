@@ -51,7 +51,7 @@ export const getSearchResults = async (searchTerm: string) => {
 
 export const getPoints = async (ca: string) => {
 	try {
-		const url = `${TOKEN_WATCHER_API_BASE_URL}get_latest_token_points_single/${ca}`;
+		const url = `${TOKEN_WATCHER_API_BASE_URL}tokens/get_latest_token_points_single/${ca}`;
 		const res = await fetch(`${url}`);
 
 		if (!res.ok) throw new Error(`Failed: ${res.status}`);
@@ -66,7 +66,7 @@ export const getPoints = async (ca: string) => {
 
 export const getLockedLiquidity = async (ca: string) => {
 	try {
-		const url = `${TOKEN_WATCHER_API_BASE_URL}get_batch_locked_liquidity/${ca}`;
+		const url = `${TOKEN_WATCHER_API_BASE_URL}tokens/get_batch_locked_liquidity/${ca}`;
 		const res = await fetch(url);
 
 		if (!res.ok) throw new Error(`Failed: ${res.status}`);

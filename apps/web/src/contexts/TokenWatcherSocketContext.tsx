@@ -161,7 +161,6 @@ export const TokenSocketProvider = ({
 
 			switch (data.type) {
 				case "metadata":
-					console.log("!!!!", JSON.stringify(data.tokenMetadata, null, 2));
 					if (data.tokenMetadata) {
 						setMetadata(data.tokenMetadata);
 						setIsLoadingMetadata(false);

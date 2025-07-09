@@ -55,10 +55,6 @@ export default function TradesTable({
 		enabled: !!token && !!filterBy && !!velarPoolId,
 	});
 
-	useEffect(() => {
-		console.log(JSON.stringify(trades, null, 2));
-	}, [isTradesLoading]);
-
 	const [tableData, setTableData] = useState<TokenSwapTransaction[]>([]);
 
 	useEffect(() => {

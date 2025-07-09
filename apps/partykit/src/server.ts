@@ -121,11 +121,12 @@ export default class Server implements Party.Server {
 		conn?: Party.Connection,
 	) {
 		const token = transformToTokenMetadata(stxCityMetadata);
-		if (stxCityMetadata.progress === 100) {
-			await this.handleCompletedStxCityToken(contractAddress, token, conn);
-		} else {
-			await this.handleIncompleteStxCityToken(contractAddress, token, conn);
-		}
+		// if (stxCityMetadata.progress === 100) {
+		// 	await this.handleCompletedStxCityToken(contractAddress, token, conn);
+		// } else {
+		// 	await this.handleIncompleteStxCityToken(contractAddress, token, conn);
+		// }
+		await this.handleIncompleteStxCityToken(contractAddress, token, conn);
 	}
 
 	private async handleCompletedStxCityToken(
@@ -146,6 +147,7 @@ export default class Server implements Party.Server {
 		token: any,
 		conn?: Party.Connection,
 	) {
+		token.source = "stxcity";
 		this.sendMetadata(contractAddress, token, conn);
 		try {
 			const res = await getStxCityTokenTrades(
@@ -170,6 +172,7 @@ export default class Server implements Party.Server {
 		tokenMetadata: any,
 	) {
 		if (tokenMetadata) {
+			tokenMetadata.source = "stxtools";
 			this.sendMetadata(contractAddress, tokenMetadata, conn);
 			this.sendAllTokenData(contractAddress, conn);
 		} else {

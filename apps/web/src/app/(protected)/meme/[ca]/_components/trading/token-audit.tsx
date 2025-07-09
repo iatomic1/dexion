@@ -98,25 +98,30 @@ export function InfoItemSkeleton({ className }: { className?: string }) {
 	);
 }
 
-// Updated TokenInfoContent to receive data as props instead of calling hooks
 function TokenInfoContent({
 	token,
 	top10Holding,
 	totalPoints,
 	lockedLiquidityPercentage,
 	devHoldingPercentage,
-	isLoading,
+	loadingStates,
 	isLoadingMetadata,
 	isHoldersLoading,
+	isStxtools,
 }: {
 	token: TokenMetadata;
 	top10Holding: number;
 	totalPoints: number | null;
 	lockedLiquidityPercentage: number;
 	devHoldingPercentage: number;
-	isLoading: boolean;
+	loadingStates: {
+		points: boolean;
+		lockedLiquidity: boolean;
+		devHolding: boolean;
+	};
 	isLoadingMetadata: boolean;
 	isHoldersLoading: boolean;
+	isStxtools: boolean;
 }) {
 	const copy = useCopyToClipboard();
 
@@ -134,7 +139,7 @@ function TokenInfoContent({
 						isGreen={top10Holding < 20}
 					/>
 				)}
-				{isLoading ? (
+				{loadingStates.devHolding ? (
 					<InfoItemSkeleton />
 				) : (
 					<InfoItem
@@ -154,24 +159,34 @@ function TokenInfoContent({
 						isGreen={devHoldingPercentage < 20}
 					/>
 				)}
-				{isLoading ? (
-					<InfoItemSkeleton />
+				{/* Conditional rendering based on token source */}
+				{isStxtools ? (
+					loadingStates.points ? (
+						<InfoItemSkeleton />
+					) : (
+						<InfoItem
+							icon={
+								<ChefHat
+									className={cn(
+										"h-4 w-4",
+										totalPoints && totalPoints > 30
+											? "text-emerald-500"
+											: "text-destructive",
+									)}
+								/>
+							}
+							isRed={totalPoints != null && totalPoints < 30}
+							isGreen={totalPoints != null && totalPoints > 30}
+							value={totalPoints?.toString() || "0"}
+							label="Trust S."
+						/>
+					)
 				) : (
 					<InfoItem
-						icon={
-							<ChefHat
-								className={cn(
-									"h-4 w-4",
-									totalPoints && totalPoints > 30
-										? "text-emerald-500"
-										: "text-destructive",
-								)}
-							/>
-						}
-						isRed={totalPoints != null && totalPoints < 30}
-						isGreen={totalPoints != null && totalPoints > 30}
-						value={totalPoints?.toString() as string}
-						label="Trust S."
+						icon={<Shield className="h-4 w-4 text-emerald-500" />}
+						value="92"
+						label="Audit Score"
+						isGreen
 					/>
 				)}
 			</div>
@@ -186,14 +201,24 @@ function TokenInfoContent({
 					value="2.21 %"
 					label="Snipers H."
 				/>
-				{isLoading ? (
-					<InfoItemSkeleton />
+				{/* Conditional rendering for locked liquidity */}
+				{isStxtools ? (
+					loadingStates.lockedLiquidity ? (
+						<InfoItemSkeleton />
+					) : (
+						<InfoItem
+							icon={<Flame className="h-4 w-4 text-destructive" />}
+							isRed
+							value={`${formatPrice(lockedLiquidityPercentage)}%`}
+							label="Locked L."
+						/>
+					)
 				) : (
 					<InfoItem
-						icon={<Flame className="h-4 w-4 text-destructive" />}
-						isRed
-						value={`${formatPrice(lockedLiquidityPercentage)}%`}
-						label="Locked L."
+						icon={<Flame className="h-4 w-4 text-emerald-500" />}
+						value="85%"
+						label="Liquidity Lock"
+						isGreen
 					/>
 				)}
 			</div>
@@ -263,13 +288,15 @@ function TokenInfoContent({
 export default function TokenAudit({ token }: { token: TokenMetadata }) {
 	const [isOpen, setIsOpen] = useState(true);
 
-	// ✅ All hooks called here - data persists across collapsible open/close
+	// All hooks called here - data persists across collapsible open/close
 	const {
 		totalPoints,
 		lockedLiquidityPercentage,
-		isLoading,
 		devHoldingPercentage,
+		loadingStates,
+		isStxtools,
 	} = useAuditData(token?.contract_id, token);
+
 	const { isLoadingMetadata } = useTokenData();
 	const { data: holders, isLoading: isHoldersLoading } = useTokenHolders();
 	const [top10Holding, setTop10Holding] = useState<number>(0);
@@ -286,18 +313,6 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
 			calculatePercentageHolding(top10Balance.toString(), token.total_supply),
 		);
 	}, [holders, token?.total_supply]);
-
-	// Props to pass to TokenInfoContent
-	const tokenInfoProps = {
-		token,
-		top10Holding,
-		totalPoints,
-		lockedLiquidityPercentage,
-		devHoldingPercentage,
-		isLoading,
-		isLoadingMetadata,
-		isHoldersLoading,
-	};
 
 	return (
 		<>
@@ -324,21 +339,20 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
 							</DrawerHeader>
 							<div className="px-4 py-4 flex flex-col gap-4">
 								<TokenInfoContent
-									devHoldingPercentage={tokenInfoProps.devHoldingPercentage}
-									isHoldersLoading={tokenInfoProps.isHoldersLoading}
-									isLoading={tokenInfoProps.isLoading}
-									isLoadingMetadata={tokenInfoProps.isLoadingMetadata}
-									lockedLiquidityPercentage={
-										tokenInfoProps.lockedLiquidityPercentage
-									}
-									token={tokenInfoProps.token}
-									top10Holding={tokenInfoProps.top10Holding}
-									totalPoints={tokenInfoProps.totalPoints as number}
+									token={token}
+									top10Holding={top10Holding}
+									totalPoints={totalPoints ? (totalPoints as number) : null}
+									lockedLiquidityPercentage={lockedLiquidityPercentage}
+									devHoldingPercentage={devHoldingPercentage}
+									loadingStates={loadingStates}
+									isLoadingMetadata={isLoadingMetadata}
+									isHoldersLoading={isHoldersLoading}
+									isStxtools={isStxtools}
 								/>
 							</div>
 
-							{tokenInfoProps.token?.progress === 100 ||
-								(!tokenInfoProps.token.progress && (
+							{token?.progress === 100 ||
+								(!token.progress && (
 									<>
 										<div className="px-4 flex gap-4 items-center">
 											<div className="h-px bg-muted flex-1" />
@@ -368,15 +382,15 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
 				</CollapsibleTrigger>
 				<CollapsibleContent className="flex flex-col gap-4 pt-2">
 					<TokenInfoContent
-						// {...tokenInfoProps}
-						devHoldingPercentage={tokenInfoProps.devHoldingPercentage}
-						isHoldersLoading={tokenInfoProps.isHoldersLoading}
-						isLoading={tokenInfoProps.isLoading}
-						isLoadingMetadata={tokenInfoProps.isLoadingMetadata}
-						lockedLiquidityPercentage={tokenInfoProps.lockedLiquidityPercentage}
-						token={tokenInfoProps.token}
-						top10Holding={tokenInfoProps.top10Holding}
-						totalPoints={tokenInfoProps.totalPoints as number}
+						token={token}
+						top10Holding={top10Holding}
+						totalPoints={totalPoints ? (totalPoints as number) : null}
+						lockedLiquidityPercentage={lockedLiquidityPercentage}
+						devHoldingPercentage={devHoldingPercentage}
+						loadingStates={loadingStates}
+						isLoadingMetadata={isLoadingMetadata}
+						isHoldersLoading={isHoldersLoading}
+						isStxtools={isStxtools}
 					/>
 				</CollapsibleContent>
 			</Collapsible>

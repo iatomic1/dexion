@@ -108,10 +108,6 @@ export default function DevTokensTable() {
 		getCoreRowModel: getCoreRowModel(),
 	});
 
-	useEffect(() => {
-		console.log(data, "dev tokens");
-	}, [data, isLoading]);
-
 	// Now you can safely return early after all hooks are called
 	if (isLoading) {
 		return <div>Loading...</div>;

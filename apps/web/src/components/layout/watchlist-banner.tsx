@@ -1,5 +1,7 @@
 "use client";
+import type { isReadable } from "node:stream";
 import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
+import type { TokenMetadata } from "@repo/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
@@ -22,6 +24,7 @@ import {
 	useWatchlistData,
 } from "~/contexts/WatchlistContext";
 import { formatPrice } from "~/lib/helpers/numbers";
+import type { UserWatchlist } from "~/types/wallets";
 
 export const WatchListBanner = () => {
 	// Use the separate hooks for data and actions to minimize re-renders
@@ -32,7 +35,6 @@ export const WatchListBanner = () => {
 		return (
 			<div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
 				{Array.from({ length: 4 }).map((_, i) => (
-					// biome-ignore lint: suspicious/noArrayIndexKey
 					<Skeleton key={i} className="h-8 w-28" />
 				))}
 			</div>
@@ -74,11 +76,21 @@ export const WatchListBanner = () => {
 	);
 };
 
-const WatchListItem = ({ token, isRefetching, watchlistId }) => {
+type WatchListWithData = {
+	token: TokenMetadata;
+	isRefetching: boolean;
+	watchlistId: string;
+};
+
+const WatchListItem = ({
+	token,
+	isRefetching,
+	watchlistId,
+}: WatchListWithData) => {
 	// Use only the removeFromWatchlist action
 	const { removeFromWatchlist } = useWatchlistActions();
 
-	const handleDelete = async (e) => {
+	const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		e.stopPropagation();
 

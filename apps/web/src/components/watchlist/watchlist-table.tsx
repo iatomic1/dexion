@@ -18,17 +18,18 @@ import {
 } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type React from "react";
+import { useMemo } from "react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import {
+	type TokenWithWatchlistId,
 	useWatchlistActions,
 	useWatchlistData,
 } from "~/contexts/WatchlistContext";
 import { formatPrice } from "~/lib/helpers/numbers";
 
-// Dynamic column definition with removeFromWatchlist action
 export const createTableColumns = (
-	removeFromWatchlist,
-): ColumnDef<TokenMetadata>[] => [
+	removeFromWatchlist: (id: string) => Promise<void>,
+): ColumnDef<TokenWithWatchlistId>[] => [
 	{
 		accessorKey: "token",
 		header: () => <div className={cn("w-32 sm:w-48")}>Token</div>,
@@ -128,7 +129,7 @@ export const WatchListTable = () => {
 	const { removeFromWatchlist } = useWatchlistActions();
 
 	// Create columns with the remove action
-	const columns = React.useMemo(
+	const columns = useMemo(
 		() => createTableColumns(removeFromWatchlist),
 		[removeFromWatchlist],
 	);

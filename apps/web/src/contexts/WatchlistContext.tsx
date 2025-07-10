@@ -122,7 +122,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 		queryKey: ["batch-tokens", contractAddresses],
 		queryFn: () => getBatchTokenData(contractAddresses),
 		enabled: contractAddresses.length > 0,
-		staleTime: 60 * 1000, // 1 minute
+		staleTime: 60 * 5000, // 1 minute
 		placeholderData: keepPreviousData,
 	});
 

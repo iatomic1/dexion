@@ -87,7 +87,7 @@ export default function TrackersDetails({
 						<span>Name</span>
 					</div>
 					<div className="flex items-center gap-3">
-						<span>Actions</span>
+						<span>{wallets.length} / 300 Wallets</span>
 						<Button
 							variant={"destructive"}
 							size={"sm"}

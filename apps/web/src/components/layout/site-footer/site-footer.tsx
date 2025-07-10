@@ -15,7 +15,7 @@ export default async function SiteFooter() {
 			<div className="flex items-center justify-between">
 				{session && (
 					<div>
-						<Suspense fallback={<Skeleton className="h-9 w-32" />}>
+						<Suspense fallback={<Skeleton className="h-5 w-32" />}>
 							<WalletTrackerContainer />
 						</Suspense>
 					</div>

@@ -6,6 +6,7 @@ import SiteFooter from "~/components/layout/site-footer/site-footer";
 import { WatchListBanner } from "~/components/layout/watchlist-banner";
 import { BtcStxPriceProvider } from "~/contexts/BtcStxPriceContext";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
+import { WatchlistProvider } from "~/contexts/WatchlistContext";
 import { auth } from "~/lib/auth";
 
 export default async function ProtectedLayout({
@@ -23,12 +24,14 @@ export default async function ProtectedLayout({
 
 	return (
 		<BtcStxPriceProvider>
-			<SiteHeader />
-			<div className="hidden sm:block">
-				<WatchListBanner />
-			</div>
-			<PresetsContextProvider>{children}</PresetsContextProvider>
-			<SiteFooter />
+			<WatchlistProvider>
+				<SiteHeader />
+				<div className="hidden sm:block">
+					<WatchListBanner />
+				</div>
+				<PresetsContextProvider>{children}</PresetsContextProvider>
+				<SiteFooter />
+			</WatchlistProvider>
 		</BtcStxPriceProvider>
 	);
 }

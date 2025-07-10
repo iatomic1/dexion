@@ -82,6 +82,7 @@ export function LoginModal({
 								return;
 							}
 						} else {
+							onOpenChange(false);
 							router.push("/portfolio");
 							toast.success("Authenticated");
 						}

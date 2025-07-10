@@ -25,7 +25,6 @@ export default function TradingPanel({
 				{/* <TradingInterface /> */}
 				<TokenAudit token={token} />
 				{token.source === "stxtools" && <Pools />}
-
 				{/* <SimilarTokens token={token} /> */}
 				<DexBanner bannerUrl={token?.header_image_url} />
 			</div>

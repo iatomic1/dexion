@@ -145,9 +145,11 @@ export const WalletItem = ({
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<span
-								className="text-xs text-muted-foreground w-8 underline cursor-pointer"
+								className="text-xs text-muted-foreground w-8 underline underline-offset-4 cursor-pointer"
 								onClick={() => {
-									openInNewPage(`${EXPLORER_BASE_URL}/${wallet.address}`);
+									openInNewPage(
+										`${EXPLORER_BASE_URL}address/${wallet.address}`,
+									);
 								}}
 							>
 								{formattedTime}
@@ -160,7 +162,7 @@ export const WalletItem = ({
 				</TooltipProvider>
 				<div className="flex items-center gap-4" ref={nicknameSectionRef}>
 					<div className="flex items-center gap-1 relative group">
-						<span>{wallet.emoji}</span>
+						<span className="text-sm">{wallet.emoji}</span>
 						{isEditing ? (
 							<Input
 								ref={inputRef}
@@ -172,7 +174,7 @@ export const WalletItem = ({
 							/>
 						) : (
 							<>
-								<span className="text-sm font-medium">{wallet.nickname}</span>
+								<span className="text-xs font-medium">{wallet.nickname}</span>
 								{isNicknameHover && (
 									<Button
 										variant="ghost"
@@ -190,8 +192,8 @@ export const WalletItem = ({
 
 					<Button
 						variant="ghost"
-						size="sm"
-						className="p-0 text-xs items-center text-muted-foreground flex gap-1"
+						size="xs"
+						className="p-0 text-xs  items-center text-muted-foreground flex gap-1"
 						onClick={() => {
 							copy(wallet.address);
 							toast.success("Address copied to clipboard");

@@ -16,7 +16,6 @@ export const trackWalletAction = authenticatedAction
 		}),
 	)
 	.handler(async ({ input, ctx: { user } }) => {
-		console.log(user, input);
 		try {
 			return await makeFetch<ApiResponse<UserWallet>>(
 				"dexion",
@@ -50,7 +49,6 @@ export const updateWalletPreferences = authenticatedAction
 		}),
 	)
 	.handler(async ({ input, ctx: { user } }) => {
-		console.log(user, input);
 		try {
 			const body = {
 				nickname: input.nickname,

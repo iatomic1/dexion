@@ -1,22 +1,13 @@
-import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { cn } from "@repo/ui/lib/utils";
-import {
-	keepPreviousData,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
 import { Star } from "lucide-react";
-import { useServerAction } from "zsa-react";
+import { useState } from "react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import {
-	addToWatchlistAction,
-	deleteWatchlistAction,
-	getUserWatchlist,
-} from "~/app/actions/watchlist-actions";
-import type { ApiResponse } from "~/types";
-import type { UserWatchlist } from "~/types/wallets";
+	useWatchlistActions,
+	useWatchlistData,
+} from "~/contexts/WatchlistContext";
 
 export function ToggleWatchlist({
 	isMobile,
@@ -25,99 +16,67 @@ export function ToggleWatchlist({
 	isMobile: boolean;
 	ca: string;
 }) {
-	const queryClient = useQueryClient();
+	const [isProcessing, setIsProcessing] = useState(false);
 
-	const { isPending: isAddPending, execute: executeAdd } =
-		useServerAction(addToWatchlistAction);
+	// Use separate hooks for data and actions to minimize re-renders
+	const { watchlist } = useWatchlistData();
+	const { addToWatchlist, removeFromWatchlist } = useWatchlistActions();
 
-	const { isPending: isDeletePending, execute: executeDelete } =
-		useServerAction(deleteWatchlistAction);
-
-	const {
-		data: watchlist,
-		// isLoading: isWatchlistLoading,
-		// error: watchlistError,
-		// isFetching: isWatchlistFetching,
-		// isInitialLoading: isWatchlistInitialLoading,
-	} = useQuery({
-		queryKey: ["watchlist"],
-		queryFn: getUserWatchlist,
-		refetchOnWindowFocus: false,
-		placeholderData: keepPreviousData,
-	});
-
-	// Add null checks for watchlist data
-	const watchlistData = watchlist?.data || [];
-	const contractAddresses = watchlistData
-		.map((item: any) => item.ca)
-		.filter(Boolean);
-	const watchlistItem = watchlistData.find((item) => item.ca === ca);
+	// Check if this token is in the watchlist
+	const watchlistItem = watchlist.find((item) => item.ca === ca);
+	const isInWatchlist = Boolean(watchlistItem);
 
 	const handleWatchlistToggle = async () => {
-		const isRemoving = watchlistItem && watchlistItem.ca === ca;
+		if (isProcessing) return;
 
-		const promise = (
-			isRemoving
-				? executeDelete({ id: watchlistItem.id as string }).then((data) => {
-						const res = data[0];
+		setIsProcessing(true);
 
-						if (!res) {
-							throw new Error("Error occured when removing from watchlist");
+		try {
+			if (isInWatchlist) {
+				// Remove from watchlist
+				if (!watchlistItem?.id) {
+					toast.error("Watchlist ID not found");
+					setIsProcessing(false);
+					return;
+				}
+
+				toast.promise(removeFromWatchlist(watchlistItem.id), {
+					loading: "Removing from watchlist...",
+					success: () => {
+						revalidateTagServer("watchlist");
+						return "Removed from watchlist";
+					},
+					error: "Failed to remove from watchlist",
+				});
+			} else {
+				// Add to watchlist
+				toast.promise(addToWatchlist(ca), {
+					loading: "Adding to watchlist...",
+					success: () => {
+						revalidateTagServer("watchlist");
+						return "Added to watchlist";
+					},
+					error: (err) => {
+						// Handle specific error cases
+						if (
+							err?.message?.includes("conflict") ||
+							err?.message?.includes("already")
+						) {
+							return "Already in watchlist";
 						}
-
-						if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-							throw new Error("You are unauthorized to perform this action");
-						}
-						if (res.status === HTTP_STATUS.NOT_FOUND) {
-							throw new Error(
-								"You can't delete a watchlist that doesn't exist",
-							);
-						}
-						return res;
-					})
-				: executeAdd({ ca: ca }).then((data) => {
-						const res = data[0];
-
-						if (!res) {
-							throw new Error("Error occured when adding to watchlist");
-						}
-
-						if (res.status === HTTP_STATUS.UNAUTHORIZED) {
-							throw new Error("You are unauthorized to perform this action");
-						}
-						if (res.status === HTTP_STATUS.CONFLICT) {
-							throw new Error("Already in watchlist");
-						}
-						return res;
-					})
-		) as Promise<ApiResponse<UserWatchlist>>;
-
-		toast.promise(promise, {
-			loading: isRemoving
-				? "Removing from watchlist..."
-				: "Adding to watchlist...",
-			success: () => {
-				// Invalidate queries and revalidate after successful operation
-				setTimeout(async () => {
-					await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-					await queryClient.invalidateQueries({
-						queryKey: ["batch-tokens"],
-						exact: false,
-					});
-					revalidateTagServer("watchlist");
-				}, 0);
-
-				return isRemoving ? "Removed from watchlist" : "Added to watchlist";
-			},
-			error: (error) => {
-				return (
-					error.message ||
-					(isRemoving
-						? "Failed to remove from watchlist"
-						: "Failed to add to watchlist")
-				);
-			},
-		});
+						return "Failed to add to watchlist";
+					},
+				});
+			}
+		} catch (error) {
+			toast.error(
+				isInWatchlist
+					? "Failed to remove from watchlist"
+					: "Failed to add to watchlist",
+			);
+		} finally {
+			setIsProcessing(false);
+		}
 	};
 
 	return (
@@ -129,14 +88,9 @@ export function ToggleWatchlist({
 				isMobile && "rounded-full",
 			)}
 			onClick={handleWatchlistToggle}
-			disabled={isAddPending || isDeletePending}
+			disabled={isProcessing}
 		>
-			<Star
-				className={cn(
-					"h-5 w-5",
-					contractAddresses?.includes(ca) && " text-blue-500",
-				)}
-			/>
+			<Star className={cn("h-5 w-5", isInWatchlist && "text-blue-500")} />
 		</Button>
 	);
 }

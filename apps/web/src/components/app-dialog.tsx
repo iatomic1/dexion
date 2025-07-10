@@ -8,6 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@repo/ui/components/ui/dialog";
+import { cn } from "@repo/ui/lib/utils";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -16,6 +17,7 @@ interface AppDialogProps {
 	dialogFooter?: ReactNode;
 	dialogTitle: ReactNode;
 	children: ReactNode;
+	contentClassName?: string;
 }
 
 export function AppDialog({
@@ -23,13 +25,14 @@ export function AppDialog({
 	children,
 	dialogFooter,
 	dialogTitle,
+	contentClassName,
 }: AppDialogProps) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent
 				showCloseIcon={false}
-				className="p-0 !max-w-sm border rounded-xl"
+				className={cn("p-0 !max-w-sm border rounded-xl", contentClassName)}
 			>
 				<DialogHeader className="px-4 border-b py-3 flex flex-row items-center justify-between">
 					<DialogTitle className="text-base">{dialogTitle}</DialogTitle>

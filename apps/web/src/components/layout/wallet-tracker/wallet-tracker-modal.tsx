@@ -134,7 +134,9 @@ export default function WalletTrackerModal({
 									Export
 								</Button>
 							</div>
-							<AddWalletModal />
+							<AddWalletModal>
+								<Button>Add Wallet</Button>
+							</AddWalletModal>
 						</div>
 					</div>
 				</TabsContent>

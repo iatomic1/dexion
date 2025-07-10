@@ -8,6 +8,7 @@ import {
 import { Button } from "@repo/ui/components/ui/button";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { toast } from "@repo/ui/components/ui/sonner";
 import { cn } from "@repo/ui/lib/utils";
 import {
 	type ColumnDef,
@@ -17,10 +18,18 @@ import {
 } from "@tanstack/react-table";
 import { Trash2 } from "lucide-react";
 import type React from "react";
-import { useWatchlistData } from "~/hooks/useWatchlistData";
+import { useMemo } from "react";
+import { revalidateTagServer } from "~/app/actions/revalidate";
+import {
+	type TokenWithWatchlistId,
+	useWatchlistActions,
+	useWatchlistData,
+} from "~/contexts/WatchlistContext";
 import { formatPrice } from "~/lib/helpers/numbers";
 
-export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
+export const createTableColumns = (
+	removeFromWatchlist: (id: string) => Promise<void>,
+): ColumnDef<TokenWithWatchlistId>[] => [
 	{
 		accessorKey: "token",
 		header: () => <div className={cn("w-32 sm:w-48")}>Token</div>,
@@ -80,11 +89,22 @@ export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
 		cell: ({ row }) => {
 			const t = row.original;
 
-			const handleDelete = (e: React.MouseEvent) => {
+			const handleDelete = async (e: React.MouseEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
-				// Add your delete logic here
-				console.log("Delete token:", t.symbol);
+
+				if (!t.watchlistId) {
+					toast.error("Unable to delete: watchlist ID not found");
+					return;
+				}
+
+				try {
+					await removeFromWatchlist(t.watchlistId);
+					revalidateTagServer("watchlist");
+					toast.success("Removed from watchlist");
+				} catch (error) {
+					toast.error("Failed to remove token from watchlist");
+				}
 			};
 
 			return (
@@ -94,7 +114,6 @@ export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
 						className="h-6 w-6 bg-transparent hover:bg-destructive/10"
 						variant="ghost"
 						onClick={handleDelete}
-						// disabled={isDeletePending}
 					>
 						<Trash2 className="h-3 w-3 text-destructive" />
 					</Button>
@@ -105,28 +124,24 @@ export const tableColumns = (): ColumnDef<TokenMetadata>[] => [
 ];
 
 export const WatchListTable = () => {
-	const { tokens, isInitialLoading, hasError, isEmpty, isFetching } =
-		useWatchlistData();
+	// Use separate hooks for data and actions
+	const { tokens, isLoading, error, isEmpty } = useWatchlistData();
+	const { removeFromWatchlist } = useWatchlistActions();
+
+	// Create columns with the remove action
+	const columns = useMemo(
+		() => createTableColumns(removeFromWatchlist),
+		[removeFromWatchlist],
+	);
 
 	const table = useReactTable({
 		data: tokens,
-		columns: tableColumns(),
+		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
 
-	// Show skeleton on initial loading
-	// if (isInitialLoading) {
-	//   return (
-	//     <div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
-	//       {Array.from({ length: 4 }).map((_, i) => (
-	//         <Skeleton key={i} className="h-8 w-28" />
-	//       ))}
-	//     </div>
-	//   );
-	// }
-
 	// Error handling
-	if (hasError) {
+	if (error) {
 		return (
 			<div className="text-sm text-destructive py-1 px-1 border-b border-b-border">
 				Failed to load watchlist data
@@ -176,7 +191,7 @@ export const WatchListTable = () => {
 			{/* Body */}
 			<div className="relative flex-1 overflow-hidden">
 				<ScrollArea className="h-full w-full">
-					{isInitialLoading && (
+					{isLoading && (
 						<div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
 							{Array.from({ length: 4 }).map((_, i) => (
 								<Skeleton key={i} className="h-8 w-28" />

@@ -98,7 +98,7 @@ export default function SiteHeader() {
 						</li>
 						<li>
 							<Link
-								href="#"
+								href="/trackers"
 								className="text-sm text-muted-foreground hover:text-foreground"
 							>
 								Trackers

@@ -23,7 +23,7 @@ import {
 import { Separator } from "@repo/ui/components/ui/separator";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { validateStacksAddress } from "@stacks/transactions";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useServerAction } from "zsa-react";
@@ -31,7 +31,7 @@ import { revalidateTagServer } from "~/app/actions/revalidate";
 import { trackWalletAction } from "~/app/actions/wallet-tracker-actions";
 import { AppDialog } from "~/components/app-dialog";
 
-export default function AddWalletModal() {
+export default function AddWalletModal({ children }: { children: ReactNode }) {
 	const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 	const [selectedEmoji, setSelectedEmoji] = useState("🤣");
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -113,7 +113,7 @@ export default function AddWalletModal() {
 		<>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-0">
-					<div className="grid gap-4 mb-20">
+					<div className="grid gap-4 mb-28">
 						<FormField
 							control={form.control}
 							name="address"
@@ -181,10 +181,11 @@ export default function AddWalletModal() {
 		<AppDialog
 			dialogTitle="Add Wallet"
 			dialogMain={dialogBody}
+			contentClassName="!max-w-[290px] rounded-sm"
 			dialogFooter={
 				<Button
 					type="submit"
-					className="w-full"
+					className="w-full rounded-full"
 					disabled={isPending}
 					onClick={form.handleSubmit(onSubmit)}
 				>
@@ -192,7 +193,7 @@ export default function AddWalletModal() {
 				</Button>
 			}
 		>
-			<Button onClick={() => setIsDialogOpen(true)}>Add Wallet</Button>
+			{children}
 		</AppDialog>
 	);
 }

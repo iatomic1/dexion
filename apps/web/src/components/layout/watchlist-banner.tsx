@@ -14,24 +14,21 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
-import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useServerAction } from "zsa-react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
-import { deleteWatchlistAction } from "~/app/actions/watchlist-actions";
 import {
-	type TokenWithWatchlistId,
+	useWatchlistActions,
 	useWatchlistData,
-} from "~/hooks/useWatchlistData";
+} from "~/contexts/WatchlistContext";
 import { formatPrice } from "~/lib/helpers/numbers";
 
 export const WatchListBanner = () => {
-	const { tokens, isInitialLoading, hasError, isEmpty, isFetching } =
-		useWatchlistData();
+	// Use the separate hooks for data and actions to minimize re-renders
+	const { tokens, isLoading, error, isEmpty, isFetching } = useWatchlistData();
 
 	// Show skeleton on initial loading
-	if (isInitialLoading) {
+	if (isLoading) {
 		return (
 			<div className="flex items-center flex-row gap-4 py-1 px-1 border-b border-b-border">
 				{Array.from({ length: 4 }).map((_, i) => (
@@ -43,7 +40,7 @@ export const WatchListBanner = () => {
 	}
 
 	// Error handling
-	if (hasError) {
+	if (error) {
 		return (
 			<div className="text-sm text-destructive py-1 px-1 border-b border-b-border">
 				Failed to load watchlist data
@@ -77,39 +74,11 @@ export const WatchListBanner = () => {
 	);
 };
 
-const WatchListItem = ({
-	token,
-	isRefetching,
-	watchlistId,
-}: {
-	token: TokenWithWatchlistId;
-	isRefetching?: boolean;
-	watchlistId: string;
-}) => {
-	const queryClient = useQueryClient();
+const WatchListItem = ({ token, isRefetching, watchlistId }) => {
+	// Use only the removeFromWatchlist action
+	const { removeFromWatchlist } = useWatchlistActions();
 
-	const { isPending: isDeletePending, execute: executeDelete } =
-		useServerAction(deleteWatchlistAction, {
-			onSuccess: async ({ data: res }) => {
-				if (res.status === HTTP_STATUS.NOT_FOUND) {
-					toast.error("You can't delete a watchlist that doesn't exist");
-					return;
-				}
-
-				await queryClient.invalidateQueries({ queryKey: ["watchlist"] });
-				await queryClient.invalidateQueries({
-					queryKey: ["batch-tokens"],
-					exact: false,
-				});
-
-				revalidateTagServer("watchlist");
-			},
-			onError: () => {
-				toast.error("Failed to remove token from watchlist");
-			},
-		});
-
-	const handleDelete = async (e: React.MouseEvent) => {
+	const handleDelete = async (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -118,7 +87,13 @@ const WatchListItem = ({
 			return;
 		}
 
-		await executeDelete({ id: watchlistId });
+		try {
+			await removeFromWatchlist(watchlistId);
+			revalidateTagServer("watchlist");
+			toast.success("Removed from watchlist");
+		} catch (error) {
+			toast.error("Failed to remove token from watchlist");
+		}
 	};
 
 	// Safe access to token properties
@@ -162,7 +137,6 @@ const WatchListItem = ({
 								className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-6 bg-transparent hover:bg-destructive/10"
 								variant="ghost"
 								onClick={handleDelete}
-								disabled={isDeletePending}
 							>
 								<Trash2 className="h-3 w-3 text-destructive" />
 							</Button>

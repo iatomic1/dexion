@@ -1,6 +1,4 @@
 "use client";
-import type { isReadable } from "node:stream";
-import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
 import type { TokenMetadata } from "@repo/tokens/types";
 import {
 	Avatar,
@@ -24,7 +22,6 @@ import {
 	useWatchlistData,
 } from "~/contexts/WatchlistContext";
 import { formatPrice } from "~/lib/helpers/numbers";
-import type { UserWatchlist } from "~/types/wallets";
 
 export const WatchListBanner = () => {
 	// Use the separate hooks for data and actions to minimize re-renders

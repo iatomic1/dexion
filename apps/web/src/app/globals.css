@@ -4,65 +4,65 @@
 @source "../node_modules/@daveyplate/better-auth-ui";
 
 @theme inline {
-  --font-geist: var(--font-geist) /* --default-font-family: */;
-  --font-geist-mono: var(--font-geist-mono) /* --default-font-family: */;
+	--font-geist: var(--font-geist) /* --default-font-family: */;
+	--font-geist-mono: var(--font-geist-mono) /* --default-font-family: */;
 }
 
 .container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .text-balance {
-  text-wrap: balance;
+	text-wrap: balance;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 /* Firefox */
 input[type="number"] {
-  -moz-appearance: textfield;
+	-moz-appearance: textfield;
 }
 
 @media (min-width: 640px) {
-  .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+	.container {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
 }
 
 @media (min-width: 1024px) {
-  .container {
-    padding-left: 4rem;
-    padding-right: 4rem;
-  }
+	.container {
+		padding-left: 4rem;
+		padding-right: 4rem;
+	}
 }
 
 @media (min-width: 1280px) {
-  .container {
-    padding-left: 5rem;
-    padding-right: 5rem;
-  }
+	.container {
+		padding-left: 5rem;
+		padding-right: 5rem;
+	}
 }
 
 @media (min-width: 1536px) {
-  .container {
-    padding-left: 6rem;
-    padding-right: 6rem;
-    max-width: 1400px;
-  }
+	.container {
+		padding-left: 6rem;
+		padding-right: 6rem;
+		max-width: 1400px;
+	}
 }

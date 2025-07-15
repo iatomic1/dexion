@@ -1,48 +1,95 @@
 "use server";
 import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
 import { Resend } from "resend";
+import type { EmailType } from "~/types/email";
 import { getOtpEmailHtml } from "./otp-template";
 import { getVerificationEmailHtml } from "./verify-email-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
+export interface ResendEmailData {
+	id: string;
+}
 export const sendEmail = async (
-  email: string,
-  type: "sign-in" | "email-verification" | "forget-password",
-  otp: string,
-) => {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: "Dexion <no-reply@auth.dexion.pro>",
-      to: [email],
-      subject:
-        type === "email-verification"
-          ? "Verify your email address"
-          : type === "sign-in"
-            ? "Dexion OTP"
-            : "Forget Password",
-      html:
-        type === "email-verification"
-          ? getVerificationEmailHtml({
-              username: email,
-              verificationCode: otp,
-            })
-          : type === "sign-in"
-            ? getOtpEmailHtml({ username: email, otp: otp })
-            : "",
-      react:
-        type === "forget-password"
-          ? ResetPasswordEmail({ resetPasswordLink: otp, userFirstname: email })
-          : null,
-    });
+	email: string,
+	type: EmailType,
+	otp: string,
+): Promise<
+	{ success: true; data: ResendEmailData } | { success: false; error: string }
+> => {
+	if (!process.env.RESEND_API_KEY) {
+		return { success: false, error: "RESEND_API_KEY is not configured" };
+	}
 
-    if (error) {
-      console.error(error);
-    }
+	if (!email || !email.includes("@")) {
+		return { success: false, error: "Invalid email address" };
+	}
 
-    console.log(data);
-    return data;
-  } catch (err) {
-    console.error(err);
-  }
+	if (!otp) {
+		return { success: false, error: "OTP is required" };
+	}
+
+	try {
+		const emailConfig = getEmailConfig(email, type, otp);
+
+		const { data, error } = await resend.emails.send(emailConfig);
+
+		if (error) {
+			console.error("Resend API error:", error);
+			return {
+				success: false,
+				error: `Failed to send email: ${error.message || "Unknown error"}`,
+			};
+		}
+
+		if (!data) {
+			return { success: false, error: "No data returned from email service" };
+		}
+
+		console.log("Email sent successfully:", data);
+		return { success: true, data };
+	} catch (err) {
+		const errorMessage =
+			err instanceof Error ? err.message : "Unknown error occurred";
+		console.error("Unexpected error sending email:", err);
+		return { success: false, error: errorMessage };
+	}
+};
+
+const getEmailConfig = (email: string, type: EmailType, otp: string) => {
+	const baseConfig = {
+		from: "Dexion <no-reply@auth.dexion.pro>",
+		to: [email],
+	};
+
+	switch (type) {
+		case "email-verification":
+			return {
+				...baseConfig,
+				subject: "Verify your email address",
+				html: getVerificationEmailHtml({
+					username: email,
+					verificationCode: otp,
+				}),
+			};
+
+		case "sign-in":
+			return {
+				...baseConfig,
+				subject: "Dexion OTP",
+				html: getOtpEmailHtml({ username: email, otp }),
+			};
+
+		case "forget-password":
+			return {
+				...baseConfig,
+				subject: "Reset Your Password",
+				react: ResetPasswordEmail({
+					resetPasswordLink: otp,
+					userFirstname: email,
+				}),
+			};
+
+		default:
+			throw new Error(`Unsupported email type: ${type}`);
+	}
 };

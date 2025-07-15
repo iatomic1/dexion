@@ -2,7 +2,8 @@
   "name": "@repo/token-watcher",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@repo/typescript-config": "workspace:*"
   },
   "scripts": {
     "start": "bun run src/index.ts",

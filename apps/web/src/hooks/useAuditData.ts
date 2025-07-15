@@ -1,71 +1,83 @@
-import { TokenMetadata } from "@repo/tokens/types";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import type { TokenMetadata } from "@repo/tokens/types";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { getBalance } from "~/lib/queries/hiro";
-import { getPoints, getLockedLiquidity } from "~/lib/queries/token-watcher";
+import { getLockedLiquidity, getPoints } from "~/lib/queries/token-watcher";
 import { getContractAddressAndName } from "~/lib/utils/contract";
 import {
-  getDevHoldingPercentage,
-  getLockedLiquidityPercentage,
+	getDevHoldingPercentage,
+	getLockedLiquidityPercentage,
 } from "~/lib/utils/token";
-import { AddressBalanceResponse } from "~/types/hiro/balance";
-import { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
+import type { AddressBalanceResponse } from "~/types/hiro/balance";
+import type { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
 
 export function useAuditData(ca: string, token: TokenMetadata) {
-  const { data: pointsData, isLoading: isPointsLoading } =
-    useQuery<TokenPoints>({
-      queryKey: ["points", ca],
-      queryFn: async () => getPoints(ca),
-      enabled: !!ca,
-    });
+	const isStxtools = token.source === "stxtools";
 
-  const { data: lockedLiquidityData, isLoading: isLockedLiquidityLoading } =
-    useQuery({
-      queryKey: ["locked-liquidity", ca],
-      queryFn: async () => getLockedLiquidity(ca),
-      enabled: !!ca,
-    });
+	// Only fetch points and locked liquidity for stxtools tokens
+	const { data: pointsData, isLoading: isPointsLoading } =
+		useQuery<TokenPoints>({
+			queryKey: ["points", ca],
+			queryFn: async () => getPoints(ca),
+			enabled: !!ca && isStxtools,
+			placeholderData: keepPreviousData,
+			refetchOnWindowFocus: false,
+		});
 
-  const { address } = getContractAddressAndName(ca);
-  const { isLoading: isAddressBalanceLoading, data: addressBalanceData } =
-    useQuery<AddressBalanceResponse>({
-      queryKey: ["devHolding", ca?.split(".")[0]],
-      queryFn: () => getBalance(address as string),
-      enabled: address ? true : false,
-    });
+	const { data: lockedLiquidityData, isLoading: isLockedLiquidityLoading } =
+		useQuery({
+			queryKey: ["locked-liquidity", ca],
+			queryFn: async () => getLockedLiquidity(ca),
+			enabled: !!ca && isStxtools,
+			placeholderData: keepPreviousData,
+			refetchOnWindowFocus: false,
+		});
 
-  const isLoading =
-    isPointsLoading || isLockedLiquidityLoading || isAddressBalanceLoading;
+	const { address } = getContractAddressAndName(ca);
+	const { isLoading: isAddressBalanceLoading, data: addressBalanceData } =
+		useQuery<AddressBalanceResponse>({
+			queryKey: ["devHolding", ca?.split(".")[0]],
+			queryFn: () => getBalance(address as string),
+			enabled: !!address,
+		});
 
-  const [lockedLiquidityPercentage, setLockedLiquidityPercentage] =
-    useState<number>(0);
-  const [devHoldingPercentage, setDevHoldingPercentage] = useState<number>(0);
+	// Granular loading states
+	const loadingStates = {
+		points: isPointsLoading,
+		lockedLiquidity: isLockedLiquidityLoading,
+		devHolding: isAddressBalanceLoading,
+	};
 
-  useEffect(() => {
-    if (lockedLiquidityData && lockedLiquidityData.length > 0) {
-      const percentage = getLockedLiquidityPercentage(
-        lockedLiquidityData[0] as TokenLockedLiquidity,
-      );
-      setLockedLiquidityPercentage(percentage);
-    }
-  }, [lockedLiquidityData]);
+	const [lockedLiquidityPercentage, setLockedLiquidityPercentage] =
+		useState<number>(0);
+	const [devHoldingPercentage, setDevHoldingPercentage] = useState<number>(0);
 
-  useEffect(() => {
-    if (addressBalanceData && addressBalanceData.fungible_tokens) {
-      setDevHoldingPercentage(
-        getDevHoldingPercentage(
-          addressBalanceData as AddressBalanceResponse,
-          token.contract_id,
-          token.total_supply,
-        ),
-      );
-    }
-  }, [addressBalanceData]);
+	useEffect(() => {
+		if (isStxtools && lockedLiquidityData && lockedLiquidityData.length > 0) {
+			const percentage = getLockedLiquidityPercentage(
+				lockedLiquidityData[0] as TokenLockedLiquidity,
+			);
+			setLockedLiquidityPercentage(percentage);
+		}
+	}, [lockedLiquidityData, isStxtools]);
 
-  return {
-    totalPoints: pointsData && pointsData.total_points,
-    lockedLiquidityPercentage,
-    devHoldingPercentage,
-    isLoading,
-  };
+	useEffect(() => {
+		if (addressBalanceData?.fungible_tokens) {
+			setDevHoldingPercentage(
+				getDevHoldingPercentage(
+					addressBalanceData as AddressBalanceResponse,
+					token.contract_id,
+					token.total_supply,
+				),
+			);
+		}
+	}, [addressBalanceData, token.contract_id, token.total_supply]);
+
+	return {
+		totalPoints: isStxtools ? pointsData?.total_points : null,
+		lockedLiquidityPercentage: isStxtools ? lockedLiquidityPercentage : 0,
+		devHoldingPercentage,
+		loadingStates,
+		isStxtools,
+	};
 }

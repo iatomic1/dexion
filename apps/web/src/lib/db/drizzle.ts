@@ -5,10 +5,10 @@ import { schema } from "./schema";
 config({ path: ".env" }); // or .env.local
 
 export const db = drizzle({
-  connection: {
-    url: process.env.DB_URL!,
-    ssl: false,
-  },
-  casing: "snake_case",
-  schema: schema,
+	connection: {
+		url: process.env.DB_URL!,
+		ssl: false,
+	},
+	casing: "snake_case",
+	schema: schema,
 });

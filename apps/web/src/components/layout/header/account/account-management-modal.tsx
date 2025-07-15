@@ -223,7 +223,7 @@ export function AccountSecurityModal({
 										onOpenChange={setDialogOpen}
 										authClient={authClient}
 										trigger={
-											<Button variant="secondary" size="sm" onClick={() => {}}>
+											<Button variant="secondary" size="sm">
 												Enable 2FA
 											</Button>
 										}

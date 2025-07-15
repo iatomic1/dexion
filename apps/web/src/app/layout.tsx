@@ -1,5 +1,7 @@
 // import "@repo/ui/globals.css";
+
 import { TurnkeyProvider } from "@turnkey/sdk-react";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@repo/ui/components/ui/sonner";
 import type { Metadata } from "next";
@@ -58,6 +60,19 @@ export default async function RootLayout({
 							</ClientQueryProvider>
 						</div>
 					</PresetsContextProvider>
+					<Script
+						src="https://cdn.databuddy.cc/databuddy.js"
+						strategy="afterInteractive"
+						async
+						data-client-id="rAfsBCtxnJvNZkVLfnP3H"
+						data-track-attributes={false}
+						data-track-errors={true}
+						data-track-outgoing-links={false}
+						data-track-web-vitals={true}
+						data-track-sessions={false}
+						data-track-exit-intent="true"
+					/>
+
 					{/* </WalletTrackerSocketProvider> */}
 				</ThemeProvider>
 			</body>

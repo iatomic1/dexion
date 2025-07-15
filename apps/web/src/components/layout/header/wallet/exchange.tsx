@@ -36,13 +36,13 @@ export default function Exchange({
 			<TabsList className="w-full bg-transparent border">
 				<TabsTrigger
 					value="withdraw"
-					className="bg-background !border-none rounded-md capitalize"
+					className="!bg-secondary !border-none rounded-md capitalize !shadow-none"
 				>
 					withdraw
 				</TabsTrigger>
 				<TabsTrigger
 					value="deposit"
-					className="group bg-background !border-none rounded-md capitalize"
+					className="!bg-secondary !border-none rounded-md capitalize !shadow-none"
 				>
 					deposit
 				</TabsTrigger>

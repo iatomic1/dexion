@@ -112,7 +112,7 @@ export function CryptoHoverCard({
 			<HoverCardTrigger asChild>{children}</HoverCardTrigger>
 			<HoverCardContent
 				className={cn(
-					"w-full md:w-80 bg-zinc-900 border-zinc-800 text-primary py-1 px-2 flex flex-col gap-2",
+					"w-full md:w-80 text-primary py-1 px-2 flex flex-col gap-2",
 					!ft.total_buys || (ft.total_buys === "0" && "hidden"),
 				)}
 				align={isMobile ? "center" : "start"}

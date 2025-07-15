@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import { auth } from "~/lib/auth";
 import PriceDisplayContainer from "./price-display-container";
+import ThemeSwitcherTab from "./theme-switcher";
 import WalletTrackerContainer from "./wallet-tracker-container";
 
 export default async function SiteFooter() {
@@ -22,6 +23,7 @@ export default async function SiteFooter() {
 				)}
 
 				<div className="flex items-center gap-0.5">
+					<ThemeSwitcherTab />
 					<Suspense fallback={<PriceDisplaySkeleton />}>
 						<PriceDisplayContainer />
 					</Suspense>

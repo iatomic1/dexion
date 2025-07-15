@@ -8,11 +8,8 @@
     "./utils": "./src/utils/index.ts",
     "./types": "./src/types/index.ts"
   },
-  "scripts": {
-    "lint": "eslint . --max-warnings 0"
-  },
+  "scripts": {},
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.3.3"
   },
@@ -22,4 +19,3 @@
     "axios": "^1.9.0"
   }
 }
-

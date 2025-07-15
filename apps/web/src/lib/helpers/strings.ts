@@ -9,23 +9,23 @@
  * @returns {string} The truncated string
  */
 export const truncateString = (
-  str: string,
-  startChars: number = 7,
-  endChars: number = 4,
-  ellipsis: string = "...",
+	str: string,
+	startChars = 7,
+	endChars = 4,
+	ellipsis = "...",
 ): string => {
-  if (!str) return "";
+	if (!str) return "";
 
-  // If the string is shorter than or equal to startChars + endChars, just return it
-  if (str.length <= startChars + endChars) {
-    return str;
-  }
+	// If the string is shorter than or equal to startChars + endChars, just return it
+	if (str.length <= startChars + endChars) {
+		return str;
+	}
 
-  // Otherwise, truncate it
-  const start = str.substring(0, startChars);
-  const end = str.substring(str.length - endChars);
+	// Otherwise, truncate it
+	const start = str.substring(0, startChars);
+	const end = str.substring(str.length - endChars);
 
-  return `${start}${ellipsis}${end}`;
+	return `${start}${ellipsis}${end}`;
 };
 
 // Usage examples:

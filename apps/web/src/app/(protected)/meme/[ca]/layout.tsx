@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { TokenSocketProvider } from "~/contexts/TokenWatcherSocketContext";
 
 export const metadata: Metadata = {
-  title: "MEME",
+	title: "MEME",
 };
 
 export default function MemePageLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return <TokenSocketProvider>{children}</TokenSocketProvider>;
+	return <TokenSocketProvider>{children}</TokenSocketProvider>;
 }

@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@repo/ui/components/ui/button";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import {
@@ -10,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import AddWalletModal from "~/components/layout/wallet-tracker/add-wallet";
 import { WalletItem } from "~/components/layout/wallet-tracker/wallet-item";
+import WalletIemSkeleton from "~/components/layout/wallet-tracker/wallet-item-skeleton";
 import type { UserWallet } from "~/types/wallets";
 
 export default function TrackersDetails({
@@ -22,6 +24,7 @@ export default function TrackersDetails({
 	const [filteredWallets, setFilteredWallets] = useState<UserWallet[]>(
 		wallets || [],
 	);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// Clear search input function
 	const _clearSearch = () => {
@@ -30,19 +33,25 @@ export default function TrackersDetails({
 
 	// Update filtered wallets whenever search query or wallets change
 	useEffect(() => {
-		if (!searchQuery.trim()) {
-			setFilteredWallets(wallets || []);
-			return;
-		}
+		setIsLoading(true);
 
-		const query = searchQuery.toLowerCase();
-		const filtered = wallets.filter(
-			(wallet) =>
-				wallet.nickname.toLowerCase().includes(query) ||
-				wallet.address.toLowerCase().includes(query),
-		);
+		// Simulate async filtering (you can remove setTimeout if not needed)
+		const timeoutId = setTimeout(() => {
+			if (!searchQuery.trim()) {
+				setFilteredWallets(wallets || []);
+			} else {
+				const query = searchQuery.toLowerCase();
+				const filtered = wallets.filter(
+					(wallet) =>
+						wallet.nickname.toLowerCase().includes(query) ||
+						wallet.address.toLowerCase().includes(query),
+				);
+				setFilteredWallets(filtered);
+			}
+			setIsLoading(false);
+		}, 100);
 
-		setFilteredWallets(filtered);
+		return () => clearTimeout(timeoutId);
 	}, [searchQuery, wallets]);
 
 	return (
@@ -80,14 +89,15 @@ export default function TrackersDetails({
 					</AddWalletModal>
 				</div>
 			</div>
+
 			<TabsContent value="manager" className="">
-				<div className="flex justify-between py-0 px-4 border-y border-y-border-y-border text-xs text-muted-foreground">
+				<div className="flex justify-between py-0 px-4 border-y border-y-border text-xs text-muted-foreground">
 					<div className="flex gap-4 items-center">
 						<span>Created</span>
 						<span>Name</span>
 					</div>
 					<div className="flex items-center gap-3">
-						<span>{wallets.length} / 300 Wallets</span>
+						<span>{wallets?.length || 0} / 300 Wallets</span>
 						<Button
 							variant={"destructive"}
 							size={"sm"}
@@ -97,8 +107,11 @@ export default function TrackersDetails({
 						</Button>
 					</div>
 				</div>
+
 				<ScrollArea className="h-64 w-full">
-					{filteredWallets && filteredWallets.length > 0 ? (
+					{isLoading ? (
+						<WalletIemSkeleton count={3} />
+					) : filteredWallets && filteredWallets.length > 0 ? (
 						filteredWallets.map((wallet, index) => (
 							<WalletItem key={wallet.address} wallet={wallet} index={index} />
 						))

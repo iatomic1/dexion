@@ -86,11 +86,11 @@ export default function AddWalletModal({ children }: { children: ReactNode }) {
 				richColors: true,
 				loading: "Tracking Wallet...",
 				success: () => {
-					setTimeout(() => {
-						form.reset();
-						setSelectedEmoji("🤣");
-						setIsDialogOpen(false);
-					}, 500);
+					// setTimeout(() => {
+					form.reset();
+					setSelectedEmoji("🤣");
+					setIsDialogOpen(false);
+					// }, 500);
 					revalidateTagServer("wallets");
 					return "Wallet tracked successfully";
 				},

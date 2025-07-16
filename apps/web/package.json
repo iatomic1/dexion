@@ -32,6 +32,7 @@
     "@turnkey/sdk-react": "^5.2.6",
     "@turnkey/sdk-server": "^4.1.0",
     "better-auth": "^1.2.9",
+    "bns-v2-sdk": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto": "^1.0.1",
     "dayjs": "^1.11.13",

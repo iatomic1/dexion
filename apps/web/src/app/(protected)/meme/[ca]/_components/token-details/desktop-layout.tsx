@@ -16,7 +16,7 @@ interface DesktopLayoutProps {
 const DesktopLayout = memo(({ tokenData }: DesktopLayoutProps) => {
 	const { isLoading: isLoadingMetadata } = useTokenMetadata();
 	return (
-		<div className="flex min-h-screen flex-col w-full">
+		<div className="flex min-h-screen flex-col w-full" suppressHydrationWarning>
 			<div className="flex flex-col sm:flex-row h-[calc(100vh-64px)]">
 				<div className="w-full h-full">
 					<div className="flex flex-col h-full">

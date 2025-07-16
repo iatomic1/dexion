@@ -42,7 +42,7 @@ export function AppDialog({
 						</Button>
 					</DialogClose>
 				</DialogHeader>
-				<div className="px-4 py-3">{dialogMain}</div>
+				<div className="px-4 py-0">{dialogMain}</div>
 				{dialogFooter && (
 					<DialogFooter className="border-t px-4 py-3 -mt-2">
 						{dialogFooter}

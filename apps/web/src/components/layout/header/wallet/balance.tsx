@@ -32,6 +32,7 @@ import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTran
 import { authClient } from "~/lib/auth-client";
 import { getBalance } from "~/lib/queries/hiro";
 import { formatTokenBalance } from "~/lib/utils/token";
+import type { CryptoAsset } from "~/types/xverse";
 import Exchange from "./exchange";
 import Withdraw from "./withdraw";
 
@@ -113,7 +114,7 @@ function BalanceContent({
 		</div>
 	);
 
-	const ActionButtons = () => (
+	const ActionButtons = ({ stxPrice }: { stxPrice: CryptoAsset }) => (
 		<div className="grid grid-cols-2 gap-3">
 			<Exchange
 				mode="deposit"
@@ -125,7 +126,7 @@ function BalanceContent({
 					Deposit
 				</Button>
 			</Exchange>
-			<Withdraw>
+			<Withdraw stxBalance={formattedBalance} stxPrice={stxPrice}>
 				<Button className="rounded-full w-full" size="sm" variant={"default"}>
 					Withdraw
 				</Button>
@@ -141,7 +142,7 @@ function BalanceContent({
 				</DrawerHeader>
 				<Separator className="-mx-4" />
 				<div className="p-4">
-					<ActionButtons />
+					<ActionButtons stxPrice={stxPrice as CryptoAsset} />
 				</div>
 			</>
 		);
@@ -154,7 +155,7 @@ function BalanceContent({
 			</div>
 			<Separator className="w-full" />
 			<div className="p-4">
-				<ActionButtons />
+				<ActionButtons stxPrice={stxPrice as CryptoAsset} />
 			</div>
 		</>
 	);

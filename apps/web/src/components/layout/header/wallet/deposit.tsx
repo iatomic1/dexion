@@ -28,7 +28,9 @@ export default function Deposit({
 
 				<div className="text-xs py-2 opacity-100 flex items-center gap-3 px-4 w-full border rounded-lg justify-between">
 					<span className="text-secondary-foreground">Balance:</span>
-					<span className="text-muted-foreground">{stxBalance} STX</span>
+					<span className="text-muted-foreground">
+						{Number(stxBalance).toFixed(2)} STX
+					</span>
 				</div>
 			</div>
 			<div

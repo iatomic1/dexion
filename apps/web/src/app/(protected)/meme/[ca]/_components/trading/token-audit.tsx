@@ -1,4 +1,5 @@
 "use client";
+
 import type { TokenMetadata } from "@repo/tokens/types";
 import { Button } from "@repo/ui/components/ui/button";
 import {
@@ -35,6 +36,7 @@ import {
 	Verified,
 	X,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
 	useTokenData,
@@ -63,7 +65,7 @@ export function InfoItem({
 	isGreen = false,
 }: InfoItemProps) {
 	return (
-		<div className="p-3 border-muted border-[1px] rounded-md items-center justify-center flex flex-col gap-1">
+		<div className="p-3 bg-card text-card-foreground border shadow rounded-md items-center justify-center flex flex-col gap-1">
 			<div className={cn("flex items-center justify-center gap-1")}>
 				{icon}
 				<span
@@ -286,6 +288,7 @@ function TokenInfoContent({
 }
 
 export default function TokenAudit({ token }: { token: TokenMetadata }) {
+	const { theme } = useTheme();
 	const [isOpen, setIsOpen] = useState(true);
 
 	// All hooks called here - data persists across collapsible open/close
@@ -375,7 +378,11 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
 				onOpenChange={setIsOpen}
 			>
 				<CollapsibleTrigger asChild>
-					<Button className={cn("w-fit text-sm")} variant={"ghost"} size={"sm"}>
+					<Button
+						className={cn("w-fit text-sm")}
+						variant={theme === "light" ? "secondary" : "ghost"}
+						size={"sm"}
+					>
 						Token Info
 						<ChevronDown className="h-4 w-4" />
 					</Button>

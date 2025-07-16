@@ -24,6 +24,17 @@
     "packages/*"
   ],
   "dependencies": {
-    "@databuddy/sdk": "^1.4.0"
+    "@databuddy/sdk": "^1.4.0",
+    "cz-emoji": "^1.3.2-canary.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-emoji",
+      "cz-emoji": {
+        "format": "{emoji} {typeUpperCase}({scope}): {subject}",
+        "useEmoji": true,
+        "align": false
+      }
+    }
   }
 }

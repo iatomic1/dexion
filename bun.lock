@@ -3,9 +3,6 @@
   "workspaces": {
     "": {
       "name": "dexion",
-      "dependencies": {
-        "@databuddy/sdk": "^1.4.0",
-      },
       "devDependencies": {
         "@biomejs/biome": "2.0.0",
         "@repo/typescript-config": "workspace:*",
@@ -622,8 +619,6 @@
     "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20240320.1", "", {}, "sha512-CiYtVpQURPgQqtBKkmOAnfPElVZuD7Xyf1IxKtKp2B4aB9gnooapwJhzeY8c4Ls4u17SgMS0MprOkrgYwzZ6xg=="],
 
     "@cspotcode/source-map-support": ["@cspotcode/source-map-support@0.8.1", "", { "dependencies": { "@jridgewell/trace-mapping": "0.3.9" } }, "sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw=="],
-
-    "@databuddy/sdk": ["@databuddy/sdk@1.4.0", "", {}, "sha512-D942LEorC1W6vp2qDK8LSJYAlLOW3CUo4RDihTx+V6KfmhdOB7JqltZbHAnneB9G91z7gMT0kj2Cu2BWcrPu4A=="],
 
     "@daveyplate/better-auth-tanstack": ["@daveyplate/better-auth-tanstack@1.3.6", "", { "peerDependencies": { "@tanstack/query-core": ">=5.65.0", "@tanstack/react-query": ">=5.65.0", "better-auth": ">=1.2.8", "react": ">=18.0.0", "react-dom": ">=18.0.0" } }, "sha512-GvIGdbjRMZCEfAffU7LeWpGpie4vSli8V9jmNFCQOziZZMEFbO4cd53HBFmAushC9oEYIyhSNZBgV2ADzW94Ww=="],
 

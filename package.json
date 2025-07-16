@@ -1,7 +1,12 @@
 {
   "name": "dexion",
-  "packageManager": "bun@1.2.12",
   "version": "1.4.3",
+  "config": {
+    "cz-gitmoji": {
+      "format": "{emoji} {type}({scope}): {subject}",
+      "subjectFormat": "lowercase"
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
     "@repo/typescript-config": "workspace:*",
@@ -12,6 +17,7 @@
     "node": ">=18"
   },
   "license": "MIT",
+  "packageManager": "bun@1.2.12",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -22,8 +28,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "@databuddy/sdk": "^1.4.0"
-  }
+  ]
 }

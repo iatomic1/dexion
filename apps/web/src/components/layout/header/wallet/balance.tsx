@@ -24,14 +24,17 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMediaQuery } from "~/app/(protected)/meme/[ca]/_components/trade-details";
+import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTransactions";
 import { authClient } from "~/lib/auth-client";
 import { getBalance } from "~/lib/queries/hiro";
 import { formatTokenBalance } from "~/lib/utils/token";
+import type { CryptoAsset } from "~/types/xverse";
 import Exchange from "./exchange";
+import Withdraw from "./withdraw";
 
 interface BalanceContentProps {
 	isPending: boolean;
@@ -56,17 +59,29 @@ function BalanceContent({
 		balanceData?.stx.balance as string,
 		6,
 	);
+	const {
+		prices,
+		isLoading: isPriceLoading,
+		isError,
+	} = useBtcStxPriceContext();
+	const stxPrice = useMemo(() => {
+		return prices?.find((p) => p.symbol === "stx");
+	}, [prices]);
 
 	const HeaderContent = () => (
 		<div className="flex justify-between flex-row">
 			<div className="flex gap-2 flex-col">
 				<span className="text-xs">Total Value</span>
-				{isPending || isLoading ? (
+				{isPending || isLoading || isPriceLoading ? (
 					<Skeleton className="h-7 w-24" />
 				) : isMobile ? (
-					<span className="text-lg font-semibold">${formattedBalance}</span>
+					<span className="text-lg font-semibold">
+						${((stxPrice?.current_price ?? 0) * formattedBalance).toFixed(2)}
+					</span>
 				) : (
-					<span className="text-lg font-semibold">${formattedBalance}</span>
+					<span className="text-lg font-semibold">
+						${((stxPrice?.current_price ?? 0) * formattedBalance).toFixed(2)}
+					</span>
 				)}
 			</div>
 			<div className="flex items-center gap-2">
@@ -99,7 +114,7 @@ function BalanceContent({
 		</div>
 	);
 
-	const ActionButtons = () => (
+	const ActionButtons = ({ stxPrice }: { stxPrice: CryptoAsset }) => (
 		<div className="grid grid-cols-2 gap-3">
 			<Exchange
 				mode="deposit"
@@ -111,16 +126,11 @@ function BalanceContent({
 					Deposit
 				</Button>
 			</Exchange>
-			<Exchange
-				mode="withdraw"
-				stxBalance={formattedBalance.toString()}
-				stxAddress={walletAddress}
-				onClose={onClose}
-			>
+			<Withdraw stxBalance={formattedBalance} stxPrice={stxPrice}>
 				<Button className="rounded-full w-full" size="sm" variant={"default"}>
 					Withdraw
 				</Button>
-			</Exchange>
+			</Withdraw>
 		</div>
 	);
 
@@ -132,7 +142,7 @@ function BalanceContent({
 				</DrawerHeader>
 				<Separator className="-mx-4" />
 				<div className="p-4">
-					<ActionButtons />
+					<ActionButtons stxPrice={stxPrice as CryptoAsset} />
 				</div>
 			</>
 		);
@@ -145,7 +155,7 @@ function BalanceContent({
 			</div>
 			<Separator className="w-full" />
 			<div className="p-4">
-				<ActionButtons />
+				<ActionButtons stxPrice={stxPrice as CryptoAsset} />
 			</div>
 		</>
 	);

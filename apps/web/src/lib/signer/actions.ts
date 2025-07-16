@@ -21,6 +21,7 @@ export const transferStx = authenticatedAction
 	)
 	.handler(async ({ input, ctx: { user } }) => {
 		try {
+			console.log(input);
 			let signer: StacksSigner;
 			try {
 				signer = await getSigner(user.session.user);
@@ -34,7 +35,10 @@ export const transferStx = authenticatedAction
 
 			let tx: SignedTransaction;
 			try {
-				tx = await signer.signTransaction("tokenTransfer", { ...input });
+				tx = await signer.signTransaction("tokenTransfer", {
+					...input,
+					amount: input.amount * 1_000_000,
+				});
 			} catch (error) {
 				throw new SigningError(
 					"Failed to sign token transfer transaction",

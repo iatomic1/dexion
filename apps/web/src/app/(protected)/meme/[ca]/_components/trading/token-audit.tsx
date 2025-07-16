@@ -288,7 +288,7 @@ function TokenInfoContent({
 }
 
 export default function TokenAudit({ token }: { token: TokenMetadata }) {
-	const { theme } = useTheme();
+	const { resolvedTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(true);
 
 	// All hooks called here - data persists across collapsible open/close
@@ -380,7 +380,7 @@ export default function TokenAudit({ token }: { token: TokenMetadata }) {
 				<CollapsibleTrigger asChild>
 					<Button
 						className={cn("w-fit text-sm")}
-						variant={theme === "light" ? "secondary" : "ghost"}
+						variant={resolvedTheme === "light" ? "secondary" : "ghost"}
 						size={"sm"}
 					>
 						Token Info

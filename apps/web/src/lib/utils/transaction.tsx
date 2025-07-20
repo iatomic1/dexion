@@ -116,7 +116,6 @@ export const getStatusBadge = (status: Transaction["tx_status"]) => {
 		case "abort_by_post_condition":
 		case "abort_by_response":
 			return <Badge variant="destructive">Failed</Badge>;
-			return <Badge variant="destructive">Failed</Badge>;
 		default:
 			return (
 				<Badge

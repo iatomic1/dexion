@@ -57,25 +57,3 @@ export async function getTransactions(
 
 	return data;
 }
-
-// export const getTransactions = async (
-// 	address: string,
-// 	limit?: number,
-// 	offset?: number,
-// ) => {
-// 	try {
-// 		const params = new URLSearchParams();
-// 		if (limit !== undefined) params.append("limit", String(limit));
-// 		if (offset !== undefined) params.append("offset", String(offset));
-
-// 		const query = params.toString();
-// 		const url = `extended/v2/addresses/${address}/transactions${query ? `?${query}` : ""}`;
-
-// 		return makeFetch<Transaction>("hiro", url, null, {
-// 			method: "GET",
-// 		})();
-// 	} catch (error) {
-// 		console.error(error);
-// 		throw error;
-// 	}
-// };

@@ -1,4 +1,5 @@
 import { type BetterAuthPlugin } from "better-auth";
+import { APIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
 import { z } from "zod";
@@ -23,6 +24,7 @@ export interface SIWSPluginOptions {
 		signature: string;
 		address: string;
 		nonce: string;
+		publicKey: string;
 	}) => Promise<boolean>;
 }
 
@@ -62,15 +64,16 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 			{
 				method: "POST",
 				body: z.object({
-					stxAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
+					walletAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
 				}),
 			},
 			async (ctx) => {
-				const { stxAddress } = ctx.body;
+				const { walletAddress } = ctx.body;
 				const nonce = await options.getNonce();
+				console.log(walletAddress, nonce);
 
 				await ctx.context.internalAdapter.createVerificationValue({
-					identifier: `siws:${stxAddress}`,
+					identifier: `siws:${walletAddress}`,
 					value: nonce,
 					expiresAt: new Date(Date.now() + 15 * 60 * 1000),
 				});
@@ -87,7 +90,8 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 					.object({
 						message: z.string().min(1),
 						signature: z.string().min(1),
-						stxAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
+						walletAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
+						publicKey: z.string(),
 						email: z.string().email().optional(),
 					})
 					.refine((data) => options.anonymous !== false || !!data.email, {
@@ -97,10 +101,12 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 				requireRequest: true,
 			},
 			async (ctx) => {
-				const { message, signature, stxAddress, email } = ctx.body;
+				const { message, signature, walletAddress, email, publicKey } =
+					ctx.body;
 				const isAnon = options.anonymous ?? true;
 
 				if (!isAnon && !email) {
+					console.log("failed in anon check");
 					throw ctx.error("BAD_REQUEST", {
 						message: "Email is required when anonymous is disabled.",
 						status: 400,
@@ -110,7 +116,7 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 				try {
 					const verification =
 						await ctx.context.internalAdapter.findVerificationValue(
-							`siws:${stxAddress}`,
+							`siws:${walletAddress}`,
 						);
 
 					if (!verification || new Date() > verification.expiresAt) {
@@ -123,8 +129,9 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 					const verified = await options.verifyMessage({
 						message,
 						signature,
-						address: stxAddress,
+						address: walletAddress,
 						nonce: verification.value,
+						publicKey: publicKey,
 					});
 
 					if (!verified) {
@@ -142,10 +149,14 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 					const existingWallet: WalletAddress | null =
 						await ctx.context.adapter.findOne({
 							model: "walletAddress",
-							where: [{ field: "address", operator: "eq", value: stxAddress }],
+							where: [
+								{ field: "address", operator: "eq", value: walletAddress },
+							],
 						});
 
-					const network = stxAddress.startsWith("SP") ? "mainnet" : "testnet"; // Infer network from address
+					const network = walletAddress.startsWith("SP")
+						? "mainnet"
+						: "testnet"; // Infer network from address
 
 					if (existingWallet) {
 						user = await ctx.context.adapter.findOne({
@@ -159,10 +170,10 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 					if (!user) {
 						const domain = options.emailDomainName;
 						const userEmail =
-							!isAnon && email ? email : `${stxAddress}@${domain}`;
+							!isAnon && email ? email : `${walletAddress}@${domain}`;
 
 						user = await ctx.context.internalAdapter.createUser({
-							name: stxAddress, // Consider BNS integration for better names
+							name: walletAddress, // Consider BNS integration for better names
 							email: userEmail,
 							image: "",
 						});
@@ -171,7 +182,7 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 							model: "walletAddress",
 							data: {
 								userId: user.id,
-								address: stxAddress,
+								address: walletAddress,
 								network, // Use inferred network
 								isPrimary: true,
 								createdAt: new Date(),
@@ -181,7 +192,7 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 						await ctx.context.internalAdapter.createAccount({
 							userId: user.id,
 							providerId: "siws",
-							accountId: stxAddress,
+							accountId: walletAddress,
 							createdAt: new Date(),
 							updatedAt: new Date(),
 						});
@@ -192,6 +203,7 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 						ctx,
 					);
 					if (!session) {
+						console.log("failing in session being created");
 						throw ctx.error("INTERNAL_SERVER_ERROR", {
 							message: "Internal Server Error",
 							status: 500,
@@ -205,12 +217,12 @@ export const siws = (options: SIWSPluginOptions): BetterAuthPlugin => ({
 						success: true,
 						user: {
 							id: user.id,
-							walletAddress: stxAddress,
+							walletAddress: walletAddress,
 							network, // Return network instead of chainId
 						},
 					});
 				} catch (err) {
-					if (err instanceof ctx.error) throw err;
+					if (err instanceof APIError) throw err;
 					throw ctx.error("UNAUTHORIZED", {
 						message: "Something went wrong.",
 						status: 401,

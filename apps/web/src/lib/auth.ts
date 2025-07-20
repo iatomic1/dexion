@@ -1,3 +1,7 @@
+import {
+	verifyMessageSignature,
+	verifyMessageSignatureRsv,
+} from "@stacks/encryption";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -210,8 +214,14 @@ export const auth = betterAuth({
 			getNonce: async () => {
 				return generateRandomString(32);
 			},
-			verifyMessage: async ({ message, signature, address }) => {
+			verifyMessage: async ({ message, signature, address, publicKey }) => {
 				try {
+					const isValid = verifyMessageSignature({
+						message,
+						signature: signature,
+						publicKey: publicKey,
+					});
+
 					// Verify the signature using viem (recommended)
 					// const isValid = await verifyMessage({
 					//   address: address as `0x${string}`,

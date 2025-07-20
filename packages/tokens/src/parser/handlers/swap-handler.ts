@@ -27,6 +27,7 @@ export class SwapHandler extends BaseProtocolHandler {
 				post_conditions,
 				tx.sender_address,
 			);
+
 			const receivedList = post_conditions.filter(
 				(pc) => pc.principal.type_id === "principal_contract",
 			);
@@ -40,12 +41,20 @@ export class SwapHandler extends BaseProtocolHandler {
 			}
 
 			const received = receivedList[receivedList.length - 1];
-			if (received.type !== "stx" && received.type !== "fungible") {
+
+			// Add explicit undefined check
+			if (
+				!received ||
+				(received.type !== "stx" && received.type !== "fungible")
+			) {
 				return null;
 			}
 
 			const sentAsset = TransactionUtils.createAssetInfo(sent);
+			if (!sentAsset) return null; // Handle null case for sent asset
+
 			const receivedAsset = TransactionUtils.createAssetInfo(received);
+			if (!receivedAsset) return null; // Handle null case for received asset
 
 			return {
 				...base,

@@ -62,6 +62,7 @@ export class TransactionParser {
 						contract_id as keyof typeof PROTOCOL_CONFIG.contracts
 					] || "Unknown Protocol";
 				return {
+					status: tx.tx_status,
 					txId: tx.tx_id,
 					sender: tx.sender_address,
 					protocol,
@@ -82,7 +83,7 @@ export class TransactionParser {
 		}
 	}
 
-	parseMany(transactions: MempoolTransaction[]): ParsedTransaction[] {
+	parseMany(transactions: Transaction[]): ParsedTransaction[] {
 		return transactions
 			.map((tx) => this.parse(tx))
 			.filter((result): result is ParsedTransaction => result !== null);

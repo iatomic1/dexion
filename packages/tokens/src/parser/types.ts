@@ -3,7 +3,7 @@ import type {
 	Transaction,
 } from "@stacks/blockchain-api-client";
 
-export type PostCondition = MempoolTransaction["post_conditions"][number];
+export type PostCondition = Transaction["post_conditions"][number];
 
 export interface AssetInfo {
 	asset: string;

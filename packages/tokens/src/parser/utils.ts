@@ -48,12 +48,27 @@ export class TransactionUtils {
 		return "Unknown";
 	}
 
-	static createAssetInfo(pc: PostCondition): AssetInfo {
-		return {
-			asset: this.getSimpleAssetName(pc),
-			amount: this.formatAmount(pc.amount, this.getAssetNameForDecimals(pc)),
-			contractId: this.getAssetContractId(pc),
-		};
+	static createAssetInfo(pc: PostCondition): AssetInfo | null {
+		// Check if this is an STX post condition
+		if (pc.type === "stx") {
+			return {
+				asset: this.getSimpleAssetName(pc),
+				amount: this.formatAmount(pc.amount, this.getAssetNameForDecimals(pc)),
+				contractId: this.getAssetContractId(pc),
+			};
+		}
+
+		// Check if this is a fungible token post condition
+		if (pc.type === "fungible") {
+			return {
+				asset: this.getSimpleAssetName(pc),
+				amount: this.formatAmount(pc.amount, this.getAssetNameForDecimals(pc)),
+				contractId: this.getAssetContractId(pc),
+			};
+		}
+
+		// For non-fungible or other types that don't have amount
+		return null;
 	}
 
 	static findPostConditionBySender(

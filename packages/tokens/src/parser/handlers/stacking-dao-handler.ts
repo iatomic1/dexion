@@ -1,6 +1,5 @@
 import type { Transaction } from "@stacks/blockchain-api-client";
-import type { PostCondition } from "@stacks/transactions";
-import type { ParsedTransaction } from "../types";
+import type { ParsedTransaction, PostCondition } from "../types";
 import { TransactionUtils } from "../utils";
 import { BaseProtocolHandler } from "./base-handler";
 
@@ -12,9 +11,12 @@ export class StackingDAOHandler extends BaseProtocolHandler {
 	parse(tx: Transaction): ParsedTransaction | null {
 		try {
 			const base = this.createBaseResponse(tx);
-			const { post_conditions, contract_call } = tx;
+			const { post_conditions } = tx;
 
-			if (!contract_call) return null;
+			// Type guard to ensure we have a contract call transaction
+			if (tx.tx_type !== "contract_call") return null;
+
+			const { contract_call } = tx;
 
 			switch (contract_call.function_name) {
 				case "deposit":
@@ -43,6 +45,8 @@ export class StackingDAOHandler extends BaseProtocolHandler {
 		if (!sent) return null;
 
 		const sentAsset = TransactionUtils.createAssetInfo(sent);
+		if (!sentAsset) return null; // Handle null case
+
 		return {
 			...base,
 			action: "Deposit",
@@ -61,6 +65,8 @@ export class StackingDAOHandler extends BaseProtocolHandler {
 		if (!claimed) return null;
 
 		const receivedAsset = TransactionUtils.createAssetInfo(claimed);
+		if (!receivedAsset) return null; // Handle null case
+
 		return {
 			...base,
 			action: "Claim Rewards",

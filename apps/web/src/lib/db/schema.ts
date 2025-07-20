@@ -110,6 +110,16 @@ export const twoFactor = pgTable("two_factor", {
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 });
+export const walletAddress = pgTable("wallet_address", {
+	id: text("id").primaryKey(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	address: text("address").notNull(),
+	network: text("network").notNull(),
+	isPrimary: boolean("is_primary"),
+	createdAt: timestamp("created_at").notNull(),
+});
 
 export const schema = {
 	user,
@@ -117,5 +127,6 @@ export const schema = {
 	account,
 	verification,
 	jwks,
+	walletAddress,
 	twoFactor,
 };

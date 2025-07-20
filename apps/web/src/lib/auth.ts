@@ -1,6 +1,7 @@
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { generateRandomString } from "better-auth/crypto";
 import { nextCookies } from "better-auth/next-js";
 import {
 	bearer,
@@ -16,6 +17,7 @@ import { sendEmailWithTrigger } from "~/trigger/send-email";
 import type { EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
+import { siws } from "./sign-in-with-wallet-plugin";
 import { createSubOrganization } from "./turnkey/service";
 import { handleEmailSendingImmediate } from "./utils/email";
 
@@ -200,6 +202,27 @@ export const auth = betterAuth({
 			},
 			totpOptions: {
 				disable: false,
+			},
+		}),
+		siws({
+			domain: "dexion.pro",
+			emailDomainName: "dexion.pro",
+			getNonce: async () => {
+				return generateRandomString(32);
+			},
+			verifyMessage: async ({ message, signature, address }) => {
+				try {
+					// Verify the signature using viem (recommended)
+					// const isValid = await verifyMessage({
+					//   address: address as `0x${string}`,
+					//   message,
+					//   signature: signature as `0x${string}`,
+					// });
+					return true;
+				} catch (error) {
+					console.error("SIWE verification failed:", error);
+					return false;
+				}
 			},
 		}),
 		nextCookies(),

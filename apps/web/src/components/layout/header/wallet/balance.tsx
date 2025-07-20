@@ -24,7 +24,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMediaQuery } from "~/app/(protected)/meme/[ca]/_components/trade-details";
 import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import useCopyToClipboard from "~/hooks/useCopy";
@@ -183,10 +183,16 @@ export default function Balance({ children }: { children: React.ReactNode }) {
 		refetchOnReconnect: true,
 	});
 
-	useSubscribeAddressTransactions(walletAddress as string, () => {
-		// toast.message("New transaction detected. Refreshing balance...");
-		refetch();
-	});
+	useSubscribeAddressTransactions(
+		walletAddress as string,
+		useCallback(
+			(tx) => {
+				toast.message("New transaction detected. Refreshing balance...");
+				refetch();
+			},
+			[refetch],
+		),
+	);
 
 	const handleCopyAddress = () => {
 		copy(data?.user.walletAddress as string);

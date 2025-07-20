@@ -1,0 +1,186 @@
+{
+	"timestamp": "2025-07-20T00:51:26.066Z",
+	"summary": {
+		"totalFiles": 7,
+		"successfulParsed": 7,
+		"failed": 0
+	},
+	"results": [
+		{
+			"filename": "claim-stxsbtc-rewards-stackingdao.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xe3261f23c4ce70ffb99615514199536470b47c64c5242bb495a7b86ec817414b",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "StackingDAO",
+				"contract": {
+					"id": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststxbtc-tracking",
+					"function": "claim-pending-rewards-many"
+				},
+				"action": "Claim Rewards",
+				"details": {
+					"received": {
+						"asset": "sBTC",
+						"amount": "0.00",
+						"contractId": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z claimed 0.00 sBTC from StackingDAO."
+			}
+		},
+		{
+			"filename": "multihop-swap.json",
+			"success": true,
+			"transaction": {
+				"txId": "0x90bb9d0446dd23bc09372027b2ec1fbb7e3b2aa85fe1cb822f4c05f52ebd7578",
+				"sender": "SP14W78Q821B3HQ3ED30624Z1F13X4JMFZY3N5SK4",
+				"status": "success",
+				"protocol": "ALEX",
+				"contract": {
+					"id": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop",
+					"function": "swap-4"
+				},
+				"action": "Swap",
+				"details": {
+					"sent": {
+						"asset": "CRYS",
+						"amount": "210.00",
+						"contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.crystals"
+					},
+					"received": {
+						"asset": "STX",
+						"amount": "1.3109",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SP14W78Q821B3HQ3ED30624Z1F13X4JMFZY3N5SK4 swapped ~210.00 CRYS for ~1.3109 STX on ALEX."
+			}
+		},
+		{
+			"filename": "velar-swap.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xe9b96f49bb275cd75335af1ff92f7ec451a7ff8e0092a15487a34cc182e23a6a",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "Velar",
+				"contract": {
+					"id": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+					"function": "apply"
+				},
+				"action": "Swap",
+				"details": {
+					"sent": {
+						"asset": "UAP",
+						"amount": "67,283.9066",
+						"contractId": "SP1JBV7TE0490KNVM1VAM19KHZG0CPC9426YCY3ZF.drones-stxcity"
+					},
+					"received": {
+						"asset": "STX",
+						"amount": "15.2531",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z swapped ~67,283.9066 UAP for ~15.2531 STX on Velar."
+			}
+		},
+		{
+			"filename": "bit-flow-swap-x-y.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xa40cf867a52b1c0f60e408e6bd3c88a6e98fe8e20185659b32057e139151e6d4",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "Bitflow",
+				"contract": {
+					"id": "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stableswap-stx-ststx-v-1-2",
+					"function": "swap-y-for-x"
+				},
+				"action": "Swap",
+				"details": {
+					"sent": {
+						"asset": "ststx",
+						"amount": "51.5529",
+						"contractId": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token"
+					},
+					"received": {
+						"asset": "STX",
+						"amount": "54.3068",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z swapped ~51.5529 ststx for ~54.3068 STX on Bitflow."
+			}
+		},
+		{
+			"filename": "withdraw-supply-from-zest.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xe56a25e4d2df3c0b612534104e05fbb00a3600136869525a60d8dc28845b63b6",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "Zest",
+				"contract": {
+					"id": "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.borrow-helper-v2-1-4",
+					"function": "withdraw"
+				},
+				"action": "Withdraw",
+				"details": {
+					"received": {
+						"asset": "STX",
+						"amount": "20.0027",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z withdrew 20.0027 STX from Zest."
+			}
+		},
+		{
+			"filename": "supply-stx-for-zest.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xf1fe92eed66a994129f32ff39e86506c79bcb98d91df3b20c04c08d518e67718",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "Zest",
+				"contract": {
+					"id": "SP2VCQJGH7PHP2DJK7Z0V48AGBHQAW3R3ZW1QF4N.borrow-helper-v2-1-4",
+					"function": "supply"
+				},
+				"action": "Supply",
+				"details": {
+					"sent": {
+						"asset": "STX",
+						"amount": "20.00",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z supplied 20.00 STX to Zest."
+			}
+		},
+		{
+			"filename": "stackingdao-deposit.json",
+			"success": true,
+			"transaction": {
+				"txId": "0xdd6d548738c238e288c1d0d90f12595c54b6653d3df618925b3e7628a612cbd3",
+				"sender": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+				"status": "success",
+				"protocol": "StackingDAO",
+				"contract": {
+					"id": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.stacking-dao-core-v4",
+					"function": "deposit"
+				},
+				"action": "Deposit",
+				"details": {
+					"sent": {
+						"asset": "STX",
+						"amount": "59.00",
+						"contractId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx"
+					}
+				},
+				"summary": "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z deposited 59.00 STX to StackingDAO."
+			}
+		}
+	]
+}

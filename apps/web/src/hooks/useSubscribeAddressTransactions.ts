@@ -1,4 +1,7 @@
-import { connectWebSocketClient } from "@stacks/blockchain-api-client";
+import {
+	connectWebSocketClient,
+	StacksApiSocketClient,
+} from "@stacks/blockchain-api-client";
 import { useEffect } from "react";
 
 export function useSubscribeAddressTransactions(
@@ -13,15 +16,11 @@ export function useSubscribeAddressTransactions(
 
 		(async () => {
 			try {
-				const client = await connectWebSocketClient(
-					"wss://api.mainnet.hiro.so/",
-				);
-				const sub = await client.subscribeAddressTransactions(
-					address,
-					(event) => {
-						if (isMounted) onTx(event);
-					},
-				);
+				const socketUrl = "https://api.mainnet.hiro.so";
+				const client = new StacksApiSocketClient({ url: socketUrl });
+				const sub = client.subscribeAddressTransactions(address, (event) => {
+					if (isMounted) onTx(event);
+				});
 				unsub = () => sub.unsubscribe();
 			} catch (e) {
 				console.error("Failed to subscribe to txs:", e);

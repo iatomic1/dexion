@@ -60,18 +60,20 @@ export default async function RootLayout({
 							</ClientQueryProvider>
 						</div>
 					</PresetsContextProvider>
-					<Script
-						src="https://cdn.databuddy.cc/databuddy.js"
-						strategy="afterInteractive"
-						async
-						data-client-id="rAfsBCtxnJvNZkVLfnP3H"
-						data-track-attributes={false}
-						data-track-errors={true}
-						data-track-outgoing-links={false}
-						data-track-web-vitals={true}
-						data-track-sessions={false}
-						data-track-exit-intent="true"
-					/>
+					{process.env.NODE_ENV === "production" && (
+						<Script
+							src="https://cdn.databuddy.cc/databuddy.js"
+							strategy="afterInteractive"
+							async
+							data-client-id="rAfsBCtxnJvNZkVLfnP3H"
+							data-track-attributes={false}
+							data-track-errors={true}
+							data-track-outgoing-links={false}
+							data-track-web-vitals={true}
+							data-track-sessions={false}
+							data-track-exit-intent="true"
+						/>
+					)}
 
 					{/* </WalletTrackerSocketProvider> */}
 				</ThemeProvider>

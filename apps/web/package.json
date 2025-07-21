@@ -23,6 +23,8 @@
     "@repo/ui": "*",
     "@stacks/blockchain-api-client": "^8.11.1",
     "@stacks/common": "^7.0.2",
+    "@stacks/connect": "^8.1.9",
+    "@stacks/encryption": "^7.1.0",
     "@stacks/transactions": "^7.1.0",
     "@tailwindcss/cli": "^4.1.5",
     "@tailwindcss/postcss": "^4.1.5",

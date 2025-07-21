@@ -19,12 +19,22 @@ import {
 import { Input } from "@repo/ui/components/ui/input";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
+import {
+	connect,
+	disconnect,
+	getLocalStorage,
+	isConnected,
+	request,
+} from "@stacks/connect";
+import { Cl } from "@stacks/transactions";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
+import { auth } from "~/lib/auth";
 import { authClient } from "~/lib/auth-client";
+import ContinueWithWallet from "./continue-with-wallet";
 
 interface SignUpModalProps {
 	open: boolean;
@@ -189,14 +199,7 @@ export function SignUpModal({
 							<SiGoogle size={12} title="Google Icon" />
 							Continue with Google
 						</Button>
-
-						<Button
-							variant="outline"
-							className="w-full bg-muted/50 py-5 text-sm rounded-full"
-							disabled
-						>
-							Connect with Xverse
-						</Button>
+						<ContinueWithWallet />
 					</div>
 
 					<div className="mt-6 text-center text-xs text-muted-foreground">

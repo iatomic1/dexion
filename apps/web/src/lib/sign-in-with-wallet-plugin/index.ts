@@ -4,31 +4,8 @@ import { APIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
 import { z } from "zod";
-// import type { User } from "~/types/auth";
 import { schema } from "./schema";
-
-export interface WalletAddress {
-	id: string;
-	userId: string;
-	address: string;
-	isPrimary: boolean;
-	network: "mainnet" | "testnet";
-	createdAt: Date;
-}
-
-export interface SIWSPluginOptions {
-	domain: string;
-	emailDomainName?: string;
-	anonymous?: boolean;
-	getNonce: () => Promise<string>;
-	verifyMessage: (args: {
-		message: string;
-		signature: string;
-		address: string;
-		nonce: string;
-		publicKey: string;
-	}) => Promise<boolean>;
-}
+import type { SIWSPluginOptions } from "./types";
 
 export const siws = (options: SIWSPluginOptions) =>
 	({
@@ -100,6 +77,7 @@ export const siws = (options: SIWSPluginOptions) =>
 							throw ctx.error("UNAUTHORIZED", {
 								message: "Invalid or expired nonce",
 								status: 401,
+								code: "UNAUTHORIZED_INVALID_OR_EXPIRED_NONCE",
 							});
 						}
 

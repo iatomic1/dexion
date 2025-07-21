@@ -1,8 +1,6 @@
-import {
-	verifyMessageSignature,
-	verifyMessageSignatureRsv,
-} from "@stacks/encryption";
-import { getAddressFromPublicKey } from "@stacks/transactions";
+import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
+import { verifyMessageSignatureRsv } from "@stacks/encryption";
+// import { getAddressFromPublicKey } from "@stacks/transactions";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { generateRandomString } from "better-auth/crypto";
@@ -17,12 +15,12 @@ import {
 } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { createClient } from "redis";
-import { sendEmailWithTrigger } from "~/trigger/send-email";
+// import { sendEmailWithTrigger } from "~/trigger/send-email";
 import type { EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
 import { siws } from "./sign-in-with-wallet-plugin";
-import { createSubOrganization } from "./turnkey/service";
+// import { createSubOrganization } from "./turnkey/service";
 import { handleEmailSendingImmediate } from "./utils/email";
 
 // const redis = createClient();
@@ -102,34 +100,33 @@ export const auth = betterAuth({
 			const userFromSession = ctx.context.newSession.user;
 			console.log(userFromSession);
 			if (userFromSession.emailVerified) {
-				console.log("reach here");
 				// Use Created values for testing for now
-				// if (email === process.env.TEST_EMAIL) {
-				// 	await db
-				// 		.update(user)
-				// 		.set({
-				// 			subOrgCreated: true,
-				// 			subOrganizationId: process.env.TEST_SUB_ORG_ID,
-				// 			walletAddress: process.env.TEST_WALLET_ADDRESS,
-				// 			walletId: process.env.TEST_WALLET_ID,
-				// 			walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
-				// 		})
-				// 		.where(eq(user.id, id));
-				// }
-				const res = await createSubOrganization(userFromSession);
-				console.log(res);
-				await db
-					.update(user)
-					.set({
-						subOrgCreated: true,
-						subOrganizationId: res.subOrganizationId,
-						walletId: res.wallet?.walletId!,
-						walletAddress: getAddressFromPublicKey(
-							res.wallet?.addresses[0] as string,
-						),
-						walletPublicKey: res.wallet?.addresses[0] as string,
-					})
-					.where(eq(user.id, userFromSession.id));
+				if (userFromSession.email === process.env.TEST_EMAIL) {
+					await db
+						.update(user)
+						.set({
+							subOrgCreated: true,
+							subOrganizationId: process.env.TEST_SUB_ORG_ID,
+							walletAddress: process.env.TEST_WALLET_ADDRESS,
+							walletId: process.env.TEST_WALLET_ID,
+							walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
+						})
+						.where(eq(user.id, userFromSession.id));
+				}
+				// const res = await createSubOrganization(userFromSession);
+				// console.log(res);
+				// await db
+				// 	.update(user)
+				// 	.set({
+				// 		subOrgCreated: true,
+				// 		subOrganizationId: res.subOrganizationId,
+				// 		walletId: res.wallet?.walletId!,
+				// 		walletAddress: getAddressFromPublicKey(
+				// 			res.wallet?.addresses[0] as string,
+				// 		),
+				// 		walletPublicKey: res.wallet?.addresses[0] as string,
+				// 	})
+				// 	.where(eq(user.id, userFromSession.id));
 			}
 		}),
 	},
@@ -209,26 +206,19 @@ export const auth = betterAuth({
 			},
 		}),
 		siws({
-			domain: "dexion.pro",
-			emailDomainName: "dexion.pro",
+			domain: DOMAIN_NAME,
+			emailDomainName: DOMAIN_NAME,
 			getNonce: async () => {
 				return generateRandomString(32);
 			},
-			verifyMessage: async ({ message, signature, address, publicKey }) => {
+			verifyMessage: async ({ message, signature, publicKey }) => {
 				try {
-					const isValid = verifyMessageSignature({
+					const isValid = verifyMessageSignatureRsv({
 						message,
-						signature: signature,
-						publicKey: publicKey,
+						signature,
+						publicKey,
 					});
-
-					// Verify the signature using viem (recommended)
-					// const isValid = await verifyMessage({
-					//   address: address as `0x${string}`,
-					//   message,
-					//   signature: signature as `0x${string}`,
-					// });
-					return true;
+					return isValid;
 				} catch (error) {
 					console.error("SIWE verification failed:", error);
 					return false;

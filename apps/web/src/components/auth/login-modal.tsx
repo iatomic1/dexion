@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
+import ContinueWithWallet from "./continue-with-wallet";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -207,13 +208,7 @@ export function LoginModal({
 							Continue with Google
 						</Button>
 
-						<Button
-							variant="outline"
-							className="w-full bg-muted/50 py-5 text-sm"
-							disabled
-						>
-							Connect with Xverse
-						</Button>
+						<ContinueWithWallet />
 					</div>
 
 					<div className="mt-6 text-center text-xs text-muted-foreground">

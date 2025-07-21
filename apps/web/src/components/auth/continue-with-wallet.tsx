@@ -9,6 +9,7 @@ import {
 	isConnected,
 	request,
 } from "@stacks/connect";
+import { Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
@@ -102,7 +103,7 @@ export default function ContinueWithWallet() {
 			onClick={handleSignInWithWallet}
 			disabled={isLoading}
 		>
-			{isLoading && <Spinner />} Connect with Wallet
+			{isLoading ? <Spinner /> : <Wallet className="" />} Continue with Wallet
 		</Button>
 	);
 }

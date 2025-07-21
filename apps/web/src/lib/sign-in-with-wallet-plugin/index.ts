@@ -1,12 +1,14 @@
 //plugin/index.ts
+
+import { validateStacksAddress } from "@stacks/transactions";
 import { type BetterAuthPlugin, type User } from "better-auth";
 import { APIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
-import { eq } from "drizzle-orm";
+// import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "../db/drizzle";
-import { user as userTable } from "../db/schema";
+// import { db } from "../db/drizzle";
+// import { user as userTable } from "../db/schema";
 import { schema } from "./schema";
 import type { SIWSPluginOptions, WalletAddress } from "./types";
 
@@ -21,7 +23,11 @@ export const siws = (options: SIWSPluginOptions) =>
 				{
 					method: "POST",
 					body: z.object({
-						walletAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
+						walletAddress: z
+							.string()
+							.refine((address) => validateStacksAddress(address), {
+								message: "Invalid Stacks wallet address format",
+							}),
 					}),
 				},
 				async (ctx) => {
@@ -46,7 +52,11 @@ export const siws = (options: SIWSPluginOptions) =>
 						.object({
 							message: z.string().min(1),
 							signature: z.string().min(1),
-							walletAddress: z.string().regex(/^S[TP][A-Z0-9]{38}$/i),
+							walletAddress: z
+								.string()
+								.refine((address) => validateStacksAddress(address), {
+									message: "Invalid Stacks wallet address format",
+								}),
 							publicKey: z.string(),
 							email: z.string().email().optional(),
 						})

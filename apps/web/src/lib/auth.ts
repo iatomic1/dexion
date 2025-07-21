@@ -19,6 +19,7 @@ import { createClient } from "redis";
 import type { EmailType } from "~/types/email";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
+import { getBnsAndAvatar } from "./queries/bns";
 import { siws } from "./sign-in-with-wallet-plugin";
 // import { createSubOrganization } from "./turnkey/service";
 import { handleEmailSendingImmediate } from "./utils/email";
@@ -188,6 +189,17 @@ export const auth = betterAuth({
 			emailDomainName: DOMAIN_NAME,
 			getNonce: async () => {
 				return generateRandomString(32);
+			},
+			bnsLookup: async ({ walletAddress }) => {
+				try {
+					const res = await getBnsAndAvatar(walletAddress);
+					return res;
+				} catch (err) {
+					return {
+						name: walletAddress,
+						avatar: "",
+					};
+				}
 			},
 			verifyMessage: async ({ message, signature, publicKey }) => {
 				try {

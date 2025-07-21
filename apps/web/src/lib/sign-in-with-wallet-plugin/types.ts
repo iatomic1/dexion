@@ -7,11 +7,21 @@ export interface WalletAddress {
 	createdAt: Date;
 }
 
+export interface BNSLookupArgs {
+	walletAddress: string;
+}
+
+export interface BNSLookupResult {
+	name: string;
+	avatar: string;
+}
+
 export interface SIWSPluginOptions {
 	domain: string;
 	emailDomainName?: string;
 	anonymous?: boolean;
 	getNonce: () => Promise<string>;
+	bnsLookup?: (args: BNSLookupArgs) => Promise<BNSLookupResult>;
 	verifyMessage: (args: {
 		message: string;
 		signature: string;

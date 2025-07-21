@@ -129,11 +129,13 @@ export const siws = (options: SIWSPluginOptions) =>
 							const domain = options.emailDomainName;
 							const userEmail =
 								!isAnon && email ? email : `${walletAddress}@${domain}`;
+							const { name, avatar } =
+								(await options.bnsLookup?.({ walletAddress })) ?? {};
 
 							user = await ctx.context.internalAdapter.createUser({
-								name: walletAddress, // Consider BNS integration for better names
+								name: name ?? walletAddress, // Consider BNS integration for better names
 								email: userEmail,
-								image: "",
+								image: avatar ?? "",
 							});
 
 							// TOGGLE ON B4 ALPHA LAUNCH

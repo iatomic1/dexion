@@ -3,9 +3,12 @@ import { type BetterAuthPlugin, type User } from "better-auth";
 import { APIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { db } from "../db/drizzle";
+import { user as userTable } from "../db/schema";
 import { schema } from "./schema";
-import type { SIWSPluginOptions } from "./types";
+import type { SIWSPluginOptions, WalletAddress } from "./types";
 
 export const siws = (options: SIWSPluginOptions) =>
 	({
@@ -91,7 +94,7 @@ export const siws = (options: SIWSPluginOptions) =>
 
 						if (!verified) {
 							throw ctx.error("UNAUTHORIZED", {
-								message: "Invalid Stacks signature",
+								message: "Unauthorized: Invalid SIWS signature",
 								status: 401,
 							});
 						}
@@ -132,6 +135,21 @@ export const siws = (options: SIWSPluginOptions) =>
 								email: userEmail,
 								image: "",
 							});
+
+							// TOGGLE ON B4 ALPHA LAUNCH
+							// TO CREATE SUB-ORG ON TK
+							if (user) {
+								// await db
+								// 	.update(userTable)
+								// 	.set({
+								// 		subOrgCreated: true,
+								// 		subOrganizationId: process.env.TEST_SUB_ORG_ID,
+								// 		walletAddress: process.env.TEST_WALLET_ADDRESS,
+								// 		walletId: process.env.TEST_WALLET_ID,
+								// 		walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
+								// 	})
+								// 	.where(eq(userTable.id, user.id));
+							}
 
 							await ctx.context.adapter.create({
 								model: "walletAddress",

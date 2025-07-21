@@ -27,6 +27,7 @@ import { handleEmailSendingImmediate } from "./utils/email";
 // await redis.connect();
 // const REDIS_PREFIX = "auth-";
 
+// @ts-ignore
 export const auth = betterAuth({
 	appName: "Dexion Pro",
 	// secondaryStorage: {
@@ -42,54 +43,6 @@ export const auth = betterAuth({
 	// 		await redis.del(REDIS_PREFIX + key);
 	// 	},
 	// },
-	user: {
-		additionalFields: {
-			inviteCode: {
-				type: "string",
-				required: false,
-				input: true,
-				unique: true,
-				defaultValue: false,
-			},
-			subOrgCreated: {
-				type: "boolean",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
-			subOrganizationId: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-				unique: true,
-			},
-			walletId: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-				unique: true,
-			},
-			walletAddress: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
-			walletPublicKey: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
-		},
-	},
 	hooks: {
 		after: createAuthMiddleware(async (ctx) => {
 			if (
@@ -164,6 +117,54 @@ export const auth = betterAuth({
 			console.log(user, request, "from onEmailVerification");
 		},
 	},
+	user: {
+		additionalFields: {
+			inviteCode: {
+				type: "string",
+				required: false,
+				input: true,
+				unique: true,
+				defaultValue: false,
+			},
+			subOrgCreated: {
+				type: "boolean",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+			subOrganizationId: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+				unique: true,
+			},
+			walletId: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+				unique: true,
+			},
+			walletAddress: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+			walletPublicKey: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+		},
+	},
 	plugins: [
 		openAPI(),
 		emailOTP({
@@ -182,6 +183,26 @@ export const auth = betterAuth({
 			sendVerificationOnSignUp: true,
 		}),
 		bearer(),
+		siws({
+			domain: DOMAIN_NAME,
+			emailDomainName: DOMAIN_NAME,
+			getNonce: async () => {
+				return generateRandomString(32);
+			},
+			verifyMessage: async ({ message, signature, publicKey }) => {
+				try {
+					const isValid = verifyMessageSignatureRsv({
+						message,
+						signature,
+						publicKey,
+					});
+					return isValid;
+				} catch (error) {
+					console.error("SIWE verification failed:", error);
+					return false;
+				}
+			},
+		}),
 		jwt({
 			jwt: {
 				expirationTime: "15m",
@@ -203,26 +224,6 @@ export const auth = betterAuth({
 			},
 			totpOptions: {
 				disable: false,
-			},
-		}),
-		siws({
-			domain: DOMAIN_NAME,
-			emailDomainName: DOMAIN_NAME,
-			getNonce: async () => {
-				return generateRandomString(32);
-			},
-			verifyMessage: async ({ message, signature, publicKey }) => {
-				try {
-					const isValid = verifyMessageSignatureRsv({
-						message,
-						signature,
-						publicKey,
-					});
-					return isValid;
-				} catch (error) {
-					console.error("SIWE verification failed:", error);
-					return false;
-				}
 			},
 		}),
 		nextCookies(),

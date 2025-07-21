@@ -1,14 +1,15 @@
-// import { reverifyClient } from "@better-auth-kit/reverify/client";
 import {
 	emailOTPClient,
 	inferAdditionalFields,
 	twoFactorClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import { siwsClient } from "./sign-in-with-wallet-plugin/client";
 
 export const authClient = createAuthClient({
 	baseURL: "http://localhost:3001",
 	plugins: [
+		siwsClient(),
 		inferAdditionalFields({
 			user: {
 				inviteCode: {
@@ -57,7 +58,6 @@ export const authClient = createAuthClient({
 			},
 		}),
 		twoFactorClient(),
-		// reverifyClient(),
 		emailOTPClient(),
 	],
 });

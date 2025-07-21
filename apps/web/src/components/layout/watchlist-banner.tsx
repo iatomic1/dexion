@@ -50,7 +50,7 @@ export const WatchListBanner = () => {
 	// Empty state
 	if (isEmpty) {
 		return (
-			<div className="text-sm text-muted-foreground py-2 px-1 border-b border-b-border">
+			<div className="text-sm text-muted-foreground py-2.5 px-3 border-b border-b-border">
 				No tokens in watchlist
 			</div>
 		);

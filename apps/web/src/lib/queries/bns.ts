@@ -1,0 +1,43 @@
+import { BNS_ONE_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { getPrimaryName } from "bns-v2-sdk";
+
+export const getBnsAndAvatar = async (walletAddress: string) => {
+	try {
+		const primaryName = await getPrimaryName({
+			address: walletAddress,
+			network: "mainnet",
+		});
+		if (!primaryName) {
+			return {
+				name: walletAddress,
+				avatar: "",
+			};
+		}
+		const bns = `${primaryName.name}.${primaryName.namespace}`;
+		const res = await fetch(`${BNS_ONE_API_BASE_URL}zonefile?fqn=${bns}`);
+
+		if (!res.ok) {
+			return {
+				name: bns,
+				avatar: "",
+			};
+		}
+
+		const data = await res.json();
+		if (!data.zonefile.pfp) {
+			return {
+				name: bns,
+				avatar: "",
+			};
+		}
+		return {
+			name: bns,
+			avatar: data.zonefile.pfp,
+		};
+	} catch (err) {
+		return {
+			name: walletAddress,
+			avatar: "",
+		};
+	}
+};

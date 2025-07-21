@@ -81,7 +81,7 @@ export default function SiteHeader() {
 					</ul>
 				</nav>
 			</div>
-			<div className="flex items-center gap-2 lg:gap-4">
+			<div className="flex items-center gap-2 lg:gap-3">
 				<SearchDialog
 					trigger={
 						<div className="relative md:block">

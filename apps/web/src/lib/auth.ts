@@ -28,8 +28,7 @@ import { handleEmailSendingImmediate } from "./utils/email";
 // await redis.connect();
 // const REDIS_PREFIX = "auth-";
 
-// @ts-ignore
-export const auth = betterAuth({
+export const auth: any = betterAuth({
 	appName: "Dexion Pro",
 	// secondaryStorage: {
 	// 	get: async (key) => {

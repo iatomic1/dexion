@@ -33,3 +33,4 @@ export const ADDRESSES = {
 export const STX_TOOLS_API_BASE_URL = "https://api.stxtools.io/";
 export const STX_CITY_API_BASE_URL = "https://stx.city/api/";
 export const HIRO_PLATFORM_API_BASE_URL = "https://api.platform.hiro.so/";
+export const BNS_ONE_API_BASE_URL = "https://api.bns.one/";

@@ -51,7 +51,6 @@ export const auth: any = betterAuth({
 			)
 				return;
 			const userFromSession = ctx.context.newSession.user;
-			console.log(userFromSession);
 			if (userFromSession.emailVerified) {
 				// Use Created values for testing for now
 				if (userFromSession.email === process.env.TEST_EMAIL) {

@@ -27,7 +27,6 @@ export const siws = (options: SIWSPluginOptions) =>
 				async (ctx) => {
 					const { walletAddress } = ctx.body;
 					const nonce = await options.getNonce();
-					console.log(walletAddress, nonce);
 
 					await ctx.context.internalAdapter.createVerificationValue({
 						identifier: `siws:${walletAddress}`,
@@ -63,7 +62,6 @@ export const siws = (options: SIWSPluginOptions) =>
 					const isAnon = options.anonymous ?? true;
 
 					if (!isAnon && !email) {
-						console.log("failed in anon check");
 						throw ctx.error("BAD_REQUEST", {
 							message: "Email is required when anonymous is disabled.",
 							status: 400,
@@ -133,7 +131,7 @@ export const siws = (options: SIWSPluginOptions) =>
 								(await options.bnsLookup?.({ walletAddress })) ?? {};
 
 							user = await ctx.context.internalAdapter.createUser({
-								name: name ?? walletAddress, // Consider BNS integration for better names
+								name: name ?? walletAddress,
 								email: userEmail,
 								image: avatar ?? "",
 							});
@@ -178,7 +176,6 @@ export const siws = (options: SIWSPluginOptions) =>
 							ctx,
 						);
 						if (!session) {
-							console.log("failing in session being created");
 							throw ctx.error("INTERNAL_SERVER_ERROR", {
 								message: "Internal Server Error",
 								status: 500,

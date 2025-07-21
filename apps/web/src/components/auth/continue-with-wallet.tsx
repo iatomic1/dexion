@@ -1,3 +1,4 @@
+import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { Spinner } from "@repo/ui/components/ui/spinner";
@@ -47,7 +48,7 @@ export default function ContinueWithWallet() {
 				return;
 			}
 
-			const message = `Sign in to Dexion dexion.pro ${nonceData.nonce}`;
+			const message = `Sign in to Dexion ${DOMAIN_NAME} ${nonceData.nonce}`;
 
 			const signResponse = await request("stx_signMessage", {
 				message: message,

@@ -12,49 +12,58 @@ import { updateTokenSources } from "./jobs/update-sources";
 import redisClient from "./services/redis";
 
 export class TokenWatcherServer {
-  private app: Hono;
-  private notifier: NotifierClient;
-  private dexMonitor: DexMonitor;
-  private priceAlertChecker: PriceAlertChecker;
+	private app: Hono;
+	private notifier: NotifierClient;
+	private dexMonitor: DexMonitor;
+	private priceAlertChecker: PriceAlertChecker;
 
-  constructor(private port: number) {
-    this.app = new Hono();
-    this.notifier = new NotifierClient();
-    const transactionHandler = new TransactionHandler(redisClient);
-    this.dexMonitor = new DexMonitor(
-      transactionHandler,
-      Object.values(ADDRESSES),
-    );
-    this.priceAlertChecker = new PriceAlertChecker(redisClient, this.notifier);
-  }
+	constructor(private port: number) {
+		this.app = new Hono();
+		this.notifier = new NotifierClient();
+		const transactionHandler = new TransactionHandler(redisClient);
+		this.dexMonitor = new DexMonitor(
+			transactionHandler,
+			Object.values(ADDRESSES),
+		);
+		this.priceAlertChecker = new PriceAlertChecker(redisClient, this.notifier);
+	}
 
-  private setupMiddleware() {
-    this.app.use(logger());
-    this.app.use("/*", cors());
-  }
+	private setupMiddleware() {
+		this.app.use(logger());
 
-  private setupRoutes() {
-    this.app.route("/", routes);
-  }
+		this.app.use("/*", cors());
 
-  public async start() {
-    await redisClient.connect();
-    console.log("Redis client connected.");
+		this.app.use("/*", async (c, next) => {
+			const path = c.req.path;
+			if (path === "/" || path === "/favicon.ico" || path.startsWith("/.git")) {
+				return c.text("Not found", 404);
+			}
+			return await next();
+		});
+	}
 
-    this.setupMiddleware();
-    this.setupRoutes();
+	private setupRoutes() {
+		this.app.route("/", routes);
+	}
 
-    updateTokenSources(redisClient);
-    setInterval(() => updateTokenSources(redisClient), 5 * 60 * 1000);
+	public async start() {
+		// await redisClient.connect();
+		// console.log("Redis client connected.");
 
-    this.dexMonitor.start();
-    this.priceAlertChecker.start();
+		this.setupMiddleware();
+		this.setupRoutes();
 
-    serve({
-      fetch: this.app.fetch,
-      port: this.port,
-    });
+		updateTokenSources(redisClient);
+		setInterval(() => updateTokenSources(redisClient), 60 * 60 * 1000);
 
-    console.log(`Server running on port ${this.port}`);
-  }
+		this.dexMonitor.start();
+		this.priceAlertChecker.start();
+
+		serve({
+			fetch: this.app.fetch,
+			port: this.port,
+		});
+
+		console.log(`Server running on port ${this.port}`);
+	}
 }

@@ -35,6 +35,18 @@ export async function updateTokenSources(redisClient: Redis) {
 		pipeline.set(key, value);
 	}
 
-	await pipeline.exec();
+	const results = await pipeline.exec();
+
+	if (!results) {
+		console.error("Redis pipeline returned null");
+		return;
+	}
+
+	results.forEach(([err, result], index) => {
+		if (err) {
+			console.error(`Redis pipeline error at index ${index}:`, err);
+		}
+	});
+
 	console.log("done");
 }

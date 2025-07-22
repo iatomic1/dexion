@@ -221,7 +221,7 @@ export const TokenSocketProvider = ({
 
 	// Use the PartySocket React hook
 	const ws = usePartySocket({
-		host: "localhost:1999",
+		host: "dexion-party.iatomic1.partykit.dev",
 		room: contractAddress ? `token:${contractAddress}` : "",
 		onOpen() {
 			console.log("PartySocket connected");

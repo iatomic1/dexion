@@ -30,6 +30,11 @@ import { handleEmailSendingImmediate } from "./utils/email";
 
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
+	baseURL:
+		process.env.NODE_ENV === "development"
+			? "http://localhost:3001"
+			: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+
 	// secondaryStorage: {
 	// 	get: async (key) => {
 	// 		const value = await redis.get(REDIS_PREFIX + key);

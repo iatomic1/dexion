@@ -600,7 +600,7 @@ export default function Home() {
 									Frequently Asked Questions
 								</h2>
 								<p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-									Everything you need to know about TradeSphere and automated
+									Everything you need to know about Dexion and automated
 									trading.
 								</p>
 							</div>
@@ -608,13 +608,13 @@ export default function Home() {
 						<div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-2">
 							<Card>
 								<CardHeader>
-									<CardTitle>Is my money safe with TradeSphere?</CardTitle>
+									<CardTitle>Is my money safe with Dexion?</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<p className="text-muted-foreground">
-										TradeSphere never holds your funds. We connect to your
-										exchange accounts using API keys, which can be configured
-										with trading-only permissions and no withdrawal access.
+										Dexion never holds your funds. We connect to your exchange
+										accounts using API keys, which can be configured with
+										trading-only permissions and no withdrawal access.
 									</p>
 								</CardContent>
 							</Card>
@@ -633,13 +633,13 @@ export default function Home() {
 							<Card>
 								<CardHeader>
 									<CardTitle>
-										Do I need trading experience to use TradeSphere?
+										Do I need trading experience to use Dexion?
 									</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<p className="text-muted-foreground">
-										While trading experience is helpful, TradeSphere is designed
-										to be accessible to beginners. We offer pre-built strategies
+										While trading experience is helpful, Dexion is designed to
+										be accessible to beginners. We offer pre-built strategies
 										and comprehensive tutorials to help you get started.
 									</p>
 								</CardContent>
@@ -659,9 +659,7 @@ export default function Home() {
 							</Card>
 							<Card>
 								<CardHeader>
-									<CardTitle>
-										Can I use TradeSphere for stock trading?
-									</CardTitle>
+									<CardTitle>Can I use Dexion for stock trading?</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<p className="text-muted-foreground">

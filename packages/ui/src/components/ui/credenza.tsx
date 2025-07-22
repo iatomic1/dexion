@@ -94,7 +94,14 @@ const CredenzaContent = ({ className, children, ...props }: CredenzaProps) => {
   const CredenzaContent = isMobile ? DrawerContent : DialogContent;
 
   return (
-    <CredenzaContent className={className} {...props}>
+    <CredenzaContent
+      className={cn(
+        "sm:max-w-2xl border p-0 overflow-hidden",
+        isMobile && "max-h-[90vh] overflow-y-auto",
+        className,
+      )}
+      {...props}
+    >
       {children}
     </CredenzaContent>
   );

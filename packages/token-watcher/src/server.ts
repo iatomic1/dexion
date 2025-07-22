@@ -34,7 +34,11 @@ export class TokenWatcherServer {
 		this.app.use(
 			"/*",
 			cors({
-				origin: ["http://localhost:3001", FRONTEND_URL],
+				origin: [
+					"http://localhost:3001",
+					FRONTEND_URL,
+					"https://dexion-web.vercel.app",
+				],
 			}),
 		);
 

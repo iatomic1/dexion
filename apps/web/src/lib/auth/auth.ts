@@ -13,7 +13,7 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
 		throw new Error("Not authenticated");
 	}
 
-	const tokenRes = await fetch(`${PUBLIC_BASE_URL}/api/auth/token`, {
+	const tokenRes = await fetch("https://dexion-web.vercel.app/api/auth/token", {
 		headers: {
 			Authorization: `Bearer ${session.session.token}`,
 		},

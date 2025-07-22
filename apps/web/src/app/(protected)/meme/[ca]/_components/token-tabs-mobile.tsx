@@ -1,6 +1,6 @@
 "use client";
+import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
-
 import {
 	Tabs,
 	TabsContent,
@@ -52,32 +52,35 @@ export default function TokenTabsMobile() {
 	return (
 		<div className="h-full flex flex-col">
 			<Tabs className="w-full h-full flex flex-col" defaultValue={"holders"}>
-				<div className="flex items-center justify-between">
-					<TabsList className="w-full flex items-center justify-between gap-4 bg-transparent mt-1">
-						{tabs.map((tab) => (
-							<TabsTrigger
-								value={tab.value.toLowerCase()}
-								key={tab.value.toLowerCase()}
-								className={cn(
-									"w-full capitalize items-center",
-									"data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none",
-								)}
-								// onClick={() => setActiveTab(tab.value.toLowerCase())}
-							>
-								{tab.value === "holders" ? (
-									isLoadingMetadata ? (
-										<>
-											Holders <Skeleton className="h-5 w-12" />{" "}
-										</>
+				<div className="w-full overflow-hidden">
+					<ScrollArea className="w-full">
+						<TabsList className="w-full flex items-center justify-between gap-4 bg-transparent mt-1">
+							{tabs.map((tab) => (
+								<TabsTrigger
+									value={tab.value.toLowerCase()}
+									key={tab.value.toLowerCase()}
+									className={cn(
+										"w-full capitalize items-center",
+										"data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full data-[state=active]:shadow-none",
+									)}
+									// onClick={() => setActiveTab(tab.value.toLowerCase())}
+								>
+									{tab.value === "holders" ? (
+										isLoadingMetadata ? (
+											<>
+												Holders <Skeleton className="h-5 w-12" />{" "}
+											</>
+										) : (
+											`holders (${tokenData?.metrics?.holder_count})`
+										)
 									) : (
-										`holders (${tokenData?.metrics?.holder_count})`
-									)
-								) : (
-									tab.value
-								)}
-							</TabsTrigger>
-						))}
-					</TabsList>
+										tab.value
+									)}
+								</TabsTrigger>
+							))}
+						</TabsList>
+						<ScrollBar orientation="horizontal" />
+					</ScrollArea>
 				</div>
 				{tabs.map((tab) => {
 					return (

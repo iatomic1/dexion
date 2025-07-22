@@ -32,7 +32,7 @@ export default function Pools() {
 
 	const isMobile = useMediaQuery("(max-width: 640px)");
 	return isMobile ? (
-		<div className="grid grid-cols-2 gap-4">
+		<div className="grid max-[475px]:grid-cols-1 grid-cols-2 gap-4">
 			{isPoolsLoading ? (
 				<PoolsItemSkeleton />
 			) : (

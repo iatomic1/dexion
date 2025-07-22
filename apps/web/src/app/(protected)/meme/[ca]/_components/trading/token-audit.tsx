@@ -275,7 +275,7 @@ function TokenInfoContent({
 								<NotebookTabs className="h-4 w-4" />
 								<span> CA:</span>
 							</div>
-							<span className="text-[#c8c9d1] font-light">
+							<span className="text-muted-foreground font-light">
 								{truncateString(token?.contract_id || "", 14, 15)}
 							</span>
 						</Button>

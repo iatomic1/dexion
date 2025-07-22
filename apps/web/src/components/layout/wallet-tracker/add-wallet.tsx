@@ -20,7 +20,6 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@repo/ui/components/ui/popover";
-import { Separator } from "@repo/ui/components/ui/separator";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { validateStacksAddress } from "@stacks/transactions";
 import { type ReactNode, useState } from "react";

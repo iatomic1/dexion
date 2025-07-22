@@ -21,7 +21,26 @@ import {
 import { CryptoHoverCard } from "../trade-details";
 
 // Helper function to define consistent column widths
-export function getColumnWidth(columnId: string): string {
+export function getColumnWidth(columnId: string, isMobile = false): string {
+	if (isMobile) {
+		switch (columnId) {
+			case "timestamp":
+				return "80px";
+			case "type":
+				return "60px";
+			case "mc":
+				return "80px";
+			case "amount":
+				return "80px";
+			case "totalUsd":
+				return "80px";
+			case "trader":
+				return "120px";
+			default:
+				return "auto";
+		}
+	}
+
 	switch (columnId) {
 		case "timestamp":
 			return "100px";
@@ -39,9 +58,11 @@ export function getColumnWidth(columnId: string): string {
 			return "auto";
 	}
 }
+
 const _foo = 123;
 
 type FilterFn = (address: string) => void;
+
 export const columns = (
 	token: TokenMetadata,
 	onFilterClick: FilterFn,
@@ -121,7 +142,6 @@ export const columns = (
 		header: "Total USD",
 		cell: ({ row }) => {
 			const amount = Number.parseFloat(row.getValue("totalUsd"));
-
 			return (
 				<div
 					className={`text-xs font-geist-mono text-center ${
@@ -144,9 +164,8 @@ export const columns = (
 			const ft = wallet?.fungible_tokens?.[0];
 			const bns = wallet.bns;
 			const address = wallet.address;
-
 			return (
-				<div className="flex items-center gap-2 text-right justify-end">
+				<div className="flex items-center gap-1 text-right justify-end">
 					{ft && (
 						<Tooltip>
 							<TooltipTrigger>
@@ -157,7 +176,6 @@ export const columns = (
 							<TooltipContent>Insider</TooltipContent>
 						</Tooltip>
 					)}
-
 					{ft ? (
 						<CryptoHoverCard
 							address={address}
@@ -171,15 +189,14 @@ export const columns = (
 							txId={row.original.tx_id}
 						>
 							<div className="text-xs font-geist-mono hover:underline">
-								{bns ? bns : truncateString(address, 8, 5)}
+								{bns ? bns : truncateString(address, 6, 4)}
 							</div>
 						</CryptoHoverCard>
 					) : (
 						<div className="text-xs font-geist-mono hover:underline">
-							{bns ? bns : truncateString(address, 8, 5)}
+							{bns ? bns : truncateString(address, 6, 4)}
 						</div>
 					)}
-
 					<Tooltip>
 						<TooltipTrigger
 							onClick={() => {
@@ -194,7 +211,6 @@ export const columns = (
 						<TooltipTrigger
 							onClick={() => {
 								onFilterClick(address);
-								console.log("clicked from columns");
 							}}
 						>
 							<Funnel className="h-3 w-3 text-muted-foreground" />

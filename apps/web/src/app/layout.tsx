@@ -43,11 +43,11 @@ export default async function RootLayout({
 					{/* <WalletTrackerSocketProvider> */}
 					<PresetsContextProvider>
 						<div className="flex min-h-screen flex-col font-geist">
-							{!DEV && (
+							{/* {!DEV && (
 								<div className="flex w-full items-center justify-center text-center text-sm py-3 text-destructive">
 									This website is still actively in development.
 								</div>
-							)}
+							)} */}
 
 							<ClientQueryProvider>
 								<main className="flex-1">

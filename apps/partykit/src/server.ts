@@ -1,3 +1,4 @@
+import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import {
 	getDevTokens,
 	getHolders,
@@ -74,7 +75,7 @@ export default class Server implements Party.Server {
 	async fetchAndSendData(contractAddress: string, conn?: Party.Connection) {
 		try {
 			const sourceResponse = await axios.get(
-				`http://localhost:3008/tokens/source/${contractAddress}`,
+				`${TOKEN_WATCHER_API_BASE_URL}tokens/source/${contractAddress}`,
 			);
 			const source = sourceResponse.data.source;
 

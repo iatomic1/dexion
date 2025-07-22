@@ -10,7 +10,11 @@ export const PUBLIC_BASE_URL = DEV
 	: `https://${DOMAIN_NAME}`;
 
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
-export const TOKEN_WATCHER_API_BASE_URL = "http://localhost:3008/";
+export const TOKEN_WATCHER_API_BASE_URL =
+	// DEV
+	// ? "http://localhost:3008/"
+	// :
+	`https://hub.${DOMAIN_NAME}/`;
 
 export const HTTP_STATUS = {
 	CONFLICT: "Conflict",

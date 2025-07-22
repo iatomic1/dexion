@@ -15,7 +15,7 @@ export default async function SiteFooter() {
 	return (
 		<footer className="fixed bottom-0 w-full border-t border-border bg-background px-2 py-1">
 			<div className="flex items-center justify-between">
-				<div className="flex gap-0.5 items-center">
+				<div className="hidden sm:flex gap-0.5 items-center">
 					{session && session.user && (
 						<div className="flex gap-0.5 items-center">
 							<Suspense fallback={<Skeleton className="h-5 w-32" />}>

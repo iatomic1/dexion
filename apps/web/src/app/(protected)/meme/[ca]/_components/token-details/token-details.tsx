@@ -5,6 +5,7 @@ import { memo, Suspense, useCallback, useMemo, useState } from "react";
 import siteConfig from "~/config/site";
 import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 import useDocumentTitle from "~/hooks/useDocumentTitle";
+import useFavicon from "~/hooks/useFavicon";
 import useMediaQuery from "~/hooks/useMediaQuery";
 import { formatPrice } from "~/lib/helpers/numbers";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
@@ -25,6 +26,11 @@ export default function TokenDetailPage() {
 		return `${tokenData.symbol} $${formatPrice(tokenData.metrics.marketcap_usd)} | ${siteConfig.title}`;
 	}, [tokenData?.symbol, tokenData?.metrics?.marketcap_usd]);
 
+	const tokenImage = useMemo(() => {
+		if (tokenData?.image_url) return tokenData?.image_url;
+	}, [tokenData?.image_url]);
+
+	useFavicon(tokenImage as string);
 	useDocumentTitle(documentTitle);
 
 	const [filterBy, setFilterBy] = useState("");

@@ -53,7 +53,7 @@ export function AccountSecurityModal({
 				</CredenzaHeader>
 				<div className="flex flex-col">
 					{/* User Profile Section */}
-					<div className="pb-4 px-4 flex items-start gap-3">
+					<div className="py-4 lg:py-0 lg:pb-4 px-4 flex items-start gap-3">
 						{session ? (
 							<>
 								<AvatarUpload
@@ -90,7 +90,9 @@ export function AccountSecurityModal({
 										</Button>
 									</div>
 									<div className="flex items-center gap-4 mt-2 text-sm">
-										<div className="text-muted-foreground">Rewards Level</div>
+										<div className="hidden min-[525px]:flex text-muted-foreground">
+											Rewards Level
+										</div>
 										<div className="flex items-center text-foreground">
 											<span className="border-b border-dotted border-muted-foreground">
 												Bronze
@@ -264,13 +266,15 @@ export function AccountSecurityModal({
 
 					{session ? (
 						<>
-							<SessionsCard
-								classNames={{
-									base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0 bg-transparent",
-									cell: "justify-between [&>*:nth-child(2)]:mr-auto",
-								}}
-								// sessions={}
-							/>
+							{/* Remove sessions card temporarily */}
+							{/* <SessionsCard
+                classNames={{
+                  base: "rounded-none pt-3 pb-0 border-0 border-t border-t-[1px] px-0 bg-transparent",
+                  cell: "justify-between [&>*:nth-child(2)]:mr-auto",
+                }}
+
+                // sessions={}
+              /> */}
 							<div className="p-4 border-t flex items-center justify-between">
 								<div>
 									<h3 className="text-destructive font-medium">Log Out</h3>

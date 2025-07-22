@@ -6,6 +6,7 @@ import {
 	AvatarImage,
 } from "@repo/ui/components/ui/avatar";
 import { Button } from "@repo/ui/components/ui/button";
+import { Label } from "@repo/ui/components/ui/label";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "@repo/ui/components/ui/sonner";
@@ -47,7 +48,7 @@ export const createTableColumns = (
 						<AvatarFallback>{t.symbol.charAt(0)}</AvatarFallback>
 					</Avatar>
 					<div className="flex flex-col justify-between">
-						<span className="text-sm font-medium">{t.symbol}</span>
+						<Label className="text-sm  font-medium">{t.symbol}</Label>
 						<span className="text-muted-foreground text-xs truncate max-w-[50px]">
 							{t.name}
 						</span>

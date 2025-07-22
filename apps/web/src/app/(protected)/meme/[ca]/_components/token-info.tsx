@@ -26,6 +26,7 @@ import openInNewPage from "~/lib/helpers/openInNewPage";
 import { truncateString } from "~/lib/helpers/strings";
 import { Socials } from "./socials";
 import { useMediaQuery } from "./trade-details";
+import TokenAudit from "./trading/token-audit";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
 	const copy = useCopyToClipboard();
@@ -54,7 +55,13 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
 										</span>
 									</TooltipTrigger>
 									<TooltipContent className="bg-secondary">
-										<span className="text-sm text-muted-foreground">
+										{/* <span className="text-sm text-muted-foreground max-w-[40px] truncate"> */}
+										{/* {token.symbol} */}
+										{/* {token.symbol.length >= 6
+                                        ? truncateString(token.name, 6, 4)
+                                        : token.name} */}
+										{/* </span> */}
+										<span className="inline-block max-w-[40px] overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted-foreground">
 											{token.symbol}
 										</span>
 									</TooltipContent>
@@ -177,7 +184,9 @@ const Actions = ({
 		<div
 			className={cn("flex items-center gap-0", className, isMobile && "gap-1")}
 		>
-			<div className="sm:hidden">{/* <TokenAudit token={token} /> */}</div>
+			<div className="sm:hidden">
+				<TokenAudit token={token} />
+			</div>
 			<Button
 				variant={isMobile ? "secondary" : "ghost"}
 				size={"icon"}

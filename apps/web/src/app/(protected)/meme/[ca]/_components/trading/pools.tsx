@@ -41,11 +41,12 @@ export default function Pools() {
 						(pool) =>
 							pool.target_token.contract_id === "stx" && pool.liquidity_usd,
 					)
-					.sort((a, b) => {
-						if (a.platform.toLowerCase() === "velar") return -1;
-						if (b.platform.toLowerCase() === "velar") return 1;
-						return 0;
-					})
+					// TEMP comment sorting of pools
+					// .sort((a, b) => {
+					// 	if (a.platform.toLowerCase() === "velar") return -1;
+					// 	if (b.platform.toLowerCase() === "velar") return 1;
+					// 	return 0;
+					// })
 					.map((pool) => <PoolsItem key={pool.pool_id} pool={pool} />)
 			)}
 		</div>

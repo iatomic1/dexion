@@ -76,11 +76,8 @@ export function SignUpModal({
 					},
 					onSuccess: (_ctx) => {
 						toast.success("OTP sent to your email");
-						onOpenChange(false); // close signup modal
-						onOtpTrigger(values.email); // open OTP modal with email context
-
-						// toast.success("Authenticated");
-						// setIsLoading(false);
+						onOpenChange(false);
+						onOtpTrigger(values.email);
 					},
 					onResponse() {
 						setIsLoading(false);
@@ -110,11 +107,6 @@ export function SignUpModal({
 					},
 				},
 			);
-
-			// if (error) {
-			//   toast.error(error.message);
-			//   return;
-			// }
 		} catch (err) {
 			toast.error("Unexpected error");
 			console.error(err);

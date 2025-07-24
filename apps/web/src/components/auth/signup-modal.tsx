@@ -32,7 +32,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
-import { auth } from "~/lib/auth";
+import { auth } from "~/lib/auth/auth";
 import { authClient } from "~/lib/auth-client";
 import ContinueWithGoogle from "./continue-with-google";
 import ContinueWithWallet from "./continue-with-wallet";

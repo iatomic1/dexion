@@ -7,7 +7,7 @@ import { WatchListBanner } from "~/components/layout/watchlist-banner";
 import { BtcStxPriceProvider } from "~/contexts/BtcStxPriceContext";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { WatchlistProvider } from "~/contexts/WatchlistContext";
-import { auth } from "~/lib/auth";
+import { auth } from "~/lib/auth/auth";
 
 export default async function ProtectedLayout({
 	children,

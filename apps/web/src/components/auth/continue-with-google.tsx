@@ -3,7 +3,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { auth } from "~/lib/auth";
+import { auth } from "~/lib/auth/auth";
 import { authClient } from "~/lib/auth-client";
 
 export default function ContinueWithGoogle() {

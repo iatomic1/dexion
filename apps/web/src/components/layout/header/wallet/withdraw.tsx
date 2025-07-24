@@ -368,7 +368,7 @@ export default function Withdraw({
 				</Form>
 			}
 			dialogTitle={"Withdraw"}
-			contentClassName=""
+			contentClassName="max-sm:min-w-[451px] max-sm:top-3 max-sm:translate-y-0 "
 			dialogFooter={
 				<Button
 					onClick={form.handleSubmit(handleSubmit)}

@@ -1,6 +1,10 @@
 import { serve } from "@hono/node-server";
 import { NotifierClient } from "@repo/notifier";
-import { ADDRESSES, FRONTEND_URL } from "@repo/shared-constants/constants.ts";
+import {
+	ADDRESSES,
+	DOMAIN_NAME,
+	VERCEL_FRONTEND_URL,
+} from "@repo/shared-constants/constants.ts";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -31,14 +35,27 @@ export class TokenWatcherServer {
 	private setupMiddleware() {
 		this.app.use(logger());
 
+		const extraOrigins = ["http://localhost:3001", VERCEL_FRONTEND_URL];
+
 		this.app.use(
 			"/*",
 			cors({
-				origin: [
-					"http://localhost:3001",
-					FRONTEND_URL,
-					"https://dexion-web.vercel.app",
-				],
+				origin: (origin, _c) => {
+					if (!origin) return null;
+					if (extraOrigins.includes(origin)) return origin;
+					try {
+						const url = new URL(origin);
+						if (
+							url.hostname === DOMAIN_NAME ||
+							url.hostname.endsWith("." + DOMAIN_NAME)
+						) {
+							return origin;
+						}
+					} catch {
+						return null;
+					}
+					return null;
+				},
 			}),
 		);
 

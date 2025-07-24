@@ -7,6 +7,7 @@ import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
 // import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { initWallet } from "../../init-wallet";
 // import { db } from "../db/drizzle";
 // import { user as userTable } from "../db/schema";
 import { schema } from "./schema";
@@ -149,16 +150,7 @@ export const siws = (options: SIWSPluginOptions) =>
 							// TOGGLE ON B4 ALPHA LAUNCH
 							// TO CREATE SUB-ORG ON TK
 							if (user) {
-								// await db
-								// 	.update(userTable)
-								// 	.set({
-								// 		subOrgCreated: true,
-								// 		subOrganizationId: process.env.TEST_SUB_ORG_ID,
-								// 		walletAddress: process.env.TEST_WALLET_ADDRESS,
-								// 		walletId: process.env.TEST_WALLET_ID,
-								// 		walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
-								// 	})
-								// 	.where(eq(userTable.id, user.id));
+								await initWallet(user, false);
 							}
 
 							await ctx.context.adapter.create({

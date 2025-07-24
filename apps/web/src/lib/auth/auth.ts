@@ -17,9 +17,9 @@ import type { EmailType } from "~/types/email";
 import { db } from "../db/drizzle";
 import { schema, user } from "../db/schema";
 import { getBnsAndAvatar } from "../queries/bns";
-import { siws } from "../sign-in-with-wallet-plugin";
 import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
+import { siws } from "./plugins/siws";
 
 // const redis = createClient();
 // await redis.connect();

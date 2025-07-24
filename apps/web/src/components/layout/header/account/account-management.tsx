@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Popover,
@@ -15,8 +17,13 @@ export function AccountPopover() {
 	const router = useRouter();
 	const [open, setIsOpen] = useState(false);
 
+	const handleModalOpen = () => {
+		// Close popover first, then let modal open naturally
+		// setIsOpen(false);
+	};
+
 	return (
-		<Popover open={open} onOpenChange={setIsOpen}>
+		<Popover open={open} onOpenChange={setIsOpen} modal={false}>
 			<PopoverTrigger asChild>
 				<Button
 					variant="ghost"
@@ -32,20 +39,9 @@ export function AccountPopover() {
 				align="end"
 				sideOffset={20}
 			>
-				<AccountSecurityModal>
-					<Button
-						className="w-full justify-start gap-3 bg-transparent "
-						variant={"ghost"}
-						// onClick={() => {
-						//   setIsOpen(false);
-						// }}
-					>
-						<User className="h-4 w-4" />
-						Account and Security
-					</Button>
-				</AccountSecurityModal>
+				<AccountSecurityModal onModalOpenAction={handleModalOpen} />
 				<Button
-					className="w-full justify-start gap-3 bg-transparent "
+					className="w-full justify-start gap-3 bg-transparent"
 					variant={"ghost"}
 					onClick={async () => {
 						const signOutPromise = new Promise((resolve, reject) => {
@@ -64,10 +60,7 @@ export function AccountPopover() {
 						toast.promise(signOutPromise, {
 							loading: "Logging out...",
 							success: () => {
-								// Navigate after successful logout
-								setTimeout(() => {
-									router.push("/");
-								}, 500);
+								router.push("/");
 								return "Logged out successfully";
 							},
 							error: (error) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionsCard } from "@daveyplate/better-auth-ui";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Credenza,
@@ -9,6 +10,7 @@ import {
 	CredenzaTitle,
 	CredenzaTrigger,
 } from "@repo/ui/components/ui/credenza";
+import { DialogTitle } from "@repo/ui/components/ui/dialog";
 import {
 	Select,
 	SelectContent,
@@ -19,7 +21,7 @@ import {
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { cn } from "@repo/ui/lib/utils";
-import { Copy, ExternalLink, Info } from "lucide-react";
+import { Copy, ExternalLink, Info, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
@@ -33,19 +35,40 @@ import AvatarUpload from "./avatar-upload";
 import SetInviteCode from "./set-invite-code";
 
 export function AccountSecurityModal({
-	children,
+	// children,
+	onModalOpenAction,
 }: {
-	children: React.ReactNode;
+	// children: Rract.ReactNode;
+	onModalOpenAction?: () => void;
 }) {
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [credenzaOpen, setCredenzaOpen] = useState(false);
 	const copy = useCopyToClipboard();
 	const { data: session } = authClient.useSession();
 	const router = useRouter();
 
+	const handleOpenChange = (open: boolean) => {
+		setCredenzaOpen(open);
+		if (open && onModalOpenAction) {
+			onModalOpenAction();
+		}
+	};
+
 	return (
-		<Credenza>
-			<CredenzaTrigger asChild>{children}</CredenzaTrigger>
+		<Credenza open={credenzaOpen} onOpenChange={handleOpenChange}>
+			<CredenzaTrigger asChild>
+				<Button
+					className="w-full justify-start gap-3 bg-transparent"
+					variant={"ghost"}
+				>
+					<User className="h-4 w-4" />
+					Account and Security
+				</Button>
+			</CredenzaTrigger>
 			<CredenzaContent className="sm:max-w-2xl border p-0 overflow-hidden">
+				<VisuallyHidden>
+					<DialogTitle>Account and Security</DialogTitle>
+				</VisuallyHidden>
 				<CredenzaHeader className="p-4 border-b flex flex-row items-center justify-between">
 					<CredenzaTitle className="text-foreground">
 						Account and Security

@@ -34,6 +34,7 @@ import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
 import { auth } from "~/lib/auth";
 import { authClient } from "~/lib/auth-client";
+import ContinueWithGoogle from "./continue-with-google";
 import ContinueWithWallet from "./continue-with-wallet";
 
 interface SignUpModalProps {
@@ -191,14 +192,7 @@ export function SignUpModal({
 					</div>
 
 					<div className="mt-4 space-y-3">
-						<Button
-							variant="outline"
-							className="w-full bg-muted/50 py-5 text-sm rounded-full"
-							disabled
-						>
-							<SiGoogle size={12} title="Google Icon" />
-							Continue with Google
-						</Button>
+						<ContinueWithGoogle />
 						<ContinueWithWallet />
 					</div>
 

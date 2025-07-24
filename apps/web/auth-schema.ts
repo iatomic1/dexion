@@ -73,6 +73,17 @@ export const verification = pgTable("verification", {
   ),
 });
 
+export const walletAddress = pgTable("wallet_address", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  address: text("address").notNull(),
+  network: text("network").notNull(),
+  isPrimary: boolean("is_primary"),
+  createdAt: timestamp("created_at").notNull(),
+});
+
 export const jwks = pgTable("jwks", {
   id: text("id").primaryKey(),
   publicKey: text("public_key").notNull(),
@@ -87,15 +98,4 @@ export const twoFactor = pgTable("two_factor", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-});
-
-export const walletAddress = pgTable("wallet_address", {
-  id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  address: text("address").notNull(),
-  network: text("network").notNull(),
-  isPrimary: boolean("is_primary"),
-  createdAt: timestamp("created_at").notNull(),
 });

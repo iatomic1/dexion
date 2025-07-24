@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
+import ContinueWithGoogle from "./continue-with-google";
 import ContinueWithWallet from "./continue-with-wallet";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -145,7 +146,7 @@ export function LoginModal({
 										<FormControl>
 											<Input
 												placeholder="Enter email"
-												className="bg-muted/50"
+												className="rounded-full"
 												{...field}
 											/>
 										</FormControl>
@@ -175,7 +176,7 @@ export function LoginModal({
 												showLabel={false}
 												type="password"
 												placeholder="Enter password"
-												className="bg-muted/50"
+												className="rounded-full"
 												{...field}
 											/>
 										</FormControl>
@@ -199,14 +200,7 @@ export function LoginModal({
 					</div>
 
 					<div className="mt-4 space-y-4">
-						<Button
-							variant="outline"
-							className="w-full bg-muted/50 py-5 text-sm"
-							disabled
-						>
-							<SiGoogle size={12} title="Google Icon" />
-							Continue with Google
-						</Button>
+						<ContinueWithGoogle />
 
 						<ContinueWithWallet />
 					</div>

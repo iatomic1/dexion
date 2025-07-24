@@ -26,8 +26,8 @@ export default function ContinueWithGoogle() {
 					},
 					onSuccess: (ctx) => {
 						console.log(ctx.data);
-						// router.push("/portfolio");
-						// toast.success("Authenticated");
+						router.push("/portfolio");
+						toast.success("Authenticated");
 					},
 					onError: (ctx) => {
 						console.log(ctx.error);

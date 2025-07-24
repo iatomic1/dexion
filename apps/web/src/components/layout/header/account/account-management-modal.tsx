@@ -35,10 +35,8 @@ import AvatarUpload from "./avatar-upload";
 import SetInviteCode from "./set-invite-code";
 
 export function AccountSecurityModal({
-	// children,
 	onModalOpenAction,
 }: {
-	// children: Rract.ReactNode;
 	onModalOpenAction?: () => void;
 }) {
 	const [dialogOpen, setDialogOpen] = useState(false);

@@ -18,6 +18,7 @@ import { eq } from "drizzle-orm";
 import { createClient } from "redis";
 // import { sendEmailWithTrigger } from "~/trigger/send-email";
 import type { EmailType } from "~/types/email";
+import { initWallet } from "./auth/init-wallet";
 import { db } from "./db/drizzle";
 import { schema, user } from "./db/schema";
 import { getBnsAndAvatar } from "./queries/bns";
@@ -57,66 +58,11 @@ export const auth: any = betterAuth({
 				ctx.context.newSession
 			) {
 				const userFromSession = ctx.context.newSession.user;
-				if (userFromSession.emailVerified && !userFromSession.subOrgCreated) {
-					// Use Created values for testing for now
-					if (userFromSession.email === process.env.TEST_EMAIL) {
-						await db
-							.update(user)
-							.set({
-								subOrgCreated: true,
-								subOrganizationId: process.env.TEST_SUB_ORG_ID,
-								walletAddress: process.env.TEST_WALLET_ADDRESS,
-								walletId: process.env.TEST_WALLET_ID,
-								walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
-							})
-							.where(eq(user.id, userFromSession.id));
-					} else {
-						const res = await createSubOrganization(userFromSession);
-						await db
-							.update(user)
-							.set({
-								subOrgCreated: true,
-								subOrganizationId: res.subOrganizationId,
-								walletId: res.wallet?.walletId!,
-								walletAddress: getAddressFromPublicKey(
-									res.wallet?.addresses[0] as string,
-								),
-								walletPublicKey: res.wallet?.addresses[0] as string,
-							})
-							.where(eq(user.id, userFromSession.id));
-					}
-				}
+				await initWallet(userFromSession, true);
 			}
 			if (ctx.path.includes("/sign-in/social") && ctx.context.newSession) {
 				const userFromSession = ctx.context.newSession.user;
-				if (!userFromSession.subOrgCreated) {
-					if (userFromSession.email === process.env.TEST_EMAIL) {
-						await db
-							.update(user)
-							.set({
-								subOrgCreated: true,
-								subOrganizationId: process.env.TEST_SUB_ORG_ID,
-								walletAddress: process.env.TEST_WALLET_ADDRESS,
-								walletId: process.env.TEST_WALLET_ID,
-								walletPublicKey: process.env.TEST_WALLET_PUBLIC_KEY,
-							})
-							.where(eq(user.id, userFromSession.id));
-					} else {
-						const res = await createSubOrganization(userFromSession);
-						await db
-							.update(user)
-							.set({
-								subOrgCreated: true,
-								subOrganizationId: res.subOrganizationId,
-								walletId: res.wallet?.walletId!,
-								walletAddress: getAddressFromPublicKey(
-									res.wallet?.addresses[0] as string,
-								),
-								walletPublicKey: res.wallet?.addresses[0] as string,
-							})
-							.where(eq(user.id, userFromSession.id));
-					}
-				}
+				await initWallet(userFromSession, false);
 			}
 		}),
 	},

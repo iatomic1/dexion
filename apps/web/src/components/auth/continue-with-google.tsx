@@ -25,17 +25,16 @@ export default function ContinueWithGoogle() {
 						setIsLoading(false);
 					},
 					onSuccess: (ctx) => {
-						console.log(ctx.data);
 						router.push("/portfolio");
 						toast.success("Authenticated");
 					},
 					onError: (ctx) => {
-						console.log(ctx.error);
+						toast.error(ctx.error.message);
 					},
 				},
 			);
 		} catch (err) {
-			console.error(err);
+			toast.error("An error occurred during authentication. Please try again.");
 		}
 	};
 	return (

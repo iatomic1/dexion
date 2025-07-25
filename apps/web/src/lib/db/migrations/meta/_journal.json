@@ -15,6 +15,13 @@
       "when": 1753030675020,
       "tag": "0001_lying_fantastic_four",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753441855632,
+      "tag": "0002_material_gamora",
+      "breakpoints": true
     }
   ]
 }

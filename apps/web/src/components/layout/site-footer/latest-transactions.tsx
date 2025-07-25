@@ -1,7 +1,7 @@
 "use client";
 import { type ParsedTransaction, TransactionParser } from "@repo/tokens/parser";
 import { Button } from "@repo/ui/components/ui/button";
-import { DialogTitle } from "@repo/ui/components/ui/dialog";
+import { DialogClose, DialogTitle } from "@repo/ui/components/ui/dialog";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { Separator } from "@repo/ui/components/ui/separator";
 import { toast } from "@repo/ui/components/ui/sonner";
@@ -47,10 +47,12 @@ export default function LatestTransactionsModal({
 						Latest Transactions
 					</DialogTitle>
 					<div className="flex gap-3 items-center">
-						<Button variant="ghost" size="icon" className="h-6 w-6">
-							<X className="h-3 w-3" />
-							<span className="sr-only">Close</span>
-						</Button>
+						<DialogClose asChild>
+							<Button variant="ghost" size="icon" className="h-6 w-6">
+								<X className="h-3 w-3" />
+								<span className="sr-only">Close</span>
+							</Button>
+						</DialogClose>
 					</div>
 				</div>
 			}
@@ -61,8 +63,7 @@ export default function LatestTransactionsModal({
 			<div className="space-y-0">
 				{/* <Separator /> */}
 				<ScrollArea className="h-64 w-full flex flex-col gap-3">
-					{data &&
-						data.results.length > 0 &&
+					{data && data.results.length > 0 ? (
 						data.results.map((tx, index) => {
 							const parsed_tx = parser.parse(tx.tx);
 							return (
@@ -73,7 +74,12 @@ export default function LatestTransactionsModal({
 									walletAddress={walletAddress}
 								/>
 							);
-						})}
+						})
+					) : (
+						<div className="flex items-center justify-center py-4 text-xs text-muted-foreground">
+							You have not made any transactions yet
+						</div>
+					)}
 				</ScrollArea>
 
 				<div className="flex justify-between pt-3 pb-4 px-3 border-t border-t-border">

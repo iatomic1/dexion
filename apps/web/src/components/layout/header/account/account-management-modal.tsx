@@ -27,22 +27,26 @@ import type React from "react";
 import { useState } from "react";
 import Disable2FADialog from "~/components/auth/twofa/disable-2fa-dialog";
 import Enable2FADialog from "~/components/auth/twofa/enable-2fa-dialog";
+import { useSession } from "~/contexts/AuthClientContext";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
 import { truncateString } from "~/lib/helpers/strings";
+import type { Session } from "~/types/auth";
 import AvatarUpload from "./avatar-upload";
 import SetInviteCode from "./set-invite-code";
 
 export function AccountSecurityModal({
 	onModalOpenAction,
+	session,
 }: {
 	onModalOpenAction?: () => void;
+	session: Session;
 }) {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [credenzaOpen, setCredenzaOpen] = useState(false);
 	const copy = useCopyToClipboard();
-	const { data: session } = authClient.useSession();
+	// const { data: session } = useSession();
 	const router = useRouter();
 
 	const handleOpenChange = (open: boolean) => {

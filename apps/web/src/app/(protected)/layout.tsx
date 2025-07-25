@@ -14,14 +14,6 @@ export default async function ProtectedLayout({
 }: {
 	children: ReactNode;
 }) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		redirect("/");
-	}
-
 	return (
 		<BtcStxPriceProvider>
 			<WatchlistProvider>

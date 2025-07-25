@@ -32,6 +32,7 @@ import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTran
 import { authClient } from "~/lib/auth-client";
 import { getBalance } from "~/lib/queries/hiro";
 import { formatTokenBalance } from "~/lib/utils/token";
+import type { Session } from "~/types/auth";
 import type { CryptoAsset } from "~/types/xverse";
 import Exchange from "./exchange";
 import Withdraw from "./withdraw";
@@ -161,11 +162,18 @@ function BalanceContent({
 	);
 }
 
-export default function Balance({ children }: { children: React.ReactNode }) {
-	const { data, isPending } = authClient.useSession();
+export default function Balance({
+	children,
+	session,
+	isSessionPending,
+}: {
+	isSessionPending: boolean;
+	session: Session;
+	children: React.ReactNode;
+}) {
 	const copy = useCopyToClipboard();
 	const isMobile = useMediaQuery("(max-width: 640px)");
-	const walletAddress = data?.user.walletAddress;
+	const walletAddress = session?.user.walletAddress;
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -176,9 +184,9 @@ export default function Balance({ children }: { children: React.ReactNode }) {
 		isLoading,
 		refetch,
 	} = useQuery({
-		queryKey: [`balance-${data?.user.walletAddress}`],
-		queryFn: () => getBalance(data?.user.walletAddress as string),
-		enabled: !!data?.user.walletAddress,
+		queryKey: [`balance-${session?.user.walletAddress}`],
+		queryFn: () => getBalance(session?.user.walletAddress as string),
+		enabled: !!session?.user.walletAddress,
 		refetchOnWindowFocus: true,
 		refetchOnReconnect: true,
 	});
@@ -195,15 +203,15 @@ export default function Balance({ children }: { children: React.ReactNode }) {
 	);
 
 	const handleCopyAddress = () => {
-		copy(data?.user.walletAddress as string);
+		copy(session?.user.walletAddress as string);
 		toast.success("STX address copied to clipboard");
 	};
 
 	const contentProps = {
-		isPending,
+		isPending: isSessionPending,
 		isLoading,
 		balanceData,
-		walletAddress: data?.user.walletAddress as string,
+		walletAddress: session?.user.walletAddress as string,
 		isMobile,
 		onCopyAddress: handleCopyAddress,
 		onClose: handleClose,

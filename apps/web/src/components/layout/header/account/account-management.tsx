@@ -11,9 +11,10 @@ import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
+import type { Session } from "~/types/auth";
 import { AccountSecurityModal } from "./account-management-modal";
 
-export function AccountPopover() {
+export function AccountPopover({ session }: { session: Session }) {
 	const router = useRouter();
 	const [open, setIsOpen] = useState(false);
 
@@ -39,7 +40,10 @@ export function AccountPopover() {
 				align="end"
 				sideOffset={20}
 			>
-				<AccountSecurityModal onModalOpenAction={handleModalOpen} />
+				<AccountSecurityModal
+					onModalOpenAction={handleModalOpen}
+					session={session}
+				/>
 				<Button
 					className="w-full justify-start gap-3 bg-transparent"
 					variant={"ghost"}

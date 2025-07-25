@@ -5,11 +5,14 @@ import { Bell, Search, Wallet2 } from "lucide-react";
 import Link from "next/link";
 import { WatchlistCredenza } from "~/components/watchlist/watchlist-credenza";
 import siteConfig from "~/config/site";
+import { useSession } from "~/contexts/AuthClientContext";
 import { AccountPopover } from "./account/account-management";
 import { SearchDialog } from "./search-dialog";
 import Balance from "./wallet/balance";
 
 export default function SiteHeader() {
+	const { data, isPending } = useSession();
+
 	return (
 		<header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4">
 			<div className="flex items-center gap-6">
@@ -105,7 +108,7 @@ export default function SiteHeader() {
 					Test Send
 				</Button> */}
 
-				<Balance>
+				<Balance session={data} isSessionPending={isPending}>
 					<Button variant="ghost" size="icon" className="rounded-full">
 						<Wallet2 className="h-5 w-5" />
 					</Button>
@@ -113,7 +116,7 @@ export default function SiteHeader() {
 				<Button variant="ghost" size="icon" className="rounded-full">
 					<Bell className="h-5 w-5" />
 				</Button>
-				<AccountPopover />
+				<AccountPopover session={data} />
 			</div>
 		</header>
 	);

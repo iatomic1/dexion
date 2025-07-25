@@ -1,5 +1,5 @@
 import { createServerActionProcedure } from "zsa";
-import { assertUserAuthenticated } from "./auth/auth";
+import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 
 export class PublicError extends Error {
 	constructor(message: string) {
@@ -8,7 +8,6 @@ export class PublicError extends Error {
 	}
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 function shapeErrors({ err }: any) {
 	const isAllowedError = err instanceof PublicError;
 	const isDev = process.env.NODE_ENV === "development";

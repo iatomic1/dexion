@@ -1,8 +1,6 @@
 import { NetworkType, type SignerConfig, SignerFactory } from "@repo/signer";
-import { headers } from "next/headers";
 import { turnkeyConfig } from "~/config/turnkey";
 import type { User } from "~/types/auth";
-import { auth } from "../auth";
 
 export async function getSigner(user: User) {
 	try {

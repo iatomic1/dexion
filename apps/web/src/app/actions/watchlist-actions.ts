@@ -1,7 +1,7 @@
 "use server";
 
 import z from "zod";
-import { assertUserAuthenticated } from "~/lib/auth/auth";
+import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import makeFetch from "~/lib/helpers/fetch";
 import { authenticatedAction } from "~/lib/safe-action";
 import type { ApiResponse } from "~/types";

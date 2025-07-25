@@ -1,4 +1,4 @@
-import { assertUserAuthenticated } from "~/lib/auth/auth";
+import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import makeFetch from "~/lib/helpers/fetch";
 import type { ApiResponse } from "~/types";
 import type { UserWallet } from "~/types/wallets";

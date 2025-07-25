@@ -1,7 +1,7 @@
 import { Skeleton } from "@repo/ui/components/ui/skeleton";
 import { headers } from "next/headers";
 import { Suspense } from "react";
-import { auth } from "~/lib/auth";
+import { auth } from "~/lib/auth/auth";
 import LatestTransactionsModal from "./latest-transactions";
 import PriceDisplayContainer from "./price-display-container";
 import ThemeSwitcherTab from "./theme-switcher";

@@ -32,8 +32,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
-import { auth } from "~/lib/auth";
+import { auth } from "~/lib/auth/auth";
 import { authClient } from "~/lib/auth-client";
+import ContinueWithGoogle from "./continue-with-google";
 import ContinueWithWallet from "./continue-with-wallet";
 
 interface SignUpModalProps {
@@ -75,11 +76,8 @@ export function SignUpModal({
 					},
 					onSuccess: (_ctx) => {
 						toast.success("OTP sent to your email");
-						onOpenChange(false); // close signup modal
-						onOtpTrigger(values.email); // open OTP modal with email context
-
-						// toast.success("Authenticated");
-						// setIsLoading(false);
+						onOpenChange(false);
+						onOtpTrigger(values.email);
 					},
 					onResponse() {
 						setIsLoading(false);
@@ -109,11 +107,6 @@ export function SignUpModal({
 					},
 				},
 			);
-
-			// if (error) {
-			//   toast.error(error.message);
-			//   return;
-			// }
 		} catch (err) {
 			toast.error("Unexpected error");
 			console.error(err);
@@ -191,14 +184,7 @@ export function SignUpModal({
 					</div>
 
 					<div className="mt-4 space-y-3">
-						<Button
-							variant="outline"
-							className="w-full bg-muted/50 py-5 text-sm rounded-full"
-							disabled
-						>
-							<SiGoogle size={12} title="Google Icon" />
-							Continue with Google
-						</Button>
+						<ContinueWithGoogle />
 						<ContinueWithWallet />
 					</div>
 

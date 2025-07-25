@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@repo/ui/components/ui/button";
+import { DialogClose } from "@repo/ui/components/ui/dialog";
 import { Input } from "@repo/ui/components/ui/input";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
 import { Separator } from "@repo/ui/components/ui/separator";
@@ -69,10 +70,12 @@ export default function WalletTrackerModal({
 								className="rounded-full text-xs placeholder:text-xs h-7"
 								onChange={(e) => setSearchQuery(e.target.value)}
 							/>
-							<Button variant="ghost" size="icon" className="h-6 w-6">
-								<X className="h-3 w-3" />
-								<span className="sr-only">Close</span>
-							</Button>
+							<DialogClose asChild>
+								<Button variant="ghost" size="icon" className="h-6 w-6">
+									<X className="h-3 w-3" />
+									<span className="sr-only">Close</span>
+								</Button>
+							</DialogClose>
 						</div>
 					</div>
 				}

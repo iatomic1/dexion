@@ -9,6 +9,7 @@ import {
 	createAuthMiddleware,
 	emailOTP,
 	jwt,
+	oneTimeToken,
 	openAPI,
 	twoFactor,
 } from "better-auth/plugins";
@@ -163,6 +164,9 @@ export const auth: any = betterAuth({
 	},
 	plugins: [
 		openAPI(),
+		oneTimeToken({
+			expiresIn: 5,
+		}),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				console.log(`Sending OTP ${otp} to ${email} for ${type}`);

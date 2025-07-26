@@ -7,6 +7,7 @@ import {
 	AvatarImage,
 } from "@repo/ui/components/ui/avatar";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import {
 	type ColumnDef,
@@ -79,27 +80,9 @@ export const tableColumns = (isMobile: boolean): ColumnDef<TokenMetadata>[] => [
 	},
 ];
 
-// Custom hook for media queries
-export function useMediaQuery(query: string): boolean {
-	const [matches, setMatches] = useState(false);
-
-	useEffect(() => {
-		const media = window.matchMedia(query);
-		if (media.matches !== matches) {
-			setMatches(media.matches);
-		}
-
-		const listener = () => setMatches(media.matches);
-		media.addEventListener("change", listener);
-		return () => media.removeEventListener("change", listener);
-	}, [matches, query]);
-
-	return matches;
-}
-
 export default function DevTokensTable() {
 	const { data, isLoading } = useDevTokens();
-	const isMobile = useMediaQuery("(max-width: 768px)");
+	const isMobile = useIsMobile();
 
 	// Move useReactTable hook before any conditional returns
 	const table = useReactTable({

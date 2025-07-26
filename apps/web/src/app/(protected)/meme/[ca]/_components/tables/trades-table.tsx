@@ -3,6 +3,7 @@
 import type { TokenMetadata, TokenSwapTransaction } from "@repo/tokens/types";
 import { Button } from "@repo/ui/components/ui/button";
 import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -17,21 +18,6 @@ import { getFilterTrades } from "~/lib/queries/token-watcher";
 import TradesTableSkeleton from "../skeleton/trades-table-skeleton";
 import { columns, getColumnWidth } from "./trades-table-columns";
 
-// Custom hook for media queries (borrowed from HoldersTable)
-export function useMediaQuery(query: string): boolean {
-	const [matches, setMatches] = useState(false);
-	useEffect(() => {
-		const media = window.matchMedia(query);
-		if (media.matches !== matches) {
-			setMatches(media.matches);
-		}
-		const listener = () => setMatches(media.matches);
-		media.addEventListener("change", listener);
-		return () => media.removeEventListener("change", listener);
-	}, [matches, query]);
-	return matches;
-}
-
 export default function TradesTable({
 	token,
 	onFilterChange,
@@ -43,7 +29,7 @@ export default function TradesTable({
 }) {
 	const { data: trades, isLoading: isTradesLoading } = useTokenTrades();
 	const [filterBy, setFilterBy] = useState(initialFilterValue);
-	const isMobile = useMediaQuery("(max-width: 768px)");
+	const isMobile = useIsMobile();
 	const velarPoolId = `VELAR_${token?.contract_id}_stx`;
 	const { data: filteredTrades, isLoading: isFilterLoading } = useQuery({
 		queryKey: ["trades", token?.contract_id, filterBy],

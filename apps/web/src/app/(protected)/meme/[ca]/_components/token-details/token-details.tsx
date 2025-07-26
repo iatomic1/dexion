@@ -1,12 +1,19 @@
 "use client";
 
 import type { TokenMetadata } from "@repo/tokens/types";
-import { memo, Suspense, useCallback, useMemo, useState } from "react";
+import { useIsMobile } from "@repo/ui/hooks/use-mobile";
+import {
+	memo,
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import siteConfig from "~/config/site";
 import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 import useDocumentTitle from "~/hooks/useDocumentTitle";
 import useFavicon from "~/hooks/useFavicon";
-import useMediaQuery from "~/hooks/useMediaQuery";
 import { formatPrice } from "~/lib/helpers/numbers";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
 import DesktopLayout from "./desktop-layout";
@@ -14,10 +21,10 @@ import MobileLayout from "./mobile-layout";
 
 export default function TokenDetailPage() {
 	const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
-	const isMobile = useMediaQuery("(max-width: 640px)", {
-		defaultValue: true, // Assume mobile-first
-		initializeWithValue: true,
-	});
+	const isMobile = useIsMobile();
+	useEffect(() => {
+		console.log("mobile", isMobile);
+	}, [isMobile]);
 
 	const documentTitle = useMemo(() => {
 		if (!tokenData?.symbol || !tokenData?.metrics?.marketcap_usd) {

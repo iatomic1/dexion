@@ -19,18 +19,18 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { Markup } from "interweave";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useTokenPools } from "~/contexts/TokenWatcherSocketContext";
 import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
-import { useMediaQuery } from "../trade-details";
 
 export default function Pools() {
 	const [isOpen, setIsOpen] = useState(true);
 	const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 
-	const isMobile = useMediaQuery("(max-width: 640px)");
+	const isMobile = useIsMobile(640);
 	return isMobile ? (
 		<div className="grid max-[475px]:grid-cols-1 grid-cols-2 gap-4">
 			{isPoolsLoading ? (

@@ -25,6 +25,7 @@ import { Copy, ExternalLink, Info, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import OTTModal from "~/components/auth/ott-modal";
 import Disable2FADialog from "~/components/auth/twofa/disable-2fa-dialog";
 import Enable2FADialog from "~/components/auth/twofa/enable-2fa-dialog";
 import { useSession } from "~/contexts/AuthClientContext";
@@ -67,7 +68,7 @@ export function AccountSecurityModal({
 					Account and Security
 				</Button>
 			</CredenzaTrigger>
-			<CredenzaContent className="sm:max-w-2xl border p-0 overflow-hidden">
+			<CredenzaContent className="sm:max-w border p-0 overflow-hidden">
 				<VisuallyHidden>
 					<DialogTitle>Account and Security</DialogTitle>
 				</VisuallyHidden>
@@ -257,6 +258,22 @@ export function AccountSecurityModal({
 									/>
 								)
 							}
+						/>
+					) : (
+						<div className="p-4 border-t flex items-center justify-between">
+							<div className="space-y-1">
+								<Skeleton className="h-5 w-24" />
+								<Skeleton className="h-4 w-32" />
+							</div>
+							<Skeleton className="h-8 w-24" />
+						</div>
+					)}
+
+					{session ? (
+						<SettingsSection
+							title="Sign in to your account on telegram"
+							description="Manage your auth"
+							action={<OTTModal />}
 						/>
 					) : (
 						<div className="p-4 border-t flex items-center justify-between">

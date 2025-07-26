@@ -16,6 +16,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import { Markup } from "interweave";
 import { Copy, ExternalLink, Share2 } from "lucide-react";
@@ -25,7 +26,6 @@ import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { truncateString } from "~/lib/helpers/strings";
 import { Socials } from "./socials";
-import { useMediaQuery } from "./trade-details";
 import TokenAudit from "./trading/token-audit";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
@@ -178,8 +178,7 @@ const Actions = ({
 	token: TokenMetadata;
 }) => {
 	const copy = useCopyToClipboard();
-	const isMobile = useMediaQuery("(max-width: 640px)");
-
+	const isMobile = useIsMobile();
 	return (
 		<div
 			className={cn("flex items-center gap-0", className, isMobile && "gap-1")}

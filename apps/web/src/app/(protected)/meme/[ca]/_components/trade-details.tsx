@@ -14,6 +14,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import { Markup } from "interweave";
 import {
@@ -52,27 +53,6 @@ interface InfoItemProps {
 	isRed?: boolean;
 }
 
-// Custom hook for media queries
-export function useMediaQuery(query: string): boolean {
-	const [matches, setMatches] = useState(false);
-
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			const media = window.matchMedia(query);
-			if (media.matches !== matches) {
-				setMatches(media.matches);
-			}
-
-			const listener = () => setMatches(media.matches);
-			media.addEventListener("change", listener);
-			return () => media.removeEventListener("change", listener);
-		}
-		return undefined;
-	}, [matches, query]);
-
-	return matches;
-}
-
 function PriceInfoItem({ icon, value, label, isRed = false }: InfoItemProps) {
 	return (
 		<div className="p-2 md:p-3 border-muted border-[1px] rounded-md items-center justify-center flex flex-col gap-1">
@@ -105,7 +85,7 @@ export function CryptoHoverCard({
 	txId,
 }: CryptoCardProps) {
 	const copy = useCopyToClipboard();
-	const isMobile = useMediaQuery("(max-width: 640px)");
+	const isMobile = useIsMobile(640);
 
 	return (
 		<HoverCard>

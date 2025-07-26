@@ -23,7 +23,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./drawer";
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 
 interface BaseProps {
   children: React.ReactNode;

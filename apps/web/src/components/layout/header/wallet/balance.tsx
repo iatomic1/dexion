@@ -21,11 +21,11 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@repo/ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
-import { useMediaQuery } from "~/app/(protected)/meme/[ca]/_components/trade-details";
 import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTransactions";
@@ -172,7 +172,7 @@ export default function Balance({
 	children: React.ReactNode;
 }) {
 	const copy = useCopyToClipboard();
-	const isMobile = useMediaQuery("(max-width: 640px)");
+	const isMobile = useIsMobile(640);
 	const walletAddress = session?.user.walletAddress;
 
 	const [isOpen, setIsOpen] = useState(false);

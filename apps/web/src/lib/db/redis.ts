@@ -7,7 +7,10 @@ export interface SecondaryStorage {
 	delete: (key: string) => Promise<void>;
 }
 
-const redisClient = new Redis();
+const url = process.env.REDIS_URL;
+if (!url) throw new Error("REDIS_URL is not defined");
+
+const redisClient = new Redis(url);
 
 redisClient.on("error", (err) => {
 	console.error("Redis Client Error", err);

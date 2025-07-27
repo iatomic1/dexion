@@ -40,7 +40,7 @@ export default function OTTModal() {
 		const { data, error } = await authClient.oneTimeToken.generate();
 		setIsGenerating(false);
 		if (error) {
-			toast.error(error.message ?? "An error occured while generating ott");
+			toast.error(error.message ?? "An error occurred while generating ott");
 			return;
 		}
 		if (data.token) {

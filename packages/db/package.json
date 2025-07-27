@@ -1,0 +1,28 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "description": "Database package for Dexion",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./drizzle.config": "./drizzle.config.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "drizzle-orm": "^0.44.1",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.1",
+    "dotenv": "^16.4.7",
+    "@types/pg": "^8.11.10"
+  }
+}

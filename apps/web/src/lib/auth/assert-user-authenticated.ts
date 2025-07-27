@@ -13,16 +13,12 @@ export const assertUserAuthenticated = async (): Promise<AuthSuccess> => {
 		throw new Error("Not authenticated");
 	}
 
-	const tokenRes = await fetch("https://dexion-web.vercel.app/api/auth/token", {
-		headers: {
-			Authorization: `Bearer ${session.session.token}`,
-		},
+	const tokenData = await auth.api.getToken({
+		headers: await headers(),
 	});
-	if (!tokenRes.ok) {
+	if (!tokenData.token) {
 		throw new Error("Error trying to get the access token");
 	}
-
-	const tokenData: { token: string } = await tokenRes.json();
 
 	try {
 		return {

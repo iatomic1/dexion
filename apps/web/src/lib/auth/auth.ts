@@ -113,7 +113,7 @@ export const auth: any = betterAuth({
 					walletPublicKey: sessionUser.walletPublicKey ?? "",
 					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
 				};
-				await initWallet(userFromSession, true);
+				await initWallet(userFromSession, false);
 			}
 		}),
 	},

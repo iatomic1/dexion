@@ -14,8 +14,10 @@ import {
 	twoFactor,
 } from "better-auth/plugins";
 import { createClient } from "redis";
+import type { User } from "~/types/auth";
 import type { EmailType } from "~/types/email";
 import { db } from "../db/drizzle";
+import { redisStorage } from "../db/redis";
 import { schema, user } from "../db/schema";
 import { getBnsAndAvatar } from "../queries/bns";
 import { handleEmailSendingImmediate } from "../utils/email";
@@ -28,36 +30,90 @@ import { siws } from "./plugins/siws";
 
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
-	// baseURL:
-	// 	process.env.NODE_ENV === "development"
-	// 		? "http://localhost:3001"
-	// 		: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+	user: {
+		additionalFields: {
+			inviteCode: {
+				type: "string",
+				required: false,
+				input: true,
+				unique: true,
+				defaultValue: false,
+			},
+			subOrgCreated: {
+				type: "boolean",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+			subOrganizationId: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+				unique: true,
+			},
+			walletId: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+				unique: true,
+			},
+			walletAddress: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+			walletPublicKey: {
+				type: "string",
+				required: false,
+				defaultValue: false,
+				input: false,
+				returned: true,
+			},
+		},
+	},
 
-	// secondaryStorage: {
-	// 	get: async (key) => {
-	// 		const value = await redis.get(REDIS_PREFIX + key);
-	// 		return value ? value : null;
-	// 	},
-	// 	set: async (key, value, ttl) => {
-	// 		if (ttl) await redis.set(REDIS_PREFIX + key, value, { EX: ttl });
-	// 		else await redis.set(key, value);
-	// 	},
-	// 	delete: async (key) => {
-	// 		await redis.del(REDIS_PREFIX + key);
-	// 	},
-	// },
+	secondaryStorage: redisStorage,
 	hooks: {
 		after: createAuthMiddleware(async (ctx) => {
 			if (
 				ctx.path.includes("/email-otp/verify-email") &&
 				ctx.context.newSession
 			) {
-				const userFromSession = ctx.context.newSession.user;
+				const sessionUser = ctx.context.newSession.user;
+
+				const userFromSession: User = {
+					...sessionUser,
+					inviteCode: sessionUser.inviteCode ?? null,
+					subOrgCreated: sessionUser.subOrgCreated ?? false,
+					subOrganizationId: sessionUser.subOrganizationId ?? undefined,
+					walletId: sessionUser.walletId ?? "",
+					walletAddress: sessionUser.walletAddress ?? "",
+					walletPublicKey: sessionUser.walletPublicKey ?? "",
+					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
+				};
 				await initWallet(userFromSession, true);
 			}
 			if (ctx.path.includes("/sign-in/social") && ctx.context.newSession) {
-				const userFromSession = ctx.context.newSession.user;
-				await initWallet(userFromSession, false);
+				const sessionUser = ctx.context.newSession.user;
+
+				const userFromSession: User = {
+					...sessionUser,
+					inviteCode: sessionUser.inviteCode ?? null,
+					subOrgCreated: sessionUser.subOrgCreated ?? false,
+					subOrganizationId: sessionUser.subOrganizationId ?? undefined,
+					walletId: sessionUser.walletId ?? "",
+					walletAddress: sessionUser.walletAddress ?? "",
+					walletPublicKey: sessionUser.walletPublicKey ?? "",
+					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
+				};
+				await initWallet(userFromSession, true);
 			}
 		}),
 	},
@@ -112,54 +168,6 @@ export const auth: any = betterAuth({
 		autoSignInAfterVerification: true,
 		async onEmailVerification(user, request) {
 			console.log(user, request, "from onEmailVerification");
-		},
-	},
-	user: {
-		additionalFields: {
-			inviteCode: {
-				type: "string",
-				required: false,
-				input: true,
-				unique: true,
-				defaultValue: false,
-			},
-			subOrgCreated: {
-				type: "boolean",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
-			subOrganizationId: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-				unique: true,
-			},
-			walletId: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-				unique: true,
-			},
-			walletAddress: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
-			walletPublicKey: {
-				type: "string",
-				required: false,
-				defaultValue: false,
-				input: false,
-				returned: true,
-			},
 		},
 	},
 	plugins: [

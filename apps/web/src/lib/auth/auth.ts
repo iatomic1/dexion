@@ -37,7 +37,7 @@ export const auth: any = betterAuth({
 				required: false,
 				input: true,
 				unique: true,
-				defaultValue: false,
+				defaultValue: null,
 			},
 			subOrgCreated: {
 				type: "boolean",
@@ -49,7 +49,7 @@ export const auth: any = betterAuth({
 			subOrganizationId: {
 				type: "string",
 				required: false,
-				defaultValue: false,
+				defaultValue: null,
 				input: false,
 				returned: true,
 				unique: true,
@@ -57,7 +57,7 @@ export const auth: any = betterAuth({
 			walletId: {
 				type: "string",
 				required: false,
-				defaultValue: false,
+				defaultValue: null,
 				input: false,
 				returned: true,
 				unique: true,
@@ -65,14 +65,14 @@ export const auth: any = betterAuth({
 			walletAddress: {
 				type: "string",
 				required: false,
-				defaultValue: false,
+				defaultValue: null,
 				input: false,
 				returned: true,
 			},
 			walletPublicKey: {
 				type: "string",
 				required: false,
-				defaultValue: false,
+				defaultValue: null,
 				input: false,
 				returned: true,
 			},

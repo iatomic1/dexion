@@ -1,15 +1,11 @@
 //plugin/index.ts
-
 import { validateStacksAddress } from "@stacks/transactions";
 import { type BetterAuthPlugin, type User } from "better-auth";
 import { APIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { createAuthEndpoint } from "better-auth/plugins";
-// import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { initWallet } from "../../init-wallet";
-// import { db } from "../db/drizzle";
-// import { user as userTable } from "../db/schema";
 import { schema } from "./schema";
 import type { SIWSPluginOptions, WalletAddress } from "./types";
 

@@ -11,6 +11,7 @@ export async function initWallet(
 	userFromSession: User,
 	requireVerified = true,
 ) {
+	// Check if subOrgCreated is true and return
 	if (userFromSession.subOrgCreated) {
 		return;
 	}

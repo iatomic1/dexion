@@ -19,7 +19,6 @@ redisClient.on("error", (err) => {
 export const redisStorage: SecondaryStorage = {
 	get: async (key: string) => {
 		const data = await redisClient.get(REDIS_PREFIX + key);
-		console.log("getting from redis");
 		return data ?? null;
 	},
 	set: async (key: string, value: string, ttl?: number) => {

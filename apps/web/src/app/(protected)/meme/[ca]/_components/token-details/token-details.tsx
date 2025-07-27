@@ -1,7 +1,7 @@
 "use client";
 
 import type { TokenMetadata } from "@repo/tokens/types";
-import { useIsMobile } from "@repo/ui/hooks/use-mobile";
+import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import {
 	memo,
 	Suspense,

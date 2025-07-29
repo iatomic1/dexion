@@ -1,6 +1,5 @@
-"use server";
 import type { ApiResponse } from "@/types";
-import makeFetch, { type BASE_URL } from "@/utils/fetch";
+import makeFetch from "@/utils/fetch";
 import {
 	addWalletSchema,
 	removeWalletSchema,

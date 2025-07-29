@@ -1,5 +1,4 @@
 "use client";
-
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import {
@@ -48,7 +47,7 @@ export default function Home() {
 					TradingView
 				</a>
 				<span>
-					{process.env.NODE_ENV} {process.env.VERCEL_URL}
+					{process.env.NODE_ENV} {process.env.NEXT_PUBLIC_VERCEL_URL}
 				</span>
 			</div>
 			<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

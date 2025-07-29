@@ -1,4 +1,4 @@
-import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
+import { DOMAIN_NAME, FRONTEND_URL } from "@repo/shared-constants/constants.ts";
 import { verifyMessageSignatureRsv } from "@stacks/encryption";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -30,6 +30,17 @@ import { siws } from "./plugins/siws";
 
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
+
+	trustedOrigins: [
+		...(process.env.VERCEL_URL ? [process.env.VERCEL_URL] : []),
+		FRONTEND_URL,
+		`https://beta.${DOMAIN_NAME}`,
+	],
+
+	baseURL:
+		process.env.NODE_ENV === "development"
+			? "http://localhost:3001"
+			: process.env.VERCEL_URL,
 	user: {
 		additionalFields: {
 			inviteCode: {

@@ -36,7 +36,6 @@ export const auth: any = betterAuth({
 		FRONTEND_URL,
 		`https://beta.${DOMAIN_NAME}`,
 	],
-
 	baseURL:
 		process.env.NODE_ENV === "development"
 			? "http://localhost:3001"

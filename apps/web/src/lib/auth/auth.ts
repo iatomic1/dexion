@@ -30,16 +30,15 @@ import { siws } from "./plugins/siws";
 
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
-
 	trustedOrigins: [
-		...(process.env.VERCEL_URL ? [process.env.VERCEL_URL] : []),
+		...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
 		FRONTEND_URL,
 		`https://beta.${DOMAIN_NAME}`,
 	],
 	baseURL:
-		process.env.NODE_ENV === "development"
-			? "http://localhost:3001"
-			: process.env.VERCEL_URL,
+		process.env.NODE_ENV === "production"
+			? `https://${process.env.VERCEL_URL}`
+			: "http://localhost:3001",
 	user: {
 		additionalFields: {
 			inviteCode: {

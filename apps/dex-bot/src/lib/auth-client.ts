@@ -3,9 +3,9 @@ import { oneTimeTokenClient } from "better-auth/client/plugins";
 
 export const authClient: any = createAuthClient({
 	baseURL:
-		process.env.NODE_ENV === "development"
-			? "http://localhost:3001"
-			: process.env.VERCEL_URL,
+		process.env.NODE_ENV === "production"
+			? `https://${process.env.VERCEL_URL}`
+			: "http://localhost:3001",
 	plugins: [oneTimeTokenClient()],
 });
 

@@ -22,53 +22,56 @@ var (
 // setupJWKS initializes the JWKS for JWT verification
 func setupJWKS(betterAuthBaseURL string) error {
 	jwksURL := fmt.Sprintf("%s/api/auth/jwks", betterAuthBaseURL)
+	fmt.Printf("[JWT DEBUG] Fetching JWKS from: %s\n", jwksURL)
 
 	options := keyfunc.Options{
-		RefreshInterval: 24 * time.Hour, // Cache for 24 hours as recommended
+		RefreshInterval: 24 * time.Hour,
 		RefreshTimeout:  10 * time.Second,
 	}
 
 	var err error
 	jwks, err = keyfunc.Get(jwksURL, options)
 	if err != nil {
+		fmt.Printf("[JWT DEBUG] Failed to fetch JWKS: %v\n", err)
 		return fmt.Errorf("failed to get JWKS: %w", err)
 	}
 
+	fmt.Println("[JWT DEBUG] Successfully fetched JWKS")
 	return nil
 }
 
 // verifyBetterAuthJWT verifies a JWT token from better-auth
 func verifyBetterAuthJWT(tokenString string, cfg *config.Config) (*jwt.Token, error) {
-	// Initialize JWKS if not already done
 	if jwks == nil {
 		if err := setupJWKS(cfg.FrontendURL); err != nil {
 			return nil, err
 		}
 	}
 
-	// Parse and verify the token
 	token, err := jwt.Parse(tokenString, jwks.Keyfunc)
 	if err != nil {
+		fmt.Printf("[JWT DEBUG] Failed to parse token: %v\n", err)
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
 
 	if !token.Valid {
+		fmt.Println("[JWT DEBUG] Token is invalid")
 		return nil, errors.New("invalid token")
 	}
 
-	// Validate claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
+		fmt.Println("[JWT DEBUG] Failed to extract claims")
 		return nil, errors.New("invalid token claims")
 	}
 
-	// Validate issuer
 	if iss, ok := claims["iss"].(string); !ok || iss != cfg.FrontendURL {
+		fmt.Printf("[JWT DEBUG] Issuer mismatch: got '%s', expected '%s'\n", iss, cfg.FrontendURL)
 		return nil, ErrInvalidIssuer
 	}
 
-	// Validate audience
 	if aud, ok := claims["aud"].(string); !ok || aud != cfg.FrontendURL {
+		fmt.Printf("[JWT DEBUG] Audience mismatch: got '%s', expected '%s'\n", aud, cfg.FrontendURL)
 		return nil, ErrInvalidAudience
 	}
 
@@ -94,7 +97,6 @@ func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 
 		tokenString = tokenParts[1]
 
-		// Verify the JWT token
 		token, err := verifyBetterAuthJWT(tokenString, cfg)
 		if err != nil {
 			http.SendUnauthorized(c, err, http.WithMessage("Token validation failed"))
@@ -102,13 +104,10 @@ func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Extract user information from claims
 		claims := token.Claims.(jwt.MapClaims)
 
-		// Based on your JWT payload, extract user data
 		userID, ok := claims["id"].(string)
 		if !ok {
-			// Fallback to sub if id is not present
 			if sub, subOk := claims["sub"].(string); subOk {
 				userID = sub
 			} else {
@@ -117,7 +116,6 @@ func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 				return
 			}
 		}
-
 		c.Set("userId", userID)
 
 		if name, ok := claims["name"].(string); ok {

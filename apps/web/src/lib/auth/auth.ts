@@ -22,13 +22,14 @@ import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
 
+const URL =
+	process.env.NODE_ENV === "production"
+		? `https://beta.${DOMAIN_NAME}`
+		: "http://localhost:3001";
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
 	trustedOrigins: [FRONTEND_URL, `https://beta.${DOMAIN_NAME}`],
-	baseURL:
-		process.env.NODE_ENV === "production"
-			? `https://beta.${DOMAIN_NAME}`
-			: "http://localhost:3001",
+	baseURL: URL,
 	// baseURL: `https://beta.${DOMAIN_NAME}`,
 	user: {
 		additionalFields: {
@@ -225,6 +226,8 @@ export const auth: any = betterAuth({
 		jwt({
 			jwt: {
 				expirationTime: "15m",
+				audience: URL,
+				issuer: URL,
 			},
 		}),
 		twoFactor({

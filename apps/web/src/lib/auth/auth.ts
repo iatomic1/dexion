@@ -13,34 +13,29 @@ import {
 	openAPI,
 	twoFactor,
 } from "better-auth/plugins";
-import { createClient } from "redis";
 import type { User } from "~/types/auth";
-import type { EmailType } from "~/types/email";
 import { db } from "../db/drizzle";
 import { redisStorage } from "../db/redis";
-import { schema, user } from "../db/schema";
+import { schema } from "../db/schema";
 import { getBnsAndAvatar } from "../queries/bns";
 import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
 
-// const redis = createClient();
-// await redis.connect();
-// const REDIS_PREFIX = "auth-";
-
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
-
-	trustedOrigins: [
-		...(process.env.VERCEL_URL ? [process.env.VERCEL_URL] : []),
-		FRONTEND_URL,
-		`https://beta.${DOMAIN_NAME}`,
-	],
-
+	// trustedOrigins: [
+	// 	...(process.env.NEXT_PUBLIC_VERCEL_URL
+	// 		? [`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`]
+	// 		: []),
+	// 	FRONTEND_URL,
+	// 	`https://beta.${DOMAIN_NAME}`,
+	// ],
 	baseURL:
-		process.env.NODE_ENV === "development"
-			? "http://localhost:3001"
-			: process.env.VERCEL_URL,
+		process.env.NODE_ENV === "production"
+			? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+			: "http://localhost:3001",
+	// baseURL: `https://beta.${DOMAIN_NAME}`,
 	user: {
 		additionalFields: {
 			inviteCode: {

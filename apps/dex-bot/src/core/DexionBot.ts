@@ -41,7 +41,6 @@ export class DexionBot {
 			console.log("Bot started successfully.");
 		});
 
-		// Graceful shutdown
 		process.once("SIGINT", () => this.bot.stop("SIGINT"));
 		process.once("SIGTERM", () => this.bot.stop("SIGTERM"));
 	}

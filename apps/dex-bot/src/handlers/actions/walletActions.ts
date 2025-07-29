@@ -1,3 +1,4 @@
+import { DexionApiSDK } from "@repo/api-sdk";
 import { Telegraf } from "telegraf";
 import * as api from "@/api";
 import * as messages from "@/messages";
@@ -5,11 +6,23 @@ import type { DexBotContext } from "@/types/bot";
 
 export function registerWalletActions(bot: Telegraf<DexBotContext>) {
 	bot.action("add_wallet", (ctx) => {
+		const sdk = new DexionApiSDK(
+			ctx.session.session_data?.accessToken,
+			ctx.session.session_data.user.id,
+			false,
+		);
+		console.log(sdk.wallets.getWallets());
 		ctx.answerCbQuery();
 		ctx.reply(messages.ADD_WALLET_PROMPT);
 	});
 
 	bot.action("delete_wallet", (ctx) => {
+		const sdk = new DexionApiSDK(
+			ctx.session.session_token,
+			ctx.session.session_data.user.id,
+			false,
+		);
+
 		ctx.answerCbQuery();
 		ctx.reply(messages.DELETE_WALLET_PROMPT);
 	});

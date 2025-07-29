@@ -42,7 +42,7 @@ func RunServer(srv *Server) {
 
 	httpServer := &http.Server{
 		Addr: "0.0.0.0:" + port,
-		// Addr: port,
+		// Addr:         port,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,

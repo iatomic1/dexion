@@ -23,7 +23,7 @@ export function registerMiddleware(bot: Telegraf<DexBotContext>) {
 	});
 
 	const publicCommands = ["/start", "/auth"];
-	const protectedCommands = ["/menu", "/wallet", "/settings"];
+	const protectedCommands = ["/menu", "/wallet", "/settings", "/list"];
 	const protectedActions = [
 		"wallets",
 		"watchlists",
@@ -39,12 +39,10 @@ export function registerMiddleware(bot: Telegraf<DexBotContext>) {
 	bot.use(async (ctx, next) => {
 		const msgText =
 			ctx.message && "text" in ctx.message ? ctx.message.text : undefined;
-
 		const callbackData =
 			ctx.callbackQuery && "data" in ctx.callbackQuery
 				? ctx.callbackQuery.data
 				: undefined;
-
 		const isPublicCommand = msgText && publicCommands.includes(msgText);
 		const isProtectedCommand = msgText && protectedCommands.includes(msgText);
 		const isProtectedAction =
@@ -60,29 +58,43 @@ export function registerMiddleware(bot: Telegraf<DexBotContext>) {
 		}
 
 		try {
-			const { data, error } = await authClient.getSession({
-				fetchOptions: {
-					headers: {
-						Authorization: `Bearer ${token}`,
+			await new Promise<void>((resolve, reject) => {
+				authClient.getSession({
+					fetchOptions: {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						onSuccess: async (responseCtx) => {
+							try {
+								const jwt = responseCtx.response.headers.get("set-auth-jwt");
+
+								// Get session data from the response
+								const { data } = await responseCtx; // or however you access the data
+
+								if (!data?.session) {
+									await ctx.reply("❌ Session expired.");
+									reject(new Error("Session expired"));
+									return;
+								}
+
+								ctx.session.session_data = {
+									session: { ...data.session, accessToken: jwt },
+									user: { ...data.user },
+								};
+
+								resolve();
+							} catch (error) {
+								reject(error);
+							}
+						},
+						onError: async (error) => {
+							console.log(error);
+							await ctx.reply("Error getting session");
+							reject(error);
+						},
 					},
-				},
+				});
 			});
-
-			if (error) {
-				console.log(error);
-				await ctx.reply("Error getting session");
-				return;
-			}
-
-			if (!data?.session) {
-				await ctx.reply("❌ Session expired.");
-				return;
-			}
-
-			ctx.session.session_data = {
-				session: { ...data.session },
-				user: { ...data.user },
-			};
 
 			return next();
 		} catch {

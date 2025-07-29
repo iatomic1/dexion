@@ -1,3 +1,4 @@
+import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
 import {
 	emailOTPClient,
 	inferAdditionalFields,
@@ -10,7 +11,7 @@ import { siwsClient } from "./auth/plugins/siws/client";
 export const authClient = createAuthClient({
 	baseURL:
 		process.env.NODE_ENV === "production"
-			? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+			? `https://beta.${DOMAIN_NAME}`
 			: "http://localhost:3001",
 	// baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3001",
 	plugins: [

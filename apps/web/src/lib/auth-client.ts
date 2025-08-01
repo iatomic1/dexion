@@ -11,7 +11,7 @@ import { siwsClient } from "./auth/plugins/siws/client";
 export const authClient = createAuthClient({
 	baseURL:
 		process.env.NODE_ENV === "production"
-			? `https://beta.${DOMAIN_NAME}`
+			? `https://${DOMAIN_NAME}`
 			: "http://localhost:3001",
 	// baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3001",
 	plugins: [

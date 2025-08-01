@@ -21,7 +21,9 @@ export default async function ProtectedLayout({
 				<div className="hidden sm:block">
 					<WatchListBanner />
 				</div>
-				<PresetsContextProvider>{children}</PresetsContextProvider>
+				{/* <PresetsContextProvider> */}
+				{children}
+				{/* </PresetsContextProvider> */}
 				<SiteFooter />
 			</WatchlistProvider>
 		</BtcStxPriceProvider>

@@ -1,9 +1,11 @@
 "use client";
 
 import type { TokenMetadata } from "@repo/tokens/types";
+import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { DexBanner } from "./dex-banner";
 import Pools from "./pools";
 import TokenAudit from "./token-audit";
+import TradingInterfaceDesktop from "./trading-interface-desktop";
 
 interface TradingPanelProps {
 	token: TokenMetadata;
@@ -20,7 +22,9 @@ export default function TradingPanel({
 		<div className="sm:flex h-full flex-col hidden">
 			<div className="flex flex-col p-4">
 				{/* <TradingStats /> */}
-				{/* <TradingInterfaceDesktop /> */}
+				<PresetsContextProvider>
+					<TradingInterfaceDesktop />
+				</PresetsContextProvider>
 				{/* <PresetTabs /> */}
 				{/* <TradingInterface /> */}
 				<TokenAudit token={token} />

@@ -6,6 +6,7 @@ import "./globals.css";
 import { Toaster } from "@repo/ui/components/ui/sonner";
 import type { Metadata } from "next";
 import type React from "react";
+import { ReactScan } from "~/components/layout/react-scan";
 import { ClientQueryProvider } from "~/components/providers/query-client-provider";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { turnkeyConfig } from "~/config/turnkey";
@@ -25,6 +26,7 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning className="dark">
+			<ReactScan />
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
 				{/* <TokenRefresher /> */}
 				<AuthClientContextProvider>

@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import useLocalStorage from "~/hooks/useLocalStorage";
 
 export type TradeMode = "buy" | "sell";
@@ -160,20 +160,22 @@ export const PresetsContextProvider: React.FC<{
 
 	const switchTab = (tab: TradeMode) =>
 		setState((prev) => ({ ...prev, activeTab: tab }));
+	const contextValue = useMemo(
+		() => ({
+			state,
+			updateSetting,
+			updateBuyAmount,
+			updateSellPercentage,
+			getBuyAmount,
+			getSellPercentage,
+			switchPreset,
+			switchTab,
+		}),
+		[state],
+	);
 
 	return (
-		<PresetsContext.Provider
-			value={{
-				state,
-				updateSetting,
-				updateBuyAmount,
-				updateSellPercentage,
-				getBuyAmount,
-				getSellPercentage,
-				switchPreset,
-				switchTab,
-			}}
-		>
+		<PresetsContext.Provider value={contextValue}>
 			{children}
 		</PresetsContext.Provider>
 	);

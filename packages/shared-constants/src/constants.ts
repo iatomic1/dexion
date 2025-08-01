@@ -7,7 +7,8 @@ export const API_BASE_URL =
 	// "http://localhost:8080/api/v1/";
 	"https://dexion-backend-production-af99.up.railway.app/api/v1/";
 
-export const DOMAIN_NAME = "www.dexion.pro";
+export const BASE_DOMAIN_NAME = "dexion.pro";
+export const DOMAIN_NAME = `www.${BASE_DOMAIN_NAME}`;
 export const PUBLIC_BASE_URL = DEV
 	? "http://localhost:3001"
 	: `https://${DOMAIN_NAME}`;
@@ -19,7 +20,7 @@ export const TOKEN_WATCHER_API_BASE_URL =
 	// DEV
 	// ? "http://localhost:3008/"
 	// :
-	`https://hub.${DOMAIN_NAME}/`;
+	`https://hub.${BASE_DOMAIN_NAME}/`;
 
 export const HTTP_STATUS = {
 	CONFLICT: "Conflict",

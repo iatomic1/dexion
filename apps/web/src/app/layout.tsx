@@ -26,8 +26,8 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning className="dark">
-			<ReactScan />
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
+				<ReactScan />
 				{/* <TokenRefresher /> */}
 				<AuthClientContextProvider>
 					<ThemeProvider

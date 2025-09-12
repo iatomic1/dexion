@@ -41,14 +41,10 @@ export class TokenWatcherServer {
 			"/*",
 			cors({
 				origin: (origin, _c) => {
-					console.log("CORS Origin received:", origin); // Add debugging
-					console.log("Extra origins:", extraOrigins); // Add debugging
-
 					if (!origin) return null;
 
 					// Check extraOrigins first
 					if (extraOrigins.includes(origin)) {
-						console.log("Origin allowed from extraOrigins:", origin);
 						return origin;
 					}
 
@@ -59,18 +55,15 @@ export class TokenWatcherServer {
 							url.hostname === DOMAIN_NAME ||
 							url.hostname.endsWith("." + DOMAIN_NAME)
 						) {
-							console.log("Origin allowed from domain:", origin);
 							return origin;
 						}
 					} catch (error) {
-						console.log("Invalid URL origin:", origin, error);
 						return null;
 					}
 
-					console.log("Origin blocked:", origin);
 					return null;
 				},
-				credentials: true, // Add this if you need to send cookies/auth headers
+				credentials: true,
 			}),
 		);
 	}

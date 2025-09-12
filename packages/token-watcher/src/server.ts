@@ -42,7 +42,13 @@ export class TokenWatcherServer {
 			cors({
 				origin: (origin, _c) => {
 					if (!origin) return null;
-					if (extraOrigins.includes(origin)) return origin;
+
+					// Check extraOrigins first
+					if (extraOrigins.includes(origin)) {
+						return origin;
+					}
+
+					// Check domain-based origins
 					try {
 						const url = new URL(origin);
 						if (
@@ -51,21 +57,15 @@ export class TokenWatcherServer {
 						) {
 							return origin;
 						}
-					} catch {
+					} catch (error) {
 						return null;
 					}
+
 					return null;
 				},
+				credentials: true,
 			}),
 		);
-
-		// this.app.use("/*", async (c, next) => {
-		// 	const path = c.req.path;
-		// 	if (path === "/favicon.ico" || path.startsWith("/.git")) {
-		// 		return c.text("Not found", 404);
-		// 	}
-		// 	return await next();
-		// });
 	}
 
 	private setupRoutes() {

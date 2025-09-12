@@ -35,14 +35,15 @@ func RunServer(srv *Server) {
 	}
 
 	port := os.Getenv("PORT")
+	fmt.Println("port from railway", port)
 	if port == "" {
 		port = srv.Config.HttpAddress
 	}
 	fmt.Println(port)
 
 	httpServer := &http.Server{
-		Addr: "0.0.0.0:" + port,
-		// Addr:         port,
+		// Addr: "0.0.0.0:" + port,
+		Addr:         ":" + port,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,

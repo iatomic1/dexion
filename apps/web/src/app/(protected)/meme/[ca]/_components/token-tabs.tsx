@@ -26,7 +26,6 @@ export default function TokenTabs({
 }: {
 	userAddress: string | null;
 }) {
-	console.log(userAddress);
 	const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
 		useTokenData();
 	const [_activeTab, setActiveTab] = useState("positions");

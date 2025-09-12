@@ -1,12 +1,9 @@
 "use client";
 
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
 import type {
 	PortfolioAddressData,
 	PortfolioFungibleToken,
-	TokenHolder,
 	TokenMetadata,
-	TokenSwapTransaction,
 } from "@repo/tokens/types";
 import {
 	Avatar,
@@ -16,11 +13,6 @@ import {
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Progress } from "@repo/ui/components/ui/progress";
 import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
 import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
 import { cn } from "@repo/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -30,19 +22,10 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ExternalLink, Worm } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatPrice } from "~/lib/helpers/numbers";
-import openInNewPage from "~/lib/helpers/openInNewPage";
-import { truncateString } from "~/lib/helpers/strings";
 import { getUserPortfolio } from "~/lib/queries/token-watcher";
-import { validateContractAddress } from "~/lib/utils/contract";
-import {
-	calculatePercentageHolding,
-	calculatePnl,
-	calculateTokenValue,
-} from "~/lib/utils/token";
-import { CryptoHoverCard } from "../trade-details";
+import { calculatePnl, calculateTokenValue } from "~/lib/utils/token";
 
 export const tableColumns = (
 	token: TokenMetadata,
@@ -195,10 +178,6 @@ export default function PositionsTable({
 		(ft) =>
 			ft.token.contract_id === token.contract_id && Number(ft.balance) > 0,
 	);
-
-	useEffect(() => {
-		console.log(currentTokenPostion);
-	}, [currentTokenPostion]);
 
 	const isMobile = useIsMobile();
 

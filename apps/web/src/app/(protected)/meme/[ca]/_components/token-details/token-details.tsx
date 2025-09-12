@@ -29,9 +29,6 @@ export default function TokenDetailPage({
 }) {
 	const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
 	const isMobile = useIsMobile();
-	useEffect(() => {
-		console.log("mobile", tokenData);
-	}, [isLoadingMetadata]);
 
 	const documentTitle = useMemo(() => {
 		if (!tokenData?.symbol || !tokenData?.metrics?.marketcap_usd) {

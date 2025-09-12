@@ -151,3 +151,41 @@ export type SearchResult = {
 	tokens: TokenMetadata[];
 	pools: LiquidityPool[];
 };
+
+export type PortfolioAddressData = {
+	address: string;
+	bns: string | null;
+	stx: {
+		debits: string;
+		credits: string;
+		fees_sent: string;
+		balance: string;
+		token: {
+			contract_id: string;
+			metrics: {
+				price_usd: number;
+			};
+		};
+	};
+	fungible_tokens: PortfolioFungibleToken[];
+};
+
+export type PortfolioFungibleToken = {
+	balance: string;
+	debits: string;
+	credits: string;
+	total_spent_usd: number | null;
+	total_received_usd: number | null;
+	total_buys: number | null;
+	total_sells: number | null;
+	token: {
+		symbol: string;
+		name: string;
+		contract_id: string;
+		decimals: number;
+		image_url: string;
+		metrics: {
+			price_usd: number;
+		};
+	};
+};

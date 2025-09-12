@@ -38,7 +38,10 @@ export class StacksSigner extends BaseSigner {
 		this.network = config.network;
 		this.turnkeyProvider = config.provider;
 	}
-
+	async getAddress() {
+		const account = await this.turnkeyProvider.getAccount();
+		return account.wallet.address;
+	}
 	async signTransaction<T extends keyof TransactionTypeMap>(
 		type: T,
 		params: TransactionTypeMap[T],
@@ -48,7 +51,7 @@ export class StacksSigner extends BaseSigner {
 
 			const account = await this.turnkeyProvider.getAccount();
 			if (!account) {
-				throw new SigningError("No Ethereum account found");
+				throw new SigningError("No Stacks account found");
 			}
 
 			const { stacksTransaction, stacksTxSigner } =

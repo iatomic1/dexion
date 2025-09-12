@@ -15,16 +15,20 @@ import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 import useDocumentTitle from "~/hooks/useDocumentTitle";
 import useFavicon from "~/hooks/useFavicon";
 import { formatPrice } from "~/lib/helpers/numbers";
+import { Session } from "~/types/auth";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";
 import DesktopLayout from "./desktop-layout";
 import MobileLayout from "./mobile-layout";
 
-export default function TokenDetailPage() {
+export default function TokenDetailPage({
+	session,
+	bitflowTokenId,
+}: {
+	session: Session;
+	bitflowTokenId: string | null;
+}) {
 	const { data: tokenData, isLoading: isLoadingMetadata } = useTokenMetadata();
 	const isMobile = useIsMobile();
-	useEffect(() => {
-		console.log("mobile", isMobile);
-	}, [isMobile]);
 
 	const documentTitle = useMemo(() => {
 		if (!tokenData?.symbol || !tokenData?.metrics?.marketcap_usd) {
@@ -50,7 +54,6 @@ export default function TokenDetailPage() {
 		setFilterBy((prevFilter) => (prevFilter === value ? "" : value));
 	}, []);
 
-	// Memoized filter handlers to prevent unnecessary re-renders
 	const filterHandlers = useMemo(
 		() => ({
 			handleFilterChange,
@@ -60,7 +63,6 @@ export default function TokenDetailPage() {
 		[handleFilterChange, handleToggleFilter, filterBy],
 	);
 
-	// Conditional rendering - only render the layout we need
 	return (
 		<Suspense fallback={<TokenInfoSkeleton />}>
 			{isMobile ? (
@@ -68,23 +70,32 @@ export default function TokenDetailPage() {
 					tokenData={tokenData}
 					filterHandlers={filterHandlers}
 					isLoadingMetadata={isLoadingMetadata}
+					userAddress={session?.user.walletAddress ?? null}
+					bitflowTokenId={bitflowTokenId}
 				/>
 			) : (
-				<DesktopLayout tokenData={tokenData} />
+				<DesktopLayoutComponent
+					tokenData={tokenData}
+					userAddress={session?.user.walletAddress ?? null}
+					bitflowTokenId={bitflowTokenId}
+				/>
 			)}
 		</Suspense>
 	);
 }
 
-// Memoized mobile layout component
 const MobileLayoutComponent = memo(
 	({
 		tokenData,
 		filterHandlers,
+		userAddress,
 		isLoadingMetadata,
+		bitflowTokenId,
 	}: {
 		tokenData: TokenMetadata | null;
+		userAddress: string | null;
 		isLoadingMetadata: boolean;
+		bitflowTokenId: string | null;
 		filterHandlers: {
 			handleFilterChange: (newFilter: string) => void;
 			handleToggleFilter: (value: string) => void;
@@ -96,15 +107,28 @@ const MobileLayoutComponent = memo(
 				tokenData={tokenData}
 				filterHandlers={filterHandlers}
 				isLoadingMetadata={isLoadingMetadata}
+				userAddress={userAddress ?? null}
+				bitflowTokenId={bitflowTokenId}
 			/>
 		</Suspense>
 	),
 );
 
-// Memoized desktop layout component
 const DesktopLayoutComponent = memo(
-	({ tokenData }: { tokenData: TokenMetadata | null }) => (
-		<DesktopLayout tokenData={tokenData} />
+	({
+		tokenData,
+		userAddress,
+		bitflowTokenId,
+	}: {
+		tokenData: TokenMetadata | null;
+		userAddress: string | null;
+		bitflowTokenId: string | null;
+	}) => (
+		<DesktopLayout
+			tokenData={tokenData}
+			userAddress={userAddress}
+			bitflowTokenId={bitflowTokenId}
+		/>
 	),
 );
 

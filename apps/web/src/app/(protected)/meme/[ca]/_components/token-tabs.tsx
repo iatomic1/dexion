@@ -18,12 +18,17 @@ import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import DevTokensTable from "./tables/dev-tokens-table";
 import HoldersTable from "./tables/holders-table";
+import PositionsTable from "./tables/postions-table";
 import TradesTable from "./tables/trades-table";
 
-export default function TokenTabs() {
+export default function TokenTabs({
+	userAddress,
+}: {
+	userAddress: string | null;
+}) {
 	const { tokenData, isLoadingMetadata, holdersData, isLoadingHolders } =
 		useTokenData();
-	const [_activeTab, setActiveTab] = useState("trades");
+	const [_activeTab, setActiveTab] = useState("positions");
 	const [filterBy, setFilterBy] = useState("");
 
 	// Handle filter changes from TradesTable component
@@ -61,6 +66,15 @@ export default function TokenTabs() {
 			value: "Dev Tokens",
 			component: <DevTokensTable />,
 		},
+		{
+			value: "Positions",
+			component:
+				isLoadingHolders || isLoadingMetadata || !tokenData ? (
+					<HoldersTableSkeleton />
+				) : (
+					<PositionsTable token={tokenData} userAddress={userAddress} />
+				),
+		},
 		// {
 		//   value: "top traders",
 		//   component: <TradesTable trades={trades} token={token} />,
@@ -71,7 +85,8 @@ export default function TokenTabs() {
 		<div className="h-full flex flex-col">
 			<Tabs
 				className="w-full h-full flex flex-col"
-				defaultValue={tabs[0]?.value}
+				defaultValue="positions"
+				// defaultValue={tabs[0]?.value}
 			>
 				<div className="flex items-center justify-between">
 					<TabsList className="w-fit flex items-center gap-4 bg-transparent mt-1">
@@ -115,7 +130,8 @@ export default function TokenTabs() {
 						<ToggleGroupItem
 							size={"sm"}
 							className="hover:text-indigo-500 text-xs font-medium"
-							value="SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+							disabled={!userAddress}
+							value={userAddress ?? ""}
 						>
 							<User2 />
 							You

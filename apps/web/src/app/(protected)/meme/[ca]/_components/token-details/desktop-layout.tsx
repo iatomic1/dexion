@@ -11,60 +11,72 @@ import TradingPanel from "../trading/trading-panel";
 
 interface DesktopLayoutProps {
 	tokenData: TokenMetadata | null;
+	userAddress: string | null;
+	bitflowTokenId: string | null;
 }
 
-const DesktopLayout = memo(({ tokenData }: DesktopLayoutProps) => {
-	const { isLoading: isLoadingMetadata } = useTokenMetadata();
-	return (
-		<div className="flex min-h-screen flex-col w-full" suppressHydrationWarning>
-			<div className="flex flex-col sm:flex-row h-[calc(100vh-64px)]">
-				<div className="w-full h-full">
-					<div className="flex flex-col h-full">
-						{/* <Suspense fallback={<TokenInfoSkeleton />}> */}
-						{isLoadingMetadata || !tokenData ? (
-							<TokenInfoSkeleton />
-						) : (
-							<TokenInfo token={tokenData} />
-						)}
-						{/* </Suspense> */}
+const DesktopLayout = memo(
+	({ tokenData, userAddress, bitflowTokenId }: DesktopLayoutProps) => {
+		const { isLoading: isLoadingMetadata } = useTokenMetadata();
+		return (
+			<div
+				className="flex min-h-screen flex-col w-full"
+				suppressHydrationWarning
+			>
+				<div className="flex flex-col sm:flex-row h-[calc(100vh-64px)]">
+					<div className="w-full h-full">
+						<div className="flex flex-col h-full">
+							{/* <Suspense fallback={<TokenInfoSkeleton />}> */}
+							{isLoadingMetadata || !tokenData ? (
+								<TokenInfoSkeleton />
+							) : (
+								<TokenInfo token={tokenData} />
+							)}
+							{/* </Suspense> */}
 
-						<div className="flex-1 overflow-hidden">
-							<div className="h-full w-full flex flex-col">
-								<div className="!h-[65%] overflow-hidden">
-									<Suspense
-										fallback={
-											<div className="h-full animate-pulse bg-muted/20" />
-										}
-									>
-										<TokenChart tokenSymbol={tokenData?.symbol as string} />
-									</Suspense>
-								</div>
+							<div className="flex-1 overflow-hidden">
+								<div className="h-full w-full flex flex-col">
+									<div className="!h-[65%] overflow-hidden">
+										<Suspense
+											fallback={
+												<div className="h-full animate-pulse bg-muted/20" />
+											}
+										>
+											<TokenChart tokenSymbol={tokenData?.symbol as string} />
+										</Suspense>
+									</div>
 
-								<div className="h-[35%] overflow-hidden">
-									<Suspense
-										fallback={
-											<div className="h-full animate-pulse bg-muted/20" />
-										}
-									>
-										<TokenTabs />
-									</Suspense>
+									<div className="h-[35%] overflow-hidden">
+										<Suspense
+											fallback={
+												<div className="h-full animate-pulse bg-muted/20" />
+											}
+										>
+											<TokenTabs userAddress={userAddress} />
+										</Suspense>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div className="w-full max-w-[350px] h-full">
-					<Suspense
-						fallback={<div className="h-full animate-pulse bg-muted/20" />}
-					>
-						{tokenData && <TradingPanel token={tokenData} />}
-					</Suspense>
+					<div className="w-full max-w-[350px] h-full">
+						<Suspense
+							fallback={<div className="h-full animate-pulse bg-muted/20" />}
+						>
+							{tokenData && (
+								<TradingPanel
+									token={tokenData}
+									bitflowTokenId={bitflowTokenId}
+								/>
+							)}
+						</Suspense>
+					</div>
 				</div>
 			</div>
-		</div>
-	);
-});
+		);
+	},
+);
 
 DesktopLayout.displayName = "DesktopLayout";
 export default DesktopLayout;

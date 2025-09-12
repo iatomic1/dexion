@@ -48,7 +48,7 @@
     "lightweight-charts": "^5.0.5",
     "lucide-react": "^0.509.0",
     "nanoid": "^5.1.5",
-    "next": "15.1.5",
+    "next": "^15.5.3",
     "partysocket": "^1.1.4",
     "postgres": "^3.4.7",
     "react": "^19.1.0",

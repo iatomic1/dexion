@@ -5,7 +5,7 @@ export const API_BASE_URL =
 	// ? "http://localhost:8080/api/v1/"
 	// :
 	// "http://localhost:8080/api/v1/";
-	"https://dexion-backend-production-af99.up.railway.app/api/v1/";
+	"https://api.dexion.pro/api/v1/";
 
 export const BASE_DOMAIN_NAME = "dexion.pro";
 export const DOMAIN_NAME = `www.${BASE_DOMAIN_NAME}`;

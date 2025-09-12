@@ -1,0 +1,24 @@
+/home/atomic/ALL/PERSONAL/FE/dexion node_modules (2270)
+[2m├──[0m @biomejs/biome[0m[2m@2.0.0[0m
+[2m├──[0m @dexion/dex-bot[0m[2m@workspace:apps/dex-bot[0m
+[2m├──[0m @dexion/partykit[0m[2m@workspace:apps/partykit[0m
+[2m├──[0m @repo/api-sdk[0m[2m@workspace:packages/api-sdk[0m
+[2m├──[0m @repo/db[0m[2m@workspace:packages/db[0m
+[2m├──[0m @repo/dex-engine[0m[2m@workspace:packages/dex-engine[0m
+[2m├──[0m @repo/jest-presets[0m[2m@workspace:packages/jest-presets[0m
+[2m├──[0m @repo/notifier[0m[2m@workspace:packages/notifier[0m
+[2m├──[0m @repo/party-watcher[0m[2m@workspace:packages/party-watcher[0m
+[2m├──[0m @repo/redis-client[0m[2m@workspace:packages/redis-client[0m
+[2m├──[0m @repo/shared-constants[0m[2m@workspace:packages/shared-constants[0m
+[2m├──[0m @repo/signer[0m[2m@workspace:packages/signer[0m
+[2m├──[0m @repo/token-watcher[0m[2m@workspace:packages/token-watcher[0m
+[2m├──[0m @repo/tokens[0m[2m@workspace:packages/tokens[0m
+[2m├──[0m @repo/transactional[0m[2m@workspace:packages/transactional[0m
+[2m├──[0m @repo/typescript-config[0m[2m@workspace:packages/typescript-config[0m
+[2m├──[0m @repo/typescript-config[0m[2m@workspace:packages/typescript-config[0m
+[2m├──[0m @repo/ui[0m[2m@workspace:packages/ui[0m
+[2m├──[0m @repo/wallet-tracker[0m[2m@workspace:apps/wallet-tracker[0m
+[2m├──[0m docs[0m[2m@workspace:apps/docs[0m
+[2m├──[0m prettier[0m[2m@3.6.2[0m
+[2m├──[0m turbo[0m[2m@2.1.1[0m
+[2m└──[0m web[0m[2m@workspace:apps/web[0m

@@ -30,16 +30,24 @@ import TokenTabsMobile from "../token-tabs-mobile";
 interface MobileLayoutProps {
 	tokenData: TokenMetadata | null;
 	isLoadingMetadata: boolean;
+	bitflowTokenId: string | null;
 	filterHandlers: {
 		handleFilterChange: (_newFilter: string) => void;
 		handleToggleFilter: (_value: string) => void;
 		filterBy: string;
 	};
+	userAddress: string | null;
 }
 
 const MobileLayout = memo(
-	({ tokenData, isLoadingMetadata, filterHandlers }: MobileLayoutProps) => {
+	({
+		tokenData,
+		isLoadingMetadata,
+		filterHandlers,
+		userAddress,
+	}: MobileLayoutProps) => {
 		const { handleFilterChange, handleToggleFilter, filterBy } = filterHandlers;
+		// const { data, isPending } = useSession();
 
 		return (
 			<div className="flex flex-col h-full">
@@ -121,7 +129,8 @@ const MobileLayout = memo(
 								<ToggleGroupItem
 									size={"sm"}
 									className="hover:text-indigo-500 text-xs font-medium"
-									value="SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z"
+									disabled={!userAddress}
+									value={userAddress ?? ""}
 								>
 									<User2 />
 									You

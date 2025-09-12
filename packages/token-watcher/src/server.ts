@@ -5,7 +5,7 @@ import {
 	DOMAIN_NAME,
 	VERCEL_FRONTEND_URL,
 } from "@repo/shared-constants/constants.ts";
-import { type Context, Hono } from "hono";
+import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import routes from "./api/routes";

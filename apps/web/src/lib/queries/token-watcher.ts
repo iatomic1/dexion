@@ -2,6 +2,7 @@ import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts"
 import type {
 	ApiRes,
 	FilterTokenSwapTransaction,
+	PortfolioAddressData,
 	TokenMetadata,
 } from "@repo/tokens/types";
 import type { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
@@ -46,6 +47,21 @@ export const getSearchResults = async (searchTerm: string) => {
 	} catch (error) {
 		console.error(error);
 		throw error;
+	}
+};
+export const getUserPortfolio = async (address: string) => {
+	try {
+		const url = `${TOKEN_WATCHER_API_BASE_URL}wallets/${address}`;
+
+		const res = await fetch(url);
+
+		if (!res.ok) throw new Error(`Failed: ${res.status}`);
+
+		const data = (await res.json()) as PortfolioAddressData;
+		return data;
+	} catch (err) {
+		console.error(err);
+		throw err;
 	}
 };
 

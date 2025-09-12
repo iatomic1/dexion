@@ -9,12 +9,14 @@ import TradingInterfaceDesktop from "./trading-interface-desktop";
 
 interface TradingPanelProps {
 	token: TokenMetadata;
+	bitflowTokenId: string | null;
 	// holders: TokenHolder[];
 	// pools: LiquidityPool[];
 }
 
 export default function TradingPanel({
 	token,
+	bitflowTokenId,
 	// holders,
 	// pools,
 }: TradingPanelProps) {
@@ -23,7 +25,10 @@ export default function TradingPanel({
 			<div className="flex flex-col p-4">
 				{/* <TradingStats /> */}
 				<PresetsContextProvider>
-					<TradingInterfaceDesktop />
+					<TradingInterfaceDesktop
+						token={token}
+						bitflowTokenId={bitflowTokenId}
+					/>
 				</PresetsContextProvider>
 				{/* <PresetTabs /> */}
 				{/* <TradingInterface /> */}

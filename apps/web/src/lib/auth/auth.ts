@@ -26,7 +26,7 @@ const URL =
 	process.env.NODE_ENV === "production"
 		? `https://${DOMAIN_NAME}`
 		: "http://localhost:3001";
-export const auth = betterAuth({
+export const auth: any = betterAuth({
 	appName: "Dexion Pro",
 	trustedOrigins: [FRONTEND_URL, `https://beta.${DOMAIN_NAME}`],
 	baseURL: URL,

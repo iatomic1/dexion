@@ -108,11 +108,6 @@ const Market = ({
 	} = usePresetsSettings();
 	const queryClient = useQueryClient();
 
-	// const tokenID = useMemo(
-	//   () => TOKEN_ID_PREFIX + tokenSymbol.toLocaleLowerCase(),
-	//   [TOKEN_ID_PREFIX, tokenSymbol],
-	// );
-
 	const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
 	const [editingValues, setEditingValues] = useState<{ [key: number]: string }>(

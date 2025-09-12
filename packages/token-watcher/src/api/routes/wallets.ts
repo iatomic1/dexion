@@ -9,7 +9,7 @@ wallets.get(":address", async (c) => {
 
 	if (!address) return c.json({ error: "Address is required" }, 400);
 	if (!validateStacksAddress(address)) {
-		return c.json({ error: "Invali STX address" }, 422);
+		return c.json({ error: "Invalid STX address" }, 422);
 	}
 
 	const url = `${STX_TOOLS_API_BASE_URL}wallets/${address}`;

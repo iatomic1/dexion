@@ -27,15 +27,13 @@ export class PartyKitSender implements IChannelSender {
 		}
 
 		const fullUrl = `${this.partyUrl}/parties/notifications/${notification.recipient.id}`;
-		console.log(fullUrl);
 
 		try {
-			const res = await fetch(fullUrl, {
+			await fetch(fullUrl, {
 				method: "POST",
 				body: JSON.stringify(notification.message),
 				headers: { "Content-Type": "application/json" },
 			});
-			console.log(await res.json());
 			console.log(`PartyKit message sent to room ${notification.recipient.id}`);
 		} catch (error) {
 			console.error(

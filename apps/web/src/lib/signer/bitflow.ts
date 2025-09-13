@@ -95,6 +95,7 @@ export const buyToken = authenticatedAction
 
 				try {
 					const bRes = await signer.broadcastTransaction(tx);
+					// REMOVE LATER
 					console.log(bRes);
 					return {
 						success: true,

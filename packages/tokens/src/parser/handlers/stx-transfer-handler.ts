@@ -6,12 +6,9 @@ import { TransactionUtils } from "../utils";
 export class STXTransferHandler {
 	static parse(tx: Transaction): ParsedTransaction | null {
 		if (tx.tx_type !== "token_transfer") return null;
+		const amount = (Number(tx.token_transfer.amount) / 1_000_000).toString();
 
 		try {
-			const amount = TransactionUtils.formatAmount(
-				tx.token_transfer.amount,
-				"STX",
-			);
 			return {
 				status: tx.tx_status,
 				txId: tx.tx_id,

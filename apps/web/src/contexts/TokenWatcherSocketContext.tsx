@@ -224,6 +224,7 @@ export const TokenSocketProvider = ({
 		// host: "localhost:1999",
 		host: "dexion-party.iatomic1.partykit.dev",
 		room: contractAddress ? `token:${contractAddress}` : "",
+		party: "main",
 		onOpen() {
 			console.log("PartySocket connected");
 			if (contractAddress) {

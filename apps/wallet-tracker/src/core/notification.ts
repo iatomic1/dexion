@@ -1,18 +1,39 @@
-import { NotificationButton, NotifierClient } from "@repo/notifier";
+import { type NotificationButton, NotifierClient } from "@repo/notifier";
+import { PARTKIT_HOST } from "@repo/shared-constants/constants.ts";
+import { type ParsedTransaction, TransactionParser } from "@repo/tokens/parser";
 import { generateTelegramMessage } from "./telegram-messages";
+import { Transaction } from "./transaction";
+
+interface WalletNotification extends ParsedTransaction {
+	type: "wallet_activity";
+	action: "send_notification";
+	wallet: {
+		userId: string;
+		nickname: string;
+		address: string;
+	};
+}
 
 export class Notification {
 	private notifier: NotifierClient;
+	private parser: TransactionParser;
 
 	constructor() {
-		this.notifier = new NotifierClient(process.env.TELEGRAM_BOT_TOKEN);
+		this.notifier = new NotifierClient(
+			process.env.TELEGRAM_BOT_TOKEN,
+			"https://" + PARTKIT_HOST,
+		);
+		this.parser = new TransactionParser();
 	}
 
-	async send(watcher: any, structuredMessage: any) {
+	async send(watcher: any, address: string, tx: any) {
 		const { preference, nickname } = watcher;
 		const [watcherType, id] = watcher.id.split(":");
 
 		if (watcherType === "telegram") {
+			const transaction = new Transaction(tx);
+			const structuredMessage = transaction.structuredMessage;
+
 			const message = await generateTelegramMessage(
 				structuredMessage,
 				nickname,
@@ -35,6 +56,24 @@ export class Notification {
 				recipient: { id },
 				buttons,
 				parseMode: "HTML",
+			});
+		}
+		if (watcherType === "app") {
+			const parsedTx = this.parser.parse(tx);
+			return this.notifier.send("partykit", {
+				recipient: { id },
+				message: {
+					type: "wallet_activity",
+					action: "send_notification",
+					wallet: {
+						userId: id,
+						nickname,
+						address: address,
+					},
+					tx: {
+						...parsedTx,
+					},
+				},
 			});
 		}
 	}

@@ -1,4 +1,4 @@
-import { MempoolTransaction } from "@stacks/blockchain-api-client";
+import { type MempoolTransaction } from "@stacks/blockchain-api-client";
 import { generateTransactionMessage } from "./parser";
 
 export class Transaction {

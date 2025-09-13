@@ -204,7 +204,6 @@ const Market = ({
 			const result = await executeBuy({
 				outTokenId: bitflowTokenId as string,
 				stxAmount: selectedAmount,
-				// slippageTolerance defaults to 4%
 			});
 
 			const txRes = result[0];

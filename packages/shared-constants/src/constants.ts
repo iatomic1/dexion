@@ -14,6 +14,7 @@ export const PUBLIC_BASE_URL = DEV
 	: `https://${DOMAIN_NAME}`;
 export const FRONTEND_URL = `https://${DOMAIN_NAME}`;
 export const VERCEL_FRONTEND_URL = "https://dexion-web.vercel.app";
+export const PARTKIT_HOST = "dexion-party.iatomic1.partykit.dev";
 
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 export const TOKEN_WATCHER_API_BASE_URL =

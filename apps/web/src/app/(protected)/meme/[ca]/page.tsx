@@ -1,5 +1,6 @@
 import { BitflowSDK } from "@bitflowlabs/core-sdk";
 import { notFound } from "next/navigation";
+import { NotificationProvider } from "~/contexts/WalletTrackerSocketContext";
 import { withAuth } from "~/lib/auth/with-auth";
 import { validateContractAddress } from "~/lib/utils/contract";
 import type { Session } from "~/types/auth";
@@ -31,10 +32,15 @@ async function MemeTokenPage(props: {
 	const bitflowToken = await getMemeFromBitflow(ca);
 
 	return (
-		<TokenDetailPage
-			session={session}
-			bitflowTokenId={bitflowToken?.["token-id"] ?? null}
-		/>
+		<NotificationProvider
+			userId={session.user.id}
+			host="dexion-party.iatomic1.partykit.dev"
+		>
+			<TokenDetailPage
+				session={session}
+				bitflowTokenId={bitflowToken?.["token-id"] ?? null}
+			/>
+		</NotificationProvider>
 	);
 }
 

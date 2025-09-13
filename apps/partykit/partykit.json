@@ -3,5 +3,8 @@
   "name": "dexion-party",
   "main": "src/server.ts",
   "port": 1999,
-  "compatibilityDate": "2025-06-17"
+  "compatibilityDate": "2025-06-17",
+  "parties": {
+    "notifications": "src/notifications.ts"
+  }
 }

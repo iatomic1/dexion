@@ -41,18 +41,17 @@ export const buyToken = authenticatedAction
 			const senderAddress = await signer.getAddress();
 
 			try {
-				// const routes = await bitflow.getAllPossibleTokenYRoutes(
-				// 	"token-stx",
-				// 	input.outTokenId,
-				// );
+				const routes = await bitflow.getAllPossibleTokenYRoutes(
+					"token-stx",
+					input.outTokenId,
+				);
 
-				// if (!routes || routes.length === 0) {
-				// 	throw new ValidationError("No available routes for this token pair");
-				// }
+				if (!routes || routes.length === 0) {
+					throw new ValidationError("No available routes for this token pair");
+				}
 
 				// console.log("Available routes:", JSON.stringify(routes, null, 2));
 
-				// Get quote for the swap (amount in STX, convert to microSTX for SDK)
 				const quoteResult = await bitflow.getQuoteForRoute(
 					"token-stx",
 					input.outTokenId,
@@ -94,9 +93,10 @@ export const buyToken = authenticatedAction
 					);
 				}
 
-				// Broadcast the transaction
 				try {
 					const bRes = await signer.broadcastTransaction(tx);
+					// REMOVE LATER
+					console.log(bRes);
 					return {
 						success: true,
 						txId: bRes.txid,

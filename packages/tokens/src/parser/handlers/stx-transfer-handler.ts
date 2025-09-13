@@ -8,10 +8,10 @@ export class STXTransferHandler {
 		if (tx.tx_type !== "token_transfer") return null;
 
 		try {
-			const amount = TransactionUtils.formatAmount(
-				tx.token_transfer.amount,
-				"STX",
-			);
+			// const amount = TransactionUtils.formatAmount(
+			// 	tx.token_transfer.amount,
+			// 	"STX",
+			// );
 			return {
 				status: tx.tx_status,
 				txId: tx.tx_id,
@@ -21,12 +21,12 @@ export class STXTransferHandler {
 				details: {
 					sent: {
 						asset: "STX",
-						amount,
+						amount: (Number(tx.token_transfer.amount) / 1_000_000).toString(),
 						contractId: PROTOCOL_CONFIG.tokens.STX.contractId,
 					},
 					recipient: tx.token_transfer.recipient_address,
 				},
-				summary: `${tx.sender_address} sent ${amount} STX to ${tx.token_transfer.recipient_address}`,
+				summary: `${tx.sender_address} sent ${(Number(tx.token_transfer.amount) / 1_000_000).toString()} STX to ${tx.token_transfer.recipient_address}`,
 			};
 		} catch (error) {
 			console.error("Error parsing STX transfer:", error);

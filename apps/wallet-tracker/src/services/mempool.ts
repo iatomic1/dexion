@@ -17,13 +17,16 @@ export class MempoolService {
 
 	public async subscribe() {
 		this.socket.subscribeMempool(async (mempoolTx) => {
-			const transaction = new Transaction(mempoolTx);
 			const watchers = await Wallet.getWatchers(mempoolTx.sender_address);
 
 			if (watchers.length > 0) {
 				const results = await Promise.allSettled(
 					watchers.map((watcher) =>
-						this.notification.send(watcher, transaction.structuredMessage),
+						this.notification.send(
+							watcher,
+							mempoolTx.sender_address,
+							mempoolTx,
+						),
 					),
 				);
 

@@ -1,5 +1,5 @@
+import { API_BASE_URL } from "@repo/shared-constants/constants.ts";
 import Redis from "ioredis";
-import { API_BASE_URL } from "../common/constants";
 
 interface Watcher {
 	user_id?: string;
@@ -20,7 +20,7 @@ export class RedisService {
 	private redis: Redis;
 
 	constructor() {
-		this.redis = new Redis();
+		this.redis = new Redis(process.env.REDIS_URL as string);
 	}
 
 	private async fetchWalletData(): Promise<{ data: Wallet[] }> {

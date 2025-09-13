@@ -54,6 +54,15 @@ export default function TokenTabs({
 			// ),
 		},
 		{
+			value: "Positions",
+			component:
+				isLoadingHolders || isLoadingMetadata || !tokenData ? (
+					<HoldersTableSkeleton />
+				) : (
+					<PositionsTable token={tokenData} userAddress={userAddress} />
+				),
+		},
+		{
 			value: "holders",
 			component:
 				isLoadingHolders || isLoadingMetadata || !tokenData ? (
@@ -66,15 +75,7 @@ export default function TokenTabs({
 			value: "Dev Tokens",
 			component: <DevTokensTable />,
 		},
-		{
-			value: "Positions",
-			component:
-				isLoadingHolders || isLoadingMetadata || !tokenData ? (
-					<HoldersTableSkeleton />
-				) : (
-					<PositionsTable token={tokenData} userAddress={userAddress} />
-				),
-		},
+
 		// {
 		//   value: "top traders",
 		//   component: <TradesTable trades={trades} token={token} />,
@@ -85,7 +86,7 @@ export default function TokenTabs({
 		<div className="h-full flex flex-col">
 			<Tabs
 				className="w-full h-full flex flex-col"
-				defaultValue="positions"
+				defaultValue="trades"
 				// defaultValue={tabs[0]?.value}
 			>
 				<div className="flex items-center justify-between">

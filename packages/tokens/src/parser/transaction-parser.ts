@@ -23,7 +23,11 @@ export class TransactionParser {
 			new ZestHandler(),
 			new SwapHandler("Velar", ["path-apply"], ["apply"]),
 			new SwapHandler("ALEX", ["multihop"], ["swap"]),
-			new SwapHandler("Bitflow", ["stableswap"], ["swap"]),
+			new SwapHandler(
+				"Bitflow",
+				["stableswap", "xyk-swap-helper-v-1-3"],
+				["swap", "swap-helper-a", "swap-helper-b"],
+			),
 		];
 	}
 

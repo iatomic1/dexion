@@ -223,7 +223,7 @@ const customToast = Object.assign({}, toast, {
           isLoading={true}
         />
       ),
-      { duration: Infinity },
+      { duration: Number.POSITIVE_INFINITY },
     );
 
     // Handle promise resolution

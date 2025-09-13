@@ -119,7 +119,7 @@ export const siws = (options: SIWSPluginOptions) =>
 
 						const network = walletAddress.startsWith("SP")
 							? "mainnet"
-							: "testnet"; // Infer network from address
+							: "testnet";
 
 						if (existingWallet) {
 							user = await ctx.context.adapter.findOne({

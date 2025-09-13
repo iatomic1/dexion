@@ -8,10 +8,6 @@ export class STXTransferHandler {
 		if (tx.tx_type !== "token_transfer") return null;
 
 		try {
-			// const amount = TransactionUtils.formatAmount(
-			// 	tx.token_transfer.amount,
-			// 	"STX",
-			// );
 			return {
 				status: tx.tx_status,
 				txId: tx.tx_id,

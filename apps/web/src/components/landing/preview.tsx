@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import Image from "next/image";
-import dashboardPreview from "@/assets/dashboard-preview.jpg";
 
 const PreviewSection = () => {
 	return (

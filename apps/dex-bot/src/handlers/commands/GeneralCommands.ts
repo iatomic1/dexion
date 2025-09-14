@@ -27,6 +27,7 @@ export class GeneralCommands {
 							token: ottToken,
 						});
 						if (error) {
+							console.error(error);
 							await ctx.reply(
 								"Authentication failed. Invalid or expired token.",
 							);

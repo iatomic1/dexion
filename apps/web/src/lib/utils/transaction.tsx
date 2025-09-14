@@ -1,5 +1,3 @@
-// import { Badge } from "@/components/ui/badge";
-// import type { TransactionType, TransactionStatus } from "../types/transaction";
 import { Badge } from "@repo/ui/components/ui/badge";
 import type { Transaction } from "@stacks/blockchain-api-client";
 import {
@@ -11,7 +9,6 @@ import {
 	Lock,
 	Plus,
 	RefreshCw,
-	Users,
 	Zap,
 } from "lucide-react";
 

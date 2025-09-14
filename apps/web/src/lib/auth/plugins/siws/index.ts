@@ -143,8 +143,6 @@ export const siws = (options: SIWSPluginOptions) =>
 								image: avatar ?? "",
 							});
 
-							// TOGGLE ON B4 ALPHA LAUNCH
-							// TO CREATE SUB-ORG ON TK
 							if (user) {
 								await initWallet(user, false);
 							}

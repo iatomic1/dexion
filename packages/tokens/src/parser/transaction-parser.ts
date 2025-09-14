@@ -43,11 +43,9 @@ export class TransactionParser {
 
 	parse(tx: Transaction): ParsedTransaction | null {
 		try {
-			// Handle STX transfers first
 			const stxTransfer = STXTransferHandler.parse(tx);
 			if (stxTransfer) return stxTransfer;
 
-			// Handle contract calls
 			if (tx.tx_type === "contract_call" && tx.contract_call) {
 				const { contract_id, function_name } = tx.contract_call;
 

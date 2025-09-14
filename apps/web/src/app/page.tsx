@@ -5,7 +5,7 @@ import HeroSection from "~/components/landing/hero";
 import HowItWorksSection from "~/components/landing/how-it-works";
 import PreviewSection from "~/components/landing/preview";
 import TestimonialsSection from "~/components/landing/testimonials";
-import WhyDexionSection from "~/components/landing/why-desxion";
+import WhyDexionSection from "~/components/landing/why-dexion";
 
 export default function Home() {
 	return (

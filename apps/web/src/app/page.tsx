@@ -10,6 +10,17 @@ import WhyDexionSection from "~/components/landing/why-desxion";
 export default function Home() {
 	return (
 		<div className="min-h-screen bg-background">
+			<div className="py-4 border-b flex items-center justify-center">
+				<span className="text-sm">Charts are powered by</span>
+				<a
+					href="https://tradingview.com"
+					className="underline ml-2 text-blue-300"
+					target="_blank"
+					rel="noopener"
+				>
+					TradingView
+				</a>
+			</div>
 			<HeroSection />
 			<FeaturesSection />
 			<HowItWorksSection />

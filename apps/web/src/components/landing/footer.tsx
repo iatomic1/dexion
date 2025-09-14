@@ -8,6 +8,7 @@ import {
 	Shield,
 	Twitter,
 } from "lucide-react";
+import siteConfig from "~/config/site";
 
 const Footer = () => {
 	return (
@@ -25,7 +26,7 @@ const Footer = () => {
 						</p>
 						<div className="flex space-x-4">
 							<a
-								href="#"
+								href={siteConfig.socials.x}
 								className="flex items-center justify-center w-10 h-10 bg-secondary rounded-lg hover:bg-primary transition-colors duration-200 group"
 								aria-label="Twitter"
 							>
@@ -39,7 +40,7 @@ const Footer = () => {
 								<Github className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
 							</a>
 							<a
-								href="#"
+								href={siteConfig.socials.telegram}
 								className="flex items-center justify-center w-10 h-10 bg-secondary rounded-lg hover:bg-primary transition-colors duration-200 group"
 								aria-label="Telegram"
 							>
@@ -54,7 +55,7 @@ const Footer = () => {
 						<ul className="space-y-3">
 							<li>
 								<a
-									href="#"
+									href={siteConfig.socials.docs}
 									className="flex items-center text-muted-foreground hover:text-accent transition-colors duration-200"
 								>
 									<Book className="w-4 h-4 mr-2" />

@@ -1,4 +1,6 @@
+import { validateStacksAddress } from "@stacks/transactions"; // or your own util
 import type { TurnkeySDKServerConfig } from "@turnkey/sdk-server";
+import { validate as isValidUuid } from "uuid";
 import { SignerError, ValidationError } from "../errors/SignerError";
 import { TurnkeyProvider } from "../providers/TurnkeyProvider";
 import { type SignerConfig } from "../types";
@@ -34,6 +36,14 @@ export class SignerFactory {
 			!turnkeyConfig.apiPublicKey
 		) {
 			throw new ValidationError("Missing turnkey config");
+		}
+
+		if (!isValidUuid(config.walletConfig.subOrgID)) {
+			throw new ValidationError("Invalid subOrgID, must be a UUID");
+		}
+
+		if (!validateStacksAddress(config.walletConfig.wallet.address)) {
+			throw new ValidationError("Invalid Stacks wallet address");
 		}
 
 		const turnkeyProvider = new TurnkeyProvider(

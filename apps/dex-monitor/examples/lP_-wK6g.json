@@ -1,0 +1,171 @@
+{
+  "apply": [
+    {
+      "block_identifier": {
+        "hash": "0x52f10033c63a53f76e1806c3e5805f25e54426e7503e1067e80b6c1f1ebff3a1",
+        "index": 4070941
+      },
+      "metadata": {
+        "bitcoin_anchor_block_identifier": {
+          "hash": "0x000000000000000000005d887c30139d37278fa5e29d55f0bf4901b3a914d6bd",
+          "index": 918309
+        },
+        "block_time": 1760012186,
+        "confirm_microblock_identifier": null,
+        "cycle_number": null,
+        "pox_cycle_index": 45910,
+        "pox_cycle_length": 20,
+        "pox_cycle_position": 8,
+        "reward_set": null,
+        "signer_bitvec": "0ed2000001dbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+        "signer_public_keys": [
+          "0x0215245613e31de2ec2e7f2c4facb45724be2e49d9d42abb0a5e571322593b36bf",
+          "0x0217ba21663bc7ea1bea961c2a314543b7e4eb53be2a00487302a75340d55ff62e",
+          "0x022150d4ea6dc60e75e162455553a92adea0a0f3000c192cc55d0bffed22c0a8e0",
+          "0x0228a566db9a7b3212d612aa06e34fa981351a4372737849bfcaa1a28e8a044e5d",
+          "0x023d6e4adbd5e7bedd5a1e1b85940e1e8c6c34924fd0d584e5e15d84c8572083d9",
+          "0x023d6ecdc36fa1e1c6a9f116c7f13ae843001ed9d617f66f6c68cabf751bf82555",
+          "0x0244869db071d334ff8e5cd94956ae7b60a4abd41f83f3c9d66ab314718151d94d",
+          "0x024f164c6e73df283d34d7d9cc86553a82dce76045ba7dfbf4de0004f89eabb8e0",
+          "0x027af6b78b484b2c129dab7e490e8438f9a6eb4890071335a5781d483073866b9a",
+          "0x0284df4505c6318a0017a7848aa0a95bf8cd3db697a89d2ec1978a027bece770ef",
+          "0x02877ce29ba35458b827a6ea18510b9058ae4c30e2c33d288f2982c13497caec6e",
+          "0x02879477ec9ed8a56c0b26ba4b452246608d6e1b02ae1fa405a2c97ee8af5da202",
+          "0x029e1245f007bd8f76d5ce67e759acd21f8b0f2538a80713468f7524bf3fff6136",
+          "0x02a89cb3164d3dabcb5cf8796bfc28b91fade8c71a64b5a76d94e79cd27cfa8895",
+          "0x0302328212d5e430a8a880f8e2365a8f976ee50490ff030c106866c0b789eae91a",
+          "0x03115cb2254a9ad4a32bbe043acf57411d32ea74b05ddf6e850a0b11dbe0f55370",
+          "0x034df3feda207a1cd4f31ae2b58f136a0d382d23419ef8d06569fa538202ba8aed",
+          "0x035bb766ff7b9c1ab0aafd39129ae3e2e051a9b7370588d5c3df000956223bda23",
+          "0x038b9ddb9808631dd75ccb0b6715b36bb1e391d85d40f1a031e98a332890bed2ea",
+          "0x039262e5a8badd8e49eaa1808a675ad005f7b324bd677576fa670e43e73b166844",
+          "0x0399fc8106e79a1e7e37a1bdc0cae4352c0899bc1d1c56279f9c0f2c66df16f9ce",
+          "0x039dc5297b92c1f6b48f4a68e180b853ff6e8188fb78422652a90b8fe14941adce",
+          "0x03a541c1ec2cfb32da48cfadf439c9b2f27d166bbffa18a178c7a6a0d54cfa7813",
+          "0x03b3b78738abbdc573cdcefd8200b1bca999e2f2fd8ecdf70c64ced1e4105437b7",
+          "0x03cc1da6f6235699284987f7d3a98a950b0c693cdbed87ab33c04f61e2dfb6a177"
+        ],
+        "signer_signature": [
+          "012f39fdc2ed04b6dd15839fdc26aef1023cf5eeb283a971779325d8f1b9d6eda522bdf4c8c8c35b0070a77de79a8329bca7a0d585789b7313c9a5ecbb56fcc907",
+          "0027d965f64a3c06fd949d621fb946168a659a1d940f1e47209cf98961020253c906b39e13fe12798cb68cec2d8347d736511b924cc990bb0913a7ca45c44ea58c",
+          "00cff5a58e4bc410b7a4da5dbb8debc7dab38d325e9ded5c963cdd8eec2c668bd40ec2a881544cb49562067018f0e3a522eee52aefe2a5ae5ae7ec788d3841ca32",
+          "0114619baca5d6c470ca5e69942a8c88fa53aae95414ab7a24c774ec314293ddaf1286cd986fb4db4c4df7a80236b54fd73e9a07ab3173aee01e0f0d5ee96627d8",
+          "01e382bc423f1cdee0b2b72cce181bebe91153bc28bc4eec2261f3f6d92799de29504e7fed8bc42a073ba112b76361d5b41b4221fcdf343bffe1ec14f0667d6c84",
+          "00721d371f0abf4828a201c1950ca5bcf8043f702687361cc7448874a4f50dac5e640839c49c07cfa0d44cc280177dc18736e7443f39526f30616911cbe68ed2db",
+          "014c61634ec15e77b71143ff318ecbc47fc9c242d7b263b2257d9f908c8c426903385daeefd6d9af2952bf9b7bc6a62fdbc401b0fa0838d3ee39ab068887313c0a",
+          "0193d04f0d688496b3596345c396f4ff5d2a571ee9bdb98a742c5785c0d78896e54d3a06712b215b921e6b79668089644934cb1057518509291bb847459b30fe23",
+          "0081da0a7f26c665b2a30950587832983da8a99baa9af5bc95abc2f623a364ee7e27740ccbcc824c519cf328fbea6bc821a5556f5ea9b07bf25d6386043f03b29f",
+          "013f1d7e2bbe888c9964ad7aa90cda4774496af0cd66a487e3458521b4aabea2bb26edf0b9e99dd2c05a62c088b7c64e06ea52e77bdacd95b4081987daa153df15",
+          "0123a2e74eedf962233cd8cfbdaabcfcad530b0e299d017fe8e2fc745c505b2856103fc4fe43f7344b2194389602b17a99b3652cb2c73bf0886b44f62e684dbed3",
+          "01f86a742beece981c68156d28c76033b1b812e06bb5d0043a13d0955876b290216debe06912c724de121504c5586b982ae9cbd1d876d155721e7af021d72f0dd0",
+          "012cef9932bacce89b71f9c4ba9789a2c334a41c2538218b7921d878b97c00a5b93d07e301a87c8b2363e7bb95acefa79b67602e0c4c5f52eccf76e8a157e74e11",
+          "0082955619d02ab806e92dc7ef6b842a4b5e3099cb696e3c1b7e1ea0e4e7400b270a57503447e53208451f0e0491b47a203207d4000c3db030dace5072d539acb2",
+          "00c341fe75dd813333eade1a76dff1e7dec82eb35796b10cc5c6c0edb1c40470e35d0b4d4cc4e62796c443fa2adc5b090e788c53af3dad2c7a3e4712d6289f0117",
+          "01605113d553ba8324dcf0d1e683fbdf0ec21c3600695581ad56e73d2dfbf0315f37aa7742b175168dee77b30e938ad800ad7049e351f2b1e289f2a75a38b40e47",
+          "01b1ea3c6f560bfc60e83da50402bfdb412ce53436260521bf40cc66a61d601be33c4f10aeabc048a6acd21d4e2ff1c9b971f4bd6714d94fb74ea80a9afb499aa2",
+          "0177f4cd2d4277cfa9e198536a22028358504306b2d1a53eb1b4529321fd240e386913dc44b1bafdb8b0af3dcd01f836a2755581cc45842470c05c8f2e95905727",
+          "00846e9eb18e8a591fe5384d70ccc027a994d98da957cbba7c64e09e3523ef58070be2eafcba96d2d59965102d67e5c6b2c151c078120e65b6885cec96e0d4ecab",
+          "00238d8d7136b33cad94f8bd9ab8382a30b2a794f10e896788cb49c7417a6e27da6ee7beb8538d53c038c7ff1354aa26e63e35fa7089df26c98ee371ff3843c479",
+          "0131b32f295c93f0d3586df50db5857148b4ea8d721a65c79fdc1004f9cf49ca3a10b5f83729a43c74c898f8ed7c68aaf7bfa460cdb3c38fad73e9d9cddb24852d",
+          "00a1fbdc47b100de07aa552a0322bbf0729ed4ef5978b0d61e33d1d2593f64a09a2f1109da453b07fb1605d61aeeb86f16a7447d376713890ffec8cad4d5ec18d1",
+          "01ed79af758ec8a8eb89fb77b8cf7bceb3cbbb5a5d902814b30e83e0f64ac46177113f9a4f93061ba41b61ea7ced9b4839f43fe9130b6c0313ea2b6a23b0199d06",
+          "01ea917fe190860ce0a37f894586f471d7ae362ca9ff24663baa9e3e7a908155207094467c65a3219691ff1f608771e412c4881cbfbda28f57192294c4f06519e6",
+          "00a2f1edff28082121d2b93db2e659ffa5d7e182a940fa3ecf37af029cb477f71325443b57dac2a3884768622ca2e2cb61f448f52dfb41758f53fbf18dd8b5c361"
+        ],
+        "stacks_block_hash": "0xe81aa45a2ceff3d3f994389b1ffc43b78f485a22e158a8cd6787303eecaa8219",
+        "tenure_height": 215556
+      },
+      "parent_block_identifier": {
+        "hash": "0x4c42bbf97921fec6b78a3526ede5f5e32dc45178da314e934d65139685428d53",
+        "index": 4070940
+      },
+      "timestamp": 1760011724,
+      "transactions": [
+        {
+          "metadata": {
+            "description": "invoked: SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging::apply(((tuple (a \"v\") (b SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-pool-v1_0_0-0003) (c u21000003) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SP3W69VDG9VTZNG7NTW1QNCC1W45SNY98W1JSZBJH.flat-earth-stxcity) (f true))), u1130000000, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx), (some SP3W69VDG9VTZNG7NTW1QNCC1W45SNY98W1JSZBJH.flat-earth-stxcity), none, none, none, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to), (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-pool-v1_0_0-0003), none, none, none, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-fees-v1_0_0-0003), none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none)",
+            "execution_cost": {
+              "read_count": 18,
+              "read_length": 29708,
+              "runtime": 252217,
+              "write_count": 1,
+              "write_length": 1
+            },
+            "fee": 8470,
+            "kind": {
+              "data": {
+                "args": [
+                  "((tuple (a \"v\") (b SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-pool-v1_0_0-0003) (c u21000003) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SP3W69VDG9VTZNG7NTW1QNCC1W45SNY98W1JSZBJH.flat-earth-stxcity) (f true)))",
+                  "u1130000000",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx)",
+                  "(some SP3W69VDG9VTZNG7NTW1QNCC1W45SNY98W1JSZBJH.flat-earth-stxcity)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-pool-v1_0_0-0003)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-fees-v1_0_0-0003)",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none"
+                ],
+                "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                "method": "apply"
+              },
+              "type": "ContractCall"
+            },
+            "nonce": 369,
+            "position": {
+              "index": 0
+            },
+            "raw_tx": "0x00000000010400828e7fb96ceb3d315766754ea3be9773281ca12b00000000000001710000000000002116000077d69a95e730497e715acbd1d5885ccdaff9548defb030e3632fe8daee46f2e919c60d5bef5bdab99e7e30ec27d08734f0e82eaada7815fb57c6226c6e2b4cf6030200000003000216828e7fb96ceb3d315766754ea3be9773281ca12b0100000000435a6e800003167c5f674a8fd08efa61dd9b11121e046dd2c8927316756e6976322d706f6f6c2d76315f305f302d30303033050000000000ac6ca00103167c5f674a8fd08efa61dd9b11121e046dd2c8927316756e6976322d706f6f6c2d76315f305f302d3030303316f864edb04ef5fac0f5d7037ab181e10b9af928e012666c61742d65617274682d7374786369747909466c61744561727468030000020e7a98c170021681d1b585c012192166f5afa30d1245701e2073a912706174682d6170706c795f73746167696e67056170706c79000000200b000000010c0000000601610d0000000176016206167c5f674a8fd08efa61dd9b11121e046dd2c8927316756e6976322d706f6f6c2d76315f305f302d3030303301630100000000000000000000000001406f43016406167c5f674a8fd08efa61dd9b11121e046dd2c89273047773747801650616f864edb04ef5fac0f5d7037ab181e10b9af928e012666c61742d65617274682d7374786369747901660301000000000000000000000000435a6e800a06167c5f674a8fd08efa61dd9b11121e046dd2c8927304777374780a0616f864edb04ef5fac0f5d7037ab181e10b9af928e012666c61742d65617274682d737478636974790909090a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f0a06167c5f674a8fd08efa61dd9b11121e046dd2c8927316756e6976322d706f6f6c2d76315f305f302d303030330909090a06167c5f674a8fd08efa61dd9b11121e046dd2c8927316756e6976322d666565732d76315f305f302d3030303309090909090909090909090909090909090909",
+            "receipt": {
+              "contract_calls_stack": [],
+              "events": [],
+              "mutated_assets_radius": [],
+              "mutated_contracts_radius": []
+            },
+            "result": "(err u1)",
+            "sender": "SP218WZXSDKNKTCAQCSTMX8XYJXSJG7515EBWG86W",
+            "sponsor": null,
+            "success": false
+          },
+          "operations": [],
+          "transaction_identifier": {
+            "hash": "0x0c3f0ec4cc9197ae34a31d295c021136d586e65bec587a8c1f6bee9f5e2d75a6"
+          }
+        }
+      ]
+    }
+  ],
+  "chainhook": {
+    "is_streaming_blocks": false,
+    "predicate": {
+      "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+      "method": "apply",
+      "scope": "contract_call"
+    },
+    "uuid": "b3e1a879-2849-4c84-8675-5b06fced5d36"
+  },
+  "events": [],
+  "rollback": []
+}

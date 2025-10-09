@@ -1,0 +1,377 @@
+{
+  "apply": [
+    {
+      "block_identifier": {
+        "hash": "0xcbfa372c598ebb76ab118f373f2930c35189d50a4e276ce38ae9482bbe7734ec",
+        "index": 4071399
+      },
+      "metadata": {
+        "bitcoin_anchor_block_identifier": {
+          "hash": "0x00000000000000000001ca6f66a2e48096591ea2fa7ed567a869c7a5678597ce",
+          "index": 918312
+        },
+        "block_time": 1760013844,
+        "confirm_microblock_identifier": null,
+        "cycle_number": null,
+        "pox_cycle_index": 45910,
+        "pox_cycle_length": 20,
+        "pox_cycle_position": 11,
+        "reward_set": null,
+        "signer_bitvec": "0ed2000001dbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03",
+        "signer_public_keys": [
+          "0x0215245613e31de2ec2e7f2c4facb45724be2e49d9d42abb0a5e571322593b36bf",
+          "0x0217ba21663bc7ea1bea961c2a314543b7e4eb53be2a00487302a75340d55ff62e",
+          "0x022150d4ea6dc60e75e162455553a92adea0a0f3000c192cc55d0bffed22c0a8e0",
+          "0x0228a566db9a7b3212d612aa06e34fa981351a4372737849bfcaa1a28e8a044e5d",
+          "0x023d6e4adbd5e7bedd5a1e1b85940e1e8c6c34924fd0d584e5e15d84c8572083d9",
+          "0x023d6ecdc36fa1e1c6a9f116c7f13ae843001ed9d617f66f6c68cabf751bf82555",
+          "0x0244869db071d334ff8e5cd94956ae7b60a4abd41f83f3c9d66ab314718151d94d",
+          "0x024f164c6e73df283d34d7d9cc86553a82dce76045ba7dfbf4de0004f89eabb8e0",
+          "0x02844807121921880119fe05ae47fccb4945a4bb2f840fe7de66e6f32640bc8169",
+          "0x02877ce29ba35458b827a6ea18510b9058ae4c30e2c33d288f2982c13497caec6e",
+          "0x02879477ec9ed8a56c0b26ba4b452246608d6e1b02ae1fa405a2c97ee8af5da202",
+          "0x029e1245f007bd8f76d5ce67e759acd21f8b0f2538a80713468f7524bf3fff6136",
+          "0x02a89cb3164d3dabcb5cf8796bfc28b91fade8c71a64b5a76d94e79cd27cfa8895",
+          "0x0302328212d5e430a8a880f8e2365a8f976ee50490ff030c106866c0b789eae91a",
+          "0x03115cb2254a9ad4a32bbe043acf57411d32ea74b05ddf6e850a0b11dbe0f55370",
+          "0x0321129d7a3e14cce66abef68b9a3d31d998f14e9a18b09d66aa1110fc604a3b1f",
+          "0x034df3feda207a1cd4f31ae2b58f136a0d382d23419ef8d06569fa538202ba8aed",
+          "0x039dc5297b92c1f6b48f4a68e180b853ff6e8188fb78422652a90b8fe14941adce",
+          "0x03a541c1ec2cfb32da48cfadf439c9b2f27d166bbffa18a178c7a6a0d54cfa7813",
+          "0x03b3b78738abbdc573cdcefd8200b1bca999e2f2fd8ecdf70c64ced1e4105437b7",
+          "0x03cc1da6f6235699284987f7d3a98a950b0c693cdbed87ab33c04f61e2dfb6a177"
+        ],
+        "signer_signature": [
+          "004952c765f3e841653ce9ca04b1864232568253cbcb4e6b03390d53a33738f7d8563ca83cec7d111daff0289470b43fa575328a8456a3166921fa4b92d38cffc2",
+          "0078f140358b2ba6eb924d9b863cb9124d772d5398daa260e0f6b0c1368e2c79f860b5441b7d2b11a29594b8017555ee023965d898611018da2029328538adf3d5",
+          "012e0a4c4af87150d6c84721e347e85434d861dfb2f9c6292c220d367d3d1c4a37357dfaf6c422d5102cb0f4eeef10826c6de2f4cfb619fbbdd0dd6c2509e22c29",
+          "00cb874faf6b724cc8e6d8675d4f333603235444d8c0de648e3e363eeb4661c8f32e0dc1682b2424cde85747a6f08cda1105e15f5d4ca2f22eda057a87050fed3a",
+          "006b678b597a22d489454dd8aacb0178712b52c0df63fec62c97b8b79897bc11764c2e006c5621be224c6fa7643926608728eda0297d3c6a943402832366499026",
+          "00c584d90fbcf1ef96d710aca859a2e92c01b7504d53b04c02b8721780df3f8c124b896bdc61baa83a0369f6212754dfe5d8e1788f3c7758eef6706c1f4262d9df",
+          "01e36eea663bb796c79d0912ea0aba72c4e651ced1ab16f047122c62176d20b9d26a941e0ea214332b649f10cb2ed12908b11e92df0553f20a342ccc0c1b660078",
+          "017341cda79f65cd5642b7969ed6e8c5ea89a8fee61d1a41609a146d61478f806a242229fc5bca21295ec19cfa774b7d75b0f6603db663e77a1bad8fd942d6fae3",
+          "009acc32bccbfd76827f00f46497d3b1e93806e9f1fe7df5d93c706e145949248f46f0b6da56b4057b3edf905a2029a02e0840d3db10280d80cb6f5dd2686e6533",
+          "01dc412fe0efccd44cef39a7c87b4163f13e29565d4df164332363f7324b0317b13007696878b71328b5d2e66eba1904658f006a31b54f12aed6607d6572f30510",
+          "01dacfad2048e325dc3072df26afb3e3b38079d0af5e5a6f8f5700484738299839600158e6f58d81b11c3d19cb342b4789e02b95cec985d55b337959680d1ce5a0",
+          "00b5151127ab91232cc858c93f8ca0e7d31249b22d94c31621fbaa367680469eec110940475c7d3f00263e9d22104e518321b37c6821b71e4d53a92a57f07bebb8",
+          "01280c8c6de6000bc720d4e581b408751743e8e728ad4e9efe0e3fc03aa4936c411d455f38d3c422ff85261feba101b259cdb26a1a8803f8f52d675032706f8d82",
+          "01a82ac20b924631583af346683cfe65b78444397a65eb5b2e78e0a39cbe9cde10316350d11075e0b3f7fcdba1af8362da0e5cf199745560ae73af21e42cae9a16",
+          "01a3f2017efced9d819558e1c7ed3985680945a4b9542f354713227e41bc59e560188a2116b28da9b7815632388db891f05a88c16968b557a7153e064713427272",
+          "01780801aedfed16ceb4910665580a7b230be9a84d132950a097213bbcc15b1fd857046c417cb40249dcb4693838e9bd5e2bb451976162b91404f84675e607737d",
+          "00cf6cfc18621bdeb97421329ed40ca74291c8dd6af345b35e8e68b730f5279f0457bbb65247bb238ec3894f538e33c98759b7d92cfd79bde0d74cf86d8afdaced",
+          "00ad69f92f97fc6156b6740ad09f77e84ae75219d9e37384b158150fc9e94805675bf9806f9a48394737c1adb1a07d6d4a4b680eae4b62f5f62af114642573c482",
+          "0190f3683fef064fd64ec4f1488a2d27fccd9ac1aac0cd027b853e6b580563bb3035aa1b4b63e4ad28c020aefb613b8b3d267c9541e5bc648e6aaf2dd990ccd416",
+          "0102dffb07c52585e3c3a5948638b78ed5379a1cc9dd3e2b798b86dde62bbe00433be8810e0de83fe91e34a9a9a7674468276d0612c256e328e2b3f25922f059a4",
+          "00d9608be6106a7dd19a621643130cc1bdb24ace7aabbf213b647a08d107959f400ee971476b6121a8857e03d3e2c5a56416fe5522dcde509caf969c25d5b3613c"
+        ],
+        "stacks_block_hash": "0xd0ded01f0839a1719964b7ba819ba04f4fd231a946d97928afe4e8b768f1f9be",
+        "tenure_height": 215559
+      },
+      "parent_block_identifier": {
+        "hash": "0x149ee3265f728018a3c1f6286ca4b918f2dcdd94269e1c534c65c8df37eab538",
+        "index": 4071398
+      },
+      "timestamp": 1760013202,
+      "transactions": [
+        {
+          "metadata": {
+            "description": "invoked: SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging::apply(((tuple (a \"v\") (b SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143) (c u21000143) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity) (f true))), u450000000, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx), (some SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity), none, none, none, (some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to), (some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143), none, none, none, (some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0143), none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none)",
+            "execution_cost": {
+              "read_count": 37,
+              "read_length": 41421,
+              "runtime": 400513,
+              "write_count": 6,
+              "write_length": 388
+            },
+            "fee": 7554,
+            "kind": {
+              "data": {
+                "args": [
+                  "((tuple (a \"v\") (b SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143) (c u21000143) (d SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity) (f true)))",
+                  "u450000000",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx)",
+                  "(some SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                  "(some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143)",
+                  "none",
+                  "none",
+                  "none",
+                  "(some SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0143)",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none",
+                  "none"
+                ],
+                "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                "method": "apply"
+              },
+              "type": "ContractCall"
+            },
+            "nonce": 507,
+            "position": {
+              "index": 0
+            },
+            "raw_tx": "0x00000000010400b16d34b71f7f00cf57f73487d5d24f8ff300c54e00000000000001fb0000000000001d82000170b1e8bc54d660548b575d3d06522811e6c1f81005c1608b8792be27bea096f05d22901e1017dcdbc8825f2e4e7e97e22259f331e2289a140b51e348dd6514bb030200000003000216b16d34b71f7f00cf57f73487d5d24f8ff300c54e01000000001ad2748000031681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3031343305000000000044aa2001031681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d303134331621588498bf15a016db8218eeb2875c185b5b000f10706f732d636f696e2d7374786369747903504f530300000034c86b528b021681d1b585c012192166f5afa30d1245701e2073a912706174682d6170706c795f73746167696e67056170706c79000000200b000000010c0000000601610d00000001760162061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3031343301630100000000000000000000000001406fcf016406167c5f674a8fd08efa61dd9b11121e046dd2c8927304777374780165061621588498bf15a016db8218eeb2875c185b5b000f10706f732d636f696e2d73747863697479016603010000000000000000000000001ad274800a06167c5f674a8fd08efa61dd9b11121e046dd2c8927304777374780a061621588498bf15a016db8218eeb2875c185b5b000f10706f732d636f696e2d737478636974790909090a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f0a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d303134330909090a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d666565732d76315f305f302d3031343309090909090909090909090909090909090909",
+            "receipt": {
+              "contract_calls_stack": [],
+              "events": [
+                {
+                  "data": {
+                    "amount": "337500",
+                    "recipient": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0143",
+                    "sender": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+                  },
+                  "position": {
+                    "index": 2
+                  },
+                  "type": "STXTransferEvent"
+                },
+                {
+                  "data": {
+                    "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143",
+                    "topic": "print",
+                    "value": {
+                      "amt-fee-lps": 1012500,
+                      "amt-fee-protocol": 337500,
+                      "amt-in": 450000000,
+                      "amt-in-adjusted": 448650000,
+                      "amt-out": 228990682903,
+                      "amt-out-desired": 1,
+                      "op": "swap",
+                      "pool": {
+                        "block-height": 4067323,
+                        "burn-block-height": 918286,
+                        "fees": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0143",
+                        "lp-token": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-lp-token-v1_0_0-0143",
+                        "reserve0": 15815817058,
+                        "reserve1": 8301373941106,
+                        "symbol": "wSTX-POS",
+                        "token0": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx",
+                        "token1": "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity"
+                      },
+                      "user": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6"
+                    }
+                  },
+                  "position": {
+                    "index": 3
+                  },
+                  "type": "SmartContractEvent"
+                },
+                {
+                  "data": {
+                    "amount": "228990682903",
+                    "asset_identifier": "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity::POS",
+                    "recipient": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6",
+                    "sender": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+                  },
+                  "position": {
+                    "index": 1
+                  },
+                  "type": "FTTransferEvent"
+                },
+                {
+                  "data": {
+                    "amount": "450000000",
+                    "recipient": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143",
+                    "sender": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6"
+                  },
+                  "position": {
+                    "index": 0
+                  },
+                  "type": "STXTransferEvent"
+                }
+              ],
+              "mutated_assets_radius": [
+                "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity::POS"
+              ],
+              "mutated_contracts_radius": [
+                "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity",
+                "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+              ]
+            },
+            "result": "(ok (tuple (swap1 (tuple (amt-in u450000000) (amt-out u228990682903))) (swap2 (tuple (amt-in u228990682903) (amt-out u228990682903))) (swap3 (tuple (amt-in u228990682903) (amt-out u228990682903))) (swap4 (tuple (amt-in u228990682903) (amt-out u228990682903)))))",
+            "sender": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6",
+            "sponsor": null,
+            "success": true
+          },
+          "operations": [
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 337500
+              },
+              "operation_identifier": {
+                "index": 0
+              },
+              "related_operations": [
+                {
+                  "index": 1
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0143"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 337500
+              },
+              "operation_identifier": {
+                "index": 1
+              },
+              "related_operations": [
+                {
+                  "index": 0
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "metadata": {
+                    "asset_class_identifier": "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity::POS",
+                    "asset_identifier": null,
+                    "standard": "SIP10"
+                  },
+                  "symbol": "TOKEN"
+                },
+                "value": 228990682903
+              },
+              "operation_identifier": {
+                "index": 2
+              },
+              "related_operations": [
+                {
+                  "index": 3
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "metadata": {
+                    "asset_class_identifier": "SPGNH14RQWAT05PVG8CEXCM7BGC5PPR01XVGQXPZ.pos-coin-stxcity::POS",
+                    "asset_identifier": null,
+                    "standard": "SIP10"
+                  },
+                  "symbol": "TOKEN"
+                },
+                "value": 228990682903
+              },
+              "operation_identifier": {
+                "index": 3
+              },
+              "related_operations": [
+                {
+                  "index": 2
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            },
+            {
+              "account": {
+                "address": "SP2RPTD5Q3XZG1KTQYWT8FNEJ9Y7Z60659R6DAAP6"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 450000000
+              },
+              "operation_identifier": {
+                "index": 4
+              },
+              "related_operations": [
+                {
+                  "index": 5
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "DEBIT"
+            },
+            {
+              "account": {
+                "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0143"
+              },
+              "amount": {
+                "currency": {
+                  "decimals": 6,
+                  "symbol": "STX"
+                },
+                "value": 450000000
+              },
+              "operation_identifier": {
+                "index": 5
+              },
+              "related_operations": [
+                {
+                  "index": 4
+                }
+              ],
+              "status": "SUCCESS",
+              "type": "CREDIT"
+            }
+          ],
+          "transaction_identifier": {
+            "hash": "0x8f23887491fe2cbd18d307c1203384f3c49a40817e7c168487dfc5212e37a858"
+          }
+        }
+      ]
+    }
+  ],
+  "chainhook": {
+    "is_streaming_blocks": false,
+    "predicate": {
+      "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+      "method": "apply",
+      "scope": "contract_call"
+    },
+    "uuid": "b3e1a879-2849-4c84-8675-5b06fced5d36"
+  },
+  "events": [],
+  "rollback": []
+}

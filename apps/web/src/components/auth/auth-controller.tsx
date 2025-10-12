@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@repo/ui/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { LoginModal } from "./login-modal";
@@ -8,7 +9,7 @@ import { SignUpModal } from "./signup-modal";
 
 const OtpModal = dynamic(() => import("./otp-modal"), { ssr: false });
 
-export default function AuthController() {
+export default function AuthController({ from }: { from?: "app" | "sbtc" }) {
 	const [signUpOpen, setSignUpOpen] = useState(false);
 	const [loginOpen, setLoginOpen] = useState(false);
 	const [otpMail, setOtpMail] = useState("");
@@ -29,14 +30,33 @@ export default function AuthController() {
 
 	return (
 		<div className="flex gap-4">
-			<Button onClick={openSignUp}>Sign Up</Button>
-			<Button variant="outline" onClick={openLogin}>
-				Login
-			</Button>
-			{/* <Button variant="outline" onClick={() => setOtpOpen(true)}>
-        OPT
-      </Button> */}
-
+			{from === "app" ? (
+				<>
+					<Button onClick={openSignUp}>Sign Up</Button>
+					<Button variant="outline" onClick={openLogin}>
+						Login
+					</Button>
+				</>
+			) : (
+				<>
+					<Button
+						size="lg"
+						className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground group"
+						onClick={openSignUp}
+					>
+						Sign Up
+						<ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+					</Button>
+					<Button
+						size="lg"
+						variant="outline"
+						className="text-lg px-8 py-6 glass-panel border-border hover:bg-secondary/50 bg-transparent"
+						onClick={openLogin}
+					>
+						Login
+					</Button>
+				</>
+			)}
 			<SignUpModal
 				open={signUpOpen}
 				onOpenChange={setSignUpOpen}

@@ -7,20 +7,23 @@ import {
 } from "@repo/ui/components/ui/tabs";
 import { type ReactNode, useState } from "react";
 import { AppDialog } from "~/components/app-dialog";
+import { TokenConfig } from "./balance";
 import Deposit from "./deposit";
 
 export default function Exchange({
 	children,
 	mode,
-	stxBalance,
+	tokenBalance,
 	stxAddress,
 	onClose,
+	tokenConfig,
 }: {
 	mode: "convert" | "deposit" | "withdraw";
+	tokenBalance: string;
 	children: ReactNode;
-	stxBalance: string;
 	stxAddress: string;
 	onClose?: () => void;
+	tokenConfig: TokenConfig;
 }) {
 	const [_activeTab, setActiveTab] = useState(mode);
 
@@ -34,12 +37,12 @@ export default function Exchange({
 			}}
 		>
 			<TabsList className="w-full bg-transparent border">
-				<TabsTrigger
-					value="withdraw"
-					className="data-[state=active]:bg-secondary !border-none rounded-md capitalize !shadow-none"
-				>
-					withdraw
-				</TabsTrigger>
+				{/*<TabsTrigger
+          value="withdraw"
+          className="data-[state=active]:bg-secondary !border-none rounded-md capitalize !shadow-none"
+        >
+          withdraw
+        </TabsTrigger>*/}
 				<TabsTrigger
 					value="deposit"
 					className="data-[state=active]:bg-secondary !border-none rounded-md capitalize !shadow-none"
@@ -49,7 +52,11 @@ export default function Exchange({
 			</TabsList>
 			<div className="py-4">
 				<TabsContent value="deposit">
-					<Deposit stxBalance={stxBalance} stxAddress={stxAddress} />
+					<Deposit
+						tokenBalance={tokenBalance}
+						address={stxAddress}
+						tokenConfig={tokenConfig}
+					/>
 				</TabsContent>
 			</div>
 		</Tabs>

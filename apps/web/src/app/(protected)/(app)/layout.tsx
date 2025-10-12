@@ -14,5 +14,18 @@ export default async function ProtectedLayout({
 }: {
 	children: ReactNode;
 }) {
-	return <BtcStxPriceProvider>{children}</BtcStxPriceProvider>;
+	return (
+		<BtcStxPriceProvider>
+			<WatchlistProvider>
+				<SiteHeader />
+				<div className="hidden sm:block">
+					<WatchListBanner />
+				</div>
+				{/* <PresetsContextProvider> */}
+				{children}
+				{/* </PresetsContextProvider> */}
+				<SiteFooter />
+			</WatchlistProvider>
+		</BtcStxPriceProvider>
+	);
 }

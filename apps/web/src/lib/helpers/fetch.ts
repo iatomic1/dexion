@@ -2,6 +2,8 @@ import {
 	API_BASE_URL,
 	HIRO_API_BASE_URL,
 	STXWATCH_API_BASE_URL,
+	TOKEN_WATCHER_API_BASE_URL,
+	ZEST_API_BASE_URL,
 } from "@repo/shared-constants/constants.ts";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -18,7 +20,7 @@ interface FetchOptions extends Omit<RequestInit, "method" | "body"> {
 }
 
 export default function makeFetch<T>(
-	service: "dexion" | "hiro" | "stxwatch",
+	service: "dexion" | "hiro" | "stxwatch" | "zest" | "hub",
 	path: string,
 	accessToken: string | null,
 	options: FetchOptions = {},
@@ -26,7 +28,6 @@ export default function makeFetch<T>(
 	return async () => {
 		let API_URL: string;
 
-		// Fix: Use switch statement or provide default case
 		switch (service) {
 			case "dexion":
 				API_URL = API_BASE_URL;
@@ -36,6 +37,12 @@ export default function makeFetch<T>(
 				break;
 			case "stxwatch":
 				API_URL = STXWATCH_API_BASE_URL;
+				break;
+			case "zest":
+				API_URL = ZEST_API_BASE_URL;
+				break;
+			case "hub":
+				API_URL = TOKEN_WATCHER_API_BASE_URL;
 				break;
 			default:
 				throw new Error(`Unknown service: ${service}`);

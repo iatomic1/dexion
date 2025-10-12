@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext, useEffect } from "react";
 import { usePrices } from "~/hooks/useBtcStxPrices";
 import type { CryptoAsset } from "~/types/xverse";
 

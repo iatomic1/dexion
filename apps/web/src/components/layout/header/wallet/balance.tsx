@@ -33,18 +33,28 @@ import { authClient } from "~/lib/auth-client";
 import { getBalance } from "~/lib/queries/hiro";
 import { formatTokenBalance } from "~/lib/utils/token";
 import type { Session } from "~/types/auth";
+import type { AddressBalanceResponse } from "~/types/hiro/balance";
 import type { CryptoAsset } from "~/types/xverse";
 import Exchange from "./exchange";
 import Withdraw from "./withdraw";
 
+export interface TokenConfig {
+	contractId?: string; // undefined for STX, contractId for fungible tokens
+	symbol: string;
+	displayName: string;
+	decimals: number;
+	icon: string;
+}
+
 interface BalanceContentProps {
 	isPending: boolean;
 	isLoading: boolean;
-	balanceData: any;
+	balanceData: AddressBalanceResponse | undefined;
 	walletAddress: string;
 	isMobile: boolean;
 	onCopyAddress: () => void;
 	onClose: () => void;
+	tokenConfig: TokenConfig;
 }
 
 function BalanceContent({
@@ -55,19 +65,35 @@ function BalanceContent({
 	isMobile,
 	onCopyAddress,
 	onClose,
+	tokenConfig,
 }: BalanceContentProps) {
-	const formattedBalance = formatTokenBalance(
-		balanceData?.stx.balance as string,
-		6,
-	);
+	const rawBalance = useMemo(() => {
+		if (!balanceData) return "0";
+
+		if (!tokenConfig.contractId) {
+			return balanceData.stx.balance;
+		}
+
+		return balanceData.fungible_tokens[tokenConfig.contractId]?.balance ?? "0";
+	}, [balanceData, tokenConfig.contractId]);
+
+	const formattedBalance = formatTokenBalance(rawBalance, tokenConfig.decimals);
+
 	const {
 		prices,
 		isLoading: isPriceLoading,
 		isError,
 	} = useBtcStxPriceContext();
-	const stxPrice = useMemo(() => {
-		return prices?.find((p) => p.symbol === "stx");
-	}, [prices]);
+
+	const tokenPrice = useMemo(() => {
+		return prices?.find(
+			(p) => p.symbol.toLowerCase() === tokenConfig.symbol.toLowerCase(),
+		);
+	}, [prices, tokenConfig.symbol]);
+
+	const totalValue = useMemo(() => {
+		return ((tokenPrice?.current_price ?? 0) * formattedBalance).toFixed(2);
+	}, [tokenPrice, formattedBalance]);
 
 	const HeaderContent = () => (
 		<div className="flex justify-between flex-row">
@@ -75,14 +101,8 @@ function BalanceContent({
 				<span className="text-xs">Total Value</span>
 				{isPending || isLoading || isPriceLoading ? (
 					<Skeleton className="h-7 w-24" />
-				) : isMobile ? (
-					<span className="text-lg font-semibold">
-						${((stxPrice?.current_price ?? 0) * formattedBalance).toFixed(2)}
-					</span>
 				) : (
-					<span className="text-lg font-semibold">
-						${((stxPrice?.current_price ?? 0) * formattedBalance).toFixed(2)}
-					</span>
+					<span className="text-lg font-semibold">${totalValue}</span>
 				)}
 			</div>
 			<div className="flex items-center gap-2">
@@ -91,9 +111,10 @@ function BalanceContent({
 						size="sm"
 						className="text-xs gap-1 text-muted-foreground"
 						variant="ghost"
+						onClick={onCopyAddress}
 					>
 						<Copy strokeWidth={1.25} size={12} className="!h-3 !w-4" />
-						Stacks
+						{tokenConfig.displayName}
 					</Button>
 				) : (
 					<Tooltip>
@@ -105,21 +126,24 @@ function BalanceContent({
 								onClick={onCopyAddress}
 							>
 								<Copy strokeWidth={1.25} size={12} className="!h-3 !w-4" />
-								Stacks
+								{tokenConfig.displayName}
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent>Copy Primary STX address</TooltipContent>
+						<TooltipContent>
+							Copy Primary {tokenConfig.symbol.toUpperCase()} address
+						</TooltipContent>
 					</Tooltip>
 				)}
 			</div>
 		</div>
 	);
 
-	const ActionButtons = ({ stxPrice }: { stxPrice: CryptoAsset }) => (
+	const ActionButtons = ({ tokenPrice }: { tokenPrice: CryptoAsset }) => (
 		<div className="grid grid-cols-2 gap-3">
 			<Exchange
 				mode="deposit"
-				stxBalance={formattedBalance.toString()}
+				tokenConfig={tokenConfig}
+				tokenBalance={formattedBalance.toString()}
 				stxAddress={walletAddress}
 				onClose={onClose}
 			>
@@ -127,7 +151,7 @@ function BalanceContent({
 					Deposit
 				</Button>
 			</Exchange>
-			<Withdraw stxBalance={formattedBalance} stxPrice={stxPrice}>
+			<Withdraw stxBalance={formattedBalance} stxPrice={tokenPrice}>
 				<Button className="rounded-full w-full" size="sm" variant={"default"}>
 					Withdraw
 				</Button>
@@ -143,7 +167,7 @@ function BalanceContent({
 				</DrawerHeader>
 				<Separator className="-mx-4" />
 				<div className="p-4">
-					<ActionButtons stxPrice={stxPrice as CryptoAsset} />
+					<ActionButtons tokenPrice={tokenPrice as CryptoAsset} />
 				</div>
 			</>
 		);
@@ -156,7 +180,7 @@ function BalanceContent({
 			</div>
 			<Separator className="w-full" />
 			<div className="p-4">
-				<ActionButtons stxPrice={stxPrice as CryptoAsset} />
+				<ActionButtons tokenPrice={tokenPrice as CryptoAsset} />
 			</div>
 		</>
 	);
@@ -166,10 +190,17 @@ export default function Balance({
 	children,
 	session,
 	isSessionPending,
+	tokenConfig = {
+		symbol: "stx",
+		displayName: "Stacks",
+		decimals: 6,
+		icon: "/icons/stx.svg",
+	},
 }: {
 	isSessionPending: boolean;
 	session: Session;
 	children: React.ReactNode;
+	tokenConfig?: TokenConfig;
 }) {
 	const copy = useCopyToClipboard();
 	const isMobile = useIsMobile(640);
@@ -204,7 +235,9 @@ export default function Balance({
 
 	const handleCopyAddress = () => {
 		copy(session?.user.walletAddress as string);
-		toast.success("STX address copied to clipboard");
+		toast.success(
+			`${tokenConfig.symbol.toUpperCase()} address copied to clipboard`,
+		);
 	};
 
 	const contentProps = {
@@ -215,6 +248,7 @@ export default function Balance({
 		isMobile,
 		onCopyAddress: handleCopyAddress,
 		onClose: handleClose,
+		tokenConfig,
 	};
 
 	return isMobile ? (

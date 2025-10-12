@@ -6,14 +6,24 @@ import { client } from "../stacks-blockchain-api-client";
 
 export const getBalance = async (address: string) => {
 	try {
-		return makeFetch<AddressBalanceResponse>(
-			"hiro",
-			`extended/v1/address/${address}/balances?unanchored=false`,
-			null,
+		const { data } = await client.GET(
+			"/extended/v1/address/{principal}/balances",
 			{
-				method: "GET",
+				params: {
+					path: { principal: address },
+					query: { unanchored: false },
+				},
 			},
-		)();
+		);
+		// return makeFetch<AddressBalanceResponse>(
+		// 	"hiro",
+		// 	`extended/v1/address/${address}/balances?unanchored=false`,
+		// 	null,
+		// 	{
+		// 		method: "GET",
+		// 	},
+		// )();
+		return data;
 	} catch (error) {
 		console.error(error);
 		throw error;

@@ -1,47 +1,75 @@
 import { toast } from "@repo/ui/components/ui/sonner";
+import { Markup } from "interweave";
+
 import { Copy } from "lucide-react";
 import Image from "next/image";
 import { QrcodeCanvas } from "react-qrcode-pretty";
 import useCopyToClipboard from "~/hooks/useCopy";
+import { formatPrice, formatTinyDecimal } from "~/lib/helpers/numbers";
+
+interface TokenConfig {
+	contractId?: string;
+	symbol: string;
+	displayName: string;
+	decimals: number;
+	icon: string;
+}
 
 export default function Deposit({
-	stxBalance,
-	stxAddress,
+	tokenBalance,
+	address,
+	tokenConfig = {
+		symbol: "stx",
+		displayName: "Stacks",
+		decimals: 6,
+		icon: "/icons/stx.svg",
+	},
 }: {
-	stxAddress: string;
-	stxBalance: string;
+	address: string;
+	tokenBalance: string;
+	tokenConfig?: TokenConfig;
 }) {
 	const copy = useCopyToClipboard();
+
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="grid grid-cols-2 gap-3">
 				<div className="text-sm py-2 opacity-100 flex items-center gap-3 px-4 w-full border rounded-lg">
 					<Image
-						src={"/icons/stx.svg"}
+						src={tokenConfig.icon}
 						height={16}
 						width={16}
-						alt="Stx logo"
+						alt={`${tokenConfig.displayName} logo`}
 						className="object-cover"
 					/>
-					<span> Stacks</span>
+					<span>{tokenConfig.displayName}</span>
 				</div>
-
 				<div className="text-xs py-2 opacity-100 flex items-center gap-3 px-4 w-full border rounded-lg justify-between">
 					<span className="text-secondary-foreground">Balance:</span>
 					<span className="text-muted-foreground">
-						{Number(stxBalance).toFixed(2)} STX
+						<Markup
+							content={
+								Number(tokenBalance) > 1
+									? formatPrice(Number(tokenBalance))
+									: formatTinyDecimal(Number(tokenBalance))
+							}
+						/>
+
+						{tokenConfig.symbol.toLowerCase() === "btc" && "sBTC"}
 					</span>
 				</div>
 			</div>
 			<div
-				className="flex relative gap-1 border rounded-xl p-1 hover:bg-popover transition-colors duration-150"
+				className="flex relative gap-1 border rounded-xl p-1 hover:bg-popover transition-colors duration-150 cursor-pointer"
 				onClick={() => {
-					copy(stxAddress as string);
-					toast.copy("STX address copied to clipboard");
+					copy(address);
+					toast.success(
+						`${tokenConfig.symbol.toLowerCase() === "btc" && "sBTC"} address copied to clipboard`,
+					);
 				}}
 			>
 				<QrcodeCanvas
-					value={stxAddress}
+					value={address}
 					variant={{
 						eyes: "circle",
 						body: "fluid",
@@ -55,10 +83,9 @@ export default function Deposit({
 						body: "none",
 					}}
 					padding={5}
-					// margin={5}
 					bgColor="#ffffff"
 					bgRounded
-					image={"/icons/stx.svg"}
+					image={tokenConfig.icon}
 					size={137}
 					divider
 				/>
@@ -70,7 +97,7 @@ export default function Deposit({
 						Deposit Address
 					</span>
 					<span className="text-muted-foreground text-wrap break-all">
-						{stxAddress}
+						{address}
 					</span>
 				</div>
 			</div>

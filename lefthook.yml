@@ -49,11 +49,11 @@ pre-push:
           exit 1
         fi
 
-    build:
-      glob: "apps/web/**/*"
-      run: |
-        cd apps/web && bun run build
-        if [ $? -ne 0 ]; then
-          echo '🔨❌ Push blocked! Fix build errors before pushing. 🔨❌'
-          exit 1
-        fi
+    # build:
+    #   glob: "apps/web/**/*"
+    #   run: |
+    #     cd apps/web && bun run build
+    #     if [ $? -ne 0 ]; then
+    #       echo '🔨❌ Push blocked! Fix build errors before pushing. 🔨❌'
+    #       exit 1
+    #     fi

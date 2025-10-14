@@ -1,0 +1,764 @@
+{
+  "chainhook": {
+    "uuid": "847902d5-b2d1-4f5f-8799-ff6e464c2355",
+    "name": "swap-update"
+  },
+  "event": {
+    "chain": "stacks",
+    "network": "mainnet",
+    "apply": [
+      {
+        "block_identifier": {
+          "index": 4094231,
+          "hash": "0x5916c9c248b4f53c3dc46c8cfdf819d0c1045b80a0686b10d889205aa33a7036"
+        },
+        "parent_block_identifier": {
+          "index": 4094230,
+          "hash": "0x7424fea6a27f81098c13a6cf41edc86ab92436cdb9546fa1803cb065aa5cbefe"
+        },
+        "timestamp": 1760106875,
+        "transactions": [
+          {
+            "transaction_identifier": {
+              "hash": "0xe5e7b83a577ed74be49bcc9b52b6ce78102cd808ab1962b7267dd2437cc18268"
+            },
+            "operations": [
+              {
+                "operation_identifier": {
+                  "index": 0
+                },
+                "type": "fee",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  },
+                  "value": "-7500"
+                },
+                "metadata": {
+                  "sponsored": false
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 1
+                },
+                "type": "contract_call",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "metadata": {
+                  "args": [
+                    {
+                      "hex": "0x010000000000000000000000012a05f200",
+                      "repr": "u5000000000",
+                      "name": "amount",
+                      "type": "uint"
+                    },
+                    {
+                      "hex": "0x0100000000000000000000000004d7309e",
+                      "repr": "u81211550",
+                      "name": "min-received",
+                      "type": "uint"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "provider",
+                      "type": "(optional principal)"
+                    },
+                    {
+                      "hex": "0x04",
+                      "repr": "false",
+                      "name": "swaps-reversed",
+                      "type": "bool"
+                    },
+                    {
+                      "hex": "0x0c00000002016106162a554e032dff998a8882a98229fd214c54e2516f0d757364682d746f6b656e2d763101620616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463",
+                      "repr": "(tuple (a 'SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1) (b 'SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc))",
+                      "name": "stableswap-tokens",
+                      "type": "(tuple (a trait_reference) (b trait_reference))"
+                    },
+                    {
+                      "hex": "0x0c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d32",
+                      "repr": "(tuple (a 'SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-pool-aeusdc-usdh-v-1-2))",
+                      "name": "stableswap-pools",
+                      "type": "(tuple (a trait_reference))"
+                    },
+                    {
+                      "hex": "0x0c0000000201610616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463016206144e91b0982dbe4ae49bb9394b1f339fb7144beee60f746f6b656e2d7374782d762d312d32",
+                      "repr": "(tuple (a 'SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc) (b 'SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.token-stx-v-1-2))",
+                      "name": "xyk-tokens",
+                      "type": "(tuple (a trait_reference) (b trait_reference))"
+                    },
+                    {
+                      "hex": "0x0c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d32",
+                      "repr": "(tuple (a 'SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2))",
+                      "name": "xyk-pools",
+                      "type": "(tuple (a trait_reference))"
+                    }
+                  ],
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.router-stableswap-xyk-multihop-v-1-1",
+                  "function_name": "swap-helper-a"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 2
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "-5000000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 3
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP3MCM8K9KEJMFM6MN191JVN5CA51MDS7AM3SGYQ6"
+                },
+                "amount": {
+                  "value": "5000000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 4
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 5
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d000000087472616e7366657204646174610c0000000406616d6f756e7401000000000000000000000000004c4b400c626c6f636b2d6865696768740100000000000000000000000000034a8109726563697069656e740516e8ca22699ba547d0d4a852196ea5628a1a3727550673656e6465720516ca4790a75f2c613bc8c5c303ff8382893ab64ee0",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 6
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d000000187472616e736665722d61676772656761746f722d666565730663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000f06616d6f756e74010000000000000000000000012a05f20014616d6f756e742d666565732d636f6e747261637401000000000000000000000000004c4b4014616d6f756e742d666565732d70726f7669646572010000000000000000000000000000000011616d6f756e742d666565732d746f74616c01000000000000000000000000004c4b4008636f6e747261637406144e91b0982dbe4ae49bb9394b1f339fb7144beee624726f757465722d737461626c65737761702d78796b2d6d756c7469686f702d762d312d310c636f6e74726163742d62707301000000000000000000000000000027100c636f6e74726163742d666565010000000000000000000000000000000a14636f6e74726163742d6665652d616464726573730516e8ca22699ba547d0d4a852196ea5628a1a3727550f636f6e74726163742d737461747573031469732d63616c6c65722d6665652d6578656d7074040870726f7669646572090c70726f76696465722d62707301000000000000000000000000000027100c70726f76696465722d66656501000000000000000000000000000000000f70726f76696465722d7374617475730305746f6b656e06162a554e032dff998a8882a98229fd214c54e2516f0d757364682d746f6b656e2d7631",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.aggregator-core-v-1-1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 7
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "-4994001000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 8
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-pool-aeusdc-usdh-v-1-2"
+                },
+                "amount": {
+                  "value": "4994001000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 9
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 10
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d000000087472616e7366657204646174610c0000000406616d6f756e740100000000000000000000000129aa68680c626c6f636b2d6865696768740100000000000000000000000000034a8109726563697069656e7406144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d320673656e6465720516ca4790a75f2c613bc8c5c303ff8382893ab64ee0",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 11
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000406616374696f6e0d0000000f7472616e736665722d746f6b656e7306616d6f756e740100000000000000000000000002f98ded09726563697069656e740516ca4790a75f2c613bc8c5c303ff8382893ab64ee00673656e64657206144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d32",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 12
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-pool-aeusdc-usdh-v-1-2"
+                },
+                "amount": {
+                  "value": "-49909229",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 13
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "49909229",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 14
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 15
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d0000000d706f6f6c2d7472616e7366657204646174610c0000000306616d6f756e740100000000000000000000000002f98ded09726563697069656e740516ca4790a75f2c613bc8c5c303ff8382893ab64ee005746f6b656e0616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-pool-aeusdc-usdh-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 16
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "-999000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 17
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP31C60QVZKZ9CMMZX73TQ3F3ZZNS89YX2DCCFT8P"
+                },
+                "amount": {
+                  "value": "999000",
+                  "currency": {
+                    "symbol": "USDh",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 18
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 19
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d000000087472616e7366657204646174610c0000000406616d6f756e7401000000000000000000000000000f3e580c626c6f636b2d6865696768740100000000000000000000000000034a8109726563697069656e740516c2c302fbfcfe96529fe9c7ab8de3ffeb9427dd130673656e6465720516ca4790a75f2c613bc8c5c303ff8382893ab64ee0",
+                  "contract_identifier": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 20
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d000000147570646174652d706f6f6c2d62616c616e63657304646174610c0000000301640100000000000000000000502a6245de2009782d62616c616e636501000000000000000000000064f79de1b409792d62616c616e6365010000000000000000000028b9af48e0ee",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-pool-aeusdc-usdh-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 21
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d0000000c737761702d792d666f722d780663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000a0264780100000000000000000000000002f98ded066d696e2d647801000000000000000000000000000000010d706f6f6c2d636f6e747261637406144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d3207706f6f6c2d6964010000000000000000000000000000000109706f6f6c2d6e616d650d0000000e6165555344432d555344682d4c5007782d746f6b656e0616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d61657573646308792d616d6f756e740100000000000000000000000129b9a6c016792d616d6f756e742d666565732d70726f746f636f6c01000000000000000000000000000f3e5816792d616d6f756e742d666565732d70726f7669646572010000000000000000000000000016dd8407792d746f6b656e06162a554e032dff998a8882a98229fd214c54e2516f0d757364682d746f6b656e2d7631",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-core-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 22
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d0000000d737761702d68656c7065722d610663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000406616d6f756e740100000000000000000000000129b9a6c00c6d696e2d726563656976656401000000000000000000000000000000000872656365697665640100000000000000000000000002f98ded0f737461626c65737761702d646174610c0000000310737461626c65737761702d706f6f6c730c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d3210737461626c65737761702d73776170730c0000000101610100000000000000000000000002f98ded11737461626c65737761702d746f6b656e730c00000002016106162a554e032dff998a8882a98229fd214c54e2516f0d757364682d746f6b656e2d763101620616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.stableswap-swap-helper-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 23
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000406616374696f6e0d0000000f7472616e736665722d746f6b656e7306616d6f756e740100000000000000000000000002f8caf809726563697069656e7406144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d320673656e6465720516ca4790a75f2c613bc8c5c303ff8382893ab64ee0",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 24
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "-49859320",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 25
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2"
+                },
+                "amount": {
+                  "value": "49859320",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 26
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 27
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2"
+                },
+                "amount": {
+                  "value": "-84595365",
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 28
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "84595365",
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 29
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d000000087472616e736665720663616c6c657206144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d3204646174610c0000000406616d6f756e7401000000000000000000000000050ad2a5046d656d6f0909726563697069656e740516ca4790a75f2c613bc8c5c303ff8382893ab64ee00673656e64657206144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d32",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.token-stx-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 30
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d0000000d706f6f6c2d7472616e7366657204646174610c0000000306616d6f756e7401000000000000000000000000050ad2a509726563697069656e740516ca4790a75f2c613bc8c5c303ff8382893ab64ee005746f6b656e06144e91b0982dbe4ae49bb9394b1f339fb7144beee60f746f6b656e2d7374782d762d312d32",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 31
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000406616374696f6e0d0000000f7472616e736665722d746f6b656e7306616d6f756e74010000000000000000000000000000c2f509726563697069656e740516c2c302fbfcfe96529fe9c7ab8de3ffeb9427dd130673656e6465720516ca4790a75f2c613bc8c5c303ff8382893ab64ee0",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 32
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                },
+                "amount": {
+                  "value": "-49909",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 33
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP31C60QVZKZ9CMMZX73TQ3F3ZZNS89YX2DCCFT8P"
+                },
+                "amount": {
+                  "value": "49909",
+                  "currency": {
+                    "symbol": "aeUSDC",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 34
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x09",
+                  "contract_identifier": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 35
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000206616374696f6e0d000000147570646174652d706f6f6c2d62616c616e63657304646174610c0000000209782d62616c616e63650100000000000000000000035344be8c3f09792d62616c616e6365010000000000000000000001f4bb9d59b3",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 36
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d0000000c737761702d792d666f722d780663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000a02647801000000000000000000000000050ad2a5066d696e2d647801000000000000000000000000000000010d706f6f6c2d636f6e747261637406144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d3207706f6f6c2d6964010000000000000000000000000000000409706f6f6c2d6e616d650d0000000d5354582d6165555344432d4c5007782d746f6b656e06144e91b0982dbe4ae49bb9394b1f339fb7144beee60f746f6b656e2d7374782d762d312d3208792d616d6f756e740100000000000000000000000002f98ded16792d616d6f756e742d666565732d70726f746f636f6c010000000000000000000000000000c2f516792d616d6f756e742d666565732d70726f766964657201000000000000000000000000000185ea07792d746f6b656e0616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-core-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 37
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d0000000d737761702d68656c7065722d610663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000406616d6f756e740100000000000000000000000002f98ded0c6d696e2d7265636569766564010000000000000000000000000000000008726563656976656401000000000000000000000000050ad2a50878796b2d646174610c000000030978796b2d706f6f6c730c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d320978796b2d73776170730c00000001016101000000000000000000000000050ad2a50a78796b2d746f6b656e730c0000000201610616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463016206144e91b0982dbe4ae49bb9394b1f339fb7144beee60f746f6b656e2d7374782d762d312d32",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-swap-helper-v-1-2",
+                  "topic": "print"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 38
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c0000000306616374696f6e0d0000000d737761702d68656c7065722d610663616c6c65720516ca4790a75f2c613bc8c5c303ff8382893ab64ee004646174610c0000000806616d6f756e74010000000000000000000000012a05f2001c616d6f756e742d61667465722d61676772656761746f722d666565730100000000000000000000000129b9a6c00c6d696e2d72656365697665640100000000000000000000000004d7309e0870726f76696465720908726563656976656401000000000000000000000000050ad2a50f737461626c65737761702d646174610c0000000310737461626c65737761702d706f6f6c730c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee621737461626c65737761702d706f6f6c2d6165757364632d757364682d762d312d3210737461626c65737761702d73776170730c0000000101610100000000000000000000000002f98ded11737461626c65737761702d746f6b656e730c00000002016106162a554e032dff998a8882a98229fd214c54e2516f0d757364682d746f6b656e2d763101620616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d6165757364630e73776170732d7265766572736564040878796b2d646174610c000000030978796b2d706f6f6c730c00000001016106144e91b0982dbe4ae49bb9394b1f339fb7144beee61978796b2d706f6f6c2d7374782d6165757364632d762d312d320978796b2d73776170730c00000001016101000000000000000000000000050ad2a50a78796b2d746f6b656e730c0000000201610616fc2fe628b1da502c1b5eb3d08727ee6022503b5a0c746f6b656e2d616575736463016206144e91b0982dbe4ae49bb9394b1f339fb7144beee60f746f6b656e2d7374782d762d312d32",
+                  "contract_identifier": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.router-stableswap-xyk-multihop-v-1-1",
+                  "topic": "print"
+                }
+              }
+            ],
+            "metadata": {
+              "status": "success",
+              "type": "contract_call",
+              "sponsored": false,
+              "canonical": true,
+              "microblock_canonical": true,
+              "execution_cost": {
+                "read_count": "215",
+                "read_length": "358993",
+                "runtime": "24813840",
+                "write_count": "18",
+                "write_length": "97"
+              },
+              "fee_rate": "7500",
+              "nonce": 33,
+              "position": {
+                "index": 0,
+                "microblock_identifier": null
+              },
+              "result": {
+                "hex": "0x0701000000000000000000000000050ad2a5",
+                "repr": "(ok u84595365)"
+              },
+              "sender_address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67",
+              "sponsor_address": null,
+              "vm_error": null,
+              "post_conditions": {
+                "mode": "deny",
+                "post_conditions": [
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_equal_to",
+                    "amount": "5000000000",
+                    "principal": {
+                      "type_id": "principal_standard",
+                      "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                    },
+                    "asset": {
+                      "contract_name": "usdh-token-v1",
+                      "asset_name": "usdh",
+                      "contract_address": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "0",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "stableswap-pool-aeusdc-usdh-v-1-2",
+                      "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR"
+                    },
+                    "asset": {
+                      "contract_name": "token-aeusdc",
+                      "asset_name": "aeUSDC",
+                      "contract_address": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "0",
+                    "principal": {
+                      "type_id": "principal_standard",
+                      "address": "SP354F457BWP62EY8RQ1G7ZW3GA4KNDJEW0NFSN67"
+                    },
+                    "asset": {
+                      "contract_name": "token-aeusdc",
+                      "asset_name": "aeUSDC",
+                      "contract_address": "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K"
+                    }
+                  },
+                  {
+                    "type": "stx",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "81211550",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "xyk-pool-stx-aeusdc-v-1-2",
+                      "address": "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "rollback": []
+  }
+}

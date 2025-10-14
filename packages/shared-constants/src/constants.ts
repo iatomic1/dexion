@@ -19,9 +19,10 @@ export const PARTKIT_HOST = "dexion-party.iatomic1.partykit.dev";
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 export const TOKEN_WATCHER_API_BASE_URL =
 	// DEV
-	// ? "http://localhost:3008/"
-	// :
-	`https://hub.${BASE_DOMAIN_NAME}/`;
+	// ?
+	"http://localhost:3008/";
+// :
+// `https://hub.${BASE_DOMAIN_NAME}/`;
 
 export const HTTP_STATUS = {
 	CONFLICT: "Conflict",
@@ -45,3 +46,5 @@ export const STX_TOOLS_API_BASE_URL = "https://api.stxtools.io/";
 export const STX_CITY_API_BASE_URL = "https://stx.city/api/";
 export const HIRO_PLATFORM_API_BASE_URL = "https://api.platform.hiro.so/";
 export const BNS_ONE_API_BASE_URL = "https://api.bns.one/";
+
+export const ZEST_API_BASE_URL = "https://app.zestprotocol.com/api";

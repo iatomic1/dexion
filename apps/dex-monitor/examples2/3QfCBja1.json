@@ -1,0 +1,475 @@
+{
+  "chainhook": {
+    "uuid": "847902d5-b2d1-4f5f-8799-ff6e464c2355",
+    "name": "swap-update"
+  },
+  "event": {
+    "chain": "stacks",
+    "network": "mainnet",
+    "apply": [
+      {
+        "block_identifier": {
+          "index": 4093945,
+          "hash": "0x6e2dbe9539e23a295a359bd8d2db604ac131e8f21250e2ddb0ff3d2b15a4d433"
+        },
+        "parent_block_identifier": {
+          "index": 4093944,
+          "hash": "0x14efcc18c7332fdee2fc9e055c3bcc4d63d44624b26e4920f1bfb187a9848be4"
+        },
+        "timestamp": 1760105718,
+        "transactions": [
+          {
+            "transaction_identifier": {
+              "hash": "0x243ab1f46944da96612dd21e0ad7486d8ab86a5dca98085336b5d0c36998f23b"
+            },
+            "operations": [
+              {
+                "operation_identifier": {
+                  "index": 0
+                },
+                "type": "fee",
+                "status": "success",
+                "account": {
+                  "address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC"
+                },
+                "amount": {
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  },
+                  "value": "-8939"
+                },
+                "metadata": {
+                  "sponsored": false
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 1
+                },
+                "type": "contract_call",
+                "status": "success",
+                "account": {
+                  "address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC"
+                },
+                "metadata": {
+                  "args": [
+                    {
+                      "hex": "0x0b000000010c0000000601610d00000001760162061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d3031353201630100000000000000000000000001406fd801640614f6decc7cfff2a413bd7cd4f53c25ad7fd1899acc0a736274632d746f6b656e01650616740df86daf71bb1a2ba1cad7f3800a52cc03a12d137465696b6f2d746f6b656e2d73747863697479016603",
+                      "repr": "(list (tuple (a \"v\") (b 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152) (c u21000152) (d 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token) (e 'SP1T0VY3DNXRVP6HBM75DFWW0199CR0X15PC1D81B.teiko-token-stxcity) (f true)))",
+                      "name": "path",
+                      "type": "(list 4 (tuple (a (string-ascii 1)) (b principal) (c uint) (d principal) (e principal) (f bool)))"
+                    },
+                    {
+                      "hex": "0x01000000000000000000000000000007d0",
+                      "repr": "u2000",
+                      "name": "amt-in",
+                      "type": "uint"
+                    },
+                    {
+                      "hex": "0x0a0614f6decc7cfff2a413bd7cd4f53c25ad7fd1899acc0a736274632d746f6b656e",
+                      "repr": "(some 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token)",
+                      "name": "token1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a0616740df86daf71bb1a2ba1cad7f3800a52cc03a12d137465696b6f2d746f6b656e2d73747863697479",
+                      "repr": "(some 'SP1T0VY3DNXRVP6HBM75DFWW0199CR0X15PC1D81B.teiko-token-stxcity)",
+                      "name": "token2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token5",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                      "name": "share-fee-to",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d706f6f6c2d76315f305f302d30313532",
+                      "repr": "(some 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152)",
+                      "name": "univ2v2-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d666565732d76315f305f302d30313532",
+                      "repr": "(some 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0152)",
+                      "name": "univ2v2-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-4",
+                      "type": "(optional trait_reference)"
+                    }
+                  ],
+                  "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                  "function_name": "apply"
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 2
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC"
+                },
+                "amount": {
+                  "value": "-2000",
+                  "currency": {
+                    "symbol": "sBTC",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc-token"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 3
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152"
+                },
+                "amount": {
+                  "value": "2000",
+                  "currency": {
+                    "symbol": "sBTC",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc-token"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 4
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152"
+                },
+                "amount": {
+                  "value": "-7680250874",
+                  "currency": {
+                    "symbol": "Teiko",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP1T0VY3DNXRVP6HBM75DFWW0199CR0X15PC1D81B.teiko-token-stxcity::Teiko"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 5
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC"
+                },
+                "amount": {
+                  "value": "7680250874",
+                  "currency": {
+                    "symbol": "Teiko",
+                    "decimals": 6,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SP1T0VY3DNXRVP6HBM75DFWW0199CR0X15PC1D81B.teiko-token-stxcity::Teiko"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 6
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152"
+                },
+                "amount": {
+                  "value": "-1",
+                  "currency": {
+                    "symbol": "sBTC",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc-token"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 7
+                },
+                "type": "token_transfer",
+                "status": "success",
+                "account": {
+                  "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-fees-v1_0_0-0152"
+                },
+                "amount": {
+                  "value": "1",
+                  "currency": {
+                    "symbol": "sBTC",
+                    "decimals": 8,
+                    "metadata": {
+                      "token_type": "ft",
+                      "asset_identifier": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc-token"
+                    }
+                  }
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 8
+                },
+                "type": "contract_log",
+                "status": "success",
+                "metadata": {
+                  "value": "0x0c000000090b616d742d6665652d6c7073010000000000000000000000000000000510616d742d6665652d70726f746f636f6c010000000000000000000000000000000106616d742d696e01000000000000000000000000000007d00f616d742d696e2d61646a757374656401000000000000000000000000000007ca07616d742d6f757401000000000000000000000001c9c753fa0f616d742d6f75742d646573697265640100000000000000000000000000000001026f700d000000047377617004706f6f6c0c000000090c626c6f636b2d68656967687401000000000000000000000000003e77c5116275726e2d626c6f636b2d68656967687401000000000000000000000000000e03b50466656573061681d1b585c012192166f5afa30d1245701e2073a916756e6976322d666565732d76315f305f302d30313532086c702d746f6b656e061681d1b585c012192166f5afa30d1245701e2073a91a756e6976322d6c702d746f6b656e2d76315f305f302d30313532087265736572766530010000000000000000000000000005f02c0872657365727665310100000000000000000000015ec94a238a0673796d626f6c0d0000000a734254432d5465696b6f06746f6b656e300614f6decc7cfff2a413bd7cd4f53c25ad7fd1899acc0a736274632d746f6b656e06746f6b656e310616740df86daf71bb1a2ba1cad7f3800a52cc03a12d137465696b6f2d746f6b656e2d7374786369747904757365720516338d0dfce2121fd2867eacc6ebb5000d70948956",
+                  "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0152",
+                  "topic": "print"
+                }
+              }
+            ],
+            "metadata": {
+              "status": "success",
+              "type": "contract_call",
+              "sponsored": false,
+              "canonical": true,
+              "microblock_canonical": true,
+              "execution_cost": {
+                "read_count": "39",
+                "read_length": "49672",
+                "runtime": "405309",
+                "write_count": "8",
+                "write_length": "399"
+              },
+              "fee_rate": "8939",
+              "nonce": 121,
+              "position": {
+                "index": 0,
+                "microblock_identifier": null
+              },
+              "result": {
+                "hex": "0x070c000000040573776170310c0000000206616d742d696e01000000000000000000000000000007d007616d742d6f757401000000000000000000000001c9c753fa0573776170320c0000000206616d742d696e01000000000000000000000001c9c753fa07616d742d6f757401000000000000000000000001c9c753fa0573776170330c0000000206616d742d696e01000000000000000000000001c9c753fa07616d742d6f757401000000000000000000000001c9c753fa0573776170340c0000000206616d742d696e01000000000000000000000001c9c753fa07616d742d6f757401000000000000000000000001c9c753fa",
+                "repr": "(ok (tuple (swap1 (tuple (amt-in u2000) (amt-out u7680250874))) (swap2 (tuple (amt-in u7680250874) (amt-out u7680250874))) (swap3 (tuple (amt-in u7680250874) (amt-out u7680250874))) (swap4 (tuple (amt-in u7680250874) (amt-out u7680250874)))))"
+              },
+              "sender_address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC",
+              "sponsor_address": null,
+              "vm_error": null,
+              "post_conditions": {
+                "mode": "deny",
+                "post_conditions": [
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_equal_to",
+                    "amount": "2000",
+                    "principal": {
+                      "type_id": "principal_standard",
+                      "address": "SPSRT3FWW891ZMM6FTPCDTXN006Q1549ASPNTNNC"
+                    },
+                    "asset": {
+                      "contract_name": "sbtc-token",
+                      "asset_name": "sbtc-token",
+                      "contract_address": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "0",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "univ2-pool-v1_0_0-0152",
+                      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY"
+                    },
+                    "asset": {
+                      "contract_name": "sbtc-token",
+                      "asset_name": "sbtc-token",
+                      "contract_address": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "7373040840",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "univ2-pool-v1_0_0-0152",
+                      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY"
+                    },
+                    "asset": {
+                      "contract_name": "teiko-token-stxcity",
+                      "asset_name": "Teiko",
+                      "contract_address": "SP1T0VY3DNXRVP6HBM75DFWW0199CR0X15PC1D81B"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "rollback": []
+  }
+}

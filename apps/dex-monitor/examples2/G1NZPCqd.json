@@ -1,0 +1,327 @@
+{
+  "chainhook": {
+    "uuid": "847902d5-b2d1-4f5f-8799-ff6e464c2355",
+    "name": "swap-update"
+  },
+  "event": {
+    "chain": "stacks",
+    "network": "mainnet",
+    "apply": [
+      {
+        "block_identifier": {
+          "index": 4093460,
+          "hash": "0x060a26a9ad957882caaeffa3bfc84fb92f9d5c732c9f622f9734ff68f2e07d26"
+        },
+        "parent_block_identifier": {
+          "index": 4093459,
+          "hash": "0x381a6334ab6ec2625c15e06862a0423e6e48fc57284c62103490be8a808083e9"
+        },
+        "timestamp": 1760103634,
+        "transactions": [
+          {
+            "transaction_identifier": {
+              "hash": "0x87c30bae65afcb8f01f34a520eba0c101a2b9f72128215c68c86800d74907673"
+            },
+            "operations": [
+              {
+                "operation_identifier": {
+                  "index": 0
+                },
+                "type": "fee",
+                "status": "abort_by_post_condition",
+                "account": {
+                  "address": "SP161T05N1EWJ52XDVSE1SY16N80PSVDPZRSG3MEM"
+                },
+                "amount": {
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  },
+                  "value": "-9012"
+                },
+                "metadata": {
+                  "sponsored": false
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 1
+                },
+                "type": "contract_call",
+                "status": "abort_by_post_condition",
+                "account": {
+                  "address": "SP161T05N1EWJ52XDVSE1SY16N80PSVDPZRSG3MEM"
+                },
+                "metadata": {
+                  "args": [
+                    {
+                      "hex": "0x0b000000010c0000000601610d0000000175016206167c5f674a8fd08efa61dd9b11121e046dd2c892730976656c61722d73747801630100000000000000000000000000000015016406167c5f674a8fd08efa61dd9b11121e046dd2c892730477737478016506167c5f674a8fd08efa61dd9b11121e046dd2c892730b76656c61722d746f6b656e016604",
+                      "repr": "(list (tuple (a \"u\") (b 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-stx) (c u21) (d 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (e 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token) (f false)))",
+                      "name": "path",
+                      "type": "(list 4 (tuple (a (string-ascii 1)) (b principal) (c uint) (d principal) (e principal) (f bool)))"
+                    },
+                    {
+                      "hex": "0x010000000000000000000000174876e800",
+                      "repr": "u100000000000",
+                      "name": "amt-in",
+                      "type": "uint"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c892730477737478",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx)",
+                      "name": "token1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c892730b76656c61722d746f6b656e",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token)",
+                      "name": "token2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token5",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                      "name": "share-fee-to",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-4",
+                      "type": "(optional trait_reference)"
+                    }
+                  ],
+                  "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                  "function_name": "apply"
+                }
+              }
+            ],
+            "metadata": {
+              "status": "abort_by_post_condition",
+              "type": "contract_call",
+              "sponsored": false,
+              "canonical": true,
+              "microblock_canonical": true,
+              "execution_cost": {
+                "read_count": "25",
+                "read_length": "81457",
+                "runtime": "406830",
+                "write_count": "1",
+                "write_length": "1"
+              },
+              "fee_rate": "9012",
+              "nonce": 3156,
+              "position": {
+                "index": 1,
+                "microblock_identifier": null
+              },
+              "result": {
+                "hex": "0x080100000000000000000000000000000001",
+                "repr": "(err u1)"
+              },
+              "sender_address": "SP161T05N1EWJ52XDVSE1SY16N80PSVDPZRSG3MEM",
+              "sponsor_address": null,
+              "vm_error": "Post-condition check failure on STX owned by SP161T05N1EWJ52XDVSE1SY16N80PSVDPZRSG3MEM: 100000000000 SentEq 0",
+              "post_conditions": {
+                "mode": "deny",
+                "post_conditions": [
+                  {
+                    "type": "stx",
+                    "condition_code": "sent_equal_to",
+                    "amount": "100000000000",
+                    "principal": {
+                      "type_id": "principal_standard",
+                      "address": "SP161T05N1EWJ52XDVSE1SY16N80PSVDPZRSG3MEM"
+                    }
+                  },
+                  {
+                    "type": "stx",
+                    "condition_code": "sent_less_than_or_equal_to",
+                    "amount": "1000000000",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "univ2-core",
+                      "address": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "9458334901473",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "univ2-core",
+                      "address": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    },
+                    "asset": {
+                      "contract_name": "velar-token",
+                      "asset_name": "velar",
+                      "contract_address": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "rollback": []
+  }
+}

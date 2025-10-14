@@ -3,6 +3,7 @@ import { NotifierClient } from "@repo/notifier";
 import {
 	ADDRESSES,
 	DOMAIN_NAME,
+	PUBLIC_BASE_URL,
 	VERCEL_FRONTEND_URL,
 } from "@repo/shared-constants/constants.ts";
 import { Hono } from "hono";
@@ -35,37 +36,48 @@ export class TokenWatcherServer {
 	private setupMiddleware() {
 		this.app.use(logger());
 
-		const extraOrigins = ["http://localhost:3001", VERCEL_FRONTEND_URL];
-
+		const extraOrigins = [
+			"http://localhost:3001",
+			VERCEL_FRONTEND_URL,
+			PUBLIC_BASE_URL,
+		];
 		this.app.use(
-			"/*",
+			"*",
 			cors({
-				origin: (origin, _c) => {
-					if (!origin) return null;
-
-					// Check extraOrigins first
-					if (extraOrigins.includes(origin)) {
-						return origin;
-					}
-
-					// Check domain-based origins
-					try {
-						const url = new URL(origin);
-						if (
-							url.hostname === DOMAIN_NAME ||
-							url.hostname.endsWith("." + DOMAIN_NAME)
-						) {
-							return origin;
-						}
-					} catch (error) {
-						return null;
-					}
-
-					return null;
-				},
-				credentials: true,
+				origin: extraOrigins,
+				allowMethods: ["GET", "POST", "OPTIONS"],
+				credentials: false,
 			}),
 		);
+
+		// this.app.use(
+		// 	"/*",
+		// 	cors({
+		// 		origin: (origin, _c) => {
+		// 			if (!origin) return null;
+
+		// 			console.log(origin, extraOrigins.includes(origin));
+		// 			if (extraOrigins.includes(origin)) {
+		// 				return origin;
+		// 			}
+
+		// 			try {
+		// 				const url = new URL(origin);
+		// 				if (
+		// 					url.hostname === DOMAIN_NAME ||
+		// 					url.hostname.endsWith("." + DOMAIN_NAME)
+		// 				) {
+		// 					return origin;
+		// 				}
+		// 			} catch (error) {
+		// 				return null;
+		// 			}
+
+		// 			return null;
+		// 		},
+		// 		credentials: true,
+		// 	}),
+		// );
 	}
 
 	private setupRoutes() {

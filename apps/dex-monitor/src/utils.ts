@@ -15,7 +15,6 @@ export function extractSwapData(transactionData: any) {
 		// Get sender address
 		const senderAddress = transaction.metadata.sender;
 
-		// Get the swap event data (SmartContractEvent with swap details)
 		const swapEvent = transaction.metadata.receipt.events.find(
 			(event) =>
 				event.type === "SmartContractEvent" && event.data.value?.op === "swap",

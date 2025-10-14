@@ -1,0 +1,332 @@
+{
+  "chainhook": {
+    "uuid": "847902d5-b2d1-4f5f-8799-ff6e464c2355",
+    "name": "swap-update"
+  },
+  "event": {
+    "chain": "stacks",
+    "network": "mainnet",
+    "apply": [
+      {
+        "block_identifier": {
+          "index": 4094455,
+          "hash": "0xda3009d2690dc3cfad1f11c9c7ae54f07cb4b5a5745d044632558c3993ed0f6c"
+        },
+        "parent_block_identifier": {
+          "index": 4094454,
+          "hash": "0x9a88cf4c4397393577bac71256b775d9779d87730d2ae2c2aa727ad287cf6fca"
+        },
+        "timestamp": 1760107788,
+        "transactions": [
+          {
+            "transaction_identifier": {
+              "hash": "0x503557324b0669c44c0aa74a76c00496f3ac0a66c65df381d12feb3c7f49060a"
+            },
+            "operations": [
+              {
+                "operation_identifier": {
+                  "index": 0
+                },
+                "type": "fee",
+                "status": "abort_by_post_condition",
+                "account": {
+                  "address": "SP3WJV10KGHHBY86J5ZY0VQD9X5S91AZF9F4V7WM6"
+                },
+                "amount": {
+                  "currency": {
+                    "symbol": "STX",
+                    "decimals": 6
+                  },
+                  "value": "-6161"
+                },
+                "metadata": {
+                  "sponsored": false
+                }
+              },
+              {
+                "operation_identifier": {
+                  "index": 1
+                },
+                "type": "contract_call",
+                "status": "abort_by_post_condition",
+                "account": {
+                  "address": "SP3WJV10KGHHBY86J5ZY0VQD9X5S91AZF9F4V7WM6"
+                },
+                "metadata": {
+                  "args": [
+                    {
+                      "hex": "0x0b000000010c0000000601610d00000001730162061681d1b585c012192166f5afa30d1245701e2073a91c63757276652d706f6f6c2d76315f305f305f73747374782d3030303101630100000000000000000000000002719c4101640616099fb88926d82f30b2f40eaf3ee423cb725bdb3b0b73747374782d746f6b656e016506167c5f674a8fd08efa61dd9b11121e046dd2c892730477737478016604",
+                      "repr": "(list (tuple (a \"s\") (b 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.curve-pool-v1_0_0_ststx-0001) (c u41000001) (d 'SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token) (e 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx) (f false)))",
+                      "name": "path",
+                      "type": "(list 4 (tuple (a (string-ascii 1)) (b principal) (c uint) (d principal) (e principal) (f bool)))"
+                    },
+                    {
+                      "hex": "0x0100000000000000000000000000989680",
+                      "repr": "u10000000",
+                      "name": "amt-in",
+                      "type": "uint"
+                    },
+                    {
+                      "hex": "0x0a0616099fb88926d82f30b2f40eaf3ee423cb725bdb3b0b73747374782d746f6b656e",
+                      "repr": "(some 'SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token)",
+                      "name": "token1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c892730477737478",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx)",
+                      "name": "token2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "token5",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a06167c5f674a8fd08efa61dd9b11121e046dd2c8927312756e6976322d73686172652d6665652d746f",
+                      "repr": "(some 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-share-fee-to)",
+                      "name": "share-fee-to",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "univ2v2-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a061681d1b585c012192166f5afa30d1245701e2073a91c63757276652d666565732d76315f305f305f73747374782d30303031",
+                      "repr": "(some 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.curve-fees-v1_0_0_ststx-0001)",
+                      "name": "curve-fees-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "curve-fees-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a061681d1b585c012192166f5afa30d1245701e2073a91c63757276652d706f6f6c2d76315f305f305f73747374782d30303031",
+                      "repr": "(some 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.curve-pool-v1_0_0_ststx-0001)",
+                      "name": "ststx-pool-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-pool-4",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x0a061681d1b585c012192166f5afa30d1245701e2073a91d63757276652d70726f78792d76315f305f305f73747374782d30303031",
+                      "repr": "(some 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.curve-proxy-v1_0_0_ststx-0001)",
+                      "name": "ststx-proxy-1",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-2",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-3",
+                      "type": "(optional trait_reference)"
+                    },
+                    {
+                      "hex": "0x09",
+                      "repr": "none",
+                      "name": "ststx-proxy-4",
+                      "type": "(optional trait_reference)"
+                    }
+                  ],
+                  "contract_identifier": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.path-apply_staging",
+                  "function_name": "apply"
+                }
+              }
+            ],
+            "metadata": {
+              "status": "abort_by_post_condition",
+              "type": "contract_call",
+              "sponsored": false,
+              "canonical": true,
+              "microblock_canonical": true,
+              "execution_cost": {
+                "read_count": "54",
+                "read_length": "61726",
+                "runtime": "2177433",
+                "write_count": "6",
+                "write_length": "361"
+              },
+              "fee_rate": "6161",
+              "nonce": 92,
+              "position": {
+                "index": 0,
+                "microblock_identifier": null
+              },
+              "result": {
+                "hex": "0x070c000000040573776170310c0000000206616d742d696e010000000000000000000000000098968007616d742d6f75740100000000000000000000000000ab197d0573776170320c0000000206616d742d696e0100000000000000000000000000ab197d07616d742d6f75740100000000000000000000000000ab197d0573776170330c0000000206616d742d696e0100000000000000000000000000ab197d07616d742d6f75740100000000000000000000000000ab197d0573776170340c0000000206616d742d696e0100000000000000000000000000ab197d07616d742d6f75740100000000000000000000000000ab197d",
+                "repr": "(ok (tuple (swap1 (tuple (amt-in u10000000) (amt-out u11213181))) (swap2 (tuple (amt-in u11213181) (amt-out u11213181))) (swap3 (tuple (amt-in u11213181) (amt-out u11213181))) (swap4 (tuple (amt-in u11213181) (amt-out u11213181)))))"
+              },
+              "sender_address": "SP3WJV10KGHHBY86J5ZY0VQD9X5S91AZF9F4V7WM6",
+              "sponsor_address": null,
+              "vm_error": "Post-condition check failure on STX owned by SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.curve-pool-v1_0_0_ststx-0001: 13327343 SentGe 11213181",
+              "post_conditions": {
+                "mode": "deny",
+                "post_conditions": [
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_equal_to",
+                    "amount": "10000000",
+                    "principal": {
+                      "type_id": "principal_standard",
+                      "address": "SP3WJV10KGHHBY86J5ZY0VQD9X5S91AZF9F4V7WM6"
+                    },
+                    "asset": {
+                      "contract_name": "ststx-token",
+                      "asset_name": "ststx",
+                      "contract_address": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG"
+                    }
+                  },
+                  {
+                    "type": "fungible",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "0",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "curve-pool-v1_0_0_ststx-0001",
+                      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY"
+                    },
+                    "asset": {
+                      "contract_name": "ststx-token",
+                      "asset_name": "ststx",
+                      "contract_address": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG"
+                    }
+                  },
+                  {
+                    "type": "stx",
+                    "condition_code": "sent_greater_than_or_equal_to",
+                    "amount": "13327343",
+                    "principal": {
+                      "type_id": "principal_contract",
+                      "contract_name": "curve-pool-v1_0_0_ststx-0001",
+                      "address": "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "rollback": []
+  }
+}

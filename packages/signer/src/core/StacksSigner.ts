@@ -22,7 +22,6 @@ import {
 import { SigningError, ValidationError } from "../errors";
 import { TurnkeyProvider } from "../providers/TurnkeyProvider";
 import {
-	type BroadcastResult,
 	NetworkType,
 	type SignedTransaction,
 	type TransactionTypeMap,

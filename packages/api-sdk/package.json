@@ -2,12 +2,14 @@
   "name": "@repo/api-sdk",
   "type": "module",
   "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
     "@types/bun": "latest",
-    "@repo/typescript-config": "workspace:*"
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "start": "bun run src/index.ts",
     "build": "bun build ./src/index.ts --target bun --outdir ./dist",
+    "test": "vitest",
     "dev": "bun run --hot src/index.ts"
   },
   "peerDependencies": {

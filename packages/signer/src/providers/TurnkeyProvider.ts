@@ -3,8 +3,6 @@ import {
 	TurnkeyApiClient,
 	type TurnkeySDKServerConfig,
 } from "@turnkey/sdk-server";
-import { type Session } from "@turnkey/sdk-types";
-// import { turnkeyConfig } from "../config";
 import { TurnkeyError } from "../errors";
 import type { SignerConfig } from "../types";
 import type { SigningResult } from "../types/turnkey";

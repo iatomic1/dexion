@@ -11,8 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/tokens": "*",
-    "@repo/ui": "*",
+    "@repo/shared-constants": "workspace:*",
+    "@repo/tokens": "workspace:*",
+    "@stacks/blockchain-api-client": "^8.13.1",
+    "@stacks/transactions": "^7.2.0",
+    "axios": "^1.12.2",
     "partysocket": "^0.0.10",
     "redis": "^4.6.15"
   },

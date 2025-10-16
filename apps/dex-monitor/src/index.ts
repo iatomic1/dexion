@@ -14,10 +14,10 @@ const dir = path.join(process.cwd(), "examples");
 const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
 
 for (const file of files) {
-	const filePath = path.join(dir, file);
-	const json = JSON.parse(readFileSync(filePath, "utf8"));
-	const data = extractSwapData(json);
-	console.log(file, data);
+  const filePath = path.join(dir, file);
+  const json = JSON.parse(readFileSync(filePath, "utf8"));
+  const data = extractSwapData(json);
+  console.log(file, data);
 }
 
 // app.post("/api/update", async (c) => {
@@ -41,6 +41,6 @@ app.use(logger());
 app.use(prettyJSON());
 
 serve({
-	fetch: app.fetch,
-	port: 3002,
+  fetch: app.fetch,
+  port: 3002,
 });

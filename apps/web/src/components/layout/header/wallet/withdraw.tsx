@@ -5,6 +5,13 @@ import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
 import { SignerError, SigningError } from "@repo/signer";
 import { Button } from "@repo/ui/components/ui/button";
 import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@repo/ui/components/ui/field";
+import {
 	Form,
 	FormControl,
 	FormDescription,
@@ -24,7 +31,7 @@ import { ArrowDown, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { useServerAction } from "zsa-react";
 import { AppDialog } from "~/components/app-dialog";
@@ -223,11 +230,12 @@ export default function Withdraw({
 	return (
 		<AppDialog
 			dialogMain={
-				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(handleSubmit)}
-						className="flex flex-col gap-3 pb-4"
-					>
+				<form
+					onSubmit={form.handleSubmit(handleSubmit)}
+					id="withdraw-form"
+					className="flex flex-col gap-3 pb-4"
+				>
+					<FieldGroup>
 						<div className="grid grid-cols-2 gap-3">
 							<div className="text-sm py-2 opacity-100 flex items-center gap-3 px-4 w-full border rounded-lg">
 								<Image
@@ -247,48 +255,50 @@ export default function Withdraw({
 							</div>
 						</div>
 
-						<FormField
+						<Controller
 							control={form.control}
 							name="amount"
-							render={({ field }) => (
-								<FormItem>
-									<div className="flex flex-col gap-2 border p-2 rounded-md">
-										<div className="flex items-center justify-between">
-											<FormLabel className="text-sm text-muted-foreground">
-												Withdraw Amount
-											</FormLabel>
-											<button
-												type="button"
-												onClick={handleMaxClick}
-												className="text-primary text-sm hover:underline"
-											>
-												Max
-											</button>
-										</div>
-										<div className="flex justify-between items-center pr-2">
-											<FormControl>
-												<Input
-													type="number"
-													// step="0.000001"
-													min="0"
-													// max={stxBalance}
-													className="border-none p-0 text-lg font-medium !bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-													placeholder="0.0"
-													{...field}
-													onChange={handleAmountChange}
-													value={field.value || ""}
-												/>
-											</FormControl>
-											<div className="flex gap-1 items-end">
-												<Image
-													src={"/icons/stx.svg"}
-													height={24}
-													width={24}
-													alt="Stx logo"
-													className="object-cover"
-												/>
-												<span className="font-medium">STX</span>
-											</div>
+							render={({ field, fieldState }) => (
+								<Field
+									className="flex flex-col gap-2 border p-2 rounded-md"
+									data-invalid={fieldState.invalid}
+								>
+									<div className="flex items-center justify-between">
+										<FieldLabel className="text-sm text-muted-foreground">
+											Withdraw Amount
+										</FieldLabel>
+										<button
+											type="button"
+											onClick={handleMaxClick}
+											className="text-primary text-sm hover:underline"
+										>
+											Max
+										</button>
+									</div>
+									<div className="flex justify-between items-center pr-2">
+										<Input
+											type="number"
+											{...field}
+											// step="0.000001"
+											min="0"
+											// max={stxBalance}
+											className="border-none p-0 text-lg font-medium !bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+											placeholder="0.0"
+											onChange={handleAmountChange}
+											aria-invalid={fieldState.invalid}
+											autoComplete="off"
+											id="amount"
+											value={field.value || ""}
+										/>
+										<div className="flex gap-1 items-end">
+											<Image
+												src={"/icons/stx.svg"}
+												height={24}
+												width={24}
+												alt="Stx logo"
+												className="object-cover"
+											/>
+											<span className="font-medium">STX</span>
 										</div>
 									</div>
 									<div className="flex items-center justify-between mt-1 text-xs text-muted-foreground">
@@ -299,8 +309,10 @@ export default function Withdraw({
 										)}
 										<span>gas fee</span>
 									</div>
-									<FormMessage />
-								</FormItem>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
 							)}
 						/>
 
@@ -308,19 +320,19 @@ export default function Withdraw({
 							<ArrowDown className="h-7 w-7 text-muted-foreground" />
 						</div>
 
-						<FormField
+						<Controller
 							control={form.control}
 							name="address"
-							render={({ field }) => (
-								<FormItem>
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
 									<div className="relative">
-										<FormControl>
-											<Input
-												className="peer ps-16 placeholder:text-xs text-secondary-foreground text-xs"
-												placeholder="Address of destination wallet or bns"
-												{...field}
-											/>
-										</FormControl>
+										<Input
+											{...field}
+											className="peer ps-16 placeholder:text-xs text-secondary-foreground text-xs"
+											placeholder="Address of destination wallet or bns"
+											aria-invalid={fieldState.invalid}
+											id="address"
+										/>
 										<span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-xs peer-disabled:opacity-50">
 											Address:
 										</span>
@@ -357,15 +369,18 @@ export default function Withdraw({
 										</div>
 									)}
 
-									<FormMessage />
-									<FormDescription className="text-xs">
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+
+									<FieldDescription className="text-xs">
 										Enter a Stacks address (SP...) or BNS name (.btc, .stx)
-									</FormDescription>
-								</FormItem>
+									</FieldDescription>
+								</Field>
 							)}
 						/>
-					</form>
-				</Form>
+					</FieldGroup>
+				</form>
 			}
 			dialogTitle={"Withdraw"}
 			contentClassName="max-sm:min-w-[451px] max-sm:top-3 max-sm:translate-y-0 "

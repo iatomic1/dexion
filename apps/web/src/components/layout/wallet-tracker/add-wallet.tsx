@@ -7,6 +7,7 @@ import {
 	EmojiPickerFooter,
 	EmojiPickerSearch,
 } from "@repo/ui/components/ui/emoji-picker";
+import { Field, FieldError, FieldGroup } from "@repo/ui/components/ui/field";
 import {
 	Form,
 	FormControl,
@@ -23,7 +24,7 @@ import {
 import { toast } from "@repo/ui/components/ui/sonner";
 import { validateStacksAddress } from "@stacks/transactions";
 import { type ReactNode, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { useServerAction } from "zsa-react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
@@ -110,69 +111,80 @@ export default function AddWalletModal({ children }: { children: ReactNode }) {
 
 	const dialogBody = (
 		<>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-0">
-					<div className="grid gap-4 mb-28">
-						<FormField
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-0"
+				id="add-wallet"
+			>
+				<FieldGroup className="grid gap-4 mb-28">
+					<Controller
+						control={form.control}
+						name="address"
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<Input
+									{...field}
+									id="address"
+									aria-invalid={fieldState.invalid}
+									placeholder="Wallet Address"
+									className="placeholder:text-xs"
+								/>
+								{fieldState.invalid && (
+									<FieldError className="text-xs" errors={[fieldState.error]} />
+								)}
+							</Field>
+						)}
+					/>
+					<div className="flex gap-3">
+						<Popover
+							onOpenChange={setIsEmojiPickerOpen}
+							open={isEmojiPickerOpen}
+						>
+							<PopoverTrigger asChild>
+								<Button size="icon" variant="secondary">
+									{selectedEmoji}
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="w-80 p-0">
+								<EmojiPicker
+									className="h-[342px]"
+									onEmojiSelect={({ emoji }) => {
+										setIsEmojiPickerOpen(false);
+										setSelectedEmoji(emoji);
+									}}
+								>
+									<EmojiPickerSearch />
+									<EmojiPickerContent />
+									<EmojiPickerFooter />
+								</EmojiPicker>
+							</PopoverContent>
+						</Popover>
+						<Controller
 							control={form.control}
-							name="address"
-							render={({ field }) => (
-								<FormItem>
+							name="name"
+							render={({ field, fieldState }) => (
+								<Field className="flex-1" data-invalid={fieldState.invalid}>
 									<FormControl>
 										<Input
-											placeholder="Wallet Address"
-											className="placeholder:text-xs"
 											{...field}
+											aria-invalid={fieldState.invalid}
+											id="nickname"
+											placeholder="Wallet Name"
+											className="placeholder:text-xs"
 										/>
 									</FormControl>
-									<FormMessage className="text-xs" />
-								</FormItem>
+									{fieldState.invalid && (
+										<FieldError
+											className="text-xs"
+											errors={[fieldState.error]}
+										/>
+									)}
+								</Field>
 							)}
 						/>
-						<div className="flex gap-3">
-							<Popover
-								onOpenChange={setIsEmojiPickerOpen}
-								open={isEmojiPickerOpen}
-							>
-								<PopoverTrigger asChild>
-									<Button size="icon" variant="secondary">
-										{selectedEmoji}
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-80 p-0">
-									<EmojiPicker
-										className="h-[342px]"
-										onEmojiSelect={({ emoji }) => {
-											setIsEmojiPickerOpen(false);
-											setSelectedEmoji(emoji);
-										}}
-									>
-										<EmojiPickerSearch />
-										<EmojiPickerContent />
-										<EmojiPickerFooter />
-									</EmojiPicker>
-								</PopoverContent>
-							</Popover>
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem className="flex-1">
-										<FormControl>
-											<Input
-												placeholder="Wallet Name"
-												className="placeholder:text-xs"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage className="text-xs" />
-									</FormItem>
-								)}
-							/>
-						</div>
 					</div>
-				</form>
-			</Form>
+				</FieldGroup>
+			</form>
 		</>
 	);
 

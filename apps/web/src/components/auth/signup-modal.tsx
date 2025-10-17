@@ -1,6 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Dialog,
@@ -9,30 +8,19 @@ import {
 	DialogTitle,
 } from "@repo/ui/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@repo/ui/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@repo/ui/components/ui/field";
 import { Input } from "@repo/ui/components/ui/input";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
-import {
-	connect,
-	disconnect,
-	getLocalStorage,
-	isConnected,
-	request,
-} from "@stacks/connect";
-import { Cl } from "@stacks/transactions";
 import Link from "next/link";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
-import { auth } from "~/lib/auth/auth";
 import { authClient } from "~/lib/auth-client";
 import ContinueWithGoogle from "./continue-with-google";
 import ContinueWithWallet from "./continue-with-wallet";
@@ -71,17 +59,13 @@ export function SignUpModal({
 					name: "",
 				},
 				{
-					onRequest: (_ctx) => {
-						setIsLoading(true);
-					},
-					onSuccess: (_ctx) => {
+					onRequest: () => setIsLoading(true),
+					onSuccess: () => {
 						toast.success("OTP sent to your email");
 						onOpenChange(false);
 						onOtpTrigger(values.email);
 					},
-					onResponse() {
-						setIsLoading(false);
-					},
+					onResponse: () => setIsLoading(false),
 					onError: async (ctx) => {
 						const errCode = ctx.error.code;
 						if (errCode === "EMAIL_NOT_VERIFIED") {
@@ -90,19 +74,11 @@ export function SignUpModal({
 									email: values.email,
 									type: "email-verification",
 								});
-
-							if (error) {
-								console.error(error);
-							}
-							console.log(data);
-							if (data?.success) {
-								toast.success("OTP sent to email");
-							}
-
+							if (error) console.error(error);
+							if (data?.success) toast.success("OTP sent to email");
 							onOpenChange(false);
 							onOtpTrigger(values.email);
 						}
-						console.log(ctx);
 						toast.error(ctx.error.message);
 					},
 				},
@@ -125,59 +101,61 @@ export function SignUpModal({
 						</DialogTitle>
 					</DialogHeader>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-							<FormField
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+						<FieldGroup>
+							<Controller
 								control={form.control}
 								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-xs text-muted-foreground">
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="text-xs text-muted-foreground">
 											Email
-										</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Enter email"
-												className="rounded-full"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+										</FieldLabel>
+										<Input
+											placeholder="Enter email"
+											className="rounded-full"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 
-							<FormField
+							<Controller
 								control={form.control}
 								name="password"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-xs text-muted-foreground">
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="text-xs text-muted-foreground">
 											Password
-										</FormLabel>
-										<FormControl>
-											<InputPassword
-												type="password"
-												className="rounded-full"
-												showLabel={false}
-												placeholder="Enter password (used after OTP)"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+										</FieldLabel>
+										<InputPassword
+											type="password"
+											className="rounded-full"
+											showLabel={false}
+											placeholder="Enter password (used after OTP)"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
+						</FieldGroup>
 
-							<Button
-								type="submit"
-								className="w-full text-sm font-medium py-5"
-								disabled={isLoading}
-							>
-								{isLoading ? "Sending OTP..." : "Send OTP"}
-							</Button>
-						</form>
-					</Form>
+						<Button
+							type="submit"
+							className="w-full text-sm font-medium py-5"
+							disabled={isLoading}
+						>
+							{isLoading ? "Sending OTP..." : "Send OTP"}
+						</Button>
+					</form>
 
 					<div className="mt-3 text-center text-sm text-muted-foreground">
 						Or

@@ -19,6 +19,321 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/alerts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all alerts for the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Get user's alerts",
+                "responses": {
+                    "200": {
+                        "description": "User alerts retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.Alert"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add an alert for a specific asset and metric",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Create a new alert",
+                "parameters": [
+                    {
+                        "description": "Alert data",
+                        "name": "AlertRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.CreateAlertParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Alert created successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Alert"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Alert already exists",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve a single alert by its UUID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Get an alert by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert retrieved",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Alert"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing alert for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Update an alert",
+                "parameters": [
+                    {
+                        "description": "Updated alert data",
+                        "name": "AlertRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.UpdateAlertParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.Alert"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific alert by ID",
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Delete an alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets": {
             "get": {
                 "security": [
@@ -792,6 +1107,91 @@ const docTemplate = `{
                 }
             }
         },
+        "backend_internal_db_repository.Alert": {
+            "type": "object",
+            "required": [
+                "ca",
+                "metric",
+                "operator",
+                "repeatable",
+                "status",
+                "value"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "cooldownSeconds": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "repeatable": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/pgtype.Numeric"
+                }
+            }
+        },
+        "backend_internal_db_repository.CreateAlertParams": {
+            "type": "object",
+            "required": [
+                "ca",
+                "metric",
+                "operator",
+                "repeatable",
+                "status",
+                "value"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "cooldownSeconds": {
+                    "type": "integer"
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "repeatable": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/pgtype.Numeric"
+                }
+            }
+        },
         "backend_internal_db_repository.CreateTelegramUserParams": {
             "type": "object",
             "properties": {
@@ -893,6 +1293,47 @@ const docTemplate = `{
                 },
                 "walletAddress": {
                     "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.UpdateAlertParams": {
+            "type": "object",
+            "required": [
+                "ca",
+                "metric",
+                "operator",
+                "repeatable",
+                "status",
+                "value"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "cooldownSeconds": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "repeatable": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "value": {
+                    "$ref": "#/definitions/pgtype.Numeric"
                 }
             }
         },
@@ -1027,8 +1468,12 @@ const docTemplate = `{
                 }
             }
         },
+        "big.Int": {
+            "type": "object"
+        },
         "pgtype.InfinityModifier": {
             "type": "integer",
+            "format": "int32",
             "enum": [
                 1,
                 0,
@@ -1039,6 +1484,27 @@ const docTemplate = `{
                 "Finite",
                 "NegativeInfinity"
             ]
+        },
+        "pgtype.Numeric": {
+            "type": "object",
+            "properties": {
+                "exp": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "infinityModifier": {
+                    "$ref": "#/definitions/pgtype.InfinityModifier"
+                },
+                "int": {
+                    "$ref": "#/definitions/big.Int"
+                },
+                "naN": {
+                    "type": "boolean"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
         },
         "pgtype.Timestamptz": {
             "type": "object",

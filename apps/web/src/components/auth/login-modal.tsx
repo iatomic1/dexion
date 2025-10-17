@@ -1,6 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SiGoogle } from "@icons-pack/react-simple-icons";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Dialog,
@@ -9,20 +8,18 @@ import {
 	DialogTitle,
 } from "@repo/ui/components/ui/dialog";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@repo/ui/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@repo/ui/components/ui/field";
 import { Input } from "@repo/ui/components/ui/input";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
@@ -66,16 +63,11 @@ export function LoginModal({
 					password: values.password,
 				},
 				{
-					onRequest: (_ctx) => {
-						setIsLoading(true);
-					},
+					onRequest: () => setIsLoading(true),
 					onSuccess: async (ctx) => {
 						if (ctx.data.twoFactorRedirect) {
 							const { data, error } = await authClient.twoFactor.sendOtp();
-
-							if (error) {
-								console.error(error);
-							}
+							if (error) console.error(error);
 							if (data) {
 								toast.success("OTP sent to email");
 								onOpenChange(false);
@@ -89,9 +81,7 @@ export function LoginModal({
 							toast.success("Authenticated");
 						}
 					},
-					onResponse(_context) {
-						setIsLoading(false);
-					},
+					onResponse: () => setIsLoading(false),
 					onError: async (ctx) => {
 						const errCode = ctx.error.code;
 						if (errCode === "EMAIL_NOT_VERIFIED") {
@@ -104,13 +94,8 @@ export function LoginModal({
 									type: "email-verification",
 								});
 
-							if (error) {
-								console.error(error);
-							}
-							console.log(data);
-							if (data?.success) {
-								toast.success("OTP sent to email");
-							}
+							if (error) console.error(error);
+							if (data?.success) toast.success("OTP sent to email");
 
 							onOpenChange(false);
 							onOtpTrigger(values.email, "email-verification");
@@ -120,7 +105,9 @@ export function LoginModal({
 					},
 				},
 			);
-		} catch (_error) {}
+		} catch {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -133,37 +120,38 @@ export function LoginModal({
 						</DialogTitle>
 					</DialogHeader>
 
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<FormField
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+						<FieldGroup>
+							<Controller
 								control={form.control}
 								name="email"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-xs text-muted-foreground">
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="text-xs text-muted-foreground">
 											Email
-										</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Enter email"
-												className="rounded-full"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+										</FieldLabel>
+										<Input
+											placeholder="Enter email"
+											className="rounded-full"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 
-							<FormField
+							<Controller
 								control={form.control}
 								name="password"
-								render={({ field }) => (
-									<FormItem>
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
 										<div className="flex items-center justify-between">
-											<FormLabel className="text-xs text-muted-foreground">
+											<FieldLabel className="text-xs text-muted-foreground">
 												Password
-											</FormLabel>
+											</FieldLabel>
 											<Link
 												href="/reset"
 												className="text-xs text-primary hover:underline"
@@ -171,29 +159,30 @@ export function LoginModal({
 												Forgot password?
 											</Link>
 										</div>
-										<FormControl>
-											<InputPassword
-												showLabel={false}
-												type="password"
-												placeholder="Enter password"
-												className="rounded-full"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+										<InputPassword
+											showLabel={false}
+											type="password"
+											placeholder="Enter password"
+											className="rounded-full"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
+						</FieldGroup>
 
-							<Button
-								type="submit"
-								className="w-full text-sm font-medium py-5"
-								disabled={isLoading}
-							>
-								{isLoading ? "Logging in..." : "Login"}
-							</Button>
-						</form>
-					</Form>
+						<Button
+							type="submit"
+							className="w-full text-sm font-medium py-5"
+							disabled={isLoading}
+						>
+							{isLoading ? "Logging in..." : "Login"}
+						</Button>
+					</form>
 
 					<div className="mt-4 text-center text-sm text-muted-foreground">
 						Or
@@ -201,7 +190,6 @@ export function LoginModal({
 
 					<div className="mt-4 space-y-4">
 						<ContinueWithGoogle />
-
 						<ContinueWithWallet />
 					</div>
 
@@ -224,4 +212,3 @@ export function LoginModal({
 		</Dialog>
 	);
 }
-//https://pastecodeapp.vercel.app/pastes/01974758-7537-7255-b354-0845b63c129f

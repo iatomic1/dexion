@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@repo/tokens": "workspace:*",
+    "@stacks/common": "^7.0.2",
     "@stacks/transactions": "^7.1.0",
     "@turnkey/sdk-server": "^4.2.2",
     "uuid": "^13.0.0"

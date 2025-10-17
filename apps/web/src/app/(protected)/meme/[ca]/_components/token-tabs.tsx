@@ -15,6 +15,7 @@ import {
 import { Funnel, User2 } from "lucide-react";
 import { useState } from "react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
+import FilterByAddressModal from "./filter-by-address-modal";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import DevTokensTable from "./tables/dev-tokens-table";
 import HoldersTable from "./tables/holders-table";
@@ -112,32 +113,35 @@ export default function TokenTabs({
 							</TabsTrigger>
 						))}
 					</TabsList>
-					<ToggleGroup
-						type="single"
-						className="flex items-center"
-						value={filterBy}
-						onValueChange={(value) => handleToggleFilter(value)}
-					>
-						<ToggleGroupItem
-							// variant={"ghost"}
-							size={"sm"}
-							aria-label="Toggle dev"
-							value={tokenData?.contract_id?.split(".")[0] as string}
-							className="hover:text-indigo-500 text-xs font-medium"
+					<div className="flex items-center gap-3">
+						<FilterByAddressModal />
+						<ToggleGroup
+							type="single"
+							className="flex items-center"
+							value={filterBy}
+							onValueChange={(value) => handleToggleFilter(value)}
 						>
-							<Funnel />
-							DEV
-						</ToggleGroupItem>
-						<ToggleGroupItem
-							size={"sm"}
-							className="hover:text-indigo-500 text-xs font-medium"
-							disabled={!userAddress}
-							value={userAddress ?? ""}
-						>
-							<User2 />
-							You
-						</ToggleGroupItem>
-					</ToggleGroup>
+							<ToggleGroupItem
+								// variant={"ghost"}
+								size={"sm"}
+								aria-label="Toggle dev"
+								value={tokenData?.contract_id?.split(".")[0] as string}
+								className="hover:text-indigo-500 text-xs font-medium"
+							>
+								<Funnel />
+								DEV
+							</ToggleGroupItem>
+							<ToggleGroupItem
+								size={"sm"}
+								className="hover:text-indigo-500 text-xs font-medium"
+								disabled={!userAddress}
+								value={userAddress ?? ""}
+							>
+								<User2 />
+								You
+							</ToggleGroupItem>
+						</ToggleGroup>
+					</div>
 				</div>
 				{tabs.map((tab) => {
 					return (

@@ -52,7 +52,7 @@ pre-push:
     build:
       glob: "apps/web/**/*"
       run: |
-        cd apps/web && bun run build
+        cd apps/web && bun run build:local
         if [ $? -ne 0 ]; then
           echo '🔨❌ Push blocked! Fix build errors before pushing. 🔨❌'
           exit 1

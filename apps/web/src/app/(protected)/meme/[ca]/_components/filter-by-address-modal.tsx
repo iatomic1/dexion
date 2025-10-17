@@ -7,16 +7,14 @@ import {
 	CredenzaTrigger,
 } from "@repo/ui/components/ui/credenza";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@repo/ui/components/ui/form";
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@repo/ui/components/ui/field";
 import { Input } from "@repo/ui/components/ui/input";
 import { RotateCcw, SlidersHorizontal } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z
@@ -68,104 +66,111 @@ export default function FilterByAddressModal() {
 				<SlidersHorizontal className="h-4 w-4" />
 			</CredenzaTrigger>
 			<CredenzaContent className="sm:max-w-2xl bg-zinc-900 border-zinc-800 text-white p-0 overflow-hidden">
-				{/* <CredenzaHeader className="p-4 border-b border-zinc-800 flex flex-row items-center justify-between"> */}
-				{/*   <CredenzaTitle className="text-white"> */}
-				{/*     Account and Security */}
-				{/*   </CredenzaTitle> */}
-				{/* </CredenzaHeader> */}
-
-				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="space-y-8 p-4 py-8"
-					>
-						<FormField
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="space-y-8 p-4 py-8"
+					id="filter-by-address"
+				>
+					<FieldGroup>
+						<Controller
 							control={form.control}
 							name="address"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel className="mb-2">Maker Address</FormLabel>
-									<FormControl>
-										<Input placeholder="Enter maker address" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
+							render={({ field, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<FieldLabel className="mb-2">Maker Address</FieldLabel>
+									<Input
+										placeholder="Enter maker address"
+										{...field}
+										aria-invalid={fieldState.invalid}
+										id="address"
+									/>
+									{fieldState.invalid && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
 							)}
 						/>
 
 						<div className="grid grid-cols-2 gap-4">
-							<FormField
+							<Controller
 								control={form.control}
 								name="min"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="mb-2">Min. USD</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												placeholder="Enter min USD"
-												{...field}
-												value={field.value === undefined ? "" : field.value}
-												onChange={(e) => {
-													const value =
-														e.target.value === ""
-															? undefined
-															: Number.parseFloat(e.target.value);
-													field.onChange(value);
-												}}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="mb-2">Min. USD</FieldLabel>
+										<Input
+											type="number"
+											placeholder="Enter min USD"
+											{...field}
+											value={field.value === undefined ? "" : field.value}
+											onChange={(e) => {
+												const value =
+													e.target.value === ""
+														? undefined
+														: Number.parseFloat(e.target.value);
+												field.onChange(value);
+											}}
+											aria-invalid={fieldState.invalid}
+											id="min"
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 
-							<FormField
+							<Controller
 								control={form.control}
 								name="max"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="mb-2">Max. USD</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												placeholder="Enter max USD"
-												{...field}
-												value={field.value === undefined ? "" : field.value}
-												onChange={(e) => {
-													const value =
-														e.target.value === ""
-															? undefined
-															: Number.parseFloat(e.target.value);
-													field.onChange(value);
-												}}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="mb-2">Max. USD</FieldLabel>
+										<Input
+											type="number"
+											placeholder="Enter max USD"
+											{...field}
+											value={field.value === undefined ? "" : field.value}
+											onChange={(e) => {
+												const value =
+													e.target.value === ""
+														? undefined
+														: Number.parseFloat(e.target.value);
+												field.onChange(value);
+											}}
+											aria-invalid={fieldState.invalid}
+											id="max"
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
 								)}
 							/>
 						</div>
+					</FieldGroup>
 
-						<CredenzaFooter className="grid grid-cols-2 mt-0 gap-4 items-center w-full">
-							<Button
-								variant="ghost"
-								size="lg"
-								className="w-full rounded-full items-center"
-							>
-								<RotateCcw />
-								Reset
-							</Button>
-							<Button
-								variant="default"
-								size="lg"
-								className="w-full rounded-full"
-							>
-								Apply
-							</Button>
-						</CredenzaFooter>
-					</form>
-				</Form>
+					<CredenzaFooter className="grid grid-cols-2 mt-0 gap-4 items-center w-full">
+						<Button
+							variant="ghost"
+							size="lg"
+							className="w-full rounded-full items-center"
+							type="button"
+							onClick={() => form.reset()}
+						>
+							<RotateCcw />
+							Reset
+						</Button>
+						<Button
+							variant="default"
+							size="lg"
+							className="w-full rounded-full"
+							type="submit"
+						>
+							Apply
+						</Button>
+					</CredenzaFooter>
+				</form>
 			</CredenzaContent>
 		</Credenza>
 	);

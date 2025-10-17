@@ -164,15 +164,13 @@ export default function AddWalletModal({ children }: { children: ReactNode }) {
 							name="name"
 							render={({ field, fieldState }) => (
 								<Field className="flex-1" data-invalid={fieldState.invalid}>
-									<FormControl>
-										<Input
-											{...field}
-											aria-invalid={fieldState.invalid}
-											id="nickname"
-											placeholder="Wallet Name"
-											className="placeholder:text-xs"
-										/>
-									</FormControl>
+									<Input
+										{...field}
+										aria-invalid={fieldState.invalid}
+										id="nickname"
+										placeholder="Wallet Name"
+										className="placeholder:text-xs"
+									/>
 									{fieldState.invalid && (
 										<FieldError
 											className="text-xs"

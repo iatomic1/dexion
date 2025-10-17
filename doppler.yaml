@@ -1,0 +1,7 @@
+setup:
+  - project: dexion
+    config: prd
+    path: apps/web/
+  - project: dexion
+    config: prd_backend
+    path: apps/backend/

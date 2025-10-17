@@ -4,9 +4,9 @@
 	"private": true,
 	"scripts": {
 		"dev": "doppler run -p dexion -c dev -- bun run dev:local",
-		"build": "doppler run -p dexion -c dev -- bun run build:local",
+		"build:local": "doppler run -p dexion -c dev -- bun run next build",
 		"dev:local": "next dev --turbopack --port 3001",
-		"build:local": "next build",
+		"build": "next build",
 		"start": "next start",
 		"db-gen": "bunx drizzle-kit generate",
 		"db-mig": "bunx drizzle-kit migrate",

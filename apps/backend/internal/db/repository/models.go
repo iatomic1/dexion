@@ -12,24 +12,37 @@ import (
 )
 
 type Alert struct {
-	ID              uuid.UUID      `json:"id"`
-	UserID          string         `json:"userId"`
-	Metric          string         `binding:"required" json:"metric"`
-	Operator        string         `binding:"required" json:"operator"`
-	Value           pgtype.Numeric `binding:"required" json:"value"`
-	Ca              string         `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	Repeatable      bool           `binding:"required" json:"repeatable"`
-	CooldownSeconds int32          `json:"cooldownSeconds"`
-	Status          string         `binding:"required" json:"status"`
-	UpdatedAt       time.Time      `json:"updatedAt"`
-	CreatedAt       time.Time      `json:"createdAt"`
+	ID         uuid.UUID `json:"id"`
+	UserID     string    `json:"userId"`
+	Metric     string    `binding:"required" json:"metric"`
+	Operator   string    `binding:"required" json:"operator"`
+	Value      string    `binding:"required" json:"value"`
+	Ca         string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
+	Repeatable bool      `binding:"required" json:"repeatable"`
+	Status     string    `binding:"required" json:"status"`
+	UpdatedAt  time.Time `json:"updatedAt"`
+	CreatedAt  time.Time `json:"createdAt"`
+}
+
+type AlertChannel struct {
+	ID        uuid.UUID `json:"id"`
+	AlertID   uuid.UUID `json:"alertId"`
+	ChannelID uuid.UUID `json:"channelId"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+type Channel struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 type TelegramUser struct {
 	ChatID                 string             `json:"chatId"`
 	Username               *string            `json:"username"`
-	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
 	NotificationPreference string             `json:"notificationPreference"`
+	CreatedAt              pgtype.Timestamptz `json:"createdAt"`
 }
 
 type TelegramUserWallet struct {
@@ -77,4 +90,14 @@ type Watchlist struct {
 	UserID    *string   `json:"userId"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
+}
+
+type WebhookConfig struct {
+	ID          uuid.UUID `json:"id"`
+	UserID      string    `json:"userId"`
+	WebhookUrl  string    `json:"webhookUrl"`
+	BearerToken string    `json:"bearerToken"`
+	IsActive    *bool     `json:"isActive"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	CreatedAt   time.Time `json:"createdAt"`
 }

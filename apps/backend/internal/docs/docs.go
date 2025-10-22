@@ -26,17 +26,20 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Retrieve all alerts for the authenticated user",
+                "description": "Fetch all alerts belonging to the currently authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Alerts"
                 ],
-                "summary": "Get user's alerts",
+                "summary": "Retrieve all alerts for the authenticated user",
                 "responses": {
                     "200": {
-                        "description": "User alerts retrieved",
+                        "description": "User alerts retrieved successfully",
                         "schema": {
                             "allOf": [
                                 {
@@ -70,7 +73,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Add an alert for a specific asset and metric",
+                "description": "Create a new alert with optional notification channels",
                 "consumes": [
                     "application/json"
                 ],
@@ -83,12 +86,12 @@ const docTemplate = `{
                 "summary": "Create a new alert",
                 "parameters": [
                     {
-                        "description": "Alert data",
+                        "description": "Alert data with channels",
                         "name": "AlertRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/backend_internal_db_repository.CreateAlertParams"
+                            "$ref": "#/definitions/api_http_handlers_alert.CreateAlertWithChannelsParams"
                         }
                     }
                 ],
@@ -138,6 +141,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/alerts/channels": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetch all available channels in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Retrieve all channels",
+                "responses": {
+                    "200": {
+                        "description": "Channels retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.Channel"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/alerts/{id}": {
             "get": {
                 "security": [
@@ -145,14 +197,17 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Retrieve a single alert by its UUID",
+                "description": "Fetch a single alert by its UUID for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Alerts"
                 ],
-                "summary": "Get an alert by ID",
+                "summary": "Retrieve a specific alert by ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -164,7 +219,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Alert retrieved",
+                        "description": "Alert retrieved successfully",
                         "schema": {
                             "allOf": [
                                 {
@@ -182,89 +237,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid UUID",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Alert not found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Update an existing alert for the authenticated user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Alerts"
-                ],
-                "summary": "Update an alert",
-                "parameters": [
-                    {
-                        "description": "Updated alert data",
-                        "name": "AlertRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/backend_internal_db_repository.UpdateAlertParams"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Alert updated successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/backend_api_http.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/backend_internal_db_repository.Alert"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request data",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Alert not found",
+                        "description": "Invalid UUID format",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -286,11 +259,17 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Delete a specific alert by ID",
+                "description": "Remove an alert belonging to the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Alerts"
                 ],
-                "summary": "Delete an alert",
+                "summary": "Delete an existing alert",
                 "parameters": [
                     {
                         "type": "string",
@@ -304,11 +283,101 @@ const docTemplate = `{
                     "200": {
                         "description": "Alert deleted successfully",
                         "schema": {
-                            "$ref": "#/definitions/backend_api_http.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Invalid UUID",
+                        "description": "Invalid UUID format",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the details of an alert belonging to the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Update an existing alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Alert update data",
+                        "name": "Alert",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.UpdateAlertWithChannelsParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.UpdateAlertWithChannelsRow"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID format or request data",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -1081,6 +1150,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "api_http_handlers_alert.CreateAlertWithChannelsParams": {
+            "type": "object",
+            "required": [
+                "ca",
+                "metric",
+                "operator",
+                "repeatable",
+                "value"
+            ],
+            "properties": {
+                "ca": {
+                    "type": "string",
+                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                },
+                "channels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "repeatable": {
+                    "type": "boolean"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
         "backend_api_http.InternalServerErrorResponse": {
             "type": "object",
             "properties": {
@@ -1122,9 +1228,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
                 },
-                "cooldownSeconds": {
-                    "type": "integer"
-                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -1150,45 +1253,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/pgtype.Numeric"
+                    "type": "string"
                 }
             }
         },
-        "backend_internal_db_repository.CreateAlertParams": {
+        "backend_internal_db_repository.Channel": {
             "type": "object",
-            "required": [
-                "ca",
-                "metric",
-                "operator",
-                "repeatable",
-                "status",
-                "value"
-            ],
             "properties": {
-                "ca": {
-                    "type": "string",
-                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
-                },
-                "cooldownSeconds": {
-                    "type": "integer"
-                },
-                "metric": {
+                "createdAt": {
                     "type": "string"
                 },
-                "operator": {
+                "description": {
                     "type": "string"
                 },
-                "repeatable": {
-                    "type": "boolean"
-                },
-                "status": {
+                "id": {
                     "type": "string"
                 },
-                "userId": {
+                "name": {
                     "type": "string"
-                },
-                "value": {
-                    "$ref": "#/definitions/pgtype.Numeric"
                 }
             }
         },
@@ -1296,23 +1378,49 @@ const docTemplate = `{
                 }
             }
         },
-        "backend_internal_db_repository.UpdateAlertParams": {
+        "backend_internal_db_repository.UpdateAlertWithChannelsParams": {
             "type": "object",
-            "required": [
-                "ca",
-                "metric",
-                "operator",
-                "repeatable",
-                "status",
-                "value"
-            ],
+            "properties": {
+                "alertId": {
+                    "type": "string"
+                },
+                "channelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "repeatable": {
+                    "type": "boolean"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.UpdateAlertWithChannelsRow": {
+            "type": "object",
             "properties": {
                 "ca": {
-                    "type": "string",
-                    "example": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token"
+                    "type": "string"
                 },
-                "cooldownSeconds": {
-                    "type": "integer"
+                "channels": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -1329,11 +1437,14 @@ const docTemplate = `{
                 "status": {
                     "type": "string"
                 },
+                "updatedAt": {
+                    "type": "string"
+                },
                 "userId": {
                     "type": "string"
                 },
                 "value": {
-                    "$ref": "#/definitions/pgtype.Numeric"
+                    "type": "string"
                 }
             }
         },
@@ -1468,9 +1579,6 @@ const docTemplate = `{
                 }
             }
         },
-        "big.Int": {
-            "type": "object"
-        },
         "pgtype.InfinityModifier": {
             "type": "integer",
             "format": "int32",
@@ -1484,27 +1592,6 @@ const docTemplate = `{
                 "Finite",
                 "NegativeInfinity"
             ]
-        },
-        "pgtype.Numeric": {
-            "type": "object",
-            "properties": {
-                "exp": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "infinityModifier": {
-                    "$ref": "#/definitions/pgtype.InfinityModifier"
-                },
-                "int": {
-                    "$ref": "#/definitions/big.Int"
-                },
-                "naN": {
-                    "type": "boolean"
-                },
-                "valid": {
-                    "type": "boolean"
-                }
-            }
         },
         "pgtype.Timestamptz": {
             "type": "object",

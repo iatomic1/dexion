@@ -5,5 +5,11 @@ const siteConfig = {
 		telegram: "https://t.me/+JcgYNb9t4w45ZTA8",
 		docs: "https://docs.dexion.pro/",
 	},
+	features: {
+		walletTracking: false,
+		priceAlerts: true,
+		trading: false,
+		signing: false,
+	},
 };
 export default siteConfig;

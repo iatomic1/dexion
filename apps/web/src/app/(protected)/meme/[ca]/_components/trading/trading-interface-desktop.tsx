@@ -18,6 +18,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
+import siteConfig from "~/config/site";
 import { usePresetsSettings } from "~/contexts/PresetsContext";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import openInNewPage from "~/lib/helpers/openInNewPage";
@@ -399,7 +400,8 @@ const Market = ({
 					size={"lg"}
 					className="capitalize rounded-full w-full"
 					onClick={handleTrade}
-					disabled={isPending || !selectedAmount || selectedAmount <= 0}
+					disabled={!siteConfig.features.trading}
+					// disabled={isPending || !selectedAmount || selectedAmount <= 0}
 				>
 					{isPending ? "Processing..." : currentTab}
 				</Button>

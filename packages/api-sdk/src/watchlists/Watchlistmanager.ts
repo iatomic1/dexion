@@ -1,61 +1,70 @@
-import type { ApiResponse } from "@/types";
-import makeFetch, { type BASE_URL } from "@/utils/fetch";
+import {
+	DexionError,
+	type ApiResponse,
+	type FetchOptions,
+} from "@repo/api-sdk/types";
+import makeFetch, { type BASE_URL } from "@repo/api-sdk/utils/fetch";
 import { addWatchlistSchema, deleteWatchlistSchema } from "./schema";
 import type {
 	AddWatchlistInput,
 	DeleteWatchlistInput,
 	UserWatchlist,
 } from "./types";
+import type { DexionClient } from "../DexionApiSDK";
 
 export class WatchlistManager {
-	private authToken: string;
-	private userId: string;
-	private isNextjs: boolean;
+	constructor(private client: DexionClient) {}
 
-	constructor(userId: string, authToken: string, isNextjs: boolean) {
-		this.userId = userId;
-		this.authToken = authToken;
-		this.isNextjs = isNextjs;
-	}
-
-	async getUserWatchlist(): Promise<ApiResponse<UserWatchlist[]>> {
-		return await makeFetch<ApiResponse<UserWatchlist[]>>(
+	async getUserWatchlist(
+		options?: FetchOptions,
+	): Promise<ApiResponse<UserWatchlist[]>> {
+		return this.client.fetch<ApiResponse<UserWatchlist[]>>(
 			"dexion",
 			"watchlist",
-			this.authToken,
-			{ method: "GET" },
-		)();
+			{
+				method: "GET",
+				fetchOptions: options,
+			},
+		);
 	}
 
 	async addToWatchlist(
 		data: AddWatchlistInput,
+		options?: FetchOptions,
 	): Promise<ApiResponse<UserWatchlist>> {
-		const parsed = addWatchlistSchema.parse(data);
-		return await makeFetch<ApiResponse<UserWatchlist>>(
+		const auth = this.client.getAuth();
+		if (!auth.userId) {
+			throw new DexionError(
+				"User ID required. Call setAuth() first.",
+				"USER_ID_REQUIRED",
+			);
+		}
+
+		return this.client.fetch<ApiResponse<UserWatchlist>>(
 			"dexion",
 			"watchlist",
-			this.authToken,
 			{
 				method: "POST",
 				body: {
-					...parsed,
-					userId: this.userId,
+					...data,
+					userId: auth.userId,
 				},
+				fetchOptions: options,
 			},
-		)();
+		);
 	}
 
 	async deleteWatchlist(
 		data: DeleteWatchlistInput,
+		options?: FetchOptions,
 	): Promise<ApiResponse<UserWatchlist>> {
-		const parsed = deleteWatchlistSchema.parse(data);
-		return await makeFetch<ApiResponse<UserWatchlist>>(
+		return this.client.fetch<ApiResponse<UserWatchlist>>(
 			"dexion",
-			`watchlist/${parsed.id}`,
-			this.authToken,
+			`watchlist/${data.id}`,
 			{
 				method: "DELETE",
+				fetchOptions: options,
 			},
-		)();
+		);
 	}
 }

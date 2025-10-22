@@ -307,3 +307,15 @@ func (h *AlertHandler) DeleteAlert(c *gin.Context) {
 
 	http.SendSuccess(c, nil, http.WithMessage("Alert deleted successfully"))
 }
+
+func StringsToUUIDs(strs []string) ([]uuid.UUID, error) {
+	uuids := make([]uuid.UUID, len(strs))
+	for i, s := range strs {
+		id, err := uuid.Parse(s)
+		if err != nil {
+			return nil, fmt.Errorf("invalid UUID: %s", s)
+		}
+		uuids[i] = id
+	}
+	return uuids, nil
+}

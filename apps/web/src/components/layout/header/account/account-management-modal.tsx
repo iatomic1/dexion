@@ -25,6 +25,7 @@ import { Copy, ExternalLink, Info, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import LinkTelegramAccount from "~/components/auth/link-telegram-account";
 import OTTModal from "~/components/auth/ott-modal";
 import Disable2FADialog from "~/components/auth/twofa/disable-2fa-dialog";
 import Enable2FADialog from "~/components/auth/twofa/enable-2fa-dialog";
@@ -287,10 +288,26 @@ export function AccountSecurityModal({
 
 					{session ? (
 						<SettingsSection
+							title="Link Telegram"
+							description="Link telegram account to receive alerts"
+							action={<LinkTelegramAccount />}
+						/>
+					) : (
+						<div className="p-4 border-t flex items-center justify-between">
+							<div className="space-y-1">
+								<Skeleton className="h-5 w-24" />
+								<Skeleton className="h-4 w-32" />
+							</div>
+							<Skeleton className="h-8 w-24" />
+						</div>
+					)}
+
+					{session ? (
+						<SettingsSection
 							title="Rewards"
 							description="Earn free SOL. Visit the rewards page to get started"
 							action={
-								<Button variant="secondary" size="sm">
+								<Button variant="secondary" size="sm" disabled>
 									<ExternalLink className="h-4 w-4 mr-2" />
 									Earn Rewards
 								</Button>

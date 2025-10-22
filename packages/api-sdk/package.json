@@ -1,26 +1,27 @@
 {
-  "name": "@repo/api-sdk",
-  "type": "module",
-  "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@types/bun": "latest",
-    "vitest": "^3.2.4"
-  },
-  "scripts": {
-    "start": "bun run src/index.ts",
-    "build": "bun build ./src/index.ts --target bun --outdir ./dist",
-    "test": "vitest",
-    "dev": "bun run --hot src/index.ts"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@repo/shared-constants": "workspace:*",
-    "zod": "^3.24.3"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "packageManager": "bun@1.0.18"
+	"name": "@repo/api-sdk",
+	"type": "module",
+	"devDependencies": {
+		"@repo/typescript-config": "workspace:*",
+		"@types/bun": "latest",
+		"vitest": "^3.2.4"
+	},
+	"scripts": {
+		"start": "bun run src/index.ts",
+		"build": "bun build ./src/index.ts --target bun --outdir ./dist",
+		"test": "vitest",
+		"dev": "bun run --hot src/index.ts"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"@repo/shared-constants": "workspace:*",
+		"@repo/tokens": "workspace:*",
+		"zod": "^3.24.3"
+	},
+	"exports": {
+		"./*": "./src/*"
+	},
+	"packageManager": "bun@1.0.18"
 }

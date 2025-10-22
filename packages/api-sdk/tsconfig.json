@@ -1,8 +1,10 @@
 {
-  "extends": "@repo/typescript-config/base.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+	"extends": "@repo/typescript-config/base.json",
+
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"paths": {
+			"@repo/api-sdk/*": ["./src/*"]
+		}
+	}
 }

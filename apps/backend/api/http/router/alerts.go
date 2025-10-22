@@ -13,12 +13,14 @@ func RegisterAlertRoutes(srv *http.Server, router *gin.RouterGroup) {
 
 	// Protected wallet routes requiring authentication
 	alertGroup := router
+	alertGroup.GET("/channels", alertHandler.GetAllChannels)
 
 	alertGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
 		alertGroup.POST("", alertHandler.CreateAlert)
 		alertGroup.GET("", alertHandler.GetUserAlerts)
-		alertGroup.DELETE("/:id", alertHandler.DeleteAlert)
 		alertGroup.GET("/:id", alertHandler.GetAlertByID)
+		alertGroup.DELETE("/:id", alertHandler.DeleteAlert)
+		alertGroup.PATCH("/:id", alertHandler.UpdateAlert)
 	}
 }

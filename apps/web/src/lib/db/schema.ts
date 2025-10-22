@@ -23,6 +23,8 @@ export const user = pgTable(
 		walletId: varchar("wallet_id", { length: 255 }).unique(),
 		walletAddress: text("wallet_address"),
 		walletPublicKey: text("wallet_public_key"),
+		telegramId: text("telegram_id"),
+		telegramUsername: text("telegram_username"),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.$defaultFn(() => new Date())
 			.notNull(),
@@ -74,6 +76,8 @@ export const account = pgTable(
 		refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
 		scope: text("scope"),
 		password: text("password"),
+		telegramId: text("telegram_id"),
+		telegramUsername: text("telegram_username"),
 		createdAt: timestamp("created_at").notNull(),
 		updatedAt: timestamp("updated_at").notNull(),
 	},

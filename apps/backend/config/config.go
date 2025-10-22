@@ -2,32 +2,21 @@ package config
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	RedisAddress          string  `mapstructure:"REDIS_ADDRESS"`
-	AccessJwtKey          string  `mapstructure:"ACCESS_JWT_KEY"`
-	Environment           string  `mapstructure:"ENVIROMENT"`
-	DbType                string  `mapstructure:"DB_TYPE"`
-	RedisPassword         string  `mapstructure:"REDIS_PASSWORD"`
-	RefreshJwtKey         string  `mapstructure:"REFRESH_JWT_KEY"`
-	ApiPrefixStr          string  `mapstructure:"API_V1_PREFIX_STRING"`
-	RedisUsername         string  `mapstructure:"REDIS_USERNAME"`
-	DbURL                 string  `mapstructure:"DB_URL"`
-	HttpAddress           string  `mapstructure:"HTTP_SERVER_ADDRESS"`
-	Host                  string  `mapstructure:"HOST"`
-	CoudinaryURL          string  `mapstructure:"CLOUDINARY_URL"`
-	FrontendURL           string  `mapstructure:"FRONTEND_URL"`
-	GoogleClientSecret    string  `mapstructure:"GOOGLE_CLIENT_SECRET"`
-	GoogleClientID        string  `mapstructure:"GOOGLE_CLIENT_ID"`
-	GoogleSigningKey      string  `mapstructure:"GOOGLE_SIGNING_KEY"`
-	GoogleMaxAge          int     `mapstructure:"GOOGLE_MAX_AGE"`
-	AccessExpirationHour  float64 `mapstructure:"ACCESS_EXPIRATION_HOUR"`
-	RedisDB               int     `mapstructure:"REDIS_DB"`
-	RefreshExpirationHour float64 `mapstructure:"REFRESH_EXPIRATION_HOUR"`
+	AccessJwtKey string `mapstructure:"ACCESS_JWT_KEY"`
+	Environment  string `mapstructure:"ENVIROMENT"`
+	DbType       string `mapstructure:"DB_TYPE"`
+	ApiPrefixStr string `mapstructure:"API_V1_PREFIX_STRING"`
+	DbURL        string `mapstructure:"DB_URL"`
+	HttpAddress  string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	Host         string `mapstructure:"HOST"`
+	CoudinaryURL string `mapstructure:"CLOUDINARY_URL"`
+	FrontendURL  string `mapstructure:"FRONTEND_URL"`
+	RdbURL       string `mapstructure:"REDIS_URL"`
 }
 
 func Load(path string) (*Config, error) {
@@ -57,9 +46,7 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 	// Directly load all environment variables, overriding any values from .env file
 
 	// String variables
-	if val := os.Getenv("REDIS_ADDRESS"); val != "" {
-		cfg.RedisAddress = val
-	}
+
 	if val := os.Getenv("ACCESS_JWT_KEY"); val != "" {
 		cfg.AccessJwtKey = val
 	}
@@ -69,18 +56,11 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 	if val := os.Getenv("DB_TYPE"); val != "" {
 		cfg.DbType = val
 	}
-	if val := os.Getenv("REDIS_PASSWORD"); val != "" {
-		cfg.RedisPassword = val
-	}
-	if val := os.Getenv("REFRESH_JWT_KEY"); val != "" {
-		cfg.RefreshJwtKey = val
-	}
+
 	if val := os.Getenv("API_V1_PREFIX_STRING"); val != "" {
 		cfg.ApiPrefixStr = val
 	}
-	if val := os.Getenv("REDIS_USERNAME"); val != "" {
-		cfg.RedisUsername = val
-	}
+
 	if val := os.Getenv("DB_URL"); val != "" {
 		cfg.DbURL = val
 	}
@@ -96,38 +76,9 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 	if val := os.Getenv("FRONTEND_URL"); val != "" {
 		cfg.FrontendURL = val
 	}
-	if val := os.Getenv("GOOGLE_CLIENT_SECRET"); val != "" {
-		cfg.GoogleClientSecret = val
-	}
-	if val := os.Getenv("GOOGLE_CLIENT_ID"); val != "" {
-		cfg.GoogleClientID = val
-	}
-	if val := os.Getenv("GOOGLE_SIGNING_KEY"); val != "" {
-		cfg.GoogleSigningKey = val
-	}
 
-	// Integer variables
-	if val := os.Getenv("GOOGLE_MAX_AGE"); val != "" {
-		if intVal, err := strconv.Atoi(val); err == nil {
-			cfg.GoogleMaxAge = intVal
-		}
-	}
 	if val := os.Getenv("REDIS_DB"); val != "" {
-		if intVal, err := strconv.Atoi(val); err == nil {
-			cfg.RedisDB = intVal
-		}
-	}
-
-	// Float variables
-	if val := os.Getenv("ACCESS_EXPIRATION_HOUR"); val != "" {
-		if floatVal, err := strconv.ParseFloat(val, 64); err == nil {
-			cfg.AccessExpirationHour = floatVal
-		}
-	}
-	if val := os.Getenv("REFRESH_EXPIRATION_HOUR"); val != "" {
-		if floatVal, err := strconv.ParseFloat(val, 64); err == nil {
-			cfg.RefreshExpirationHour = floatVal
-		}
+		cfg.RdbURL = val
 	}
 
 	return cfg, nil

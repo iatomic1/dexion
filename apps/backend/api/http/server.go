@@ -13,18 +13,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 )
 
 type Server struct {
 	Router *gin.Engine
 	Config *config.Config
 	DB     *pgxpool.Pool
+	RDB    *redis.Client
 }
 
-func NewServer(cfg *config.Config, db *pgxpool.Pool) (*Server, error) {
+func NewServer(cfg *config.Config, db *pgxpool.Pool, rdb *redis.Client) (*Server, error) {
 	return &Server{
 		Config: cfg,
 		DB:     db,
+		RDB:    rdb,
 	}, nil
 }
 

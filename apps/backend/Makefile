@@ -104,3 +104,6 @@ dev:
 	# $(MAKE) gen
 	$(MAKE) docs
 	air
+
+dev-local:
+	doppler run -p dexion -c dev_backend -- $(MAKE) dev

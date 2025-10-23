@@ -1,32 +1,35 @@
 {
-  "name": "dexion",
-  "version": "1.4.3",
-  "config": {
-    "cz-gitmoji": {
-      "format": "{emoji} {type}({scope}): {subject}",
-      "subjectFormat": "lowercase"
-    }
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.0.0",
-    "@repo/typescript-config": "workspace:*",
-    "prettier": "^3.3.3",
-    "turbo": "2.1.1"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "license": "MIT",
-  "packageManager": "bun@1.2.12",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "ui": "bun --filter @repo/ui ui"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+	"name": "dexion",
+	"version": "1.4.3",
+	"config": {
+		"cz-gitmoji": {
+			"format": "{emoji} {type}({scope}): {subject}",
+			"subjectFormat": "lowercase"
+		}
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.0",
+		"@repo/typescript-config": "workspace:*",
+		"prettier": "^3.3.3",
+		"turbo": "2.1.1"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"license": "MIT",
+	"packageManager": "bun@1.2.12",
+	"private": true,
+	"scripts": {
+		"build": "turbo build",
+		"dev": "turbo dev",
+		"lint": "turbo lint",
+		"ui": "bun --filter @repo/ui ui"
+	},
+	"resolutions": {
+		"ioredis": "5.8.1"
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	]
 }

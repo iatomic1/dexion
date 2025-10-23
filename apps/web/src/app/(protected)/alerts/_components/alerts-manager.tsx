@@ -4,7 +4,6 @@ import { Channel, UserAlert, WebhookConfig } from "@repo/api-sdk/index.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import { Bell, Plus, Settings } from "lucide-react";
 import { useState } from "react";
-import { useAlertsActions } from "~/hooks/useAlertsActions";
 import { AlertDialog } from "./alert-dialog";
 import { AlertsTable } from "./alerts-table";
 import { WebhookSettingsDialog } from "./webhook-settings-dialog";
@@ -20,7 +19,6 @@ export function AlertsManager({
 		webhookUrl: "",
 		bearerToken: "",
 	});
-	const { createAlert, updateAlert, deleteAlert } = useAlertsActions();
 
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);

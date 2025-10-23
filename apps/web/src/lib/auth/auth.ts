@@ -22,6 +22,7 @@ import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
 import { telegram } from "./plugins/telegram";
+import { getTelegramPlugin } from "./plugins/telegram/import";
 
 const URL =
 	process.env.NODE_ENV === "production"
@@ -185,10 +186,7 @@ export const auth: any = betterAuth({
 		},
 	},
 	plugins: [
-		telegram({
-			botToken: process.env.TELEGRAM_BOT_TOKEN!,
-			botUsername: "dex1933_bot",
-		}),
+		...(getTelegramPlugin() ? [getTelegramPlugin()!] : []),
 		openAPI(),
 		oneTimeToken({
 			expiresIn: 5,

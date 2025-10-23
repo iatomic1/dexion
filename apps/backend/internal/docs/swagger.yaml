@@ -1,5 +1,31 @@
 basePath: /api/v1
 definitions:
+  api_http_handlers_alert.CreateAlertWithChannelsParams:
+    properties:
+      ca:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token
+        type: string
+      channels:
+        items:
+          type: string
+        type: array
+      metric:
+        type: string
+      operator:
+        type: string
+      repeatable:
+        type: boolean
+      userId:
+        type: string
+      value:
+        type: string
+    required:
+    - ca
+    - metric
+    - operator
+    - repeatable
+    - value
+    type: object
   backend_api_http.InternalServerErrorResponse:
     properties:
       errors: {}
@@ -16,6 +42,48 @@ definitions:
       message:
         type: string
       status:
+        type: string
+    type: object
+  backend_internal_db_repository.Alert:
+    properties:
+      ca:
+        example: SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      metric:
+        type: string
+      operator:
+        type: string
+      repeatable:
+        type: boolean
+      status:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      value:
+        type: string
+    required:
+    - ca
+    - metric
+    - operator
+    - repeatable
+    - status
+    - value
+    type: object
+  backend_internal_db_repository.Channel:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
         type: string
     type: object
   backend_internal_db_repository.CreateTelegramUserParams:
@@ -85,6 +153,52 @@ definitions:
       nickname:
         type: string
       walletAddress:
+        type: string
+    type: object
+  backend_internal_db_repository.UpdateAlertWithChannelsParams:
+    properties:
+      alertId:
+        type: string
+      channelIds:
+        items:
+          type: string
+        type: array
+      metric:
+        type: string
+      operator:
+        type: string
+      repeatable:
+        type: boolean
+      userId:
+        type: string
+      value:
+        type: string
+    type: object
+  backend_internal_db_repository.UpdateAlertWithChannelsRow:
+    properties:
+      ca:
+        type: string
+      channels:
+        items:
+          type: integer
+        type: array
+      createdAt:
+        type: string
+      id:
+        type: string
+      metric:
+        type: string
+      operator:
+        type: string
+      repeatable:
+        type: boolean
+      status:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      value:
         type: string
     type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
@@ -181,6 +295,7 @@ definitions:
     - 1
     - 0
     - -1
+    format: int32
     type: integer
     x-enum-varnames:
     - Infinity
@@ -205,6 +320,235 @@ info:
   title: DEXION API
   version: "1.0"
 paths:
+  /alerts:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all alerts belonging to the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User alerts retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.Alert'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve all alerts for the authenticated user
+      tags:
+      - Alerts
+    post:
+      consumes:
+      - application/json
+      description: Create a new alert with optional notification channels
+      parameters:
+      - description: Alert data with channels
+        in: body
+        name: AlertRequest
+        required: true
+        schema:
+          $ref: '#/definitions/api_http_handlers_alert.CreateAlertWithChannelsParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Alert created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.Alert'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Alert already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new alert
+      tags:
+      - Alerts
+  /alerts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an alert belonging to the authenticated user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an existing alert
+      tags:
+      - Alerts
+    get:
+      consumes:
+      - application/json
+      description: Fetch a single alert by its UUID for the authenticated user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.Alert'
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve a specific alert by ID
+      tags:
+      - Alerts
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of an alert belonging to the authenticated user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Alert update data
+        in: body
+        name: Alert
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateAlertWithChannelsParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.UpdateAlertWithChannelsRow'
+              type: object
+        "400":
+          description: Invalid UUID format or request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing alert
+      tags:
+      - Alerts
+  /alerts/channels:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all available channels in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Channels retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.Channel'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve all channels
+      tags:
+      - Alerts
   /wallets:
     get:
       description: Retrieve all wallets tracked by the user

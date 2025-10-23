@@ -1,0 +1,29 @@
+{
+	"name": "@repo/dex-monitor",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"scripts": {
+		"dev": "doppler run -p dexion -c dev_backend -- bun --hot src/index.ts",
+		"lint": "bunx biome check ./",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@bull-board/api": "^6.13.1",
+		"@bull-board/hono": "6.0.0",
+		"@hirosystems/chainhooks-client": "^0.8.0",
+		"@hono/node-server": "^1.19.5",
+		"@repo/notifier": "workspace:*",
+		"@repo/shared-constants": "workspace:*",
+		"@repo/tokens": "workspace:*",
+		"@stacks/blockchain-api-client": "^8.11.2",
+		"bullmq": "^5.61.0",
+		"hono": "^4.10.1",
+		"ioredis": "*",
+		"resend": "^6.2.2"
+	}
+}

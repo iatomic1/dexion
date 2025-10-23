@@ -2,7 +2,6 @@ package domain
 
 import (
 	"backend/api/http"
-	"backend/pkg/jwt"
 	"errors"
 	"fmt"
 
@@ -22,19 +21,6 @@ const (
 
 	TokensRefreshed = "Tokens Refreshed successfully"
 )
-
-type AuthResponse struct {
-	jwt.TokenPair
-	UserID string `json:"userId"`
-}
-
-// type RegisterRequest struct {
-// 	repository.RegisterUserParams
-// }
-
-type RefreshTokenResponse struct {
-	jwt.TokenPair
-}
 
 type EmailID struct {
 	Email     string `json:"email"`

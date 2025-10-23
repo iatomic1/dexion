@@ -40,6 +40,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -60,8 +61,6 @@ func main() {
 		log.Fatalf("Unable to parse pool config: %v\n", err)
 	}
 
-	// Set some reasonable pool settings
-	// Adjust these values based on your application's needs
 	poolConfig.MaxConns = 10
 
 	// Create the connection pool
@@ -78,8 +77,24 @@ func main() {
 
 	fmt.Println("Database connection pool established successfully")
 
-	// Pass the pool to your server instead of a single connection
-	srv, err := http.NewServer(cfg, pool)
+	rdbURL := os.Getenv("REDIS_URL")
+	if rdbURL == "" {
+		rdbURL = cfg.RdbURL
+	}
+
+	opt, err := redis.ParseURL(rdbURL)
+	if err != nil {
+		log.Fatalf("Invalid Redis URL: %v", err)
+	}
+
+	rdb := redis.NewClient(opt)
+
+	err = rdb.Ping(context.Background()).Err()
+	if err != nil {
+		log.Fatalf("Could not connect to Redis: %v", err)
+	}
+	fmt.Println("Connected to Redis successfully")
+	srv, err := http.NewServer(cfg, pool, rdb)
 	if err != nil {
 		log.Fatal(err)
 	}

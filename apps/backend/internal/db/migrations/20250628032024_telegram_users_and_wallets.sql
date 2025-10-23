@@ -3,6 +3,7 @@
 CREATE TABLE IF NOT EXISTS telegram_users (
     chat_id TEXT PRIMARY KEY, -- Telegram's unique chat ID is the perfect primary key
     username TEXT, -- Telegram username, can be null
+    notification_preference TEXT NOT NULL DEFAULT 'confirmed',
     created_at TIMESTAMPTZ DEFAULT now()
 );
 

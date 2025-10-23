@@ -15,20 +15,29 @@ import {
 } from "better-auth/plugins";
 import type { User } from "~/types/auth";
 import { db } from "../db/drizzle";
-import { redisStorage } from "../db/redis";
+import { cacheUserData, redisStorage } from "../db/redis";
 import { schema } from "../db/schema";
 import { getBnsAndAvatar } from "../queries/bns";
 import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
+import { telegram } from "./plugins/telegram";
+import { getTelegramPlugin } from "./plugins/telegram/import";
 
 const URL =
 	process.env.NODE_ENV === "production"
 		? `https://${DOMAIN_NAME}`
 		: "http://localhost:3001";
+const NGROK_PERSONAL_DOMAIN =
+	"https://unhuntable-kristofer-unresident.ngrok-free.dev";
 export const auth: any = betterAuth({
 	appName: "Dexion Pro",
-	trustedOrigins: [FRONTEND_URL, `https://beta.${DOMAIN_NAME}`],
+	trustedOrigins: [
+		FRONTEND_URL,
+		`https://beta.${DOMAIN_NAME}`,
+		URL,
+		NGROK_PERSONAL_DOMAIN,
+	],
 	baseURL: URL,
 	user: {
 		additionalFields: {
@@ -87,6 +96,7 @@ export const auth: any = betterAuth({
 				ctx.context.newSession
 			) {
 				const sessionUser = ctx.context.newSession.user;
+				cacheUserData(sessionUser);
 
 				const userFromSession: User = {
 					...sessionUser,
@@ -102,6 +112,7 @@ export const auth: any = betterAuth({
 			}
 			if (ctx.path.includes("/sign-in/social") && ctx.context.newSession) {
 				const sessionUser = ctx.context.newSession.user;
+				cacheUserData(sessionUser);
 
 				const userFromSession: User = {
 					...sessionUser,
@@ -114,6 +125,10 @@ export const auth: any = betterAuth({
 					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
 				};
 				await initWallet(userFromSession, false);
+			}
+			if (ctx.path.includes("/sign-in/email") && ctx.context.newSession) {
+				const sessionUser = ctx.context.newSession.user;
+				cacheUserData(sessionUser);
 			}
 		}),
 	},
@@ -171,6 +186,7 @@ export const auth: any = betterAuth({
 		},
 	},
 	plugins: [
+		...(getTelegramPlugin() ? [getTelegramPlugin()!] : []),
 		openAPI(),
 		oneTimeToken({
 			expiresIn: 5,

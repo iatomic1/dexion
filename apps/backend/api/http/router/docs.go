@@ -12,9 +12,8 @@ import (
 
 func RegisterDocsRoutes(router *gin.RouterGroup) {
 	docsGroup := router
-	fmt.Println("in")
 	specUrl := filepath.Join(projectpath.Root, "/internal/docs/openapi.json")
-	fmt.Println("2")
+
 	fmt.Println("Serving spec from:", specUrl)
 	docsGroup.GET("/test", func(c *gin.Context) {
 		c.String(http.StatusOK, "Docs group is working")

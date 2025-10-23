@@ -7,9 +7,14 @@ CREATE TABLE IF NOT EXISTS watchlist (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_watchlist_user_id ON watchlist(user_id);
+CREATE INDEX IF NOT EXISTS idx_watchlist_ca ON watchlist(ca);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+DROP INDEX IF EXISTS idx_watchlist_user_id;
+DROP INDEX IF EXISTS idx_watchlist_ca;
 DROP TABLE IF EXISTS watchlist;
 -- +goose StatementEnd

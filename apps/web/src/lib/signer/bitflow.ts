@@ -8,6 +8,7 @@ import {
 	ValidationError,
 } from "@repo/signer";
 import z from "zod";
+import siteConfig from "~/config/site";
 import { authenticatedAction } from "../safe-action";
 import { getSigner } from "./getSigner";
 
@@ -27,6 +28,11 @@ export const buyToken = authenticatedAction
 		try {
 			console.log("Buy token input:", input);
 			let signer: StacksSigner;
+			if (!siteConfig.features.trading) {
+				throw new Error(
+					"Token trading is temporarily disabled for maintenance",
+				);
+			}
 
 			try {
 				signer = await getSigner(user.session.user);
@@ -147,6 +153,12 @@ export const sellToken = authenticatedAction
 	)
 	.handler(async ({ input, ctx: { user } }) => {
 		try {
+			if (!siteConfig.features.trading) {
+				throw new Error(
+					"Token trading is temporarily disabled for maintenance",
+				);
+			}
+
 			console.log("Sell token input:", input);
 			let signer: StacksSigner;
 

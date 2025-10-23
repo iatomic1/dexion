@@ -8,7 +8,7 @@ export type TokenMetadata = {
 	circulating_supply: string;
 	total_supply: string;
 	image_url: string;
-	header_image_url: string;
+	header_image_url: string | null;
 	description: string;
 	verified: boolean;
 	bc: "stxcity" | "fakfun";

@@ -1,14 +1,16 @@
-export function getFungibleContractId(postConditions) {
-  const fungibleCondition = postConditions.find(
-    (condition) => condition.type === "fungible",
-  );
+import type { PostCondition } from "@stacks/transactions";
 
-  if (fungibleCondition && fungibleCondition.asset) {
-    const { contract_address, contract_name } = fungibleCondition.asset;
-    return `${contract_address}.${contract_name}`;
-  }
+export function getFungibleContractId(postConditions: PostCondition[]) {
+	const fungibleCondition = postConditions.find(
+		(condition) => condition.type === "ft-postcondition",
+	);
 
-  return null;
+	if (fungibleCondition && fungibleCondition.asset) {
+		const [contractId] = fungibleCondition.asset.split("::");
+		return contractId;
+	}
+
+	return null;
 }
 //
 export function extractTxIdFromChainHook(data: any) {}

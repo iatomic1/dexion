@@ -1,4 +1,4 @@
-# @charisma/notifier
+# @repo/notifier
 
 This package provides a unified client to send notifications via multiple channels: Telegram, Discord, and SMS (via Twilio).
 
@@ -56,24 +56,9 @@ Below are instructions on how to obtain these credentials for each service:
     3.  **Enable Privileged Gateway Intents**: For the bot to function correctly (especially for reading messages or user information if needed beyond just sending), you might need to enable Privileged Gateway Intents under the "Bot" tab. For sending messages as implemented in this package, `Guilds`, `GuildMessages`, and `DirectMessages` intents are used. Ensure these are enabled if your bot requires them beyond basic functionality or if you encounter permission issues.
     4.  **Invite Bot to Server**: To send messages to a server channel, your bot must be a member of that server.
         - Go to the "OAuth2" -> "URL Generator" tab in the Developer Portal.
-        - Select the `bot` scope. 
+        - Select the `bot` scope.
         - In "Bot Permissions" that appear below, select necessary permissions (e.g., `Send Messages`, `Read Message History` in the channels it should operate).
         - Copy the generated URL and open it in your browser to invite the bot to your server.
-
-### 3. Twilio (for SMS)
-
-- **`TWILIO_ACCOUNT_SID`**: Your main Twilio account identifier.
-- **`TWILIO_AUTH_TOKEN`**: Your Twilio account authentication token.
-- **`TWILIO_PHONE_NUMBER`**: A Twilio phone number that you own, capable of sending SMS messages.
-
-    1.  **Create or Login to Twilio Account**: Go to [www.twilio.com](https://www.twilio.com/) and sign up or log in.
-    2.  **Find Credentials**: On your Twilio Console Dashboard ([www.twilio.com/console](https://www.twilio.com/console)), you will find your `ACCOUNT SID` and `AUTH TOKEN`.
-        - Click "Show" next to the Auth Token if it's hidden.
-        - **Important**: Keep your Auth Token secure.
-    3.  **Get a Twilio Phone Number**: If you don't have one, you'll need to buy or provision a Twilio phone number that is SMS-capable.
-        - You can find this under "Phone Numbers" -> "Manage" -> "Active numbers" in the Twilio console.
-        - Ensure this number is E.164 formatted (e.g., `+1234567890`) when setting `TWILIO_PHONE_NUMBER`.
-    4.  **Verify "To" Numbers (Trial Accounts)**: If you are using a Twilio trial account, you can only send SMS messages to phone numbers that you have verified in the Twilio console.
 
 ## Usage
 
@@ -84,9 +69,6 @@ import { NotifierClient, NotificationRecipient, Notification } from '@charisma/n
 const notifier = new NotifierClient(
   // process.env.TELEGRAM_BOT_TOKEN, // (optional, defaults to env)
   // process.env.DISCORD_BOT_TOKEN,    // (optional, defaults to env)
-  // process.env.TWILIO_ACCOUNT_SID,   // (optional, defaults to env)
-  // process.env.TWILIO_AUTH_TOKEN,    // (optional, defaults to env)
-  // process.env.TWILIO_PHONE_NUMBER   // (optional, defaults to env)
 );
 
 async function sendAlerts() {
@@ -116,7 +98,7 @@ async function sendAlerts() {
     }
 
     // For Discord, allow some time for client to connect and be ready
-    await new Promise(resolve => setTimeout(resolve, 5000)); 
+    await new Promise(resolve => setTimeout(resolve, 5000));
     if (notifier["discordSender"].isReady()) {
       await notifier.send('discord', discordMessage);
       console.log('Discord alert sent!');
@@ -154,4 +136,4 @@ cd packages/notifier
 pnpm test
 ```
 
-The tests use Jest and mock the actual API calls to avoid sending real notifications during testing. 
+The tests use Jest and mock the actual API calls to avoid sending real notifications during testing.

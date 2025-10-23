@@ -157,7 +157,6 @@ func (h *WatchlistHandler) GetUserWatchlists(c *gin.Context) {
 	repo := repository.New(h.srv.DB)
 	watchlists, err := repo.GetWatchlistsByUserId(ctx, &userID)
 	if err != nil {
-		fmt.Printf("Error getting watchlists: %v\n", err) // Log the exact error
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			fmt.Printf("PostgreSQL Error: %+v\n", pgErr) // Log PostgreSQL details

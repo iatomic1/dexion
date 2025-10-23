@@ -1,4 +1,5 @@
 import { Redis } from "ioredis";
+import { User } from "~/types/auth";
 
 const REDIS_PREFIX = "auth-";
 export interface SecondaryStorage {
@@ -32,3 +33,19 @@ export const redisStorage: SecondaryStorage = {
 		await redisClient.del(REDIS_PREFIX + key);
 	},
 };
+
+type CachedUserData = {
+	email?: string;
+	telegram_id?: string;
+};
+export async function cacheUserData(user: User) {
+	if (!user?.id || !user?.email) return;
+
+	const key = `user:${user.id}`;
+	const data: CachedUserData = {};
+
+	data.email = user.email;
+	if (user.telegram_id) data.telegram_id = user.telegram_id;
+
+	await redisClient.hset(key, data);
+}

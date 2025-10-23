@@ -21,7 +21,7 @@ export function transformToTokenMetadata(input: any): TokenMetadata {
 				? [{ platform: "website", value: input.homepage }]
 				: []),
 		],
-		...(input.source && input.source),
+		...(input.source ?? {}),
 		metrics: {
 			contract_id: input.dex_contract,
 			holder_count: input.holders,

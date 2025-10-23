@@ -6,7 +6,6 @@ import { AlertsManager } from "./_components/alerts-manager";
 
 const getAlertsAndChannels = async () => {
 	const session = await assertUserAuthenticated();
-	console.log(session.accessToken);
 	const sdk = createServerSDK(session.accessToken, session.userId);
 
 	try {
@@ -32,7 +31,6 @@ const getAlertsAndChannels = async () => {
 
 async function AlertsPage() {
 	const data = await getAlertsAndChannels();
-	console.log(data);
 
 	return (
 		<div className="min-h-screen bg-background">

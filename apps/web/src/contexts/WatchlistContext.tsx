@@ -98,7 +98,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 	} = useQuery({
 		queryKey: ["watchlist"],
 		queryFn: getUserWatchlist,
-		refetchOnWindowFocus: true,
+		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,
 	});
 
@@ -138,7 +138,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 		// Merge token data with watchlist IDs
 		const mergedTokens = tokenData.map((token: TokenMetadata) => ({
 			...token,
-			watchlistId: watchlistMap.get(token.contract_id),
+			watchlistId: watchlistMap.get(token?.contract_id),
 		}));
 
 		return {

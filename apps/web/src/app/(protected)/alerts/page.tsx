@@ -1,7 +1,6 @@
 import { createServerSDK } from "@repo/api-sdk/DexionApiSDK.ts";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
-import { Session } from "~/types/auth";
 import { AlertsManager } from "./_components/alerts-manager";
 
 const getAlertsAndChannels = async () => {
@@ -32,11 +31,19 @@ const getAlertsAndChannels = async () => {
 async function AlertsPage() {
 	const data = await getAlertsAndChannels();
 
+	if (!data) {
+		return (
+			<div className="min-h-screen bg-background flex items-center justify-center">
+				<p className="text-muted-foreground">Failed to load alerts</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="min-h-screen bg-background">
 			<AlertsManager
-				alerts={data?.alerts?.data}
-				channels={data?.channels?.data}
+				alerts={data?.alerts?.data ?? []}
+				channels={data?.channels?.data ?? []}
 			/>
 		</div>
 	);

@@ -1,5 +1,5 @@
 const nextConfig = {
-	transpilePackages: ["@repo/ui", "@repo/api-sdk"],
+	transpilePackages: ["@repo/ui"],
 	reactStrictMode: true,
 	eslint: {
 		ignoreDuringBuilds: true,

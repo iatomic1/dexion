@@ -1,5 +1,4 @@
 {
-	// "extends": "@repo/typescript-config/nextjs.json",
 	"compilerOptions": {
 		"target": "ES2017",
 		"lib": ["dom", "dom.iterable", "esnext"],
@@ -22,7 +21,6 @@
 		],
 		"paths": {
 			"~/*": ["./src/*"]
-			// "@/*": ["../packages/api-sdk/src/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

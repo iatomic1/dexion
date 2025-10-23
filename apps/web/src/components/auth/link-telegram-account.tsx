@@ -32,7 +32,7 @@ export default function LinkTelegramAccount() {
 								const linkRes = await authClient.linkTelegram(authData);
 								console.log(authData, "authdata");
 								console.log(linkRes, "linkres");
-								if (!linRes.error) toast.success("Telegram account linked!");
+								if (!linkRes.error) toast.success("Telegram account linked!");
 								setIsDialogOpen(false);
 							} catch (error) {
 								console.error("Failed to link:", error);

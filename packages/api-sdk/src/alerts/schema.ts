@@ -36,3 +36,8 @@ export const updateAlertSchema = addNewAlertSchema.extend({
 export const removeAlertSchema = z.object({
 	id: z.string(),
 });
+
+export const webhookSchema = z.object({
+	webhookUrl: z.string(),
+	bearerToken: z.string(),
+});

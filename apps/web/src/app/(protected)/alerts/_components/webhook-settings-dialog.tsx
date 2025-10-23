@@ -1,5 +1,6 @@
 "use client";
 
+import { WebhookConfig } from "@repo/api-sdk/index.ts";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Dialog,
@@ -14,7 +15,6 @@ import { Label } from "@repo/ui/components/ui/label";
 import { Webhook } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import type { WebhookConfig } from "@/types/webhook-config";
 
 interface WebhookSettingsDialogProps {
 	open: boolean;
@@ -30,8 +30,8 @@ export function WebhookSettingsDialog({
 	onSave,
 }: WebhookSettingsDialogProps) {
 	const [formData, setFormData] = useState<WebhookConfig>({
-		webhook_url: "",
-		bearer_token: "",
+		webhookUrl: "",
+		bearerToken: "",
 	});
 
 	useEffect(() => {
@@ -78,9 +78,9 @@ export function WebhookSettingsDialog({
 								id="webhook_url"
 								type="url"
 								placeholder="https://your-api.com/webhook"
-								value={formData.webhook_url}
+								value={formData.webhookUrl}
 								onChange={(e) =>
-									setFormData({ ...formData, webhook_url: e.target.value })
+									setFormData({ ...formData, webhookUrl: e.target.value })
 								}
 								className="font-mono"
 								required
@@ -98,9 +98,9 @@ export function WebhookSettingsDialog({
 								id="bearer_token"
 								type="password"
 								placeholder="Your authentication token"
-								value={formData.bearer_token}
+								value={formData.bearerToken}
 								onChange={(e) =>
-									setFormData({ ...formData, bearer_token: e.target.value })
+									setFormData({ ...formData, bearerToken: e.target.value })
 								}
 								className="font-mono"
 								required
@@ -139,7 +139,7 @@ export function WebhookSettingsDialog({
 						</Button>
 						<Button
 							type="submit"
-							disabled={!formData.webhook_url || !formData.bearer_token}
+							disabled={!formData.webhookUrl || !formData.bearerToken}
 						>
 							Save Configuration
 						</Button>

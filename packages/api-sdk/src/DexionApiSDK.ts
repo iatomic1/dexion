@@ -160,7 +160,7 @@ export class DexionClient {
 			}
 
 			if (Object.keys(nextOptions).length > 0) {
-				// @ts-expect-error - Next.js specific property
+				// @ts-ignore - Next.js specific property
 				fetchInit.next = nextOptions;
 			}
 		}

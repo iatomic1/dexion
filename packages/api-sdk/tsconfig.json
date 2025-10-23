@@ -4,7 +4,8 @@
 	"compilerOptions": {
 		"allowImportingTsExtensions": true,
 		"paths": {
-			"@repo/api-sdk/*": ["./src/*"]
+			"@repo/api-sdk/*": ["./src/*"],
+			"@repo/api-sdk/types": ["./src/types/index.ts"]
 		}
 	}
 }

@@ -2,7 +2,7 @@ import {
 	DexionError,
 	type ApiResponse,
 	type FetchOptions,
-} from "@repo/api-sdk/types";
+} from "../types/index";
 import type {
 	AddAlertInput,
 	Channel,

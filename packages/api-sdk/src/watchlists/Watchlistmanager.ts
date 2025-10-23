@@ -2,9 +2,7 @@ import {
 	DexionError,
 	type ApiResponse,
 	type FetchOptions,
-} from "@repo/api-sdk/types";
-import makeFetch, { type BASE_URL } from "@repo/api-sdk/utils/fetch";
-import { addWatchlistSchema, deleteWatchlistSchema } from "./schema";
+} from "../types/index";
 import type {
 	AddWatchlistInput,
 	DeleteWatchlistInput,

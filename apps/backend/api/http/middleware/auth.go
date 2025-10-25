@@ -11,6 +11,7 @@ import (
 	"github.com/MicahParks/keyfunc/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -22,7 +23,7 @@ var (
 // setupJWKS initializes the JWKS for JWT verification
 func setupJWKS(betterAuthBaseURL string) error {
 	jwksURL := fmt.Sprintf("%s/api/auth/jwks", betterAuthBaseURL)
-	fmt.Printf("[JWT DEBUG] Fetching JWKS from: %s\n", jwksURL)
+	log.Debug().Msgf("[JWT DEBUG] Fetching JWKS from: %s", jwksURL)
 
 	options := keyfunc.Options{
 		RefreshInterval: 24 * time.Hour,
@@ -32,11 +33,11 @@ func setupJWKS(betterAuthBaseURL string) error {
 	var err error
 	jwks, err = keyfunc.Get(jwksURL, options)
 	if err != nil {
-		fmt.Printf("[JWT DEBUG] Failed to fetch JWKS: %v\n", err)
+		log.Debug().Err(err).Msg("[JWT DEBUG] Failed to fetch JWKS")
 		return fmt.Errorf("failed to get JWKS: %w", err)
 	}
 
-	fmt.Println("[JWT DEBUG] Successfully fetched JWKS")
+	log.Debug().Msg("[JWT DEBUG] Successfully fetched JWKS")
 	return nil
 }
 
@@ -50,28 +51,28 @@ func verifyBetterAuthJWT(tokenString string, cfg *config.Config) (*jwt.Token, er
 
 	token, err := jwt.Parse(tokenString, jwks.Keyfunc)
 	if err != nil {
-		fmt.Printf("[JWT DEBUG] Failed to parse token: %v\n", err)
+		log.Debug().Err(err).Msg("[JWT DEBUG] Failed to parse token")
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
 
 	if !token.Valid {
-		fmt.Println("[JWT DEBUG] Token is invalid")
+		log.Debug().Msg("[JWT DEBUG] Token is invalid")
 		return nil, errors.New("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		fmt.Println("[JWT DEBUG] Failed to extract claims")
+		log.Debug().Msg("[JWT DEBUG] Failed to extract claims")
 		return nil, errors.New("invalid token claims")
 	}
 
 	if iss, ok := claims["iss"].(string); !ok || iss != cfg.FrontendURL {
-		fmt.Printf("[JWT DEBUG] Issuer mismatch: got '%s', expected '%s'\n", iss, cfg.FrontendURL)
+		log.Debug().Msgf("[JWT DEBUG] Issuer mismatch: got '%s', expected '%s'", iss, cfg.FrontendURL)
 		return nil, ErrInvalidIssuer
 	}
 
 	if aud, ok := claims["aud"].(string); !ok || aud != cfg.FrontendURL {
-		fmt.Printf("[JWT DEBUG] Audience mismatch: got '%s', expected '%s'\n", aud, cfg.FrontendURL)
+		log.Debug().Msgf("[JWT DEBUG] Audience mismatch: got '%s', expected '%s'", aud, cfg.FrontendURL)
 		return nil, ErrInvalidAudience
 	}
 

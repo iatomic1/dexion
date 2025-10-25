@@ -3,10 +3,10 @@ package domain
 import (
 	"backend/api/http"
 	"errors"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -43,7 +43,7 @@ func GetUserIDFromContext(c *gin.Context) (string, error) {
 		http.SendUnauthorized(c, nil, http.WithMessage("User ID not found in context"))
 		return "", errors.New("user id not found")
 	}
-	fmt.Println(userID)
+	log.Info().Interface("userID", userID).Msg("userID")
 
 	userIDStr, ok := userID.(string)
 	if !ok {

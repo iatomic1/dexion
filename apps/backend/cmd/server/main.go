@@ -33,20 +33,22 @@ import (
 	"backend/api/http"
 	"backend/api/http/router"
 	"backend/config"
+	"backend/pkg/logger"
 	"backend/pkg/projectpath"
 	"context"
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
+	logger.Init()
+
 	cfg, err := config.Load(projectpath.Root)
 	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
+		log.Fatal().Err(err).Msg("Error loading config")
 	}
 
 	// Get database URL from environment or config
@@ -58,7 +60,7 @@ func main() {
 	// Create a connection pool instead of a single connection
 	poolConfig, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
-		log.Fatalf("Unable to parse pool config: %v\n", err)
+		log.Fatal().Err(err).Msg("Unable to parse pool config")
 	}
 
 	poolConfig.MaxConns = 10
@@ -66,16 +68,15 @@ func main() {
 	// Create the connection pool
 	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
-		log.Fatalf("Unable to create connection pool: %v\n", err)
+		log.Fatal().Err(err).Msg("Unable to create connection pool")
 	}
-	defer pool.Close()
 
 	// Verify connection is working
 	if err := pool.Ping(context.Background()); err != nil {
-		log.Fatalf("Unable to connect to database: %v\n", err)
+		log.Fatal().Err(err).Msg("Unable to connect to database")
 	}
 
-	fmt.Println("Database connection pool established successfully")
+	log.Info().Msg("Database connection pool established successfully")
 
 	rdbURL := os.Getenv("REDIS_URL")
 	if rdbURL == "" {
@@ -84,22 +85,23 @@ func main() {
 
 	opt, err := redis.ParseURL(rdbURL)
 	if err != nil {
-		log.Fatalf("Invalid Redis URL: %v", err)
+		log.Fatal().Err(err).Msg("Invalid Redis URL")
 	}
 
 	rdb := redis.NewClient(opt)
 
 	err = rdb.Ping(context.Background()).Err()
 	if err != nil {
-		log.Fatalf("Could not connect to Redis: %v", err)
+		log.Fatal().Err(err).Msg("Could not connect to Redis")
 	}
-	fmt.Println("Connected to Redis successfully")
+	log.Info().Msg("Connected to Redis successfully")
+
 	srv, err := http.NewServer(cfg, pool, rdb)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("Failed to create server")
 	}
 
-	fmt.Println("Server initialized successfully")
+	log.Info().Msg("Server initialized successfully")
 	router.SetupRouter(srv)
 	http.RunServer(srv)
 }

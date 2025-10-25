@@ -17,6 +17,10 @@ type Config struct {
 	CoudinaryURL string `mapstructure:"CLOUDINARY_URL"`
 	FrontendURL  string `mapstructure:"FRONTEND_URL"`
 	RdbURL       string `mapstructure:"REDIS_URL"`
+	// AllowedOrigins specifies the list of allowed origins for CORS configuration.
+	// Expected format: comma-separated list of origins (e.g., "https://example.com,https://another.com").
+	// Used to configure CORS middleware to restrict cross-origin requests.
+	AllowedOrigins string `mapstructure:"ALLOWED_ORIGINS"`
 }
 
 func Load(path string) (*Config, error) {
@@ -79,6 +83,9 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 
 	if val := os.Getenv("REDIS_DB"); val != "" {
 		cfg.RdbURL = val
+	}
+	if val := os.Getenv("ALLOWED_ORIGINS"); val != "" {
+		cfg.AllowedOrigins = val
 	}
 
 	return cfg, nil

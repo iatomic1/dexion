@@ -2,6 +2,7 @@ package router
 
 import (
 	"backend/api/http"
+	"backend/api/http/handlers"
 	alerts "backend/api/http/handlers/alert"
 	"backend/api/http/middleware"
 
@@ -17,10 +18,10 @@ func RegisterAlertRoutes(srv *http.Server, router *gin.RouterGroup) {
 
 	alertGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
-		alertGroup.POST("", alertHandler.CreateAlert)
-		alertGroup.GET("", alertHandler.GetUserAlerts)
-		alertGroup.GET("/:id", alertHandler.GetAlertByID)
-		alertGroup.DELETE("/:id", alertHandler.DeleteAlert)
-		alertGroup.PATCH("/:id", alertHandler.UpdateAlert)
+		alertGroup.POST("", handlers.WithUser(alertHandler.CreateAlert))
+		alertGroup.GET("", handlers.WithUser(alertHandler.GetUserAlerts))
+		alertGroup.GET("/:id", handlers.WithUser(alertHandler.GetAlertByID))
+		alertGroup.DELETE("/:id", handlers.WithUser(alertHandler.DeleteAlert))
+		alertGroup.PATCH("/:id", handlers.WithUser(alertHandler.UpdateAlert))
 	}
 }

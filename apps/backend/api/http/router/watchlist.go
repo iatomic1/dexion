@@ -2,6 +2,7 @@ package router
 
 import (
 	"backend/api/http"
+	"backend/api/http/handlers"
 	"backend/api/http/handlers/watchlist"
 	"backend/api/http/middleware"
 
@@ -18,9 +19,9 @@ func RegisterWatchlistRoutes(srv *http.Server, router *gin.RouterGroup) {
 	// watchlistGroup.GET("/:address/watchers", watchlistHandler.GetWalletWatchers)
 	watchlistGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
-		watchlistGroup.POST("", watchlistHandler.CreateWatchlist)
-		watchlistGroup.GET("", watchlistHandler.GetUserWatchlists)
+		watchlistGroup.POST("", handlers.WithUser(watchlistHandler.CreateWatchlist))
+		watchlistGroup.GET("", handlers.WithUser(watchlistHandler.GetUserWatchlists))
 		// watchlistGroup.PATCH("/:id", watchlistHandler.UpdateWatchlist)
-		watchlistGroup.DELETE("/:id", watchlistHandler.DeleteWatchlist)
+		watchlistGroup.DELETE("/:id", handlers.WithUser(watchlistHandler.DeleteWatchlist))
 	}
 }

@@ -1,3 +1,4 @@
+import { createLogger } from "@repo/logger";
 import { PartyKitSender } from "./channels/partykit";
 import { TelegramSender } from "./channels/telegram";
 import type {
@@ -8,6 +9,8 @@ import type {
 	NotificationRecipient,
 } from "./interfaces";
 
+const logger = createLogger({ service: "notifier" });
+
 export class NotifierClient implements INotifier {
 	private telegramSender: IChannelSender;
 	private partykitSender: IChannelSender;
@@ -16,15 +19,16 @@ export class NotifierClient implements INotifier {
 		this.telegramSender = new TelegramSender(telegramBotToken);
 		this.partykitSender = new PartyKitSender(partykitUrl);
 
-		console.log("NotifierClient initialized with all channel senders");
+		logger.info("NotifierClient initialized with all channel senders");
 	}
 
 	async send(
 		channel: NotificationChannel,
 		notification: Notification,
 	): Promise<void> {
-		console.log(
-			`Attempting to send notification via ${channel} to ${notification.recipient.id}`,
+		logger.info(
+			{ channel, recipient: notification.recipient.id },
+			"Attempting to send notification",
 		);
 
 		let sender: IChannelSender;
@@ -38,31 +42,28 @@ export class NotifierClient implements INotifier {
 				break;
 			default:
 				const exhaustiveCheck: never = channel;
-				return Promise.reject(
-					new Error(`Unsupported channel: ${exhaustiveCheck}`),
-				);
+				const err = new Error(`Unsupported channel: ${exhaustiveCheck}`);
+				logger.error(err);
+				return Promise.reject(err);
 		}
 
 		if (!sender.isReady()) {
-			console.warn(
-				`Sender for channel ${channel} is not ready. Skipping notification.`,
-			);
-			return Promise.reject(
-				new Error(`Sender for channel ${channel} is not ready.`),
-			);
+			const err = new Error(`Sender for channel ${channel} is not ready.`);
+			logger.warn(err, "Skipping notification");
+			return Promise.reject(err);
 		}
 
 		try {
 			await sender.send(notification);
-			console.log(`Notification successfully routed via ${channel}.`);
+			logger.info({ channel }, `Notification successfully routed via ${channel}.`);
 		} catch (error) {
-			console.error(`Error sending notification via ${channel}:`, error);
+			logger.error(error, `Error sending notification via ${channel}:`);
 			throw error;
 		}
 	}
 
 	async destroyAll(): Promise<void> {
-		console.log("Destroying all notifier clients...");
+		logger.info("Destroying all notifier clients...");
 		if (
 			this.partykitSender &&
 			typeof (this.partykitSender as any).destroy === "function"
@@ -70,7 +71,7 @@ export class NotifierClient implements INotifier {
 			(this.partykitSender as any).destroy();
 		}
 		// Add similar destroy calls for TelegramSender if it implements a destroy method
-		console.log("All notifier clients shutdown sequence initiated.");
+		logger.info("All notifier clients shutdown sequence initiated.");
 	}
 }
 

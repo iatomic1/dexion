@@ -2,8 +2,10 @@ package http
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 // getDefaultMessage returns the default message for a given status code
@@ -139,11 +141,21 @@ func SendValidationError(c *gin.Context, errors interface{}, opts ...ResponseOpt
 }
 
 func SendError(c *gin.Context, statusCode int, errs []error, opts ...ResponseOption) {
-	var outputErrors []string
-	if len(errs) > 0 {
-		outputErrors = make([]string, 0, len(errs))
-		for _, err := range errs {
-			outputErrors = append(outputErrors, err.Error())
+	var outputErrors interface{}
+
+	// For 5xx errors, we always want to log them.
+	if statusCode >= 500 {
+		if len(errs) > 0 {
+			log.Error().Errs("errors", errs).Msg("Internal server error")
+		}
+	} else if os.Getenv("ENVIRONMENT") != "production" {
+		// For other errors (e.g., 4xx), we only include them in the response if not in production.
+		if len(errs) > 0 {
+			var errorStrings []string
+			for _, err := range errs {
+				errorStrings = append(errorStrings, err.Error())
+			}
+			outputErrors = errorStrings
 		}
 	}
 

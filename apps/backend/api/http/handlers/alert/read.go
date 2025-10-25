@@ -3,7 +3,6 @@ package alerts
 import (
 	"backend/api/http"
 	"backend/internal/db/repository"
-	"backend/internal/domain"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -21,17 +20,10 @@ import (
 // @Success      200  {object}  http.Response{data=[]repository.Alert}  "User alerts retrieved successfully"
 // @Failure      500  {object}  http.InternalServerErrorResponse        "Internal server error"
 // @Router       /alerts [get]
-func (h *AlertHandler) GetUserAlerts(c *gin.Context) {
+func (h *AlertHandler) GetUserAlerts(c *gin.Context, userID string) {
 	ctx := c.Request.Context()
 
-	userID, err := domain.GetUserIDFromContext(c)
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("error getting userID"))
-		return
-	}
-
-	repo := repository.New(h.srv.DB)
-	alerts, err := repo.GetUserAlerts(ctx, userID)
+	alerts, err := h.alertService.GetUserAlerts(ctx, userID)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
@@ -77,7 +69,7 @@ func (h *AlertHandler) GetAllChannels(c *gin.Context) {
 // @Failure      400  {object}  map[string]string                     "Invalid UUID format"
 // @Failure      500  {object}  http.InternalServerErrorResponse      "Internal server error"
 // @Router       /alerts/{id} [get]
-func (h *AlertHandler) GetAlertByID(c *gin.Context) {
+func (h *AlertHandler) GetAlertByID(c *gin.Context, userID string) {
 	ctx := c.Request.Context()
 
 	idStr := c.Param("id")
@@ -87,17 +79,7 @@ func (h *AlertHandler) GetAlertByID(c *gin.Context) {
 		return
 	}
 
-	userID, err := domain.GetUserIDFromContext(c)
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("error getting userID"))
-		return
-	}
-
-	repo := repository.New(h.srv.DB)
-	alert, err := repo.GetAlertById(ctx, repository.GetAlertByIdParams{
-		ID:     id,
-		UserID: userID,
-	})
+	alert, err := h.alertService.GetAlertByID(ctx, id, userID)
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return

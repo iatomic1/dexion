@@ -18,14 +18,11 @@ import (
 func CacheStruct(ctx context.Context, rdb *redis.Client, key string, v any) error {
 	m, err := toMap(v)
 	if err != nil {
-		fmt.Println("stopping here gng 1")
 		return err
 	}
 	if len(m) == 0 {
-		fmt.Println("stopping here gng 2")
 		return nil
 	}
-	fmt.Println("we ain't going no where")
 	return rdb.HSet(ctx, key, m).Err()
 }
 

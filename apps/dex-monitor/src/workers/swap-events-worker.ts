@@ -1,5 +1,11 @@
 import { Job, Queue, Worker } from "bullmq";
-import { emailQueue, swapQueue, telegramQueue, webhookQueue } from "@/queues";
+import {
+	emailQueue,
+	swapQueue,
+	swapQueueDlq,
+	telegramQueue,
+	webhookQueue,
+} from "@/queues";
 import { getActiveAlertsByCa } from "@/lib/redis/alerts";
 import type { SwapEventJobData } from "@/queues/types";
 import { getTokenMetadata } from "@repo/tokens/services";
@@ -7,6 +13,7 @@ import { bullMqRedisConnection } from "@/config/redis";
 import { getCachedUserProfile } from "@/lib/redis/user-profile";
 import { ALERT_CHANNELS } from "@/lib/constants";
 import { evaluateAlert, getMetricValue, hasChannel } from "@/utils/swap-events";
+import { logger } from "@/config/logger";
 
 export type Alert = Awaited<ReturnType<typeof getActiveAlertsByCa>>[number];
 
@@ -32,75 +39,71 @@ const swapEventsWorker = new Worker(
 
 					await Promise.all(
 						alerts.map(async (alert) => {
-							try {
-								const shouldTrigger = evaluateAlert(alert, token);
-								if (!shouldTrigger) return;
+							const shouldTrigger = evaluateAlert(alert, token);
+							if (!shouldTrigger) return;
 
-								const userProfile = await getCachedUserProfile(alert.userId);
+							const userProfile = await getCachedUserProfile(alert.userId);
 
-								console.log(`Alert triggered for user ${alert.userId}:`, {
-									metric: alert.metric,
-									operator: alert.operator,
-									value: alert.value,
-									currentValue: getMetricValue(alert.metric, token),
-								});
+							logger.info(
+								{ alert, currentValue: getMetricValue(alert.metric, token) },
+								`Alert triggered for user ${alert.userId}`,
+							);
 
-								const activeChannels = alert.channels
-									.map(
-										(cid: string) =>
-											ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
-									)
-									.filter(Boolean)
-									.filter((chName) => hasChannel(userProfile, chName));
+							const activeChannels = alert.channels
+								.map(
+									(cid: string) =>
+										ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
+								)
+								.filter(Boolean)
+								.filter((chName) => hasChannel(userProfile, chName));
 
-								await Promise.all(
-									activeChannels.map(async (chName) => {
-										try {
-											const queue = queueMap[chName as keyof typeof queueMap];
-											if (!queue) return;
+							await Promise.all(
+								activeChannels.map(async (chName) => {
+									const queue = queueMap[chName as keyof typeof queueMap];
+									if (!queue) return;
 
-											await queue.add(
-												"send-alert",
-												{
-													channel: chName,
-													userProfile,
-													alert,
-													token,
-													triggeredAt: new Date().toISOString(),
-												},
-												{
-													attempts: 3,
-													backoff: { type: "exponential", delay: 2000 },
-												},
-											);
-										} catch (error) {
-											console.error(
-												`Failed to queue alert for channel ${chName}:`,
-												error,
-											);
-										}
-									}),
-								);
+									await queue.add(
+										"send-alert",
+										{
+											channel: chName,
+											userProfile,
+											alert,
+											token,
+											triggeredAt: new Date().toISOString(),
+										},
+										{
+											attempts: 3,
+											backoff: { type: "exponential", delay: 2000 },
+										},
+									);
+								}),
+							);
 
-								if (!alert.repeatable) {
-									// Mark as completed here | Delete from cache
-								}
-							} catch (error) {
-								console.error(
-									`Failed processing alert ${alert.id} for user ${alert.userId}:`,
-									error,
-								);
+							if (!alert.repeatable) {
+								// Mark as completed here | Delete from cache
 							}
 						}),
 					);
 				} catch (error) {
-					console.error(`Failed processing alerts for CA ${ca}:`, error);
+					logger.error(error, `Failed processing alerts for CA ${ca}`);
+					throw error; // Propagate error to fail the job; failed jobs are moved to DLQ by the `failed` event handler below
 				}
 			}),
 		);
 		return;
 	},
-	{ connection: bullMqRedisConnection },
+	{
+		connection: bullMqRedisConnection,
+		removeOnComplete: { count: 1000 },
+		removeOnFail: { count: 5000 },
+	},
 );
+
+swapEventsWorker.on("failed", (job, err) => {
+	if (job) {
+		swapQueueDlq.add(job.name, job.data);
+		logger.warn({ err, jobId: job.id }, `Moved job ${job.id} to DLQ`);
+	}
+});
 
 export default swapEventsWorker;

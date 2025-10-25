@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AlertDialog } from "./alert-dialog";
 import { AlertsTable } from "./alerts-table";
 import { WebhookSettingsDialog } from "./webhook-settings-dialog";
+// import { useLogger } from "~/lib/axiom/client";
 
 export function AlertsManager({
 	alerts,
@@ -19,6 +20,7 @@ export function AlertsManager({
 		webhookUrl: "",
 		bearerToken: "",
 	});
+	// const logger = useLogger();
 
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
@@ -30,6 +32,7 @@ export function AlertsManager({
 	};
 
 	const handleEdit = (alert: UserAlert) => {
+		// logger.info("testing axiom logging 2.2029");
 		setEditingAlert(alert);
 		setIsDialogOpen(true);
 	};

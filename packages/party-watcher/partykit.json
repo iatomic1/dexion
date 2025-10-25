@@ -1,7 +1,0 @@
-{
-  "$schema": "https://www.partykit.io/schema.json",
-  "name": "token-watcher-party",
-  "main": "src/server.ts",
-  "port": 3008,
-  "compatibilityDate": "2025-06-17"
-}

@@ -4,6 +4,7 @@ import {
 	type Chainhook,
 	type PaginatedChainhookResponse,
 } from "@hirosystems/chainhooks-client";
+import { logger } from "./config/logger";
 
 export const client = new ChainhooksClient({
 	baseUrl: CHAINHOOKS_BASE_URL.mainnet,
@@ -71,12 +72,9 @@ const registerSwapChainhooks = async () => {
 			options: CHAINHOOK_OPTIONS,
 		});
 
-		console.log("Chainhooks registered:", {
-			velarChainhook,
-			bitflowChainhook,
-		});
+		logger.info({ velarChainhook, bitflowChainhook }, "Chainhooks registered:");
 	} catch (err) {
-		console.error("Failed to register swap chainhooks:", err);
+		logger.error(err, "Failed to register swap chainhooks:");
 	}
 };
 // await registerSwapChainhooks();
@@ -100,4 +98,4 @@ const updateChainhookWebhookURL = async (
 const chainhooks2 = await client.getChainhooks();
 
 await updateChainhookWebhookURL(chainhooks2);
-console.log(JSON.stringify(chainhooks2, null, 2));
+logger.info(chainhooks2, "Chainhooks updated:");

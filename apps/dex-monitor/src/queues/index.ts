@@ -18,11 +18,31 @@ export const telegramQueue = new Queue("telegram-queue", {
 	connection: bullMqRedisConnection,
 });
 
+export const swapQueueDlq = new Queue<SwapEventJobData>("swap-events-queue.dlq", {
+	connection: bullMqRedisConnection,
+});
+
+export const webhookQueueDlq = new Queue("webhook-queue.dlq", {
+	connection: bullMqRedisConnection,
+});
+
+export const emailQueueDlq = new Queue<SendEmailAlertJobData>("email-queue.dlq", {
+	connection: bullMqRedisConnection,
+});
+
+export const telegramQueueDlq = new Queue("telegram-queue.dlq", {
+	connection: bullMqRedisConnection,
+});
+
 export const queues = {
 	swapQueue,
 	webhookQueue,
 	emailQueue,
 	telegramQueue,
+	swapQueueDlq,
+	webhookQueueDlq,
+	emailQueueDlq,
+	telegramQueueDlq,
 };
 
 export type QueueNames = keyof typeof queues;

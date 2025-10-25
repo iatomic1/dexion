@@ -3,18 +3,12 @@ package alerts
 import (
 	"backend/api/http"
 	"backend/internal/db/repository"
-	"backend/internal/domain"
-	"backend/pkg/cacheutil"
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
-	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // UpdateAlert godoc
@@ -32,17 +26,12 @@ import (
 // @Failure      404    {object}  map[string]string                       "Alert not found"
 // @Failure      500    {object}  http.InternalServerErrorResponse        "Internal server error"
 // @Router       /alerts/{id} [patch]
-func (h *AlertHandler) UpdateAlert(c *gin.Context) {
+func (h *AlertHandler) UpdateAlert(c *gin.Context, userID string) {
 	ctx := c.Request.Context()
 	idStr := c.Param("id")
 	alertId, err := uuid.Parse(idStr)
 	if err != nil {
 		http.SendBadRequest(c, fmt.Errorf("invalid UUID format"), http.WithMessage("Invalid UUID format"))
-		return
-	}
-	userID, err := domain.GetUserIDFromContext(c)
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("error getting userID"))
 		return
 	}
 	var req repository.UpdateAlertWithChannelsParams
@@ -57,26 +46,14 @@ func (h *AlertHandler) UpdateAlert(c *gin.Context) {
 		return
 	}
 
-	req.AlertID = pgtype.UUID{Bytes: alertId, Valid: true}
-	req.UserID = &userID
-
-	tx, cleanup, err := h.beginTx(ctx)
-	if err != nil {
-		http.SendInternalServerError(c, err)
-		return
-	}
-	success := false
-	defer cleanup(success)
-
-	txRepo := repository.New(tx)
-	alert, err := txRepo.UpdateAlert(ctx, repository.UpdateAlertParams{
+	alert, err := h.alertService.UpdateAlert(ctx, repository.UpdateAlertParams{
 		Metric:     *req.Metric,
 		Operator:   *req.Operator,
 		Value:      *req.Value,
 		Repeatable: *req.Repeatable,
 		ID:         alertId,
-		UserID:     *req.UserID,
-	})
+		UserID:     userID,
+	}, req.ChannelIds)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.SendNotFound(c, err, http.WithMessage("alert not found"))
@@ -86,51 +63,7 @@ func (h *AlertHandler) UpdateAlert(c *gin.Context) {
 		return
 	}
 
-	// Replace alert channels
-	err = txRepo.DeleteAlertChannels(ctx, alertId)
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("failed to delete alert channels"))
-		return
-	}
-	fmt.Print(req.ChannelIds)
-
-	channels, err := txRepo.InsertAlertChannels(ctx, repository.InsertAlertChannelsParams{
-		AlertID: alertId,
-		Column2: req.ChannelIds,
-	})
-	if err != nil {
-		http.SendInternalServerError(c, err, http.WithMessage("failed to insert alert channels"))
-		return
-	}
-	fmt.Print(channels)
-
-	success = true
-	cleanup(success)
-
-	// Cache the updated alert
-	cachedAlert := CachedAlert{
-		ID:         alert.ID.String(),
-		UserID:     alert.UserID,
-		Metric:     alert.Metric,
-		Operator:   alert.Operator,
-		Value:      alert.Value,
-		Ca:         alert.Ca,
-		Repeatable: alert.Repeatable,
-		Status:     alert.Status,
-		UpdatedAt:  alert.UpdatedAt.Format(time.RFC3339),
-		CreatedAt:  alert.CreatedAt.Format(time.RFC3339),
-	}
-
-	// Convert channels to cache format
-	var ids []string
-	for _, ch := range channels {
-		ids = append(ids, ch.String())
-	}
-	cachedAlert.Channels = strings.Join(ids, ",")
-
-	if err := cacheutil.CacheStruct(ctx, h.srv.RDB, h.getAlertCacheKey(alert.ID), cachedAlert); err != nil {
-		log.Printf("cache update failed for alert %s: %v", alert.ID, err)
-	}
+	h.updateCachedAlert(ctx, alert, req.ChannelIds)
 
 	http.SendSuccess(c, alert, http.WithMessage("Alert updated successfully"))
 }

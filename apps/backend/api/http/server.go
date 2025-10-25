@@ -4,7 +4,6 @@ import (
 	"backend/config"
 	"context"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
@@ -33,7 +33,7 @@ func NewServer(cfg *config.Config, db *pgxpool.Pool, rdb *redis.Client) (*Server
 
 func RunServer(srv *Server) {
 	if srv == nil {
-		log.Fatal(errors.New("Server instance can't be nil"))
+		log.Fatal().Err(errors.New("server instance can't be nil")).Msg("server instance is nil")
 	}
 
 	host := "0.0.0.0"
@@ -56,17 +56,37 @@ func RunServer(srv *Server) {
 		Handler:      srv.Router,
 	}
 
+	log.Info().Str("addr", host+":"+port).Msg("HTTP server started")
+
 	go func() {
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal(err, nil)
+			log.Fatal().Err(err).Msg("listen and serve failed")
 		}
 	}()
+
 	quit := make(chan os.Signal, 1)
+
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	log.Info().Msg("Shutting down server...")
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
+
 	if err := httpServer.Shutdown(ctx); err != nil {
-		log.Fatal(err, nil)
+		log.Error().Err(err).Msg("Server shutdown failed")
+	} else {
+		log.Info().Msg("HTTP server stopped gracefully")
 	}
+
+	log.Info().Msg("Closing database connection...")
+	srv.DB.Close()
+
+	log.Info().Msg("Closing Redis connection...")
+	if err := srv.RDB.Close(); err != nil {
+		log.Error().Err(err).Msg("Redis connection closing failed")
+	}
+
+	log.Info().Msg("Server exited")
+
 }

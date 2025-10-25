@@ -86,7 +86,7 @@ const swapEventsWorker = new Worker(
 					);
 				} catch (error) {
 					logger.error(error, `Failed processing alerts for CA ${ca}`);
-					throw error; // Propagate error to fail the job
+					throw error; // Propagate error to fail the job; failed jobs are moved to DLQ by the `failed` event handler below
 				}
 			}),
 		);

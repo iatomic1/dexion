@@ -1,4 +1,7 @@
+import { createLogger } from "@repo/logger";
 import type { IChannelSender, Notification } from "../interfaces";
+
+const logger = createLogger({ service: "notifier-partykit" });
 
 export class PartyKitSender implements IChannelSender {
 	private partyUrl: string;
@@ -15,14 +18,14 @@ export class PartyKitSender implements IChannelSender {
 		if (!this.isReady()) {
 			const errorMessage =
 				"PartyKitSender is not ready (partyUrl not configured).";
-			console.warn(errorMessage + " Cannot send message.");
+			logger.warn(errorMessage + " Cannot send message.");
 			return Promise.reject(new Error(errorMessage));
 		}
 
 		if (!notification.recipient.id) {
 			const errorMessage =
 				"Recipient ID (room ID) is missing for PartyKit notification";
-			console.error(errorMessage);
+			logger.error(errorMessage);
 			return Promise.reject(new Error(errorMessage));
 		}
 
@@ -34,17 +37,17 @@ export class PartyKitSender implements IChannelSender {
 				body: JSON.stringify(notification.message),
 				headers: { "Content-Type": "application/json" },
 			});
-			console.log(`PartyKit message sent to room ${notification.recipient.id}`);
+			logger.info(`PartyKit message sent to room ${notification.recipient.id}`);
 		} catch (error) {
-			console.error(
-				`Failed to send PartyKit message to room ${notification.recipient.id}:`,
+			logger.error(
 				error,
+				`Failed to send PartyKit message to room ${notification.recipient.id}:`,
 			);
 			throw error;
 		}
 	}
 
 	destroy(): void {
-		console.log("PartyKitSender destroy called - no specific action taken.");
+		logger.info("PartyKitSender destroy called - no specific action taken.");
 	}
 }

@@ -1,5 +1,8 @@
+import { createLogger } from "@repo/logger";
 import { Markup, Telegraf } from "telegraf";
 import type { IChannelSender, Notification } from "../interfaces";
+
+const logger = createLogger({ service: "notifier-telegram" });
 
 export class TelegramSender implements IChannelSender {
 	private bot: Telegraf;
@@ -8,7 +11,7 @@ export class TelegramSender implements IChannelSender {
 	constructor(botToken?: string) {
 		this.botToken = botToken || process.env.TELEGRAM_BOT_TOKEN;
 		if (!this.botToken) {
-			console.warn(
+			logger.warn(
 				"Telegram Bot Token not provided. TelegramSender will not be able to send messages.",
 			);
 			this.bot = new Telegraf("YOUR_FALLBACK_BOT_TOKEN_IF_ANY_OR_EMPTY_STRING");
@@ -18,7 +21,7 @@ export class TelegramSender implements IChannelSender {
 
 		// Optional: Add error handling for the bot
 		this.bot.catch((err, ctx) => {
-			console.error(`Telegraf error for ${ctx.updateType}`, err);
+			logger.error({ err, ctx }, `Telegraf error for ${ctx.updateType}`);
 		});
 	}
 
@@ -28,15 +31,18 @@ export class TelegramSender implements IChannelSender {
 
 	async send(notification: Notification): Promise<void> {
 		if (!this.isReady()) {
-			console.warn(
+			const err = new Error("Telegram Bot Token is not configured.");
+			logger.warn(
+				err,
 				"TelegramSender is not ready (missing bot token). Cannot send message.",
 			);
-			return Promise.reject(new Error("Telegram Bot Token is not configured."));
+			return Promise.reject(err);
 		}
 
 		if (!notification.recipient.id) {
-			console.error("Recipient ID is missing for Telegram notification");
-			return Promise.reject(new Error("Recipient ID is missing."));
+			const err = new Error("Recipient ID is missing.");
+			logger.error(err, "Recipient ID is missing for Telegram notification");
+			return Promise.reject(err);
 		}
 
 		try {
@@ -56,12 +62,14 @@ export class TelegramSender implements IChannelSender {
 				notification.message,
 				extra,
 			);
-			console.log(`Telegram message sent to ${notification.recipient.id}`);
-			console.log(result);
+			logger.info(
+				{ result, recipient: notification.recipient.id },
+				"Telegram message sent",
+			);
 		} catch (error) {
-			console.error(
-				`Failed to send Telegram message to ${notification.recipient.id}:`,
+			logger.error(
 				error,
+				`Failed to send Telegram message to ${notification.recipient.id}:`,
 			);
 			throw error;
 		}

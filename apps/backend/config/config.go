@@ -7,16 +7,19 @@ import (
 )
 
 type Config struct {
-	AccessJwtKey   string `mapstructure:"ACCESS_JWT_KEY"`
-	Environment    string `mapstructure:"ENVIROMENT"`
-	DbType         string `mapstructure:"DB_TYPE"`
-	ApiPrefixStr   string `mapstructure:"API_V1_PREFIX_STRING"`
-	DbURL          string `mapstructure:"DB_URL"`
-	HttpAddress    string `mapstructure:"HTTP_SERVER_ADDRESS"`
-	Host           string `mapstructure:"HOST"`
-	CoudinaryURL   string `mapstructure:"CLOUDINARY_URL"`
-	FrontendURL    string `mapstructure:"FRONTEND_URL"`
-	RdbURL         string `mapstructure:"REDIS_URL"`
+	AccessJwtKey string `mapstructure:"ACCESS_JWT_KEY"`
+	Environment  string `mapstructure:"ENVIROMENT"`
+	DbType       string `mapstructure:"DB_TYPE"`
+	ApiPrefixStr string `mapstructure:"API_V1_PREFIX_STRING"`
+	DbURL        string `mapstructure:"DB_URL"`
+	HttpAddress  string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	Host         string `mapstructure:"HOST"`
+	CoudinaryURL string `mapstructure:"CLOUDINARY_URL"`
+	FrontendURL  string `mapstructure:"FRONTEND_URL"`
+	RdbURL       string `mapstructure:"REDIS_URL"`
+	// AllowedOrigins specifies the list of allowed origins for CORS configuration.
+	// Expected format: comma-separated list of origins (e.g., "https://example.com,https://another.com").
+	// Used to configure CORS middleware to restrict cross-origin requests.
 	AllowedOrigins string `mapstructure:"ALLOWED_ORIGINS"`
 }
 

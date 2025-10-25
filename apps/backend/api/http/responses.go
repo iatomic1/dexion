@@ -148,7 +148,7 @@ func SendError(c *gin.Context, statusCode int, errs []error, opts ...ResponseOpt
 		if len(errs) > 0 {
 			log.Error().Errs("errors", errs).Msg("Internal server error")
 		}
-	} else if os.Getenv("ENVIROMENT") != "production" {
+	} else if os.Getenv("ENVIRONMENT") != "production" {
 		// For other errors (e.g., 4xx), we only include them in the response if not in production.
 		if len(errs) > 0 {
 			var errorStrings []string

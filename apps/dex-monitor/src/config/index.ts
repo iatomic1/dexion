@@ -1,6 +1,14 @@
-export const config = {
-	port: Number(process.env.PORT || 4000),
-	bullMqRedisUrl: process.env.BULLMQ_REDIS_URL || "redis://127.0.0.1:6379",
-	redisUrl: process.env.REDIS_URL || "",
-	chainhookConsumerSecret: process.env.CHAINHOOK_CONSUMER_SECRET,
-};
+import { configSchema } from "./schema";
+
+const parsedConfig = configSchema.safeParse(process.env);
+
+if (!parsedConfig.success) {
+	console.error(
+		"❌ Invalid environment variables:",
+		parsedConfig.error.flatten().fieldErrors,
+	);
+	throw new Error("Invalid environment variables");
+}
+
+export const config = parsedConfig.data;
+

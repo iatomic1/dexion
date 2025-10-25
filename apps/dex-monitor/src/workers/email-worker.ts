@@ -4,6 +4,7 @@ import type { SendEmailAlertJobData } from "@/queues/types";
 import { bullMqRedisConnection } from "@/config/redis";
 import { Resend } from "resend";
 import { getAlertEmail } from "@/lib/email";
+import { logger } from "@/config/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -11,7 +12,7 @@ const emailWorker = new Worker(
 	emailQueue.name,
 	async (job: Job<SendEmailAlertJobData>) => {
 		try {
-			console.log("📩 Received in email worker:", job.data);
+			logger.info(job.data, "📩 Received in email worker:");
 
 			const { alert, token, userProfile: user } = job.data;
 
@@ -24,10 +25,10 @@ const emailWorker = new Worker(
 				html: getAlertEmail({ token, alert }),
 			});
 
-			console.log("✅ Email sent successfully:", response);
+			logger.info(response, "✅ Email sent successfully:");
 			return response;
 		} catch (err) {
-			console.error("❌ Error in email worker:", err);
+			logger.error(err, "❌ Error in email worker:");
 			throw err; // Ensure BullMQ marks job as failed
 		}
 	},

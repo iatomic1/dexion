@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./routes";
+import { logger } from "./config/logger";
 
 const startServer = () => {
 	const app = createApp();
@@ -10,8 +11,8 @@ const startServer = () => {
 			port: 4000,
 		},
 		({ address, port }) => {
-			console.log(`✅ Server running at http://localhost:${port}`);
-			console.log(`For the UI of instance1, open http://localhost:${port}/ui`);
+			logger.info(`✅ Server running at http://localhost:${port}`);
+			logger.info(`For the UI of instance1, open http://localhost:${port}/ui`);
 		},
 	);
 };

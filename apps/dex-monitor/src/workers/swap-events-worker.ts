@@ -7,6 +7,7 @@ import { bullMqRedisConnection } from "@/config/redis";
 import { getCachedUserProfile } from "@/lib/redis/user-profile";
 import { ALERT_CHANNELS } from "@/lib/constants";
 import { evaluateAlert, getMetricValue, hasChannel } from "@/utils/swap-events";
+import { logger } from "@/config/logger";
 
 export type Alert = Awaited<ReturnType<typeof getActiveAlertsByCa>>[number];
 
@@ -38,12 +39,10 @@ const swapEventsWorker = new Worker(
 
 								const userProfile = await getCachedUserProfile(alert.userId);
 
-								console.log(`Alert triggered for user ${alert.userId}:`, {
-									metric: alert.metric,
-									operator: alert.operator,
-									value: alert.value,
-									currentValue: getMetricValue(alert.metric, token),
-								});
+								logger.info(
+									{ alert, currentValue: getMetricValue(alert.metric, token) },
+									`Alert triggered for user ${alert.userId}`,
+								);
 
 								const activeChannels = alert.channels
 									.map(
@@ -74,9 +73,9 @@ const swapEventsWorker = new Worker(
 												},
 											);
 										} catch (error) {
-											console.error(
-												`Failed to queue alert for channel ${chName}:`,
+											logger.error(
 												error,
+												`Failed to queue alert for channel ${chName}`,
 											);
 										}
 									}),
@@ -86,15 +85,15 @@ const swapEventsWorker = new Worker(
 									// Mark as completed here | Delete from cache
 								}
 							} catch (error) {
-								console.error(
-									`Failed processing alert ${alert.id} for user ${alert.userId}:`,
+								logger.error(
 									error,
+									`Failed processing alert ${alert.id} for user ${alert.userId}`,
 								);
 							}
 						}),
 					);
 				} catch (error) {
-					console.error(`Failed processing alerts for CA ${ca}:`, error);
+					logger.error(error, `Failed processing alerts for CA ${ca}`);
 				}
 			}),
 		);

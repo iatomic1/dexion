@@ -1,4 +1,3 @@
-import type { CachedUserProfile } from "@/lib/redis/user-profile";
 import type { Alert } from "@/workers/swap-events-worker";
 import type { TokenMetadata } from "@repo/tokens/types";
 

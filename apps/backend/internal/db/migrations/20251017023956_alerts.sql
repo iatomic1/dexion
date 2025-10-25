@@ -1,16 +1,5 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE IF NOT EXISTS "webhook_configs" (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  webhook_url TEXT NOT NULL, -- tags:`binding:"required"`
-  bearer_token VARCHAR(512) NOT NULL, -- tags:`binding:"required"`
-  enabled BOOLEAN DEFAULT true,
-  status TEXT NOT NULL DEFAULT 'streaming' CHECK (status IN ('streaming', 'interrupted')), -- tags:`binding:"required"`
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
 -- Available notification channels
 CREATE TABLE IF NOT EXISTS "channels" (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -54,7 +43,6 @@ CREATE TABLE IF NOT EXISTS "alert_channels" (
 CREATE INDEX IF NOT EXISTS idx_alerts_user_id ON alerts(user_id);
 CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status);
 CREATE INDEX IF NOT EXISTS idx_alert_channels_alert_id ON alert_channels(alert_id);
-CREATE INDEX IF NOT EXISTS idx_webhook_configs_user_id ON webhook_configs(user_id);
 -- +goose StatementEnd
 
 -- +goose Down
@@ -62,10 +50,8 @@ CREATE INDEX IF NOT EXISTS idx_webhook_configs_user_id ON webhook_configs(user_i
 DROP INDEX IF EXISTS idx_alert_channels_alert_id;
 DROP INDEX IF EXISTS idx_alerts_user_id;
 DROP INDEX IF EXISTS idx_alerts_status;
-DROP INDEX IF EXISTS idx_webhook_configs_user_id;
 
 DROP TABLE IF EXISTS alert_channels;
 DROP TABLE IF EXISTS alerts;
 DROP TABLE IF EXISTS channels;
-DROP TABLE IF EXISTS webhook_configs;
 -- +goose StatementEnd

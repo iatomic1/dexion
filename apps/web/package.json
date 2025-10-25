@@ -14,6 +14,10 @@
 		"lint": "biome lint ./src"
 	},
 	"dependencies": {
+		"@axiomhq/js": "^1.3.1",
+		"@axiomhq/logging": "^0.1.5",
+		"@axiomhq/nextjs": "^0.1.5",
+		"@axiomhq/react": "^0.1.5",
 		"@better-auth/core": "^1.3.29",
 		"@bitflowlabs/core-sdk": "^2.4.0",
 		"@daveyplate/better-auth-ui": "1.7.4",
@@ -25,6 +29,7 @@
 		"@repo/api-sdk": "workspace:*",
 		"@repo/shared-constants": "workspace:*",
 		"@repo/signer": "workspace:*",
+		"@repo/logger": "workspace:*",
 		"@repo/token-watcher": "workspace:*",
 		"@repo/tokens": "workspace:*",
 		"@repo/transactional": "workspace:*",

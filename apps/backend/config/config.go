@@ -7,16 +7,17 @@ import (
 )
 
 type Config struct {
-	AccessJwtKey string `mapstructure:"ACCESS_JWT_KEY"`
-	Environment  string `mapstructure:"ENVIROMENT"`
-	DbType       string `mapstructure:"DB_TYPE"`
-	ApiPrefixStr string `mapstructure:"API_V1_PREFIX_STRING"`
-	DbURL        string `mapstructure:"DB_URL"`
-	HttpAddress  string `mapstructure:"HTTP_SERVER_ADDRESS"`
-	Host         string `mapstructure:"HOST"`
-	CoudinaryURL string `mapstructure:"CLOUDINARY_URL"`
-	FrontendURL  string `mapstructure:"FRONTEND_URL"`
-	RdbURL       string `mapstructure:"REDIS_URL"`
+	AccessJwtKey   string `mapstructure:"ACCESS_JWT_KEY"`
+	Environment    string `mapstructure:"ENVIROMENT"`
+	DbType         string `mapstructure:"DB_TYPE"`
+	ApiPrefixStr   string `mapstructure:"API_V1_PREFIX_STRING"`
+	DbURL          string `mapstructure:"DB_URL"`
+	HttpAddress    string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	Host           string `mapstructure:"HOST"`
+	CoudinaryURL   string `mapstructure:"CLOUDINARY_URL"`
+	FrontendURL    string `mapstructure:"FRONTEND_URL"`
+	RdbURL         string `mapstructure:"REDIS_URL"`
+	AllowedOrigins string `mapstructure:"ALLOWED_ORIGINS"`
 }
 
 func Load(path string) (*Config, error) {
@@ -79,6 +80,9 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 
 	if val := os.Getenv("REDIS_DB"); val != "" {
 		cfg.RdbURL = val
+	}
+	if val := os.Getenv("ALLOWED_ORIGINS"); val != "" {
+		cfg.AllowedOrigins = val
 	}
 
 	return cfg, nil

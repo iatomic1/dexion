@@ -1,5 +1,5 @@
-import { Job, Worker } from "bullmq";
-import { emailQueue } from "@/queues";
+import { Job, Queue, Worker } from "bullmq";
+import { emailQueue, emailQueueDlq } from "@/queues";
 import type { SendEmailAlertJobData } from "@/queues/types";
 import { bullMqRedisConnection } from "@/config/redis";
 import { Resend } from "resend";
@@ -32,7 +32,18 @@ const emailWorker = new Worker(
 			throw err; // Ensure BullMQ marks job as failed
 		}
 	},
-	{ connection: bullMqRedisConnection },
+	{
+		connection: bullMqRedisConnection,
+		removeOnComplete: { count: 1000 },
+		removeOnFail: { count: 5000 },
+	},
 );
+
+emailWorker.on("failed", (job, err) => {
+	if (job) {
+		emailQueueDlq.add(job.name, job.data);
+		logger.warn({ err, jobId: job.id }, `Moved job ${job.id} to DLQ`);
+	}
+});
 
 export default emailWorker;

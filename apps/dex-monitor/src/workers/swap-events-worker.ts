@@ -1,5 +1,11 @@
 import { Job, Queue, Worker } from "bullmq";
-import { emailQueue, swapQueue, telegramQueue, webhookQueue } from "@/queues";
+import {
+	emailQueue,
+	swapQueue,
+	swapQueueDlq,
+	telegramQueue,
+	webhookQueue,
+} from "@/queues";
 import { getActiveAlertsByCa } from "@/lib/redis/alerts";
 import type { SwapEventJobData } from "@/queues/types";
 import { getTokenMetadata } from "@repo/tokens/services";
@@ -33,73 +39,71 @@ const swapEventsWorker = new Worker(
 
 					await Promise.all(
 						alerts.map(async (alert) => {
-							try {
-								const shouldTrigger = evaluateAlert(alert, token);
-								if (!shouldTrigger) return;
+							const shouldTrigger = evaluateAlert(alert, token);
+							if (!shouldTrigger) return;
 
-								const userProfile = await getCachedUserProfile(alert.userId);
+							const userProfile = await getCachedUserProfile(alert.userId);
 
-								logger.info(
-									{ alert, currentValue: getMetricValue(alert.metric, token) },
-									`Alert triggered for user ${alert.userId}`,
-								);
+							logger.info(
+								{ alert, currentValue: getMetricValue(alert.metric, token) },
+								`Alert triggered for user ${alert.userId}`,
+							);
 
-								const activeChannels = alert.channels
-									.map(
-										(cid: string) =>
-											ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
-									)
-									.filter(Boolean)
-									.filter((chName) => hasChannel(userProfile, chName));
+							const activeChannels = alert.channels
+								.map(
+									(cid: string) =>
+										ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
+								)
+								.filter(Boolean)
+								.filter((chName) => hasChannel(userProfile, chName));
 
-								await Promise.all(
-									activeChannels.map(async (chName) => {
-										try {
-											const queue = queueMap[chName as keyof typeof queueMap];
-											if (!queue) return;
+							await Promise.all(
+								activeChannels.map(async (chName) => {
+									const queue = queueMap[chName as keyof typeof queueMap];
+									if (!queue) return;
 
-											await queue.add(
-												"send-alert",
-												{
-													channel: chName,
-													userProfile,
-													alert,
-													token,
-													triggeredAt: new Date().toISOString(),
-												},
-												{
-													attempts: 3,
-													backoff: { type: "exponential", delay: 2000 },
-												},
-											);
-										} catch (error) {
-											logger.error(
-												error,
-												`Failed to queue alert for channel ${chName}`,
-											);
-										}
-									}),
-								);
+									await queue.add(
+										"send-alert",
+										{
+											channel: chName,
+											userProfile,
+											alert,
+											token,
+											triggeredAt: new Date().toISOString(),
+										},
+										{
+											attempts: 3,
+											backoff: { type: "exponential", delay: 2000 },
+										},
+									);
+								}),
+							);
 
-								if (!alert.repeatable) {
-									// Mark as completed here | Delete from cache
-								}
-							} catch (error) {
-								logger.error(
-									error,
-									`Failed processing alert ${alert.id} for user ${alert.userId}`,
-								);
+							if (!alert.repeatable) {
+								// Mark as completed here | Delete from cache
 							}
 						}),
 					);
 				} catch (error) {
 					logger.error(error, `Failed processing alerts for CA ${ca}`);
+					throw error; // Propagate error to fail the job
 				}
 			}),
 		);
 		return;
 	},
-	{ connection: bullMqRedisConnection },
+	{
+		connection: bullMqRedisConnection,
+		removeOnComplete: { count: 1000 },
+		removeOnFail: { count: 5000 },
+	},
 );
+
+swapEventsWorker.on("failed", (job, err) => {
+	if (job) {
+		swapQueueDlq.add(job.name, job.data);
+		logger.warn({ err, jobId: job.id }, `Moved job ${job.id} to DLQ`);
+	}
+});
 
 export default swapEventsWorker;

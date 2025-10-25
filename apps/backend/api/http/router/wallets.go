@@ -2,6 +2,7 @@ package router
 
 import (
 	"backend/api/http"
+	"backend/api/http/handlers"
 	"backend/api/http/handlers/wallet"
 	"backend/api/http/middleware"
 
@@ -18,9 +19,9 @@ func RegisterWalletRoutes(srv *http.Server, router *gin.RouterGroup) {
 	walletGroup.GET("/:address/watchers", walletHandler.GetWalletWatchers)
 	walletGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{
-		walletGroup.POST("", walletHandler.TrackWallet)
-		walletGroup.GET("", walletHandler.GetTrackedWallets)
-		walletGroup.PATCH("/:address", walletHandler.UpdateWalletPreferences)
-		walletGroup.DELETE("/:address", walletHandler.UntrackWallet)
+		walletGroup.POST("", handlers.WithUser(walletHandler.TrackWallet))
+		walletGroup.GET("", handlers.WithUser(walletHandler.GetTrackedWallets))
+		walletGroup.PATCH("/:address", handlers.WithUser(walletHandler.UpdateWalletPreferences))
+		walletGroup.DELETE("/:address", handlers.WithUser(walletHandler.UntrackWallet))
 	}
 }

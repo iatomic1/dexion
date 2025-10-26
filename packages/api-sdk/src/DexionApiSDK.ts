@@ -12,6 +12,7 @@ import {
 } from "./types";
 import { WalletManager } from "./wallets";
 import { WatchlistManager } from "./watchlists";
+import { WebhookManager } from "./webhooks";
 
 export class DexionClient {
 	private config: Required<
@@ -91,6 +92,14 @@ export class DexionClient {
 			this._watchlists = new WatchlistManager(this);
 		}
 		return this._watchlists;
+	}
+
+	private _webhooks?: WebhookManager;
+	get webhooks(): WebhookManager {
+		if (!this._webhooks) {
+			this._webhooks = new WebhookManager(this);
+		}
+		return this._webhooks;
 	}
 
 	// Core fetch method

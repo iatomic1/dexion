@@ -1,0 +1,96 @@
+import { getMetricSign, getMetricValue } from "@/utils/swap-events";
+import type { Alert } from "@/workers/swap-events-worker";
+import { SOCIALS } from "@repo/shared-constants/constants.ts";
+import type { TokenMetadata } from "@repo/tokens/types";
+
+/*
+  HTML helpers that escape content and return small tag fragments.
+  Use these to build safe HTML messages for Telegram.
+
+  Telegram supports: <b>, <strong>, <i>, <em>, <u>, <s>, <tg-spoiler>,
+  <a href="">, <code>, <pre>
+*/
+
+function escapeHtml(text: string): string {
+	return text
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
+}
+
+function Bold(text: string): string {
+	return `<b>${escapeHtml(text)}</b>`;
+}
+
+function Italic(text: string): string {
+	return `<i>${escapeHtml(text)}</i>`;
+}
+
+function Code(text: string): string {
+	return `<code>${escapeHtml(text)}</code>`;
+}
+
+function Pre(text: string): string {
+	return `<pre>${escapeHtml(text)}</pre>`;
+}
+
+function Link(text: string, url: string): string {
+	const safeUrl = escapeHtml(url);
+	return `<a href="${safeUrl}">${escapeHtml(text)}</a>`;
+}
+
+function LineBreak(): string {
+	return "\n";
+}
+
+export const getAlertHtmlMessage = ({
+	token,
+	alert,
+}: {
+	token: TokenMetadata;
+	alert: Alert;
+}) => {
+	const metricValueRaw = getMetricValue(alert.metric, token);
+	const metricValue = String(metricValueRaw.toLocaleString());
+	const repeatable = alert.repeatable ? "Yes" : "No";
+	const tokenName = String(token.name ?? token.symbol ?? "Unknown");
+	const tokenSymbol = String(token.symbol ?? "");
+	const metric = String(alert.metric ?? "");
+	const operator = String(alert.operator ?? "");
+	const value = String(alert.value ?? "");
+	const tokenPage = `https://www.dexion.pro/meme/${encodeURIComponent(
+		token.contract_id ?? "",
+	)}`;
+	const sign = escapeHtml(getMetricSign(metric));
+
+	const header = "🚨 " + Bold("Price Alert Triggered");
+
+	const body = [
+		Bold("Your alert condition has been met!"),
+		"",
+		"🪙 " +
+			`<a href="${escapeHtml(tokenPage)}"><b>${escapeHtml(tokenName)}</b></a>` +
+			Bold(` (${tokenSymbol})`),
+	].join("\n");
+
+	const details = [
+		"📊 " + Bold("Metric Tracked: ") + escapeHtml(metric),
+		"⚙️ " +
+			Bold("Condition Set: ") +
+			escapeHtml(operator) +
+			" " +
+			sign +
+			Code(Number(value).toLocaleString()),
+		"📈 " + Bold("Current Value: ") + sign + Code(metricValue),
+		"🔁 " + Bold("Repeatable: ") + escapeHtml(repeatable),
+	].join("\n\n");
+
+	const footer =
+		"Join our " +
+		Link("Discord", SOCIALS.DISCORD) +
+		" for feedback or support.";
+
+	return [header, "", body, "", details, "", footer].join("\n");
+};

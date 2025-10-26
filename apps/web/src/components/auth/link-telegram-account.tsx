@@ -59,7 +59,6 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 									toast.success("Telegram linked successfully");
 									setIsDialogOpen(false);
 									window.location.reload();
-									n;
 								} else {
 									toast.error(
 										linkRes?.data?.error || "Failed to link Telegram account",

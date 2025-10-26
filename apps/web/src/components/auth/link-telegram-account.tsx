@@ -11,6 +11,7 @@ import {
 import { toast } from "@repo/ui/components/ui/sonner";
 import { Spinner } from "@repo/ui/components/ui/spinner";
 import { Send } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
@@ -30,6 +31,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 
 	useEffect(() => {
 		console.log(user, "user");
@@ -58,7 +60,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 								) {
 									toast.success("Telegram linked successfully");
 									setIsDialogOpen(false);
-									window.location.reload();
+									router.refresh();
 								} else {
 									toast.error(
 										linkRes?.data?.error || "Failed to link Telegram account",
@@ -99,7 +101,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 			try {
 				await authClient.unlinkTelegram();
 				toast.success("Telegram account unlinked");
-				window.location.reload(); // refresh to show link button again
+				router.refresh();
 			} catch (err: any) {
 				console.error(err);
 				setError(err?.message || "Failed to unlink Telegram account");

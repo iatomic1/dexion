@@ -8,7 +8,7 @@
 		"typescript": "^5.0.0"
 	},
 	"scripts": {
-		"dev": "doppler run -p dexion -c dev_backend -- bun --hot src/index.ts",
+		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/index.ts",
 		"lint": "bunx biome check ./",
 		"test": "bun test"
 	},

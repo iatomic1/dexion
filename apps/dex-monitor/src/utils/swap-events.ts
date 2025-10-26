@@ -1,3 +1,4 @@
+import { logger } from "@/config/logger";
 import type { CachedUserProfile } from "@/lib/redis/user-profile";
 import type { Alert } from "@/workers/swap-events-worker";
 import type { TokenMetadata } from "@repo/tokens/types";
@@ -13,6 +14,8 @@ export function getMetricValue(metric: string, token: TokenMetadata): number {
 
 	return metricMap[metric] ?? 0;
 }
+export const getMetricSign = (metric: string): string =>
+	metric === "holders" ? "" : "$";
 
 export function evaluateAlert(alert: Alert, token: TokenMetadata): boolean {
 	const currentValue = getMetricValue(alert.metric, token);
@@ -39,10 +42,11 @@ export function hasChannel(
 	userProfile: CachedUserProfile | null,
 	channel: string,
 ): boolean {
+	logger.debug(userProfile?.telegram_id, "userprofile telegram");
 	const channelMap: Record<string, boolean> = {
 		email: !!userProfile?.email,
 		telegram: !!userProfile?.telegram_id,
-		// webhook: !!userProfile.webhook,
+		webhook: !!userProfile?.webhook,
 	};
 	return channelMap[channel] ?? false;
 }

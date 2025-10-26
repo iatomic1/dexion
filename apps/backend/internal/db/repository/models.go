@@ -97,7 +97,8 @@ type WebhookConfig struct {
 	UserID      string    `json:"userId"`
 	WebhookUrl  string    `json:"webhookUrl"`
 	BearerToken string    `json:"bearerToken"`
-	IsActive    *bool     `json:"isActive"`
+	Enabled     *bool     `json:"enabled"`
+	Status      string    `json:"status"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	CreatedAt   time.Time `json:"createdAt"`
 }

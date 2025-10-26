@@ -12,16 +12,12 @@ import { WebhookSettingsDialog } from "./webhook-settings-dialog";
 export function AlertsManager({
 	alerts,
 	channels,
+	webhookConfig,
 }: {
 	alerts: UserAlert[];
 	channels: Channel[];
+	webhookConfig: WebhookConfig;
 }) {
-	const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>({
-		webhookUrl: "",
-		bearerToken: "",
-	});
-	// const logger = useLogger();
-
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
 	const [editingAlert, setEditingAlert] = useState<UserAlert | null>(null);
@@ -35,10 +31,6 @@ export function AlertsManager({
 		// logger.info("testing axiom logging 2.2029");
 		setEditingAlert(alert);
 		setIsDialogOpen(true);
-	};
-
-	const handleWebhookSave = (config: WebhookConfig) => {
-		setWebhookConfig(config);
 	};
 
 	return (
@@ -85,7 +77,6 @@ export function AlertsManager({
 				open={isWebhookDialogOpen}
 				onOpenChange={setIsWebhookDialogOpen}
 				config={webhookConfig}
-				onSave={handleWebhookSave}
 			/>
 		</div>
 	);

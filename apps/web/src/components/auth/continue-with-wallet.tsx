@@ -1,4 +1,5 @@
 import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
+import { Badge } from "@repo/ui/components/ui/badge";
 import { Button } from "@repo/ui/components/ui/button";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { Spinner } from "@repo/ui/components/ui/spinner";
@@ -99,10 +100,13 @@ export default function ContinueWithWallet() {
 	return (
 		<Button
 			variant="outline"
-			className="w-full bg-muted/50 py-5 text-sm rounded-full"
+			className="w-full bg-muted/50 py-5 text-sm rounded-full relative"
 			onClick={handleSignInWithWallet}
-			disabled={isLoading}
+			disabled={true}
 		>
+			<Badge className="absolute -top-2 right-2" variant={"outline"}>
+				Coming Soon
+			</Badge>
 			{isLoading ? <Spinner /> : <Wallet className="" />} Continue with Wallet
 		</Button>
 	);

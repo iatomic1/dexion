@@ -19,22 +19,50 @@ export default function ResetPassword() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		// prevent double submissions
+		if (isLoading) return;
+
 		setIsLoading(true);
-		toast.info(
-			"If you have an account with us, check your email for a link to reset your password.",
-		);
 
-		const { error } = await authClient.requestPasswordReset({
-			email,
-			redirectTo: "/recover-account",
-		});
-		if (error) {
-			console.error(error);
+		try {
+			const { error } = await authClient.requestPasswordReset(
+				{
+					email,
+					redirectTo: "/recover-account",
+				},
+				{
+					onSuccess: async () => {
+						toast.info(
+							"If you have an account with us, check your email for a link to reset your password.",
+						);
+					},
+				},
+			);
+
+			if (error) {
+				console.error("Password reset request failed:", error);
+				toast.error(
+					error.message || "Something went wrong while sending the reset link.",
+				);
+				return;
+			}
+
+			// Explicitly handle successful completion
+			toast.success("Password reset request sent successfully!");
+		} catch (err: unknown) {
+			console.error("Unexpected error:", err);
+
+			// Handle both known and unknown errors gracefully
+			const message =
+				err instanceof Error
+					? err.message
+					: "An unexpected error occurred. Please try again.";
+
+			toast.error(message);
+		} finally {
+			setIsLoading(false);
 		}
-
-		setIsLoading(false);
-		// Handle reset password logic here
-		console.log("Reset password for:", email);
 	};
 
 	return (

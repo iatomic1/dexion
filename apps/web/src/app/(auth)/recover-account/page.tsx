@@ -22,13 +22,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { passwordRule } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
 
 // ✅ Schema validation
 const recoverSchema = z
 	.object({
-		password: z.string().min(8, "Password must be at least 8 characters long"),
-		confirmPassword: z.string(),
+		password: passwordRule,
+		confirmPassword: passwordRule,
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords do not match",

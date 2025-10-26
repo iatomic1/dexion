@@ -1,4 +1,4 @@
-import type { BetterAuthClientPlugin } from "better-auth/client";
+import type { BetterAuthClientPlugin } from "better-auth";
 import type { telegram } from "./index";
 import type { TelegramAuthData } from "./types";
 

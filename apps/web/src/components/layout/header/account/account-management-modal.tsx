@@ -290,7 +290,7 @@ export function AccountSecurityModal({
 						<SettingsSection
 							title="Link Telegram"
 							description="Link telegram account to receive alerts"
-							action={<LinkTelegramAccount />}
+							action={<LinkTelegramAccount user={session.user} />}
 						/>
 					) : (
 						<div className="p-4 border-t flex items-center justify-between">

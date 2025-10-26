@@ -144,6 +144,7 @@ export const siws = (options: SIWSPluginOptions) =>
 							});
 
 							if (user) {
+								// @ts-expect-error Ignore
 								await initWallet(user, false);
 							}
 

@@ -2,11 +2,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@repo/ui/components/ui/card";
 import {
 	Field,
 	FieldError,
@@ -17,30 +18,21 @@ import { Input } from "@repo/ui/components/ui/input";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
+import ContinueWithGoogle from "~/components/auth/continue-with-google";
+import ContinueWithWallet from "~/components/auth/continue-with-wallet";
 import { authClient } from "~/lib/auth-client";
-import ContinueWithGoogle from "./continue-with-google";
-import ContinueWithWallet from "./continue-with-wallet";
-
-interface SignUpModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	onSwitchToLogin: () => void;
-	onOtpTrigger: (email: string) => void;
-}
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-export function SignUpModal({
-	open,
-	onOpenChange,
-	onSwitchToLogin,
-	onOtpTrigger,
-}: SignUpModalProps) {
+export default function SignUpPage() {
 	const [isLoading, setIsLoading] = useState(false);
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
 	const form = useForm<SignUpFormValues>({
 		resolver: zodResolver(signUpSchema),
@@ -62,8 +54,9 @@ export function SignUpModal({
 					onRequest: () => setIsLoading(true),
 					onSuccess: () => {
 						toast.success("OTP sent to your email");
-						onOpenChange(false);
-						onOtpTrigger(values.email);
+						const newParams = new URLSearchParams(searchParams);
+						newParams.set("email", values.email);
+						router.push(`/otp?${newParams.toString()}`);
 					},
 					onResponse: () => setIsLoading(false),
 					onError: async (ctx) => {
@@ -76,8 +69,9 @@ export function SignUpModal({
 								});
 							if (error) console.error(error);
 							if (data?.success) toast.success("OTP sent to email");
-							onOpenChange(false);
-							onOtpTrigger(values.email);
+							const newParams = new URLSearchParams(searchParams);
+							newParams.set("email", values.email);
+							router.push(`/otp?${newParams.toString()}`);
 						}
 						toast.error(ctx.error.message);
 					},
@@ -92,15 +86,14 @@ export function SignUpModal({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[400px] p-0 bg-background border-border">
-				<div className="p-6">
-					<DialogHeader className="relative mb-5">
-						<DialogTitle className="text-xl font-medium text-center">
-							Sign Up
-						</DialogTitle>
-					</DialogHeader>
-
+		<div className="min-h-screen flex items-center justify-center p-4">
+			<Card className="w-full max-w-md">
+				<CardHeader className="relative mb-5">
+					<CardTitle className="text-xl font-medium text-center">
+						Sign Up
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
 						<FieldGroup>
 							<Controller
@@ -165,23 +158,16 @@ export function SignUpModal({
 						<ContinueWithGoogle />
 						<ContinueWithWallet />
 					</div>
-
-					<div className="mt-6 text-center text-xs text-muted-foreground">
+				</CardContent>
+				<CardFooter className="flex-col items-center justify-center gap-y-3">
+					<div className="text-center text-xs text-muted-foreground">
 						Already have an account?{" "}
-						<button
-							className="text-primary hover:underline"
-							type="button"
-							onClick={(e) => {
-								e.preventDefault();
-								onOpenChange(false);
-								onSwitchToLogin();
-							}}
-						>
+						<Link href="/login" className="text-primary hover:underline">
 							Login
-						</button>
+						</Link>
 					</div>
 
-					<div className="mt-4 text-xs text-center text-muted-foreground">
+					<div className="text-xs text-center text-muted-foreground">
 						By creating an account, you agree to Dexion's{" "}
 						<Link href="#" className="text-primary hover:underline">
 							Privacy Policy
@@ -191,8 +177,8 @@ export function SignUpModal({
 							Terms of Service
 						</Link>
 					</div>
-				</div>
-			</DialogContent>
-		</Dialog>
+				</CardFooter>
+			</Card>
+		</div>
 	);
 }

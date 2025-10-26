@@ -2,11 +2,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@repo/ui/components/ui/card";
 import {
 	Field,
 	FieldError,
@@ -17,35 +18,21 @@ import { Input } from "@repo/ui/components/ui/input";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
+import ContinueWithGoogle from "~/components/auth/continue-with-google";
+import ContinueWithWallet from "~/components/auth/continue-with-wallet";
 import { authClient } from "~/lib/auth-client";
-import ContinueWithGoogle from "./continue-with-google";
-import ContinueWithWallet from "./continue-with-wallet";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-interface LoginModalProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	onSwitchToSignUp: () => void;
-	onOtpTrigger: (
-		email: string,
-		type: "email-verification" | "two-factor",
-	) => void;
-}
-
-export function LoginModal({
-	open,
-	onOpenChange,
-	onSwitchToSignUp,
-	onOtpTrigger,
-}: LoginModalProps) {
+export default function LoginPage() {
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+	const searchParams = useSearchParams();
 
 	const form = useForm<LoginFormValues>({
 		resolver: zodResolver(loginSchema),
@@ -70,13 +57,14 @@ export function LoginModal({
 							if (error) console.error(error);
 							if (data) {
 								toast.success("OTP sent to email");
-								onOpenChange(false);
-								onOtpTrigger(values.email, "two-factor");
+								const newParams = new URLSearchParams(searchParams);
+								newParams.set("email", values.email);
+								newParams.set("type", "two-factor");
+								router.push(`/otp?${newParams.toString()}`);
 								setIsLoading(false);
 								return;
 							}
 						} else {
-							onOpenChange(false);
 							router.push("/portfolio");
 							toast.success("Authenticated");
 						}
@@ -97,8 +85,10 @@ export function LoginModal({
 							if (error) console.error(error);
 							if (data?.success) toast.success("OTP sent to email");
 
-							onOpenChange(false);
-							onOtpTrigger(values.email, "email-verification");
+							const newParams = new URLSearchParams(searchParams);
+							newParams.set("email", values.email);
+							newParams.set("type", "email-verification");
+							router.push(`/otp?${newParams.toString()}`);
 						} else {
 							toast.error(ctx.error.message);
 						}
@@ -111,15 +101,14 @@ export function LoginModal({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange} modal={true}>
-			<DialogContent className="sm:max-w-[400px] p-0 bg-background border-border">
-				<div className="p-6">
-					<DialogHeader className="relative mb-5">
-						<DialogTitle className="text-xl font-medium text-center">
-							Login
-						</DialogTitle>
-					</DialogHeader>
-
+		<div className="min-h-screen flex items-center justify-center p-4">
+			<Card className="w-full max-w-md">
+				<CardHeader className="relative mb-5">
+					<CardTitle className="text-xl font-medium text-center">
+						Login
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FieldGroup>
 							<Controller
@@ -192,23 +181,14 @@ export function LoginModal({
 						<ContinueWithGoogle />
 						<ContinueWithWallet />
 					</div>
-
-					<div className="mt-6 text-center text-xs text-muted-foreground">
-						Don't have an account?{" "}
-						<button
-							type="button"
-							className="text-primary hover:underline"
-							onClick={(e) => {
-								e.preventDefault();
-								onOpenChange(false);
-								onSwitchToSignUp();
-							}}
-						>
-							Sign Up
-						</button>
-					</div>
-				</div>
-			</DialogContent>
-		</Dialog>
+				</CardContent>
+				<CardFooter className="mt-6 text-center text-xs text-muted-foreground">
+					Don't have an account?{" "}
+					<Link href="/signup" className="text-primary hover:underline">
+						Sign Up
+					</Link>
+				</CardFooter>
+			</Card>
+		</div>
 	);
 }

@@ -3,10 +3,11 @@ import { emailQueue, emailQueueDlq } from "@/queues";
 import type { SendEmailAlertJobData } from "@/queues/types";
 import { bullMqRedisConnection } from "@/config/redis";
 import { Resend } from "resend";
-import { getAlertEmail } from "@/lib/email";
+import { getAlertEmail } from "@/lib/messages/email";
 import { logger } from "@/config/logger";
+import { config } from "@/config";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const resend = new Resend(config.RESEND_API_KEY);
 
 const emailWorker = new Worker(
 	emailQueue.name,

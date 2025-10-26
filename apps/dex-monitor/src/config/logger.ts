@@ -2,4 +2,5 @@ import { createLogger } from "@repo/logger";
 
 export const logger = createLogger({
 	service: "dex-monitor",
+	level: "info",
 });

@@ -10,6 +10,8 @@ const siteConfig = {
 		priceAlerts: true,
 		trading: false,
 		signing: false,
+		unlinkTelegram: false,
+		ott: false,
 	},
 };
 export default siteConfig;

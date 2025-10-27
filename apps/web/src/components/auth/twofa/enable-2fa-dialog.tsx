@@ -26,7 +26,7 @@ const Enable2FADialog: React.FC<Enable2FADialogProps> = ({
 		handleVerificationSubmit,
 		resendEmailOTP,
 		copyToClipboard,
-	} = useTwoFA(authClient);
+	} = useTwoFA();
 
 	const handleOpenChange = (open: boolean) => {
 		if (!open) {

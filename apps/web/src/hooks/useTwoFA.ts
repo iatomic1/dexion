@@ -1,8 +1,9 @@
 import { useState } from "react";
 import siteConfig from "~/config/site";
+import { authClient } from "~/lib/auth-client";
 import type { TwoFAState } from "../types/twofa";
 
-export const useTwoFA = (authClient: any) => {
+export const useTwoFA = () => {
 	const [state, setState] = useState<TwoFAState>({
 		step: 1,
 		password: "",
@@ -70,9 +71,7 @@ export const useTwoFA = (authClient: any) => {
 				if (error) throw new Error(error.message);
 
 				// Then send OTP
-				const { error: otpError } = await authClient.twoFactor.sendOtp({
-					trustDevice: false,
-				});
+				const { error: otpError } = await authClient.twoFactor.sendOtp();
 
 				if (otpError) throw new Error(otpError.message);
 
@@ -124,9 +123,7 @@ export const useTwoFA = (authClient: any) => {
 		updateState({ isLoading: true, error: "" });
 
 		try {
-			const { error: otpError } = await authClient.twoFactor.sendOtp({
-				trustDevice: false,
-			});
+			const { error: otpError } = await authClient.twoFactor.sendOtp();
 
 			if (otpError) throw new Error(otpError.message);
 

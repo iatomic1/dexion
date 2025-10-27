@@ -230,8 +230,6 @@ export default function HoldersTable({
 }) {
 	const isMobile = useIsMobile();
 
-	// Use useMemo instead of useState + useEffect
-	// This automatically recomputes when holders reference changes
 	const tableData = useMemo(() => [...holders], [holders]);
 
 	const table = useReactTable({

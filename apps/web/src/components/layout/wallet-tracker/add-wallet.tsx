@@ -60,8 +60,8 @@ export default function AddWalletModal({ children }: { children: ReactNode }) {
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			address: "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1",
-			name: "Atomic",
+			address: "",
+			name: "",
 		},
 	});
 

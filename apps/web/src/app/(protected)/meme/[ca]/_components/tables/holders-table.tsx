@@ -23,7 +23,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { ExternalLink, Worm } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { formatPrice } from "~/lib/helpers/numbers";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { truncateString } from "~/lib/helpers/strings";
@@ -228,12 +228,11 @@ export default function HoldersTable({
 	holders: TokenHolder[];
 	token: TokenMetadata;
 }) {
-	const [tableData, setTableData] = useState<TokenHolder[]>(holders);
 	const isMobile = useIsMobile();
 
-	useEffect(() => {
-		setTableData([...holders]);
-	}, [JSON.stringify(holders)]);
+	// Use useMemo instead of useState + useEffect
+	// This automatically recomputes when holders reference changes
+	const tableData = useMemo(() => [...holders], [holders]);
 
 	const table = useReactTable({
 		data: tableData,

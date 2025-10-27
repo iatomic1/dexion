@@ -22,7 +22,6 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useEffect } from "react";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { getUserPortfolio } from "~/lib/queries/token-watcher";
 import { calculatePnl, calculateTokenValue } from "~/lib/utils/token";
@@ -174,7 +173,8 @@ export default function PositionsTable({
 		enabled: !!userAddress,
 	});
 
-	const currentTokenPostion = positionsData?.fungible_tokens.find(
+	// Safe access with proper null checking
+	const currentTokenPostion = positionsData?.fungible_tokens?.find(
 		(ft) =>
 			ft.token.contract_id === token.contract_id && Number(ft.balance) > 0,
 	);

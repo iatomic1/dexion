@@ -10,6 +10,7 @@ import { Label } from "@repo/ui/components/ui/label";
 import { AlertTriangle, ArrowLeft, Key, Mail, Smartphone } from "lucide-react";
 import type React from "react";
 import QRCode from "react-qr-code";
+import { QrcodeCanvas } from "react-qrcode-pretty";
 import type { TwoFAState } from "~/types/twofa";
 
 interface VerificationStepProps {
@@ -48,7 +49,27 @@ export const VerificationStep: React.FC<VerificationStepProps> = ({
 					<div className="text-center">
 						<div className="mx-auto mb-4 inline-block rounded-lg p-4">
 							{state.totpUri ? (
-								<QRCode title="QRCODE" value={state.totpUri} size={180} />
+								<QrcodeCanvas
+									value={state.totpUri}
+									variant={{
+										eyes: "circle",
+										body: "fluid",
+									}}
+									color={{
+										eyes: "#000000",
+										body: "#000000",
+									}}
+									colorEffect={{
+										eyes: "none",
+										body: "none",
+									}}
+									padding={20}
+									bgColor="#ffffff"
+									bgRounded
+									image={"/branding/logo-light.png"}
+									size={256}
+									divider
+								/>
 							) : (
 								<div className="h-40 w-40 flex items-center justify-center bg-gray-100">
 									<span className="text-sm text-gray-500">

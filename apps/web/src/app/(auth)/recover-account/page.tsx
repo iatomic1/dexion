@@ -90,7 +90,7 @@ export default function RecoverAccountPage() {
 						await authClient.revokeSessions();
 						setIsSuccess(true);
 						toast.success("Password updated successfully!");
-						router.push("/");
+						router.push("/login");
 					},
 				},
 			);
@@ -202,14 +202,6 @@ export default function RecoverAccountPage() {
 								)}
 							/>
 						</FieldGroup>
-
-						{/* Success message */}
-						{isSuccess && (
-							<div className="flex items-center gap-2 text-green-600 text-sm mt-2">
-								<CheckCircle2Icon size={16} />
-								<span>Password updated successfully!</span>
-							</div>
-						)}
 
 						<Button
 							type="submit"

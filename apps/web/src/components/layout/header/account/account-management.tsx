@@ -2,30 +2,31 @@
 
 import { Button } from "@repo/ui/components/ui/button";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@repo/ui/components/ui/popover";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuShortcut,
+	DropdownMenuTrigger,
+} from "@repo/ui/components/ui/dropdown-menu";
 import { toast } from "@repo/ui/components/ui/sonner";
-import { LogOut, User } from "lucide-react";
+import { Copy, LogOut, Settings, User } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
+import { truncateString } from "~/lib/helpers/strings";
 import type { Session } from "~/types/auth";
-import { AccountSecurityModal } from "./account-management-modal";
 
-export function AccountPopover({ session }: { session: Session }) {
+export function AccountDropdown({ session }: { session: Session }) {
 	const router = useRouter();
-	const [open, setIsOpen] = useState(false);
-
-	const handleModalOpen = () => {
-		// Close popover first, then let modal open naturally
-		// setIsOpen(false);
-	};
+	const copy = useCopyToClipboard();
 
 	return (
-		<Popover open={open} onOpenChange={setIsOpen} modal={false}>
-			<PopoverTrigger asChild>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
 				<Button
 					variant="ghost"
 					size="icon"
@@ -33,20 +34,61 @@ export function AccountPopover({ session }: { session: Session }) {
 				>
 					<User className="h-5 w-5" />
 				</Button>
-			</PopoverTrigger>
-			<PopoverContent
-				className="w-60 p-2"
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				className="w-64"
 				side="bottom"
 				align="end"
-				sideOffset={20}
+				sideOffset={8}
 			>
-				<AccountSecurityModal
-					onModalOpenAction={handleModalOpen}
-					session={session}
-				/>
-				<Button
-					className="w-full justify-start gap-3 bg-transparent"
-					variant={"ghost"}
+				{/*<DropdownMenuLabel className="font-normal">
+					<div className="flex flex-col gap-1">
+						<p className="text-sm font-medium leading-none">
+							{session?.user?.name || "User"}
+						</p>
+						<p className="text-muted-foreground text-xs leading-none">
+							{session?.user?.email}
+						</p>
+						<p className="text-muted-foreground text-xs leading-none font-mono">
+							ID: {session?.user?.id}
+						</p>
+					</div>*/}
+				{/*</DropdownMenuLabel>*/}
+				<DropdownMenuGroup>
+					<DropdownMenuItem>{session?.user?.email}</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							copy(session?.user?.id || "");
+							toast.copy("UserID copied to clipboard");
+						}}
+					>
+						{truncateString(session?.user?.id, 6, 4)}
+						<DropdownMenuShortcut>
+							<Copy className="h-4 w-4" strokeWidth={1.25} />
+						</DropdownMenuShortcut>
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuLabel className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+					Account
+				</DropdownMenuLabel>
+				<DropdownMenuItem asChild>
+					<Link href="/settings" className="cursor-pointer">
+						<Settings className="h-4 w-4" />
+						Settings
+					</Link>
+				</DropdownMenuItem>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuLabel className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+					Actions
+				</DropdownMenuLabel>
+				<DropdownMenuItem
+					variant="destructive"
+					className="cursor-pointer"
 					onClick={async () => {
 						const signOutPromise = new Promise((resolve, reject) => {
 							authClient.signOut({
@@ -75,8 +117,8 @@ export function AccountPopover({ session }: { session: Session }) {
 				>
 					<LogOut className="h-4 w-4" />
 					Log Out
-				</Button>
-			</PopoverContent>
-		</Popover>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

@@ -2,12 +2,12 @@
 import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import { Bell, Search, Wallet2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { WatchlistCredenza } from "~/components/watchlist/watchlist-credenza";
-import siteConfig from "~/config/site";
 import { useSession } from "~/contexts/AuthClientContext";
 import { Session } from "~/types/auth";
-import { AccountPopover } from "./account/account-management";
+import { AccountDropdown } from "./account/account-management";
 import { SearchDialog } from "./search-dialog";
 import Balance from "./wallet/balance";
 
@@ -19,8 +19,15 @@ export default function SiteHeader() {
 			<div className="flex items-center gap-6">
 				<Link href="/" className="flex items-center gap-2 font-bold">
 					<div className="flex items-center">
-						<div className="h-6 w-6 bg-primary clip-triangle" />
-						<span className="ml-2 text-blue-400">{siteConfig.title} Pro</span>
+						<Image
+							src="/branding/logo-light.png"
+							alt="Company Logo"
+							width={50}
+							height={40}
+							className="h-auto w-auto"
+							priority
+						/>
+						<span className="-ml-3  text-blue-400">Pro</span>
 					</div>
 				</Link>
 				<nav className="hidden md:flex">
@@ -114,10 +121,10 @@ export default function SiteHeader() {
 						<Wallet2 className="h-5 w-5" />
 					</Button>
 				</Balance>
-				<Button variant="ghost" size="icon" className="rounded-full">
+				<Button variant="ghost" size="icon" className="rounded-full" disabled>
 					<Bell className="h-5 w-5" />
 				</Button>
-				<AccountPopover session={data as Session} />
+				<AccountDropdown session={data as Session} />
 			</div>
 		</header>
 	);

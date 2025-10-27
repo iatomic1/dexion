@@ -18,10 +18,12 @@ type Querier interface {
 	CreateTelegramUser(ctx context.Context, arg CreateTelegramUserParams) (*TelegramUser, error)
 	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error)
+	CreateWebhookConfig(ctx context.Context, arg CreateWebhookConfigParams) (*WebhookConfig, error)
 	DeleteAlert(ctx context.Context, arg DeleteAlertParams) (*Alert, error)
 	DeleteAlertChannels(ctx context.Context, alertID uuid.UUID) error
 	DeleteAllInactiveAlerts(ctx context.Context, userID string) error
 	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
+	DeleteWebhookConfig(ctx context.Context, userID string) error
 	GetActiveAlertsByMetric(ctx context.Context, metric string) ([]*Alert, error)
 	GetAlertById(ctx context.Context, arg GetAlertByIdParams) (*Alert, error)
 	GetAllChannels(ctx context.Context) ([]*Channel, error)
@@ -38,6 +40,7 @@ type Querier interface {
 	GetWalletsWithWatchers(ctx context.Context) ([]*GetWalletsWithWatchersRow, error)
 	GetWatchersForWallet(ctx context.Context, walletAddress string) ([]*GetWatchersForWalletRow, error)
 	GetWatchlistsByUserId(ctx context.Context, userID *string) ([]*Watchlist, error)
+	GetWebhookConfigByUserID(ctx context.Context, userID string) (*WebhookConfig, error)
 	HasAlert(ctx context.Context, arg HasAlertParams) (bool, error)
 	HasWatchlist(ctx context.Context, arg HasWatchlistParams) (bool, error)
 	HasWatchlistById(ctx context.Context, arg HasWatchlistByIdParams) (bool, error)
@@ -53,6 +56,7 @@ type Querier interface {
 	UpdateAlertWithChannels(ctx context.Context, arg UpdateAlertWithChannelsParams) (*UpdateAlertWithChannelsRow, error)
 	UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error)
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
+	UpdateWebhookConfig(ctx context.Context, arg UpdateWebhookConfigParams) (*WebhookConfig, error)
 	UpsertTelegramUserWallet(ctx context.Context, arg UpsertTelegramUserWalletParams) (*TelegramUserWallet, error)
 	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)
 	WalletExists(ctx context.Context, address string) (bool, error)

@@ -1,7 +1,7 @@
 import { Redis } from "ioredis";
 import { User } from "~/types/auth";
 
-const REDIS_PREFIX = "auth-";
+export const REDIS_PREFIX = "auth-";
 export interface SecondaryStorage {
 	get: (key: string) => Promise<string | null>;
 	set: (key: string, value: string, ttl?: number) => Promise<void>;
@@ -38,14 +38,27 @@ type CachedUserData = {
 	email?: string;
 	telegram_id?: string;
 };
-export async function cacheUserData(user: User) {
-	if (!user?.id || !user?.email) return;
 
-	const key = `user:${user.id}`;
-	const data: CachedUserData = {};
+export async function updateCachedUserField(
+	userId: string,
+	field: keyof CachedUserData,
+	value: string,
+) {
+	if (!userId || !field) return;
 
-	data.email = user.email;
-	if (user.telegram_id) data.telegram_id = user.telegram_id;
+	const key = `user:${userId}`;
+	await redisClient.hset(key, field, value);
+}
 
-	await redisClient.hset(key, data);
+export async function getCachedUserData(
+	userId: string,
+): Promise<CachedUserData | null> {
+	if (!userId) return null;
+
+	const key = `user:${userId}`;
+	const data = await redisClient.hgetall(key);
+
+	if (!data || Object.keys(data).length === 0) return null;
+
+	return data as CachedUserData;
 }

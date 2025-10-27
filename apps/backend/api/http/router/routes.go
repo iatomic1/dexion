@@ -32,6 +32,7 @@ func SetupRouter(srv *http.Server) {
 		RegisterTelegramWalletRoutes(srv, api.Group("/wallets/telegram"))
 		RegisterWatchlistRoutes(srv, api.Group("/watchlist"))
 		RegisterAlertRoutes(srv, api.Group("/alerts"))
+		RegisterWebhookRoutes(srv, api.Group("/webhooks"))
 
 		RegisterDocsRoutes(api.Group("/docs"))
 	}

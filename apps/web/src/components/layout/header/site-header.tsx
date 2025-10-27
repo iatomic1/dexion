@@ -6,6 +6,7 @@ import Link from "next/link";
 import { WatchlistCredenza } from "~/components/watchlist/watchlist-credenza";
 import siteConfig from "~/config/site";
 import { useSession } from "~/contexts/AuthClientContext";
+import { Session } from "~/types/auth";
 import { AccountPopover } from "./account/account-management";
 import { SearchDialog } from "./search-dialog";
 import Balance from "./wallet/balance";
@@ -108,7 +109,7 @@ export default function SiteHeader() {
 					Test Send
 				</Button> */}
 
-				<Balance session={data} isSessionPending={isPending}>
+				<Balance session={data as Session} isSessionPending={isPending}>
 					<Button variant="ghost" size="icon" className="rounded-full">
 						<Wallet2 className="h-5 w-5" />
 					</Button>
@@ -116,7 +117,7 @@ export default function SiteHeader() {
 				<Button variant="ghost" size="icon" className="rounded-full">
 					<Bell className="h-5 w-5" />
 				</Button>
-				<AccountPopover session={data} />
+				<AccountPopover session={data as Session} />
 			</div>
 		</header>
 	);

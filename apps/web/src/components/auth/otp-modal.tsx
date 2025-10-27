@@ -18,18 +18,18 @@ import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
-import useLocalStorage from "~/hooks/useLocalStorage"; // Adjust path as needed
+import useLocalStorage from "~/hooks/useLocalStorage";
 import { authClient } from "~/lib/auth-client";
 
-// Extract timeout constant
 const RESEND_TIMEOUT_SECONDS = 48;
 
 interface OtpModalProps {
 	open: boolean;
 	onOpenChange: (_open: boolean) => void;
-	onSwitchToSignUp: () => void;
+	onSwitchToSignUp?: () => void;
 	mail: string;
 	type: "email-verification" | "two-factor";
+	onSuccess?: () => void; // Optional success callback
 }
 
 export default function OtpModal({
@@ -37,6 +37,7 @@ export default function OtpModal({
 	onOpenChange,
 	mail,
 	type,
+	onSuccess,
 }: OtpModalProps) {
 	const [value, setValue] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -45,22 +46,18 @@ export default function OtpModal({
 
 	const timerKey = `otp_timer_${mail}_${type}`;
 
-	// Use the custom hook for localStorage
 	const [timerStartTime, setTimerStartTime, removeTimerStartTime] =
 		useLocalStorage<number | null>(timerKey, null);
 
-	// Get persisted timer or create new one
 	const getExpiryTimestamp = () => {
 		if (timerStartTime) {
 			const elapsed = (Date.now() - timerStartTime) / 1000;
 			const remaining = Math.max(0, RESEND_TIMEOUT_SECONDS - elapsed);
 
 			if (remaining > 0) {
-				// Return future timestamp
 				return new Date(Date.now() + remaining * 1000);
 			}
 		}
-		// No saved time or expired, start fresh
 		const newStartTime = Date.now();
 		setTimerStartTime(newStartTime);
 		return new Date(Date.now() + RESEND_TIMEOUT_SECONDS * 1000);
@@ -75,7 +72,6 @@ export default function OtpModal({
 		autoStart: true,
 	});
 
-	// Calculate total seconds from minutes and seconds
 	const totalSeconds = minutes * 60 + seconds;
 	const canResend = totalSeconds <= 0;
 
@@ -96,8 +92,6 @@ export default function OtpModal({
 					return;
 				}
 
-				console.log("Email verification response:", data);
-
 				if (data?.success) {
 					toast.success("OTP sent to email");
 					success = true;
@@ -114,8 +108,6 @@ export default function OtpModal({
 					return;
 				}
 
-				console.log("Two-factor response:", data);
-
 				if (data) {
 					toast.success("Two-factor code sent");
 					success = true;
@@ -125,7 +117,6 @@ export default function OtpModal({
 				}
 			}
 
-			// Only restart timer and clear input if API call was successful
 			if (success) {
 				const newStartTime = Date.now();
 				setTimerStartTime(newStartTime);
@@ -133,12 +124,11 @@ export default function OtpModal({
 					Date.now() + RESEND_TIMEOUT_SECONDS * 1000,
 				);
 				restart(newExpiryTime);
-				setValue(""); // Clear current input
+				setValue("");
 			}
 		} catch (error) {
 			console.error("Unexpected error during resend:", error);
 
-			// Handle different error types
 			if (error instanceof Error) {
 				toast.error(error.message);
 			} else if (typeof error === "string") {
@@ -157,14 +147,12 @@ export default function OtpModal({
 		return `${mins}:${secs.toString().padStart(2, "0")}`;
 	};
 
-	// Auto-submit when OTP is complete
 	useEffect(() => {
 		if (value.length === 6) {
 			handleSubmit();
 		}
 	}, [value]);
 
-	// Initialize timer when modal opens
 	useEffect(() => {
 		if (open && timerStartTime) {
 			const elapsed = (Date.now() - timerStartTime) / 1000;
@@ -188,8 +176,12 @@ export default function OtpModal({
 						onSuccess: () => {
 							toast.success("Authenticated");
 							removeTimerStartTime();
-							pause(); // Stop timer
+							pause();
 							onOpenChange(false);
+							// Call the success callback if provided
+							if (onSuccess) {
+								onSuccess();
+							}
 						},
 						onError: (ctx) => {
 							toast.error(ctx.error.message || "Invalid code");
@@ -208,8 +200,14 @@ export default function OtpModal({
 						onSuccess() {
 							toast.success("Authenticated");
 							removeTimerStartTime();
-							pause(); // Stop timer
-							router.push("/portfolio");
+							pause();
+							onOpenChange(false);
+							// For two-factor, use callback or default navigation
+							if (onSuccess) {
+								onSuccess();
+							} else {
+								router.push("/portfolio");
+							}
 						},
 						onError(ctx) {
 							toast.error(ctx.error.message || "Invalid code");
@@ -238,12 +236,22 @@ export default function OtpModal({
 			>
 				<div className="mx-auto w-full">
 					<DialogHeader className="flex flex-row items-center justify-between px-4 py-4">
-						<Button className="h-6 w-6" variant="ghost" size="icon">
+						<Button
+							className="h-6 w-6"
+							variant="ghost"
+							size="icon"
+							onClick={() => onOpenChange(false)}
+						>
 							<ArrowLeft />
 						</Button>
 						<DialogTitle className="text-base">Confirmation Code</DialogTitle>
 						<DrawerClose asChild>
-							<Button className="h-6 w-6" variant="ghost" size="icon">
+							<Button
+								className="h-6 w-6"
+								variant="ghost"
+								size="icon"
+								onClick={() => onOpenChange(false)}
+							>
 								<X />
 							</Button>
 						</DrawerClose>

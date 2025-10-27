@@ -1,4 +1,4 @@
-import { Job, Queue, Worker } from "bullmq";
+import { Job, Queue, Worker, type BackoffOptions } from "bullmq";
 import {
 	emailQueue,
 	swapQueue,
@@ -20,33 +20,75 @@ export type Alert = Awaited<ReturnType<typeof getActiveAlertsByCa>>[number];
 const queueMap: Record<string, Queue> = {
 	email: emailQueue,
 	telegram: telegramQueue,
-	// webapp: webappQueue,
 	webhook: webhookQueue,
 };
+const retryMap: Record<string, { attempts: number; backoff?: BackoffOptions }> =
+	{
+		webhook: { attempts: 1 }, // no retry
+		email: { attempts: 2, backoff: { type: "exponential", delay: 2000 } }, // retry once
+		telegram: { attempts: 3, backoff: { type: "exponential", delay: 2000 } }, // retry thrice
+	};
 
 const swapEventsWorker = new Worker(
 	swapQueue.name,
 	async (job: Job<SwapEventJobData>) => {
 		const { assetContracts } = job.data;
+		logger.info({ jobId: job.id, assetContracts }, "Job started");
+
 		await Promise.all(
 			assetContracts.map(async (ca) => {
+				logger.debug({ jobId: job.id, ca }, "Processing asset contract");
+
 				try {
 					const alerts = await getActiveAlertsByCa(ca);
-					if (!alerts?.length) return;
+					logger.debug(
+						{ jobId: job.id, ca, alertCount: alerts?.length },
+						"Fetched active alerts",
+					);
+					if (!alerts?.length) {
+						logger.debug({ jobId: job.id, ca }, "No active alerts found");
+						return;
+					}
 
 					const token = await getTokenMetadata(ca);
-					if (!token) return;
+					if (!token) {
+						logger.warn({ jobId: job.id, ca }, "Token metadata missing");
+						return;
+					}
 
 					await Promise.all(
 						alerts.map(async (alert) => {
+							logger.debug(
+								{ jobId: job.id, alertId: alert.id },
+								"Evaluating alert condition",
+							);
 							const shouldTrigger = evaluateAlert(alert, token);
-							if (!shouldTrigger) return;
+							if (!shouldTrigger) {
+								logger.debug(
+									{ jobId: job.id, alertId: alert.id },
+									"Alert did not trigger",
+								);
+								return;
+							}
 
 							const userProfile = await getCachedUserProfile(alert.userId);
+							if (!userProfile) {
+								logger.warn(
+									{ jobId: job.id, userId: alert.userId },
+									"User profile not found",
+								);
+								return;
+							}
 
+							const currentValue = getMetricValue(alert.metric, token);
 							logger.info(
-								{ alert, currentValue: getMetricValue(alert.metric, token) },
-								`Alert triggered for user ${alert.userId}`,
+								{
+									jobId: job.id,
+									alertId: alert.id,
+									userId: alert.userId,
+									currentValue,
+								},
+								"Alert triggered",
 							);
 
 							const activeChannels = alert.channels
@@ -54,13 +96,30 @@ const swapEventsWorker = new Worker(
 									(cid: string) =>
 										ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
 								)
-								.filter(Boolean)
+								.filter((chName): chName is string => Boolean(chName))
 								.filter((chName) => hasChannel(userProfile, chName));
+
+							logger.debug(
+								{ jobId: job.id, alertId: alert.id, activeChannels },
+								"Resolved active delivery channels",
+							);
 
 							await Promise.all(
 								activeChannels.map(async (chName) => {
 									const queue = queueMap[chName as keyof typeof queueMap];
-									if (!queue) return;
+									if (!queue) {
+										logger.warn(
+											{ jobId: job.id, alertId: alert.id, chName },
+											"No queue found for channel",
+										);
+										return;
+									}
+									const retryCfg = retryMap[chName] || { attempts: 1 };
+
+									logger.info(
+										{ jobId: job.id, alertId: alert.id, chName },
+										"Enqueueing alert delivery job",
+									);
 
 									await queue.add(
 										"send-alert",
@@ -71,25 +130,41 @@ const swapEventsWorker = new Worker(
 											token,
 											triggeredAt: new Date().toISOString(),
 										},
-										{
-											attempts: 3,
-											backoff: { type: "exponential", delay: 2000 },
-										},
+										retryCfg,
+									);
+
+									logger.debug(
+										{ jobId: job.id, alertId: alert.id, chName },
+										"Alert delivery job enqueued",
 									);
 								}),
 							);
 
 							if (!alert.repeatable) {
-								// Mark as completed here | Delete from cache
+								logger.info(
+									{ jobId: job.id, alertId: alert.id },
+									"Non-repeatable alert, marking for completion",
+								);
+								// TODO: Mark alert as completed or delete from cache
 							}
 						}),
 					);
+
+					logger.debug(
+						{ jobId: job.id, ca },
+						"Completed alerts processing for CA",
+					);
 				} catch (error) {
-					logger.error(error, `Failed processing alerts for CA ${ca}`);
-					throw error; // Propagate error to fail the job; failed jobs are moved to DLQ by the `failed` event handler below
+					logger.error(
+						{ jobId: job.id, ca, err: error },
+						"Failed processing alerts for CA",
+					);
+					throw error;
 				}
 			}),
 		);
+
+		logger.info({ jobId: job.id }, "Job completed successfully");
 		return;
 	},
 	{
@@ -102,8 +177,22 @@ const swapEventsWorker = new Worker(
 swapEventsWorker.on("failed", (job, err) => {
 	if (job) {
 		swapQueueDlq.add(job.name, job.data);
-		logger.warn({ err, jobId: job.id }, `Moved job ${job.id} to DLQ`);
+		logger.warn({ jobId: job.id, err }, "Job failed, moved to DLQ");
+	} else {
+		logger.error({ err }, "Worker failed with unknown job");
 	}
+});
+
+swapEventsWorker.on("completed", (job) => {
+	logger.info({ jobId: job.id }, "Worker reported job completion");
+});
+
+swapEventsWorker.on("active", (job) => {
+	logger.debug({ jobId: job.id }, "Worker picked up job");
+});
+
+swapEventsWorker.on("stalled", (jobId) => {
+	logger.warn({ jobId }, "Job stalled");
 });
 
 export default swapEventsWorker;

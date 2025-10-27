@@ -1,6 +1,8 @@
 import type { BetterAuthPlugin, User } from "better-auth";
-import { createAuthEndpoint } from "better-auth/api";
+import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
+import { REDIS_PREFIX, updateCachedUserField } from "~/lib/db/redis";
+import { auth } from "../../auth";
 import type { TelegramAuthData, TelegramPluginOptions } from "./types";
 import {
 	parseMiniAppInitData,
@@ -17,6 +19,27 @@ export type {
 	TelegramMiniAppUser,
 	TelegramPluginOptions,
 } from "./types";
+
+const BIG_LOGS = process.env.BIG_LOGS === "true" || false;
+
+const bigLog = (...args: any[]) => {
+	if (BIG_LOGS) {
+		console.log(...args);
+	}
+};
+
+// Utility function for URL validation
+const isValidImageUrl = (url: string): boolean => {
+	try {
+		const parsedUrl = new URL(url);
+		return (
+			(parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") &&
+			/\.(jpg|jpeg|png|gif|webp)$/i.test(parsedUrl.pathname)
+		);
+	} catch {
+		return false;
+	}
+};
 
 /**
  * Telegram authentication plugin for Better Auth
@@ -70,12 +93,14 @@ export const telegram = (options: TelegramPluginOptions) => {
 					telegramId: {
 						type: "string",
 						required: false,
-						unique: false,
+						input: true,
+						returned: true,
 					},
 					telegramUsername: {
 						type: "string",
 						required: false,
-						unique: false,
+						input: true,
+						returned: true,
 					},
 				},
 			},
@@ -84,12 +109,14 @@ export const telegram = (options: TelegramPluginOptions) => {
 					telegramId: {
 						type: "string",
 						required: false,
-						unique: false,
+						input: false,
+						returned: true,
 					},
 					telegramUsername: {
 						type: "string",
 						required: false,
-						unique: false,
+						input: false,
+						returned: true,
 					},
 				},
 			},
@@ -219,137 +246,182 @@ export const telegram = (options: TelegramPluginOptions) => {
 				"/telegram/link",
 				{
 					method: "POST",
+					use: [sessionMiddleware],
 				},
 				async (ctx) => {
-					console.log("STEP 1: Endpoint called");
-					console.log("STEP 1: Full context keys:", Object.keys(ctx.context));
-					console.log("STEP 2: ctx.context:", ctx.context);
-					console.log("STEP 3: Session from context:", ctx.context.session);
+					try {
+						bigLog("STEP 1: Endpoint called");
+						bigLog("STEP 1: Full context keys:", Object.keys(ctx.context));
+						bigLog("STEP 2: ctx.context:", ctx.context);
+						bigLog("STEP 3: Session from context:", ctx.context.session);
 
-					if (!allowUserToLink) {
-						console.log("STEP 1.1: Linking disabled");
-						return ctx.json(
-							{ error: "Linking Telegram accounts is disabled" },
-							{ status: 403 },
+						if (!allowUserToLink) {
+							bigLog("STEP 1.1: Linking disabled");
+							return ctx.json(
+								{ error: "Linking Telegram accounts is disabled" },
+								{ status: 403 },
+							);
+						}
+
+						bigLog("STEP 2: Getting body and session");
+						const body = await ctx.body;
+						const session = ctx.context.session;
+						bigLog(body, "body");
+						bigLog(session, "session");
+
+						bigLog("STEP 3: Checking authentication");
+						if (!session?.user?.id) {
+							bigLog("STEP 3.1: Not authenticated");
+							return ctx.json({ error: "Not authenticated" }, { status: 401 });
+						}
+
+						bigLog("STEP 4: Validating Telegram auth data");
+						if (!validateTelegramAuthData(body)) {
+							bigLog("STEP 4.1: Invalid Telegram auth data");
+							return ctx.json(
+								{ error: "Invalid Telegram auth data" },
+								{ status: 400 },
+							);
+						}
+
+						bigLog("STEP 5: Parsing Telegram data");
+						const telegramData = body as TelegramAuthData;
+						bigLog("STEP 5.1: Telegram data:", telegramData);
+
+						bigLog("STEP 6: Verifying Telegram authentication");
+						const isValid = verifyTelegramAuth(
+							telegramData,
+							botToken,
+							maxAuthAge,
 						);
-					}
+						bigLog("STEP 6.1: Verification result:", isValid);
 
-					console.log("STEP 2: Getting body and session");
-					const body = await ctx.body;
-					const session = ctx.context.session;
-					console.log(body, "body");
-					console.log(session, "session");
+						if (!isValid) {
+							bigLog("STEP 6.2: Invalid Telegram authentication");
+							return ctx.json(
+								{ error: "Invalid Telegram authentication" },
+								{ status: 401 },
+							);
+						}
 
-					console.log("STEP 3: Checking authentication");
-					if (!session?.user?.id) {
-						console.log("STEP 3.1: Not authenticated");
-						return ctx.json({ error: "Not authenticated" }, { status: 401 });
-					}
+						const telegramId = telegramData.id.toString();
 
-					console.log("STEP 4: Validating Telegram auth data");
-					// Validate auth data
-					if (!validateTelegramAuthData(body)) {
-						console.log("STEP 4.1: Invalid Telegram auth data");
-						return ctx.json(
-							{ error: "Invalid Telegram auth data" },
-							{ status: 400 },
-						);
-					}
+						bigLog("STEP 7: Checking for existing account");
+						const existingAccount = await ctx.context.adapter.findOne<{
+							userId: string;
+							providerId: string;
+							accountId: string;
+						}>({
+							model: "account",
+							where: [
+								{ field: "providerId", value: "telegram" },
+								{ field: "accountId", value: telegramId },
+							],
+						});
+						bigLog("STEP 7.1: Existing account:", existingAccount);
 
-					console.log("STEP 5: Parsing Telegram data");
-					const telegramData = body as TelegramAuthData;
-					console.log("STEP 5.1: Telegram data:", telegramData);
+						if (existingAccount && existingAccount.userId !== session.user.id) {
+							bigLog("STEP 7.2: Account linked to another user");
+							return ctx.json(
+								{
+									error:
+										"This Telegram account is already linked to another user",
+								},
+								{ status: 409 },
+							);
+						}
 
-					console.log("STEP 6: Verifying Telegram authentication");
-					// Verify authentication
-					const isValid = verifyTelegramAuth(
-						telegramData,
-						botToken,
-						maxAuthAge,
-					);
-					console.log("STEP 6.1: Verification result:", isValid);
+						if (existingAccount) {
+							bigLog("STEP 7.3: Account already linked to current user");
 
-					if (!isValid) {
-						console.log("STEP 6.2: Invalid Telegram authentication");
-						return ctx.json(
-							{ error: "Invalid Telegram authentication" },
-							{ status: 401 },
-						);
-					}
+							// Ensure cache reflects Telegram link
+							await updateCachedUserField(
+								session.user.id,
+								"telegram_id",
+								telegramId,
+							);
 
-					console.log("STEP 7: Checking for existing account");
-					// Check if Telegram account is already linked to another user
-					const existingAccount = await ctx.context.adapter.findOne({
-						model: "account",
-						where: [
-							{
-								field: "providerId",
-								value: "telegram",
-							},
-							{
-								field: "accountId",
-								value: telegramData.id.toString(),
-							},
-						],
-					});
-					console.log("STEP 7.1: Existing account:", existingAccount);
+							return ctx.json(
+								{
+									error:
+										"This Telegram account is already linked to your account",
+								},
+								{ status: 409 },
+							);
+						}
 
-					if (
-						existingAccount &&
-						(existingAccount as any).userId !== session.user.id
-					) {
-						console.log("STEP 7.2: Account linked to another user");
-						return ctx.json(
-							{
-								error:
-									"This Telegram account is already linked to another user",
-							},
-							{ status: 409 },
-						);
-					}
+						// Use transaction for atomic operations
+						await ctx.context.adapter.transaction(async (trxAdapter) => {
+							bigLog("STEP 8: Creating account link");
+							await trxAdapter.create({
+								model: "account",
+								data: {
+									userId: session.user.id,
+									providerId: "telegram",
+									accountId: telegramId,
+									telegramId: telegramId,
+									telegramUsername: telegramData.username,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+							});
+							bigLog("STEP 8.1: Account link created");
+						});
 
-					if (existingAccount) {
-						console.log("STEP 7.3: Account already linked to current user");
-						return ctx.json(
-							{
-								error:
-									"This Telegram account is already linked to your account",
-							},
-							{ status: 409 },
-						);
-					}
+						bigLog("STEP 9: Updating user with Telegram data");
 
-					console.log("STEP 8: Creating account link");
-					// Create account link
-					await ctx.context.adapter.create({
-						model: "account",
-						data: {
-							userId: session.user.id,
-							providerId: "telegram",
-							accountId: telegramData.id.toString(),
-							telegramId: telegramData.id.toString(),
+						// Prepare update data
+						const updateData: {
+							telegramId: string;
+							telegramUsername?: string;
+							image?: string;
+						} = {
+							telegramId,
 							telegramUsername: telegramData.username,
-						},
-					});
-					console.log("STEP 8.1: Account link created");
+						};
 
-					console.log("STEP 9: Updating user with Telegram data");
-					// Update user with Telegram data
-					await ctx.context.adapter.update({
-						model: "user",
-						where: [{ field: "id", value: session.user.id }],
-						update: {
-							telegramId: telegramData.id.toString(),
-							telegramUsername: telegramData.username,
-						},
-					});
-					console.log("STEP 9.1: User updated");
+						// Only update image if user doesn't have one and Telegram provides a valid one
+						if (!session.user.image && telegramData.photo_url) {
+							if (isValidImageUrl(telegramData.photo_url)) {
+								updateData.image = telegramData.photo_url;
+							} else {
+								bigLog(
+									"STEP 9.0: Invalid Telegram photo URL, skipping image update",
+								);
+							}
+						}
 
-					console.log("STEP 10: Success - returning response");
-					return ctx.json({
-						success: true,
-						message: "Telegram account linked successfully",
-					});
+						// Update user and cached session
+						await auth.api.updateUser({
+							headers: ctx.headers,
+							body: updateData,
+						});
+						bigLog("STEP 9.1: User updated");
+
+						// Update Redis cache
+						await updateCachedUserField(
+							session.user.id,
+							"telegram_id",
+							telegramId,
+						);
+						bigLog("STEP 9.2: Redis cache updated");
+
+						bigLog("STEP 10: Success - returning response");
+						return ctx.json({
+							success: true,
+							message: "Telegram account linked successfully",
+						});
+					} catch (error) {
+						console.error("Error linking Telegram account:", {
+							error,
+							userId: ctx.context.session?.user?.id,
+						});
+
+						return ctx.json(
+							{ error: "Failed to link Telegram account. Please try again." },
+							{ status: 500 },
+						);
+					}
 				},
 			),
 
@@ -357,6 +429,7 @@ export const telegram = (options: TelegramPluginOptions) => {
 				"/telegram/unlink",
 				{
 					method: "POST",
+					use: [sessionMiddleware],
 				},
 				async (ctx) => {
 					const session = ctx.context.session;
@@ -393,10 +466,9 @@ export const telegram = (options: TelegramPluginOptions) => {
 					});
 
 					// Clear Telegram data from user
-					await ctx.context.adapter.update({
-						model: "user",
-						where: [{ field: "id", value: session.user.id }],
-						update: {
+					await auth.api.updateUser({
+						headers: ctx.headers,
+						body: {
 							telegramId: null,
 							telegramUsername: null,
 						},

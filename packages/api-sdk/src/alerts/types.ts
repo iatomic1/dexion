@@ -3,7 +3,6 @@ import type {
 	updateAlertSchema,
 	removeAlertSchema,
 	addNewAlertSchema,
-	webhookSchema,
 } from "./schema";
 
 export type Channel = {
@@ -15,7 +14,6 @@ export type Channel = {
 export type UpdateAlertInput = z.infer<typeof updateAlertSchema>;
 export type AddAlertInput = z.infer<typeof addNewAlertSchema>;
 export type RemoveAlertInput = z.infer<typeof removeAlertSchema>;
-export type WebhookConfig = z.infer<typeof webhookSchema>;
 
 export type RawUserAlert = Omit<UserAlert, "channels"> & { channels: string };
 export type UserAlert = Omit<AddAlertInput, "channels"> & {

@@ -24,6 +24,7 @@ import {
 	Shield,
 } from "lucide-react";
 import { useState } from "react";
+import siteConfig from "~/config/site";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
 
@@ -36,17 +37,20 @@ export default function OTTModal() {
 	const copy = useCopyToClipboard();
 
 	const generateToken = async () => {
-		setIsGenerating(true);
-		const { data, error } = await authClient.oneTimeToken.generate();
-		setIsGenerating(false);
-		if (error) {
-			toast.error(error.message ?? "An error occurred while generating ott");
-			return;
+		if (siteConfig.features.ott) {
+			setIsGenerating(true);
+			const { data, error } = await authClient.oneTimeToken.generate();
+			setIsGenerating(false);
+			if (error) {
+				toast.error(error.message ?? "An error occurred while generating ott");
+				return;
+			}
+			if (data.token) {
+				setExpiresIn(300);
+				setToken(data.token);
+			}
 		}
-		if (data.token) {
-			setExpiresIn(300);
-			setToken(data.token);
-		}
+		toast.info("OTT signing in is disabled at the moment");
 	};
 
 	const copyToken = async () => {

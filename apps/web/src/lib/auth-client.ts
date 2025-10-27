@@ -60,7 +60,6 @@ export const authClient = createAuthClient({
 					returned: true,
 					unique: true,
 				},
-
 				walletAddress: {
 					type: "string",
 					required: false,

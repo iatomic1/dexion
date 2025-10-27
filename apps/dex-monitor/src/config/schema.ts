@@ -7,6 +7,7 @@ export const configSchema = z.object({
 	CHAINHOOK_CONSUMER_SECRET: z.string().min(1),
 	HIRO_PLATFORM_API_KEY: z.string().min(1),
 	RESEND_API_KEY: z.string().min(1),
+	TELEGRAM_BOT_TOKEN: z.string().min(1),
 });
 
 export type Config = z.infer<typeof configSchema>;

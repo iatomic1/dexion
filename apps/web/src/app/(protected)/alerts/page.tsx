@@ -1,6 +1,7 @@
 import { createServerSDK } from "@repo/api-sdk/DexionApiSDK.ts";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
+import { Session } from "~/types/auth";
 import { AlertsManager } from "./_components/alerts-manager";
 
 const getAlertsAndChannels = async () => {
@@ -8,27 +9,41 @@ const getAlertsAndChannels = async () => {
 	const sdk = createServerSDK(session.accessToken, session.userId);
 
 	try {
-		const [alerts, channels] = await Promise.all([
+		const [alerts, channels, webhookConfig] = await Promise.all([
 			sdk.alerts.getAlerts({
-				next: {
-					tags: ["alerts", `user-alerts-${session.userId}`],
-				},
+				next: { tags: ["alerts", `user-alerts-${session.userId}`] },
 			}),
 			sdk.alerts.getAlertChannels({
-				next: {
-					revalidate: 43200,
-				},
+				next: { revalidate: 43200 },
 			}),
+			(async () => {
+				try {
+					return await sdk.webhooks.getWebhook({
+						next: { tags: [`user-webhook-config-${session.userId}`] },
+					});
+				} catch (err: any) {
+					if (err.statusCode === 404) {
+						// no config yet, return null instead of throwing
+						return {
+							data: null as any,
+							message: "Webhook configuration not found",
+							status: "Not Found",
+							errors: [],
+						};
+					}
+					throw err;
+				}
+			})(),
 		]);
 
-		return { alerts, channels };
+		return { alerts, channels, webhookConfig };
 	} catch (err) {
 		console.error(err);
 		return null;
 	}
 };
 
-async function AlertsPage() {
+async function AlertsPage(props: { session: Session }) {
 	const data = await getAlertsAndChannels();
 
 	if (!data) {
@@ -44,6 +59,7 @@ async function AlertsPage() {
 			<AlertsManager
 				alerts={data?.alerts?.data ?? []}
 				channels={data?.channels?.data ?? []}
+				webhookConfig={data?.webhookConfig?.data ?? null}
 			/>
 		</div>
 	);

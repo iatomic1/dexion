@@ -1,4 +1,6 @@
 "use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/components/ui/button";
 import {
 	Card,
@@ -7,25 +9,44 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@repo/ui/components/ui/card";
+import {
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from "@repo/ui/components/ui/field";
 import InputPassword from "@repo/ui/components/ui/input-password";
 import { toast } from "@repo/ui/components/ui/sonner";
 import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { passwordRule } from "~/app/schema";
 import { authClient } from "~/lib/auth-client";
 
+// ✅ Schema validation
+const recoverSchema = z
+	.object({
+		password: passwordRule,
+		confirmPassword: passwordRule,
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
+
+type RecoverFormValues = z.infer<typeof recoverSchema>;
+
 export default function RecoverAccountPage() {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [error, setError] = useState<string | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
+	const router = useRouter();
 	const [token, setToken] = useState<string | null>(null);
 	const [tokenError, setTokenError] = useState<string | null>(null);
-	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSuccess, setIsSuccess] = useState(false);
 
+	// ✅ Extract token from URL
 	useEffect(() => {
-		// Extract token from URL parameters
 		const urlParams = new URLSearchParams(window.location.search);
 		const resetToken = urlParams.get("token");
 
@@ -37,54 +58,62 @@ export default function RecoverAccountPage() {
 			setToken(resetToken);
 		}
 	}, []);
-	const handleReset = () => {
+
+	const form = useForm<RecoverFormValues>({
+		resolver: zodResolver(recoverSchema),
+		defaultValues: {
+			password: "",
+			confirmPassword: "",
+		},
+	});
+
+	const handleResetRedirect = () => {
 		window.location.href = "/reset";
 	};
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setError(null);
-		setIsSubmitting(true);
 
-		// Validate passwords match
-		if (password !== confirmPassword) {
-			setError("Passwords do not match");
-			setIsSubmitting(false);
-			return;
-		}
-
-		// Validate password length - Fixed: should be 8 characters, not 4
-		if (password.length < 8) {
-			setError("Password must be at least 8 characters long");
-			setIsSubmitting(false);
+	const onSubmit = async (values: RecoverFormValues) => {
+		if (!token) {
+			toast.error("Missing reset token. Please request a new link.");
 			return;
 		}
 
 		try {
+			setIsSubmitting(true);
+
 			const { error: resetError } = await authClient.resetPassword(
 				{
-					newPassword: password,
-					token: token as string,
+					newPassword: values.password,
+					token,
 				},
 				{
 					async onSuccess() {
 						await authClient.revokeSessions();
 						setIsSuccess(true);
-						toast.success("Password updated");
+						toast.success("Password updated successfully!");
 						router.push("/");
 					},
 				},
 			);
 
 			if (resetError) {
-				setError(resetError.message || "Failed to reset password");
+				console.error("Password reset error:", resetError);
+				toast.error(resetError.message || "Failed to reset password.");
 			}
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "An error occurred");
+			console.error("Unexpected error:", err);
+			const message =
+				err instanceof TypeError && err.message.includes("fetch")
+					? "Network error. Please check your internet connection."
+					: err instanceof Error
+						? err.message
+						: "An unexpected error occurred. Please try again.";
+			toast.error(message);
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
+	// ✅ Invalid token UI
 	if (tokenError) {
 		return (
 			<div className="h-dvh flex items-center justify-center">
@@ -104,7 +133,7 @@ export default function RecoverAccountPage() {
 						<Button
 							size="sm"
 							className="rounded-full w-full"
-							onClick={handleReset}
+							onClick={handleResetRedirect}
 						>
 							Request New Reset Link
 						</Button>
@@ -114,66 +143,83 @@ export default function RecoverAccountPage() {
 		);
 	}
 
+	// ✅ Main form UI
 	return (
 		<div className="h-dvh flex items-center justify-center">
 			<Card className="max-w-sm w-full rounded-sm py-2">
-				<form onSubmit={handleSubmit}>
-					<CardHeader>
-						<CardTitle className="text-sm text-center">
-							Reset Password
-						</CardTitle>
-					</CardHeader>
-					<CardContent className="space-y-4 mt-3">
-						<div className="space-y-3">
-							<InputPassword
-								label="New Password"
-								placeholder="Enter your password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								required
-								minLength={8}
-								aria-invalid={error ? "true" : "false"}
-								className="rounded-full"
+				<CardHeader>
+					<CardTitle className="text-sm text-center">Reset Password</CardTitle>
+				</CardHeader>
+
+				<CardContent>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="space-y-4 mt-3"
+					>
+						<FieldGroup>
+							{/* Password field */}
+							<Controller
+								control={form.control}
+								name="password"
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="text-xs text-muted-foreground">
+											New Password
+										</FieldLabel>
+										<InputPassword
+											placeholder="Enter new password"
+											className="rounded-full"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
 							/>
 
-							<InputPassword
-								showLabel={false}
-								placeholder="Confirm new password"
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								required
-								minLength={8}
-								aria-invalid={error ? "true" : "false"}
-								className="rounded-full"
+							{/* Confirm password field */}
+							<Controller
+								control={form.control}
+								name="confirmPassword"
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel className="text-xs text-muted-foreground">
+											Confirm Password
+										</FieldLabel>
+										<InputPassword
+											showLabel={false}
+											placeholder="Confirm new password"
+											className="rounded-full"
+											{...field}
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
 							/>
-						</div>
-
-						{/* Error message */}
-						{error && (
-							<div className="flex items-center gap-2 text-destructive text-sm">
-								<XCircleIcon size={16} />
-								<span>{error}</span>
-							</div>
-						)}
+						</FieldGroup>
 
 						{/* Success message */}
 						{isSuccess && (
-							<div className="flex items-center gap-2 text-green-600 text-sm">
+							<div className="flex items-center gap-2 text-green-600 text-sm mt-2">
 								<CheckCircle2Icon size={16} />
-								<span>Password set successfully!</span>
+								<span>Password updated successfully!</span>
 							</div>
 						)}
-					</CardContent>
-					<CardFooter className="my-2">
+
 						<Button
-							size={"sm"}
-							className="rounded-full w-full"
+							type="submit"
+							className="w-full rounded-full text-sm font-medium py-5"
 							disabled={isSubmitting}
 						>
-							Reset Password
+							{isSubmitting ? "Updating..." : "Reset Password"}
 						</Button>
-					</CardFooter>
-				</form>
+					</form>
+				</CardContent>
 			</Card>
 		</div>
 	);

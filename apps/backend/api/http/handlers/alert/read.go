@@ -3,10 +3,12 @@ package alerts
 import (
 	"backend/api/http"
 	"backend/internal/db/repository"
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 // GetUserAlerts godoc
@@ -67,6 +69,7 @@ func (h *AlertHandler) GetAllChannels(c *gin.Context) {
 // @Param        id   path      string  true  "Alert ID (UUID)"
 // @Success      200  {object}  http.Response{data=repository.Alert}  "Alert retrieved successfully"
 // @Failure      400  {object}  map[string]string                     "Invalid UUID format"
+// @Failure      404  {object}  map[string]string                     "Alert not found"
 // @Failure      500  {object}  http.InternalServerErrorResponse      "Internal server error"
 // @Router       /alerts/{id} [get]
 func (h *AlertHandler) GetAlertByID(c *gin.Context, userID string) {
@@ -81,6 +84,10 @@ func (h *AlertHandler) GetAlertByID(c *gin.Context, userID string) {
 
 	alert, err := h.alertService.GetAlertByID(ctx, id, userID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.SendNotFound(c, err, http.WithMessage("Alert not found"))
+			return
+		}
 		http.SendInternalServerError(c, err)
 		return
 	}

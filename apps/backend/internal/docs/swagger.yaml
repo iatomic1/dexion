@@ -103,6 +103,15 @@ definitions:
     required:
     - ca
     type: object
+  backend_internal_db_repository.CreateWebhookConfigParams:
+    properties:
+      bearerToken:
+        type: string
+      userId:
+        type: string
+      webhookUrl:
+        type: string
+    type: object
   backend_internal_db_repository.GetTrackedWalletsTelegramRow:
     properties:
       address:
@@ -217,6 +226,19 @@ definitions:
     - nickname
     - walletAddress
     type: object
+  backend_internal_db_repository.UpdateWebhookConfigParams:
+    properties:
+      bearerToken:
+        type: string
+      enabled:
+        type: boolean
+      status:
+        type: string
+      userId:
+        type: string
+      webhookUrl:
+        type: string
+    type: object
   backend_internal_db_repository.UpsertTelegramUserWalletParams:
     properties:
       chatId:
@@ -289,6 +311,25 @@ definitions:
         type: string
     required:
     - ca
+    type: object
+  backend_internal_db_repository.WebhookConfig:
+    properties:
+      bearerToken:
+        type: string
+      createdAt:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      webhookUrl:
+        type: string
     type: object
   pgtype.InfinityModifier:
     enum:
@@ -459,6 +500,12 @@ paths:
               type: object
         "400":
           description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
           schema:
             additionalProperties:
               type: string
@@ -1002,6 +1049,148 @@ paths:
       summary: Delete watchlist entry
       tags:
       - Watchlist
+  /webhooks:
+    delete:
+      description: Delete the webhook configuration for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook configuration deleted successfully
+          schema:
+            $ref: '#/definitions/backend_api_http.Response'
+        "404":
+          description: Webhook configuration not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete webhook configuration
+      tags:
+      - Webhooks
+    get:
+      description: Get the webhook configuration for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook configuration retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
+              type: object
+        "404":
+          description: Webhook configuration not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get webhook configuration
+      tags:
+      - Webhooks
+    post:
+      consumes:
+      - application/json
+      description: Create a new webhook configuration for the authenticated user
+      parameters:
+      - description: Webhook configuration data
+        in: body
+        name: WebhookRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.CreateWebhookConfigParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Webhook configuration created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Webhook configuration already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new webhook configuration
+      tags:
+      - Webhooks
+    put:
+      consumes:
+      - application/json
+      description: Update the webhook configuration for the authenticated user
+      parameters:
+      - description: Webhook configuration data
+        in: body
+        name: WebhookRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateWebhookConfigParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook configuration updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Webhook configuration not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update webhook configuration
+      tags:
+      - Webhooks
 schemes:
 - http
 - https

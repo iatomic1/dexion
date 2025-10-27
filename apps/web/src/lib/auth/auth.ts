@@ -15,13 +15,16 @@ import {
 } from "better-auth/plugins";
 import type { User } from "~/types/auth";
 import { db } from "../db/drizzle";
-import { cacheUserData, redisStorage } from "../db/redis";
+import {
+	getCachedUserData,
+	redisStorage,
+	updateCachedUserField,
+} from "../db/redis";
 import { schema } from "../db/schema";
 import { getBnsAndAvatar } from "../queries/bns";
 import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
-import { telegram } from "./plugins/telegram";
 import { getTelegramPlugin } from "./plugins/telegram/import";
 
 const URL =
@@ -30,7 +33,7 @@ const URL =
 		: "http://localhost:3001";
 const NGROK_PERSONAL_DOMAIN =
 	"https://unhuntable-kristofer-unresident.ngrok-free.dev";
-export const auth: any = betterAuth({
+export const auth = betterAuth({
 	appName: "Dexion Pro",
 	trustedOrigins: [
 		FRONTEND_URL,
@@ -96,7 +99,13 @@ export const auth: any = betterAuth({
 				ctx.context.newSession
 			) {
 				const sessionUser = ctx.context.newSession.user;
-				cacheUserData(sessionUser);
+				const cachedUserData = await getCachedUserData(sessionUser.id);
+				if (!cachedUserData?.email)
+					await updateCachedUserField(
+						sessionUser.id,
+						"email",
+						sessionUser.email,
+					);
 
 				const userFromSession: User = {
 					...sessionUser,
@@ -112,7 +121,13 @@ export const auth: any = betterAuth({
 			}
 			if (ctx.path.includes("/sign-in/social") && ctx.context.newSession) {
 				const sessionUser = ctx.context.newSession.user;
-				cacheUserData(sessionUser);
+				const cachedUserData = await getCachedUserData(sessionUser.id);
+				if (!cachedUserData?.email)
+					await updateCachedUserField(
+						sessionUser.id,
+						"email",
+						sessionUser.email,
+					);
 
 				const userFromSession: User = {
 					...sessionUser,
@@ -128,7 +143,13 @@ export const auth: any = betterAuth({
 			}
 			if (ctx.path.includes("/sign-in/email") && ctx.context.newSession) {
 				const sessionUser = ctx.context.newSession.user;
-				cacheUserData(sessionUser);
+				const cachedUserData = await getCachedUserData(sessionUser.id);
+				if (!cachedUserData?.email)
+					await updateCachedUserField(
+						sessionUser.id,
+						"email",
+						sessionUser.email,
+					);
 			}
 		}),
 	},
@@ -166,7 +187,7 @@ export const auth: any = betterAuth({
 		enabled: true,
 		requireEmailVerification: true,
 		autoSignIn: true,
-		minPasswordLength: 4,
+		minPasswordLength: 8,
 		sendResetPassword: async ({ user, url }) => {
 			try {
 				await handleEmailSendingImmediate(user.email, "forget-password", url);

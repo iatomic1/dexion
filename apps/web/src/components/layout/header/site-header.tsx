@@ -27,7 +27,7 @@ export default function SiteHeader() {
 							className="h-auto w-auto"
 							priority
 						/>
-						<span className="-ml-3  text-blue-400">Pro</span>
+						<span className="-ml-3 text-blue-400">Pro</span>
 					</div>
 				</Link>
 				<nav className="hidden md:flex">

@@ -41,19 +41,6 @@ export function AccountDropdown({ session }: { session: Session }) {
 				align="end"
 				sideOffset={8}
 			>
-				{/*<DropdownMenuLabel className="font-normal">
-					<div className="flex flex-col gap-1">
-						<p className="text-sm font-medium leading-none">
-							{session?.user?.name || "User"}
-						</p>
-						<p className="text-muted-foreground text-xs leading-none">
-							{session?.user?.email}
-						</p>
-						<p className="text-muted-foreground text-xs leading-none font-mono">
-							ID: {session?.user?.id}
-						</p>
-					</div>*/}
-				{/*</DropdownMenuLabel>*/}
 				<DropdownMenuGroup>
 					<DropdownMenuItem>{session?.user?.email}</DropdownMenuItem>
 					<DropdownMenuItem

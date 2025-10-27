@@ -9,8 +9,10 @@ import {
 	Twitter,
 } from "lucide-react";
 import siteConfig from "~/config/site";
+import ThemeSwitcherTab from "../layout/site-footer/theme-switcher";
 
 const Footer = () => {
+	const year = new Date().getFullYear();
 	return (
 		<footer className="bg-background border-t border-border/50">
 			<div className="container mx-auto px-4 py-16">
@@ -105,6 +107,7 @@ const Footer = () => {
 									Terms of Service
 								</a>
 							</li>
+							<ThemeSwitcherTab />
 						</ul>
 					</div>
 				</div>
@@ -112,8 +115,10 @@ const Footer = () => {
 				<Separator className="my-8 bg-border/50" />
 
 				<div className="flex flex-col md:flex-row justify-between items-center text-muted-foreground text-sm">
-					<div>© 2024 Dexion. All rights reserved.</div>
-					<div className="mt-4 md:mt-0">Built on Stacks • Powered by Web3</div>
+					<div>© {year} Dexion. All rights reserved.</div>
+					<div className="mt-4 md:mt-0">
+						Built on Stacks • Driven by Smart Contracts
+					</div>
 				</div>
 			</div>
 		</footer>

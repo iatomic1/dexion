@@ -1,4 +1,4 @@
-import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { TOKEN_WATCHER_API_BASE_URL } from "@dexion/shared";
 import {
 	getDevTokens,
 	getHolders,
@@ -7,11 +7,11 @@ import {
 	getStxCityTokenTrades,
 	getTokenMetadata,
 	getTrades,
-} from "@repo/tokens/services";
+} from "@dexion/tokens/services";
 import {
 	convertTransaction,
 	transformToTokenMetadata,
-} from "@repo/tokens/utils";
+} from "@dexion/tokens/utils";
 import axios from "axios";
 import type * as Party from "partykit/server";
 import { getSocketClient } from "./socket";

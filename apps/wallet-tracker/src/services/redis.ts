@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { API_BASE_URL } from "@dexion/shared";
 import Redis from "ioredis";
 
 interface Watcher {

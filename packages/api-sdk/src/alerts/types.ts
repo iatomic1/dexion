@@ -3,6 +3,7 @@ import type {
 	updateAlertSchema,
 	removeAlertSchema,
 	addNewAlertSchema,
+	userAlertChannelSchema,
 } from "./schema";
 
 export type Channel = {
@@ -21,3 +22,5 @@ export type UserAlert = Omit<AddAlertInput, "channels"> & {
 	user_id: string;
 	channels: Channel[];
 };
+
+export type UserAlertChannels = z.infer<typeof userAlertChannelSchema>;

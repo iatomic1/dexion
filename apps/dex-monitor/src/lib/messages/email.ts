@@ -1,6 +1,6 @@
 import { getMetricValue } from "@/utils/swap-events";
 import type { Alert } from "@/workers/swap-events-worker";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 
 export const getAlertEmail = ({
 	token,

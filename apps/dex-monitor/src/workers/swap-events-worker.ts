@@ -8,7 +8,7 @@ import {
 } from "@/queues";
 import { getActiveAlertsByCa } from "@/lib/redis/alerts";
 import type { SwapEventJobData } from "@/queues/types";
-import { getTokenMetadata } from "@repo/tokens/services";
+import { getTokenMetadata } from "@dexion/tokens/services";
 import { bullMqRedisConnection } from "@/config/redis";
 import { getCachedUserProfile } from "@/lib/redis/user-profile";
 import { ALERT_CHANNELS } from "@/lib/constants";

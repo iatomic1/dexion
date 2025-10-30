@@ -3,10 +3,10 @@ import { telegramQueue, telegramQueueDlq } from "@/queues";
 import type { SendTelegramAlertJobData } from "@/queues/types";
 import { bullMqRedisConnection } from "@/config/redis";
 import { logger } from "@/config/logger";
-import { NotifierClient, type NotificationButton } from "@repo/notifier";
+import { NotifierClient, type NotificationButton } from "@dexion/notifier";
 import { config } from "@/config";
 import { getAlertHtmlMessage } from "@/lib/messages/telegram";
-import { FRONTEND_URL, SOCIALS } from "@repo/shared-constants/constants.ts";
+import { FRONTEND_URL, SOCIALS } from "@dexion/shared";
 
 const telegramWorker = new Worker(
 	telegramQueue.name,

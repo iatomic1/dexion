@@ -1,4 +1,4 @@
-import { createLogger } from "@repo/logger";
+import { createLogger } from "@dexion/logger";
 import { PartyKitSender } from "./channels/partykit";
 import { TelegramSender } from "./channels/telegram";
 import type {

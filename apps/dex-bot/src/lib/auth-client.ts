@@ -1,4 +1,4 @@
-import { DOMAIN_NAME, FRONTEND_URL } from "@repo/shared-constants/constants.ts";
+import { DOMAIN_NAME, FRONTEND_URL } from "@dexion/shared";
 import { createAuthClient } from "better-auth/client";
 import { oneTimeTokenClient } from "better-auth/client/plugins";
 

@@ -1,4 +1,4 @@
-import { type ParsedTransaction } from "@repo/tokens/parser";
+import { type ParsedTransaction } from "@dexion/tokens/parser";
 import type * as Party from "partykit/server";
 
 interface WalletNotification {

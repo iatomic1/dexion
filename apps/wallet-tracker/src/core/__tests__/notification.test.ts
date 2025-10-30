@@ -5,7 +5,7 @@ const mockNotifierSend = mock(() => Promise.resolve());
 const mockGenerateTelegramMessage = mock(() => Promise.resolve("test message"));
 
 // Mock the modules
-mock.module("@repo/notifier", () => ({
+mock.module("@dexion/notifier", () => ({
 	NotifierClient: mock(() => ({
 		send: mockNotifierSend,
 	})),

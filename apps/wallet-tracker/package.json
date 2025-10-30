@@ -1,5 +1,5 @@
 {
-	"name": "@repo/wallet-tracker",
+	"name": "@dexion/wallet-tracker",
 	"type": "module",
 	"devDependencies": {
 		"@types/bun": "latest"
@@ -13,10 +13,10 @@
 		"test": "bun test"
 	},
 	"dependencies": {
+		"@dexion/notifier": "workspace:*",
+		"@dexion/tokens": "workspace:*",
+		"@dexion/shared": "workspace:*",
 		"@stacks/blockchain-api-client": "^8.11.2",
-		"@repo/notifier": "workspace:*",
-		"@repo/tokens": "workspace:*",
-		"@repo/shared-constants": "workspace:*",
 		"ioredis": "^5.6.1",
 		"partykit": "^0.0.115",
 		"partysocket": "^1.1.4"

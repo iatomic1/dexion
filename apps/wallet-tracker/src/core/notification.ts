@@ -1,6 +1,9 @@
-import { type NotificationButton, NotifierClient } from "@repo/notifier";
-import { PARTKIT_HOST } from "@repo/shared-constants/constants.ts";
-import { type ParsedTransaction, TransactionParser } from "@repo/tokens/parser";
+import { type NotificationButton, NotifierClient } from "@dexion/notifier";
+import { PARTKIT_HOST } from "@dexion/shared";
+import {
+	type ParsedTransaction,
+	TransactionParser,
+} from "@dexion/tokens/parser";
 import { generateTelegramMessage } from "./telegram-messages";
 import { Transaction } from "./transaction";
 

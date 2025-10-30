@@ -1,32 +1,28 @@
-import { validateContractAddress } from "@repo/tokens/utils";
+import { validateContractAddress } from "@dexion/tokens/utils";
 import z from "zod";
+import { webhookConfigSchema } from "../webhooks";
 
 export const addNewAlertSchema = z.object({
 	ca: z
-		.string({
-			required_error: "Contract address is required.",
-			invalid_type_error: "You must pass a valid CA",
+		.string()
+		.min(1, "Contract address is required.")
+		.describe("You must pass a valid CA"),
+
+	channels: z.array(z.string()).min(1, "At least one channel is required"),
+
+	metric: z.enum(["price", "volume", "tvl", "marketcap"]),
+
+	operator: z.enum([">", "<", ">=", "<=", "=", "!="]),
+	repeatable: z.boolean(),
+
+	value: z
+		.number()
+		.refine((val) => !Number.isNaN(val), {
+			message: "Value must be a number.",
 		})
-		.refine((ca) => {
-			return validateContractAddress(ca);
-		}),
-	channels: z.string().array().min(1, "At least one channel is required"),
-	metric: z.enum(["price", "volume", "tvl", "marketcap"], {
-		errorMap: () => ({
-			message: "Metric must be one of: price, volume, tvl, or marketcap",
-		}),
-	}),
-	operator: z.enum([">", "<", ">=", "<=", "=", "!="], {
-		errorMap: () => ({
-			message: "Operator must be one of: >, <, >=, <=, =, or !=",
-		}),
-	}),
-	repeatable: z.boolean().default(false),
-	value: z.number({
-		required_error: "Value is required.",
-		invalid_type_error: "Value must be a number.",
-	}),
-	status: z.enum(["active", "paused", "completed"]).default("active"),
+		.describe("Value is required."),
+
+	status: z.enum(["active", "paused", "completed"]),
 });
 
 export const updateAlertSchema = addNewAlertSchema.extend({
@@ -40,4 +36,10 @@ export const removeAlertSchema = z.object({
 export const webhookSchema = z.object({
 	webhookUrl: z.string(),
 	bearerToken: z.string(),
+});
+
+export const userAlertChannelSchema = z.object({
+	email: z.string().optional(),
+	telegram_id: z.string().optional(),
+	webhook: webhookConfigSchema.optional(),
 });

@@ -2,7 +2,7 @@
 // Core Client
 // ============================================================================
 
-import { API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { API_BASE_URL } from "@dexion/shared";
 import { AlertManager } from "./alerts";
 import {
 	DexionError,

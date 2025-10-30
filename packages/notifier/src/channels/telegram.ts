@@ -1,4 +1,4 @@
-import { createLogger } from "@repo/logger";
+import { createLogger } from "@dexion/logger";
 import { Markup, Telegraf } from "telegraf";
 import type { IChannelSender, Notification } from "../interfaces";
 

@@ -1,6 +1,6 @@
 import type { CachedWebhookConfig } from "@/lib/redis/user-profile";
 import type { Alert } from "@/workers/swap-events-worker";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 
 export type SwapEventJobData = {
 	senderAddress: string;

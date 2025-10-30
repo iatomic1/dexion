@@ -1,9 +1,9 @@
 {
-  "name": "@repo/signer",
+  "name": "@dexion/signer",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
-    "@repo/typescript-config": "workspace:*",
+    "@dexion/typescript-config": "workspace:*",
     "vitest": "^1.3.1"
   },
   "scripts": {
@@ -15,7 +15,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@repo/tokens": "workspace:*",
+    "@dexion/tokens": "workspace:*",
     "@stacks/common": "^7.0.2",
     "@stacks/transactions": "^7.1.0",
     "@turnkey/sdk-server": "^4.2.2",

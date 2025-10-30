@@ -1,0 +1,29 @@
+{
+	"name": "@dexion/hub",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@dexion/typescript-config": "workspace:*"
+	},
+	"scripts": {
+		"start": "bun run src/index.ts",
+		"build": "bun build ./src/index.ts --target bun --outdir ./dist",
+		"dev": "bun run --hot src/index.ts"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"@hono/node-server": "^1.14.3",
+		"@dexion/notifier": "workspace:*",
+		"@dexion/shared": "workspace:*",
+		"@dexion/tokens": "workspace:*",
+		"@stacks/transactions": "^7.2.0",
+		"axios": "^1.10.0",
+		"hono": "^4.7.8",
+		"ioredis": "^5.6.1",
+		"railway": "^2.0.17",
+		"redis": "^4.6.15"
+	},
+	"packageManager": "bun@1.0.18"
+}

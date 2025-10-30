@@ -1,0 +1,3 @@
+{
+  "extends": "@dexion/typescript-config/base.json"
+}

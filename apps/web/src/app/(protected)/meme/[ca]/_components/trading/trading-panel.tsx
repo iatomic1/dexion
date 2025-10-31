@@ -1,6 +1,6 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { DexBanner } from "./dex-banner";
 import Pools from "./pools";

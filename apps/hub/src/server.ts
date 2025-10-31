@@ -1,10 +1,6 @@
 import { serve } from "@hono/node-server";
-import { NotifierClient } from "@repo/notifier";
-import {
-	ADDRESSES,
-	DOMAIN_NAME,
-	VERCEL_FRONTEND_URL,
-} from "@repo/shared-constants/constants.ts";
+import { NotifierClient } from "@dexion/notifier";
+import { ADDRESSES, DOMAIN_NAME, VERCEL_FRONTEND_URL } from "@dexion/shared";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";

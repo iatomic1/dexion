@@ -1,8 +1,5 @@
-import {
-	EXPLORER_BASE_URL,
-	STX_TOOLS_API_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
-import { getTokenMetadata } from "@repo/tokens/services";
+import { EXPLORER_BASE_URL, STX_TOOLS_API_BASE_URL } from "@dexion/shared";
+import { getTokenMetadata } from "@dexion/tokens/services";
 import { formatPrice } from "../common/utils";
 
 const shortAddress = (address: string) => {

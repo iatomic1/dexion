@@ -1,5 +1,5 @@
-import { getStxcityBondingData } from "@repo/tokens/services";
-import { transformToTokenMetadata } from "@repo/tokens/utils";
+import { getStxcityBondingData } from "@dexion/tokens/services";
+import { transformToTokenMetadata } from "@dexion/tokens/utils";
 import axios from "axios";
 import { Hono } from "hono";
 

@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -6,11 +6,11 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/dialog";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Label } from "@dexion/ui/components/ui/label";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import type React from "react";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";

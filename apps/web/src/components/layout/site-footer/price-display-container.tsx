@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import { PriceDisplay } from "./price-display";
 

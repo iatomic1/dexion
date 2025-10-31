@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { Checkbox } from "@repo/ui/components/ui/checkbox";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Checkbox } from "@dexion/ui/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -9,8 +9,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Label } from "@repo/ui/components/ui/label";
+} from "@dexion/ui/components/ui/dialog";
+import { Label } from "@dexion/ui/components/ui/label";
 import type { Table } from "@tanstack/react-table";
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import { NotifierClient } from "@repo/notifier";
+import { NotifierClient } from "@dexion/notifier";
 import type Redis from "ioredis";
 
 export class PriceAlertChecker {

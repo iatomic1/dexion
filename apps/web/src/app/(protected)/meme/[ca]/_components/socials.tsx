@@ -1,11 +1,11 @@
-import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons";
-import type { TokenMetadata } from "@repo/tokens/types";
-import { Button } from "@repo/ui/components/ui/button";
+import type { TokenMetadata } from "@dexion/tokens/types";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
+import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons";
 import { Globe } from "lucide-react";
 
 export function Socials({ socials }: { socials: TokenMetadata["socials"] }) {

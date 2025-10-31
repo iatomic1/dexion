@@ -1,30 +1,30 @@
 "use client";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Badge } from "@repo/ui/components/ui/badge";
+} from "@dexion/ui/components/ui/avatar";
+import { Badge } from "@dexion/ui/components/ui/badge";
 import {
 	Dialog,
 	DialogClose,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Toggle } from "@repo/ui/components/ui/toggle";
+} from "@dexion/ui/components/ui/dialog";
+import { Input } from "@dexion/ui/components/ui/input";
+import { ScrollArea, ScrollBar } from "@dexion/ui/components/ui/scroll-area";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Toggle } from "@dexion/ui/components/ui/toggle";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Copy, Loader2, Search } from "lucide-react";
 import Image from "next/image";

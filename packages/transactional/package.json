@@ -1,5 +1,5 @@
 {
-  "name": "@repo/transactional",
+  "name": "@dexion/transactional",
   "version": "1.0.0",
   "private": true,
   "scripts": {

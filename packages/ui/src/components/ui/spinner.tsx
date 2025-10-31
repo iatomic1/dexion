@@ -1,4 +1,4 @@
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@dexion/ui/lib/utils";
 import {
   LoaderCircleIcon,
   LoaderIcon,

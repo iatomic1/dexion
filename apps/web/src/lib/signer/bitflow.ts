@@ -6,7 +6,7 @@ import {
 	SigningError,
 	type StacksSigner,
 	ValidationError,
-} from "@repo/signer";
+} from "@dexion/signer";
 import z from "zod";
 import siteConfig from "~/config/site";
 import { authenticatedAction } from "../safe-action";
@@ -16,15 +16,14 @@ const bitflow = new BitflowSDK();
 const DEFAULT_FEE = 0.03 * 1_000_000;
 
 export const buyToken = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			outTokenId: z.string(),
 			stxAmount: z.number(),
 			slippageTolerance: z.number().min(0).max(1).default(0.04),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			console.log("Buy token input:", input);
 			let signer: StacksSigner;
@@ -143,15 +142,14 @@ export const buyToken = authenticatedAction
 	});
 
 export const sellToken = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			inTokenId: z.string(), // The token to sell (e.g., 'token-usda', 'token-btc')
 			tokenAmount: z.number(), // Amount of token to sell (in token's base unit)
 			slippageTolerance: z.number().min(0).max(1).default(0.01), // 1% default
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			if (!siteConfig.features.trading) {
 				throw new Error(
@@ -176,16 +174,6 @@ export const sellToken = authenticatedAction
 			const senderAddress = await signer.getAddress();
 
 			try {
-				// Get routes for inToken -> STX
-				// const routes = await bitflow.getAllPossibleTokenYRoutes(
-				// 	input.inTokenId,
-				// 	"token-stx",
-				// );
-
-				// if (!routes || routes.length === 0) {
-				// 	throw new ValidationError("No available routes for this token pair");
-				// }
-
 				// Get quote for the swap
 				const quoteResult = await bitflow.getQuoteForRoute(
 					input.inTokenId,
@@ -273,54 +261,18 @@ export const sellToken = authenticatedAction
 	});
 
 // Helper function to get available tokens
-export const getAvailableTokens = authenticatedAction
-	.createServerAction()
-	.input(z.object({}))
-	.handler(async () => {
-		try {
-			const tokens = await bitflow.getAvailableTokens();
-			return {
-				success: true,
-				tokens,
-			};
-		} catch (error) {
-			throw new Error(
-				`Failed to get available tokens: ${error instanceof Error ? error.message : String(error)}`,
-			);
-		}
-	});
-
-// Helper function to get quote without executing
-// export const getSwapQuote = authenticatedAction
-// 	.createServerAction()
-// 	.input(
-// 		z.object({
-// 			fromTokenId: z.string(),
-// 			toTokenId: z.string(),
-// 			amount: z.number(),
-// 		})
-// 	)
-// 	.handler(async ({ input }) => {
-// 		try {
-// 			const quoteResult = await bitflow.getQuoteForRoute(
-// 				input.fromTokenId,
-// 				input.toTokenId,
-// 				input.amount
-// 			);
-
-// 			if (!quoteResult.bestRoute) {
-// 				throw new ValidationError("No quote available for this token pair");
-// 			}
-
-// 			return {
-// 				success: true,
-// 				quote: quoteResult.bestRoute,
-// 				expectedOutput: quoteResult.bestRoute.amountY,
-// 				priceImpact: quoteResult.bestRoute.priceImpact,
-// 			};
-// 		} catch (error) {
-// 			throw new Error(
-// 				`Failed to get swap quote: ${error instanceof Error ? error.message : String(error)}`
-// 			);
-// 		}
-// 	});
+export const getAvailableTokens = authenticatedAction.action(async () => {
+	try {
+		const tokens = await bitflow.getAvailableTokens();
+		return {
+			success: true,
+			tokens,
+		};
+	} catch (error) {
+		throw new Error(
+			`Failed to get available tokens: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
+		);
+	}
+});

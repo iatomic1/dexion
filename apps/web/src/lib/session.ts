@@ -1,5 +1,5 @@
 "use server";
-import { PUBLIC_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { PUBLIC_BASE_URL } from "@dexion/shared";
 import { headers } from "next/headers";
 
 export const withAuth = async () => {

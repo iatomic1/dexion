@@ -1,9 +1,9 @@
-import { validateContractAddress } from "@repo/tokens/utils";
+import { validateContractAddress } from "@dexion/tokens/utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ValidationError } from "../../../src";
 import { Validator } from "../../../src/utils/validation";
 
-vi.mock("@repo/tokens/utils", () => ({
+vi.mock("@dexion/tokens/utils", () => ({
 	validateContractAddress: vi.fn(),
 }));
 

@@ -1,12 +1,12 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Input } from "@dexion/ui/components/ui/input";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import { Check, Edit, HouseIcon, PanelsTopLeftIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";

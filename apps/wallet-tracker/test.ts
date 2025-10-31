@@ -5,7 +5,10 @@
  * Usage: bun run parse-examples.ts
  */
 
-import { type ParsedTransaction, TransactionParser } from "@repo/tokens/parser";
+import {
+	type ParsedTransaction,
+	TransactionParser,
+} from "@dexion/tokens/parser";
 import type { MempoolTransaction } from "@stacks/blockchain-api-client";
 import { readdir, readFile, writeFile } from "fs/promises";
 import { basename, extname, join } from "path";

@@ -10,6 +10,7 @@ import type {
 	RemoveAlertInput,
 	UpdateAlertInput,
 	UserAlert,
+	UserAlertChannels,
 } from "./types";
 import type { DexionClient } from "../DexionApiSDK";
 
@@ -70,10 +71,23 @@ export class AlertManager {
 	): Promise<ApiResponse<Channel[]>> {
 		return this.client.fetch<ApiResponse<Channel[]>>(
 			"dexion",
-			"alerts/channels",
+			"alerts/channels/all",
 			{
 				method: "GET",
 				requiresAuth: false,
+				fetchOptions: options,
+			},
+		);
+	}
+
+	async getUserAlertChannels(
+		options?: FetchOptions,
+	): Promise<ApiResponse<UserAlertChannels>> {
+		return this.client.fetch<ApiResponse<UserAlertChannels>>(
+			"dexion",
+			"alerts/channels",
+			{
+				method: "GET",
 				fetchOptions: options,
 			},
 		);

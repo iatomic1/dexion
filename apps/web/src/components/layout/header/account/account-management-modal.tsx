@@ -1,26 +1,26 @@
 "use client";
 
 import { SessionsCard } from "@daveyplate/better-auth-ui";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Credenza,
 	CredenzaContent,
 	CredenzaHeader,
 	CredenzaTitle,
 	CredenzaTrigger,
-} from "@repo/ui/components/ui/credenza";
-import { DialogTitle } from "@repo/ui/components/ui/dialog";
+} from "@dexion/ui/components/ui/credenza";
+import { DialogTitle } from "@dexion/ui/components/ui/dialog";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@repo/ui/components/ui/select";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/select";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { cn } from "@dexion/ui/lib/utils";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Copy, ExternalLink, Info, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";

@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -37,18 +36,19 @@ func ParseIDs(id string) (uuid.UUID, error) {
 	return userId, nil
 }
 
+// GetUserIDFromContext extracts the user ID from the Gin context.
+// If not found or invalid, it sends the appropriate HTTP response and returns an error.
 func GetUserIDFromContext(c *gin.Context) (string, error) {
 	userID, exists := c.Get("userId")
 	if !exists {
 		http.SendUnauthorized(c, nil, http.WithMessage("User ID not found in context"))
 		return "", errors.New("user id not found")
 	}
-	log.Info().Interface("userID", userID).Msg("userID")
 
 	userIDStr, ok := userID.(string)
 	if !ok {
 		http.SendInternalServerError(c, nil, http.WithMessage("Invalid user ID format"))
-		return "", errors.New("invalid user ID type")
+		return "", errors.New("invalid user id type")
 	}
 
 	return userIDStr, nil

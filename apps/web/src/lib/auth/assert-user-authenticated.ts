@@ -1,5 +1,4 @@
 "use server";
-import { PUBLIC_BASE_URL } from "@repo/shared-constants/constants.ts";
 import { headers } from "next/headers";
 import type { AuthSuccess } from "~/types/auth";
 import { authClient } from "../auth-client";

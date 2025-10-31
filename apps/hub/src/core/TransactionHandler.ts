@@ -1,4 +1,4 @@
-import { getTokenMetadata } from "@repo/tokens/services";
+import { getTokenMetadata } from "@dexion/tokens/services";
 import type Redis from "ioredis";
 import { getContractIdsFromPostConditions } from "../lib/utils";
 

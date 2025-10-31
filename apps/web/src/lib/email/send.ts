@@ -1,5 +1,5 @@
 "use server";
-import { ResetPasswordEmail } from "@repo/transactional/reset-password.tsx";
+import { ResetPasswordEmail } from "@dexion/transactional/reset-password.tsx";
 import { Resend } from "resend";
 import type { EmailType } from "~/types/email";
 import { getOtpEmailHtml } from "./otp-template";

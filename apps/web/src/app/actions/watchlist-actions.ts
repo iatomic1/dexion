@@ -26,13 +26,12 @@ export async function getUserWatchlist() {
 }
 
 export const addToWatchlistAction = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			ca: z.string(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			return await makeFetch<ApiResponse<UserWatchlist>>(
 				"dexion",
@@ -47,18 +46,19 @@ export const addToWatchlistAction = authenticatedAction
 				},
 			)();
 		} catch (err) {
-			console.error(err);
+			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});
 
 export const deleteWatchlistAction = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			id: z.string(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			return await makeFetch<ApiResponse<AuthSuccess>>(
 				"dexion",
@@ -69,6 +69,8 @@ export const deleteWatchlistAction = authenticatedAction
 				},
 			)();
 		} catch (err) {
-			console.error(err);
+			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});

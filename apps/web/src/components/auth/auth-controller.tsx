@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import Link from "next/link";
 
 export default function AuthController() {

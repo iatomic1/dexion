@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+import { Button } from "@dexion/ui/components/ui/button";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import { useEffect, useState } from "react";
 import AddWalletModal from "~/components/layout/wallet-tracker/add-wallet";
 import { WalletItem } from "~/components/layout/wallet-tracker/wallet-item";

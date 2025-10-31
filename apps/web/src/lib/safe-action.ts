@@ -1,39 +1,20 @@
-import { createServerActionProcedure } from "zsa";
+import { createMiddleware, createSafeActionClient } from "next-safe-action";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 
-export class PublicError extends Error {
-	constructor(message: string) {
-		super(message);
-		this.name = "PUBLIC_ERROR";
-	}
-}
+export const unauthenticatedAction = createSafeActionClient({});
 
-function shapeErrors({ err }: any) {
-	const isAllowedError = err instanceof PublicError;
-	const isDev = process.env.NODE_ENV === "development";
-	if (isAllowedError || isDev) {
-		console.error(err);
-		return {
-			code: err.code ?? "ERROR",
-			message: `${!isAllowedError && isDev ? "DEV ONLY ENABLED - " : ""}${
-				err.message
-			}`,
-		};
-	}
-	return {
-		code: "ERROR",
-		message: "Something went wrong",
-	};
-}
-
-export const authenticatedAction = createServerActionProcedure()
-	.experimental_shapeError(shapeErrors)
-	.handler(async () => {
+export const authMiddleware = createMiddleware().define(
+	async ({ ctx, next }) => {
 		const user = await assertUserAuthenticated();
+		return next({ ctx: { user } });
+	},
+);
 
-		return { user };
-	});
-
-export const unauthenticatedAction = createServerActionProcedure()
-	.experimental_shapeError(shapeErrors)
-	.handler(async () => {});
+export const authenticatedAction = createSafeActionClient({
+	handleServerError: (e) => {
+		console.error("Action error:", e.message);
+		return {
+			errorMessage: e.message,
+		};
+	},
+}).use(authMiddleware);

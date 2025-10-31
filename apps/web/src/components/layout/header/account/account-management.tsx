@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,8 +10,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from "@repo/ui/components/ui/dropdown-menu";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/dropdown-menu";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { Copy, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

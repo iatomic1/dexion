@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useId, useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@dexion/ui/lib/utils";
 import { Input } from "./input";
 import { Label } from "./label";
 

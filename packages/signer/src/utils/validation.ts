@@ -1,4 +1,4 @@
-import { validateContractAddress } from "@repo/tokens/utils";
+import { validateContractAddress } from "@dexion/tokens/utils";
 import { ValidationError } from "../errors";
 import type { ContractCallParams } from "../types";
 

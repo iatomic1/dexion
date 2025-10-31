@@ -2,7 +2,7 @@ import type {
 	TokenHolder,
 	TokenMetadata,
 	TokenSwapTransaction,
-} from "@repo/tokens/types";
+} from "@dexion/tokens/types";
 import type { AddressBalanceResponse } from "~/types/hiro/balance";
 import type { TokenLockedLiquidity } from "~/types/stxwatch";
 import { formatPrice } from "../helpers/numbers";

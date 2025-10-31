@@ -1,4 +1,4 @@
-import { DOMAIN_NAME, FRONTEND_URL } from "@repo/shared-constants/constants.ts";
+import { DOMAIN_NAME, FRONTEND_URL } from "@dexion/shared";
 import { verifyMessageSignatureRsv } from "@stacks/encryption";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -90,7 +90,44 @@ export const auth = betterAuth({
 			},
 		},
 	},
+	databaseHooks: {
+		account: {
+			create: {
+				after: async (account, ctx) => {
+					if (!ctx?.context || account.providerId !== "google") {
+						return;
+					}
 
+					const sessionUser = ctx.context.session?.user;
+					if (!sessionUser) {
+						return;
+					}
+
+					const cachedUserData = await getCachedUserData(sessionUser.id);
+					if (!cachedUserData?.email) {
+						await updateCachedUserField(
+							sessionUser.id,
+							"email",
+							sessionUser.email,
+						);
+					}
+
+					const userFromSession: User = {
+						...sessionUser,
+						inviteCode: sessionUser.inviteCode ?? null,
+						subOrgCreated: sessionUser.subOrgCreated ?? false,
+						subOrganizationId: sessionUser.subOrganizationId ?? undefined,
+						walletId: sessionUser.walletId ?? "",
+						walletAddress: sessionUser.walletAddress ?? "",
+						walletPublicKey: sessionUser.walletPublicKey ?? "",
+						twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
+					};
+
+					await initWallet(userFromSession, false);
+				},
+			},
+		},
+	},
 	secondaryStorage: redisStorage,
 	hooks: {
 		after: createAuthMiddleware(async (ctx) => {
@@ -118,38 +155,6 @@ export const auth = betterAuth({
 					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
 				};
 				await initWallet(userFromSession, true);
-			}
-			if (ctx.path.includes("/sign-in/social") && ctx.context.newSession) {
-				const sessionUser = ctx.context.newSession.user;
-				const cachedUserData = await getCachedUserData(sessionUser.id);
-				if (!cachedUserData?.email)
-					await updateCachedUserField(
-						sessionUser.id,
-						"email",
-						sessionUser.email,
-					);
-
-				const userFromSession: User = {
-					...sessionUser,
-					inviteCode: sessionUser.inviteCode ?? null,
-					subOrgCreated: sessionUser.subOrgCreated ?? false,
-					subOrganizationId: sessionUser.subOrganizationId ?? undefined,
-					walletId: sessionUser.walletId ?? "",
-					walletAddress: sessionUser.walletAddress ?? "",
-					walletPublicKey: sessionUser.walletPublicKey ?? "",
-					twoFactorEnabled: sessionUser.twoFactorEnabled ?? false,
-				};
-				await initWallet(userFromSession, false);
-			}
-			if (ctx.path.includes("/sign-in/email") && ctx.context.newSession) {
-				const sessionUser = ctx.context.newSession.user;
-				const cachedUserData = await getCachedUserData(sessionUser.id);
-				if (!cachedUserData?.email)
-					await updateCachedUserField(
-						sessionUser.id,
-						"email",
-						sessionUser.email,
-					);
 			}
 		}),
 	},
@@ -193,7 +198,6 @@ export const auth = betterAuth({
 				await handleEmailSendingImmediate(user.email, "forget-password", url);
 			} catch (error) {
 				console.error("Failed to send reset password email:", error);
-				// Re-throw to let better-auth handle the error
 				throw new Error("Failed to send reset password email");
 			}
 		},

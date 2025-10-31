@@ -1,14 +1,14 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/avatar";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import {
 	type ColumnDef,
 	flexRender,

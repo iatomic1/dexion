@@ -1,4 +1,4 @@
-import { DexionApiSDK } from "@repo/api-sdk";
+import { DexionApiSDK } from "@dexion/api-sdk";
 import { Telegraf } from "telegraf";
 import * as messages from "../../messages";
 import { WalletService } from "../../services/WalletService";

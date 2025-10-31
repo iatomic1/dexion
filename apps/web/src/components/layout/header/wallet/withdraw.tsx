@@ -1,41 +1,30 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import { SignerError, SigningError } from "@repo/signer";
-import { Button } from "@repo/ui/components/ui/button";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Field,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/ui/field";
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Spinner } from "@repo/ui/components/ui/spinner";
+} from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Spinner } from "@dexion/ui/components/ui/spinner";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ValidationError } from "@stacks/common";
 import { validateStacksAddress } from "@stacks/transactions";
 import { getNameInfo } from "bns-v2-sdk";
 import { ArrowDown, ExternalLink } from "lucide-react";
 import Image from "next/image";
+import { useAction } from "next-safe-action/hooks";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useServerAction } from "zsa-react";
 import { AppDialog } from "~/components/app-dialog";
-import { useTokenTransfer } from "~/hooks/useTokenTransfer";
 import openInNewPage from "~/lib/helpers/openInNewPage";
 import { truncateString } from "~/lib/helpers/strings";
 import { transferStx } from "~/lib/signer/actions";
@@ -83,53 +72,29 @@ export default function Withdraw({
 	const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
 	const [isValidatingAddress, setIsValidatingAddress] = useState(false);
 	const [addressError, setAddressError] = useState<string | null>(null);
-	// const { handleTokenTransfer, isPending } = useTokenTransfer();
 
-	const { isPending, execute, data, error, isError } =
-		useServerAction(transferStx);
+	const { execute, status } = useAction(transferStx, {
+		onSuccess: (data) => {
+			if (data.data?.success) {
+				toast.success(
+					`Transaction successful! TX ID: ${data.data.txid?.slice(0, 8)}...`,
+				);
+			} else if ("error" in data.data) {
+				toast.error(`${data.data.reason}: ${data.data.error}`);
+			} else {
+				toast.error("Transaction failed");
+			}
+		},
 
-	const handleTokenTransfer = async (amount: number, recipient: string) => {
-		const transferPromise = execute({
-			amount,
-			recipient,
-		});
+		onError: ({ error: { serverError } }) => {
+			toast.error(serverError?.errorMessage || "Transaction failed");
+		},
+	});
 
-		return toast.promise(transferPromise, {
-			loading: "Signing and broadcasting transaction...",
-			success: (result) => {
-				const txRes = result[0];
-				console.log(txRes);
-				if (txRes?.success) {
-					return `Transaction successful! TX ID: ${txRes.txid?.slice(0, 8)}...`;
-				}
-			},
-			error: (error) => {
-				console.error("Transaction failed:", error);
+	const isPending = status === "executing";
 
-				if (error instanceof ValidationError) {
-					return `Invalid input: ${error.message}`;
-				}
-				if (error instanceof SigningError) {
-					return `Signing failed: ${error.message}`;
-				}
-				if (error instanceof SignerError) {
-					switch (error.code) {
-						case "SIGNER_INIT_ERROR":
-							return "Failed to initialize signer. Please check your wallet connection.";
-						case "BROADCAST_ERROR":
-							return "Failed to broadcast transaction. Please try again.";
-						case "TURNKEY_ERROR":
-							return "Wallet provider error. Please check your connection.";
-						default:
-							return `Transaction failed: ${error.message}`;
-					}
-				}
-				return `Transaction failed: ${error instanceof Error ? error.message : String(error)}`;
-			},
-		});
-	};
 	const form = useForm<WithdrawFormData>({
-		resolver: zodResolver(withdrawSchema),
+		resolver: standardSchemaResolver(withdrawSchema),
 		defaultValues: {
 			amount: 0.0001,
 			address: "",
@@ -204,20 +169,12 @@ export default function Withdraw({
 	};
 
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		// const value = Number.parseFloat(e.target.value) || 0;
-		// Cap the amount at stxBalance
-		// const cappedValue = Math.min(value, stxBalance);
 		form.setValue("amount", Number(e.target.value));
 	};
 
 	const handleSubmit = async (data: WithdrawFormData) => {
 		if (resolvedAddress && !addressError) {
-			handleTokenTransfer(data.amount, resolvedAddress);
-			// console.log(resolvedAddress, data);
-			// onWithdraw?.({
-			//   ...data,
-			//   address: resolvedAddress, // Use resolved address for submission
-			// });
+			execute({ amount: data.amount, recipient: resolvedAddress });
 		}
 	};
 

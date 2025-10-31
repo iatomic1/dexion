@@ -3,7 +3,7 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@dexion/ui/components/ui/card";
 
 export default function BalanceSection() {
 	return (

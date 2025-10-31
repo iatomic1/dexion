@@ -1,21 +1,21 @@
 "use client";
 
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
 import type {
 	TokenHolder,
 	TokenMetadata,
 	TokenSwapTransaction,
-} from "@repo/tokens/types";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Progress } from "@repo/ui/components/ui/progress";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
+} from "@dexion/tokens/types";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Progress } from "@dexion/ui/components/ui/progress";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tooltip";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import {
 	type ColumnDef,
 	flexRender,

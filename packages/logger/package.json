@@ -1,5 +1,5 @@
 {
-	"name": "@repo/logger",
+	"name": "@dexion/logger",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
@@ -12,7 +12,7 @@
 		"clean": "rm -rf node_modules"
 	},
 	"devDependencies": {
-		"@repo/typescript-config": "workspace:*",
+		"@dexion/typescript-config": "workspace:*",
 		"@types/node": "^22.14.0",
 		"eslint": "^9.24.0",
 		"pino-pretty": "^13.1.2",

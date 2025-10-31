@@ -152,6 +152,78 @@
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Fetch all notification channels for a given user ID",
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Retrieve notification channels for a user",
+                "parameters": [
+                    {
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User channels retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/backend_api_http.Response"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/api_http_handlers_alert.UserChannelsResponse"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/backend_api_http.InternalServerErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/channels/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch all available channels in the system",
                 "tags": [
                     "Alerts"
@@ -1675,6 +1747,20 @@
                     },
                     "value": {
                         "type": "string"
+                    }
+                }
+            },
+            "api_http_handlers_alert.UserChannelsResponse": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "telegram_id": {
+                        "type": "string"
+                    },
+                    "webhook": {
+                        "$ref": "#/components/schemas/backend_internal_db_repository.WebhookConfig"
                     }
                 }
             },

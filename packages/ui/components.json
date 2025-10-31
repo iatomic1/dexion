@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@repo/ui/components",
-    "ui": "@repo/ui/components/ui",
-    "utils": "@repo/ui/lib/utils",
-    "lib": "@repo/ui/lib",
-    "hooks": "@repo/ui/hooks"
+    "components": "@dexion/ui/components",
+    "ui": "@dexion/ui/components/ui",
+    "utils": "@dexion/ui/lib/utils",
+    "lib": "@dexion/ui/lib",
+    "hooks": "@dexion/ui/hooks"
   }
 }

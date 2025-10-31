@@ -1,4 +1,4 @@
-import { createLogger } from "@repo/logger";
+import { createLogger } from "@dexion/logger";
 import type { IChannelSender, Notification } from "../interfaces";
 
 const logger = createLogger({ service: "notifier-partykit" });

@@ -1,4 +1,4 @@
-import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
+import { DOMAIN_NAME } from "@dexion/shared";
 import {
 	emailOTPClient,
 	inferAdditionalFields,

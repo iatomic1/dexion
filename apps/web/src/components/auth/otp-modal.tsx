@@ -1,19 +1,19 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
-import { DrawerClose } from "@repo/ui/components/ui/drawer";
+} from "@dexion/ui/components/ui/dialog";
+import { DrawerClose } from "@dexion/ui/components/ui/drawer";
 import {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSlot,
-} from "@repo/ui/components/ui/input-otp";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/input-otp";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

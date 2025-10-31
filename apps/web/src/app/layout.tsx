@@ -1,9 +1,9 @@
-// import "@repo/ui/globals.css";
+// import "@dexion/ui/globals.css";
 
 import { TurnkeyProvider } from "@turnkey/sdk-react";
 import Script from "next/script";
 import "./globals.css";
-import { Toaster } from "@repo/ui/components/ui/sonner";
+import { Toaster } from "@dexion/ui/components/ui/sonner";
 import type { Metadata } from "next";
 import type React from "react";
 import { ReactScan } from "~/components/layout/react-scan";
@@ -27,8 +27,6 @@ export default async function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning className="dark">
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
-				<ReactScan />
-				{/* <TokenRefresher /> */}
 				<AuthClientContextProvider>
 					<ThemeProvider
 						attribute="class"
@@ -46,12 +44,6 @@ export default async function RootLayout({
 						{/* <WalletTrackerSocketProvider> */}
 						<PresetsContextProvider>
 							<div className="flex min-h-screen flex-col font-geist">
-								{/* {!DEV && (
-								<div className="flex w-full items-center justify-center text-center text-sm py-3 text-destructive">
-									This website is still actively in development.
-								</div>
-							)} */}
-
 								<ClientQueryProvider>
 									<main className="flex-1">
 										<TurnkeyProvider config={turnkeyConfig}>
@@ -75,8 +67,6 @@ export default async function RootLayout({
 								data-track-exit-intent="true"
 							/>
 						)}
-
-						{/* </WalletTrackerSocketProvider> */}
 					</ThemeProvider>
 				</AuthClientContextProvider>
 			</body>

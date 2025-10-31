@@ -1,12 +1,12 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
-import { Button } from "@repo/ui/components/ui/button";
+import type { TokenMetadata } from "@dexion/tokens/types";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@repo/ui/components/ui/collapsible";
+} from "@dexion/ui/components/ui/collapsible";
 import {
 	Drawer,
 	DrawerClose,
@@ -14,15 +14,15 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 	DrawerTrigger,
-} from "@repo/ui/components/ui/drawer";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/drawer";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tooltip";
+import { cn } from "@dexion/ui/lib/utils";
 import {
 	ChefHat,
 	ChevronDown,

@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
-import { Card, CardContent, CardHeader } from "@repo/ui/components/ui/card";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Card, CardContent, CardHeader } from "@dexion/ui/components/ui/card";
 import {
 	Table,
 	TableBody,
@@ -9,8 +9,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@repo/ui/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@dexion/ui/components/ui/tabs";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 

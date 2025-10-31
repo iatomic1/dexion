@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { Card, CardContent } from "@dexion/ui/components/ui/card";
 import { BarChart3, CreditCard, UserPlus } from "lucide-react";
 
 const steps = [

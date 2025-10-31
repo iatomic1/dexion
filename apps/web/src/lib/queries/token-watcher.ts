@@ -1,10 +1,10 @@
-import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { TOKEN_WATCHER_API_BASE_URL } from "@dexion/shared";
 import type {
 	ApiRes,
 	FilterTokenSwapTransaction,
 	PortfolioAddressData,
 	TokenMetadata,
-} from "@repo/tokens/types";
+} from "@dexion/tokens/types";
 import type { TokenLockedLiquidity, TokenPoints } from "~/types/stxwatch";
 
 type PulseResponse = {

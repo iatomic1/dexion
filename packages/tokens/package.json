@@ -1,23 +1,23 @@
 {
-  "name": "@repo/tokens",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    "./services": "./src/services/index.ts",
-    "./utils": "./src/utils/index.ts",
-    "./parser": "./src/parser/index.ts",
-    "./types": "./src/types/index.ts"
-  },
-  "scripts": {},
-  "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@repo/shared-constants": "workspace:*",
-    "@stacks/blockchain-api-client": "^8.10.0",
-    "@stacks/transactions": "^7.2.0",
-    "axios": "^1.9.0"
-  }
+	"name": "@dexion/tokens",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./services": "./src/services/index.ts",
+		"./utils": "./src/utils/index.ts",
+		"./parser": "./src/parser/index.ts",
+		"./types": "./src/types/index.ts"
+	},
+	"scripts": {},
+	"devDependencies": {
+		"@dexion/typescript-config": "workspace:*",
+		"typescript": "^5.3.3"
+	},
+	"dependencies": {
+		"@stacks/blockchain-api-client": "^8.10.0",
+		"@dexion/shared": "workspace:*",
+		"@stacks/transactions": "^7.2.0",
+		"axios": "^1.9.0"
+	}
 }

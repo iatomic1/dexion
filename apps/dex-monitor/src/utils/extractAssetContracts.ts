@@ -1,4 +1,4 @@
-import type { PostCondition } from "@repo/tokens/parser";
+import type { PostCondition } from "@dexion/tokens/parser";
 
 export function extractAssetContracts(
 	postConditions: PostCondition[],

@@ -1,4 +1,4 @@
-import { BNS_ONE_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { BNS_ONE_API_BASE_URL } from "@dexion/shared";
 import { getPrimaryName } from "bns-v2-sdk";
 
 // redeploy try

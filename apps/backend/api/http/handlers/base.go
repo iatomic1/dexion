@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/api/http"
 	"backend/internal/domain"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +11,16 @@ import (
 // It simplifies handlers by removing the need to manually get the user ID and handle errors.
 func WithUser(handler func(c *gin.Context, userID string)) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userID, err := domain.GetUserIDFromContext(c)
+		authUserID, err := domain.GetUserIDFromContext(c)
 		if err != nil {
-			// GetUserIDFromContext handles the error response, so we just need to return.
 			return
 		}
-		handler(c, userID)
+
+		if paramUserID := c.Param("userId"); paramUserID != "" && paramUserID != authUserID {
+			http.SendForbidden(c, nil, http.WithMessage("user ID mismatch"))
+			return
+		}
+
+		handler(c, authUserID)
 	}
 }

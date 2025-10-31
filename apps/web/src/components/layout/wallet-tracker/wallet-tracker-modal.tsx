@@ -1,15 +1,15 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
-import { DialogClose } from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { Separator } from "@repo/ui/components/ui/separator";
+import { Button } from "@dexion/ui/components/ui/button";
+import { DialogClose } from "@dexion/ui/components/ui/dialog";
+import { Input } from "@dexion/ui/components/ui/input";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
+import { Separator } from "@dexion/ui/components/ui/separator";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import { Wallet2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DraggableDialog } from "~/components/draggable-modal";

@@ -4,17 +4,17 @@ import type {
 	PortfolioAddressData,
 	PortfolioFungibleToken,
 	TokenMetadata,
-} from "@repo/tokens/types";
+} from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Progress } from "@repo/ui/components/ui/progress";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/avatar";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Progress } from "@dexion/ui/components/ui/progress";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
 	type ColumnDef,

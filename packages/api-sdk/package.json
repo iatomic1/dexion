@@ -1,8 +1,8 @@
 {
-	"name": "@repo/api-sdk",
+	"name": "@dexion/api-sdk",
 	"type": "module",
 	"devDependencies": {
-		"@repo/typescript-config": "workspace:*",
+		"@dexion/typescript-config": "workspace:*",
 		"@types/bun": "latest",
 		"vitest": "^3.2.4"
 	},
@@ -16,9 +16,9 @@
 		"typescript": "^5.0.0"
 	},
 	"dependencies": {
-		"@repo/shared-constants": "workspace:*",
-		"@repo/tokens": "workspace:*",
-		"zod": "^3.24.3"
+		"@dexion/shared": "workspace:*",
+		"@dexion/tokens": "workspace:*",
+		"zod": "4.1.12"
 	},
 	"exports": {
 		"./*": "./src/*"

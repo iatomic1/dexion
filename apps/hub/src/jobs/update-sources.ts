@@ -1,7 +1,4 @@
-import {
-	STX_CITY_API_BASE_URL,
-	STX_TOOLS_API_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
+import { STX_CITY_API_BASE_URL, STX_TOOLS_API_BASE_URL } from "@dexion/shared";
 import axios from "axios";
 import type Redis from "ioredis";
 

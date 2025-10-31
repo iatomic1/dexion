@@ -1,7 +1,7 @@
 "use client";
-import { Input } from "@repo/ui/components/ui/input";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@dexion/ui/components/ui/tabs";
 import { Settings, Truck, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import {

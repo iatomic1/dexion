@@ -1,14 +1,14 @@
 "use client";
 
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Credenza,
 	CredenzaContent,
 	CredenzaTitle,
 	CredenzaTrigger,
-} from "@repo/ui/components/ui/credenza";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/credenza";
+import { cn } from "@dexion/ui/lib/utils";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Star } from "lucide-react";
 import type React from "react";
 import { useState } from "react";

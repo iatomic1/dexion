@@ -1,4 +1,4 @@
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 
 /**
  * Describes all transaction types on Stacks 2.0 blockchain

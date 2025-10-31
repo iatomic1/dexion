@@ -1,6 +1,6 @@
-import { Button } from "@repo/ui/components/ui/button";
-import { Drawer, DrawerContent } from "@repo/ui/components/ui/drawer";
-import { Tabs, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Drawer, DrawerContent } from "@dexion/ui/components/ui/drawer";
+import { Tabs, TabsList, TabsTrigger } from "@dexion/ui/components/ui/tabs";
 
 export default function ChangeTradingMode({
 	selected,

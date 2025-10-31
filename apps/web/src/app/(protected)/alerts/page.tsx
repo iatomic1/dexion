@@ -1,4 +1,4 @@
-import { createServerSDK } from "@repo/api-sdk/DexionApiSDK.ts";
+import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
 import { Session } from "~/types/auth";
@@ -9,7 +9,7 @@ const getAlertsAndChannels = async () => {
 	const sdk = createServerSDK(session.accessToken, session.userId);
 
 	try {
-		const [alerts, channels, webhookConfig] = await Promise.all([
+		const [alerts, channels, webhookConfig, userChannels] = await Promise.all([
 			sdk.alerts.getAlerts({
 				next: { tags: ["alerts", `user-alerts-${session.userId}`] },
 			}),
@@ -34,9 +34,10 @@ const getAlertsAndChannels = async () => {
 					throw err;
 				}
 			})(),
+			sdk.alerts.getUserAlertChannels(),
 		]);
 
-		return { alerts, channels, webhookConfig };
+		return { alerts, channels, webhookConfig, userChannels };
 	} catch (err) {
 		console.error(err);
 		return null;
@@ -60,6 +61,7 @@ async function AlertsPage(props: { session: Session }) {
 				alerts={data?.alerts?.data ?? []}
 				channels={data?.channels?.data ?? []}
 				webhookConfig={data?.webhookConfig?.data ?? null}
+				availableUserChannels={data?.userChannels.data ?? null}
 			/>
 		</div>
 	);

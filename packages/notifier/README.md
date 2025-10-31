@@ -1,4 +1,4 @@
-# @repo/notifier
+# @dexion/notifier
 
 This package provides a unified client to send notifications via multiple channels: Telegram, Discord, and SMS (via Twilio).
 

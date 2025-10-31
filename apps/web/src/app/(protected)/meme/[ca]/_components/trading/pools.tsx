@@ -1,25 +1,25 @@
 "use client";
-import type { LiquidityPool } from "@repo/tokens/types";
+import type { LiquidityPool } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
-import { Checkbox } from "@repo/ui/components/ui/checkbox";
+} from "@dexion/ui/components/ui/avatar";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Checkbox } from "@dexion/ui/components/ui/checkbox";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@repo/ui/components/ui/collapsible";
-import { Label } from "@repo/ui/components/ui/label";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+} from "@dexion/ui/components/ui/collapsible";
+import { Label } from "@dexion/ui/components/ui/label";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
+} from "@dexion/ui/components/ui/tooltip";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { Markup } from "interweave";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";

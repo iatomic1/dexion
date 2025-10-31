@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -16,18 +17,30 @@ type Service interface {
 	UpdateAlert(ctx context.Context, params repository.UpdateAlertParams, channels []uuid.UUID) (*repository.Alert, error)
 	GetUserAlerts(ctx context.Context, userID string) ([]*repository.GetUserAlertsRow, error)
 	GetAlertByID(ctx context.Context, id uuid.UUID, userID string) (*repository.Alert, error)
+	GetUserChannelsFromCache(ctx context.Context, userID string) (map[string]string, error)
 }
 
 type service struct {
 	db     *pgxpool.Pool
+	rdb    *redis.Client
 	logger zerolog.Logger
 }
 
-func NewService(db *pgxpool.Pool, logger zerolog.Logger) Service {
+func NewService(db *pgxpool.Pool, rdb *redis.Client, logger zerolog.Logger) Service {
 	return &service{
 		db:     db,
+		rdb:    rdb,
 		logger: logger,
 	}
+}
+
+func (s *service) GetUserChannelsFromCache(ctx context.Context, userID string) (map[string]string, error) {
+	key := "user-" + userID
+	data, err := s.rdb.HGetAll(ctx, key).Result()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user channels from redis: %w", err)
+	}
+	return data, nil
 }
 
 func (s *service) CreateAlert(ctx context.Context, params repository.CreateAlertParams, channels []string) (*repository.Alert, error) {

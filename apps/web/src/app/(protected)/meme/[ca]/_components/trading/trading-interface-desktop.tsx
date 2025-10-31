@@ -1,23 +1,23 @@
 "use client";
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import { SignerError, SigningError, ValidationError } from "@repo/signer";
-import { TokenMetadata } from "@repo/tokens/types";
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
-import { Separator } from "@repo/ui/components/ui/separator";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import { SignerError, SigningError, ValidationError } from "@dexion/signer";
+import { TokenMetadata } from "@dexion/tokens/types";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Separator } from "@dexion/ui/components/ui/separator";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tabs";
+import { cn } from "@dexion/ui/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Edit, HouseIcon, PanelsTopLeftIcon } from "lucide-react";
 import Image from "next/image";
+import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useServerAction } from "zsa-react";
 import siteConfig from "~/config/site";
 import { usePresetsSettings } from "~/contexts/PresetsContext";
 import useLocalStorage from "~/hooks/useLocalStorage";
@@ -115,11 +115,49 @@ const Market = ({
 		{},
 	);
 
-	// Server actions for buy and sell
-	const { isPending: isBuying, execute: executeBuy } =
-		useServerAction(buyToken);
-	const { isPending: isSelling, execute: executeSell } =
-		useServerAction(sellToken);
+	const { execute: executeBuy, status: buyStatus } = useAction(buyToken, {
+		onSuccess: (data) => {
+			if (data.data?.success) {
+				queryClient.invalidateQueries({ queryKey: ["userPortfolio"] });
+				toast.success(
+					`Buy successful! TX ID: ${data.data.txId?.slice(0, 8)}...`,
+					{
+						action: {
+							label: "Open in DEXplorer",
+							onClick: () => {
+								openInNewPage(`${EXPLORER_BASE_URL}txid/${data.data?.txId}`);
+							},
+						},
+					},
+				);
+			} else {
+				toast.error("Buy transaction completed but was not successful");
+			}
+		},
+
+		onError: ({ error: { serverError } }) => {
+			toast.error(serverError?.errorMessage || "Buy transaction failed");
+		},
+	});
+
+	const { execute: executeSell, status: sellStatus } = useAction(sellToken, {
+		onSuccess: (data) => {
+			if (data.data?.success) {
+				queryClient.invalidateQueries({ queryKey: ["userPortfolio"] });
+				toast.success(
+					`Sell successful! TX ID: ${data.data.txId?.slice(
+						0,
+						8,
+					)}... | Expected STX: ${data.data.expectedOutput}`,
+				);
+			} else {
+				toast.error("Sell transaction failed");
+			}
+		},
+		onError: ({ error: { serverError } }) => {
+			toast.error(serverError?.errorMessage || "Sell transaction failed");
+		},
+	});
 
 	const _currentPreset = state[state.activePreset];
 	const currentTab = state.activeTab;
@@ -199,65 +237,10 @@ const Market = ({
 			return;
 		}
 
-		const loadingToast = toast.loading("Executing buy order...");
-
-		try {
-			const result = await executeBuy({
-				outTokenId: bitflowTokenId as string,
-				stxAmount: selectedAmount,
-			});
-
-			const txRes = result[0];
-			console.log(txRes);
-
-			toast.dismiss(loadingToast);
-
-			if (txRes?.success) {
-				queryClient.invalidateQueries({ queryKey: ["userPortfolio"] });
-				toast.success(`Buy successful! TX ID: ${txRes.txId?.slice(0, 8)}...`, {
-					action: {
-						label: "Open in DEXplorer",
-						onClick: () => {
-							openInNewPage(`${EXPLORER_BASE_URL}txid/${txRes.txid}`);
-						},
-					},
-				});
-			} else {
-				toast.error("Buy transaction completed but was not successful");
-			}
-		} catch (error) {
-			toast.dismiss(loadingToast);
-
-			console.error("Buy transaction failed:", error);
-
-			if (error instanceof ValidationError) {
-				toast.error(`Invalid input: ${error.message}`);
-			} else if (error instanceof SigningError) {
-				toast.error(`Signing failed: ${error.message}`);
-			} else if (error instanceof SignerError) {
-				switch (error.code) {
-					case "SIGNER_INIT_ERROR":
-						toast.error(
-							"Failed to initialize signer. Please check your wallet connection.",
-						);
-						break;
-					case "BROADCAST_ERROR":
-						toast.error("Failed to broadcast transaction. Please try again.");
-						break;
-					case "SWAP_PREPARATION_ERROR":
-						toast.error(
-							"Failed to prepare swap. The token pair might not be available.",
-						);
-						break;
-					default:
-						toast.error(`Buy failed: ${error.message}`);
-				}
-			} else {
-				toast.error(
-					`Buy failed: ${error instanceof Error ? error.message : String(error)}`,
-				);
-			}
-		}
+		executeBuy({
+			outTokenId: bitflowTokenId as string,
+			stxAmount: selectedAmount,
+		});
 	};
 
 	// Handle sell token transaction
@@ -269,44 +252,9 @@ const Market = ({
 
 		const tokenAmount = selectedAmount;
 
-		const sellPromise = executeSell({
+		executeSell({
 			inTokenId: bitflowTokenId as string,
 			tokenAmount: tokenAmount,
-			// slippageTolerance defaults to 4%
-		});
-
-		return toast.promise(sellPromise, {
-			loading: "Executing sell order...",
-			success: (result) => {
-				queryClient.invalidateQueries({ queryKey: ["userPortfolio"] });
-				const txRes = result[0];
-				console.log(txRes);
-				if (txRes?.success) {
-					return `Sell successful! TX ID: ${txRes.txId?.slice(0, 8)}... | Expected STX: ${txRes.expectedOutput}`;
-				}
-			},
-			error: (error) => {
-				console.error("Sell transaction failed:", error);
-				if (error instanceof ValidationError) {
-					return `Invalid input: ${error.message}`;
-				}
-				if (error instanceof SigningError) {
-					return `Signing failed: ${error.message}`;
-				}
-				if (error instanceof SignerError) {
-					switch (error.code) {
-						case "SIGNER_INIT_ERROR":
-							return "Failed to initialize signer. Please check your wallet connection.";
-						case "BROADCAST_ERROR":
-							return "Failed to broadcast transaction. Please try again.";
-						case "SWAP_PREPARATION_ERROR":
-							return "Failed to prepare swap. The token pair might not be available.";
-						default:
-							return `Sell failed: ${error.message}`;
-					}
-				}
-				return `Sell failed: ${error instanceof Error ? error.message : String(error)}`;
-			},
 		});
 	};
 
@@ -319,7 +267,7 @@ const Market = ({
 		}
 	};
 
-	const isPending = isBuying || isSelling;
+	const isPending = buyStatus === "executing" || sellStatus === "executing";
 
 	return (
 		<div className="space-y-4">

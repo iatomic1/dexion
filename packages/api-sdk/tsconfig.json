@@ -1,11 +1,11 @@
 {
-	"extends": "@repo/typescript-config/base.json",
+	"extends": "@dexion/typescript-config/base.json",
 
 	"compilerOptions": {
 		"allowImportingTsExtensions": true,
 		"paths": {
-			"@repo/api-sdk/*": ["./src/*"],
-			"@repo/api-sdk/types": ["./src/types/index.ts"]
+			"@dexion/api-sdk/*": ["./src/*"],
+			"@dexion/api-sdk/types": ["./src/types/index.ts"]
 		}
 	}
 }

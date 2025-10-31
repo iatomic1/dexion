@@ -1,18 +1,18 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
-import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import type { TokenMetadata } from "@dexion/tokens/types";
+import { ScrollArea, ScrollBar } from "@dexion/ui/components/ui/scroll-area";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import {
 	ToggleGroup,
 	ToggleGroupItem,
-} from "@repo/ui/components/ui/toggle-group";
+} from "@dexion/ui/components/ui/toggle-group";
 import {
 	BoxIcon,
 	FilterIcon as Funnel,

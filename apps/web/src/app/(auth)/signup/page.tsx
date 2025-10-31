@@ -1,22 +1,22 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@dexion/ui/components/ui/card";
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/ui/field";
-import { Input } from "@repo/ui/components/ui/input";
-import InputPassword from "@repo/ui/components/ui/input-password";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
+import InputPassword from "@dexion/ui/components/ui/input-password";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -37,7 +37,7 @@ export default function SignUpPage() {
 	const router = useRouter();
 
 	const form = useForm<SignUpFormValues>({
-		resolver: zodResolver(signUpSchema),
+		resolver: standardSchemaResolver(signUpSchema),
 		defaultValues: {
 			email: "",
 			password: "",

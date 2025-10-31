@@ -1,9 +1,11 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { WebhookConfig, webhookConfigSchema } from "@repo/api-sdk/index.ts";
-import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
-import { Button } from "@repo/ui/components/ui/button";
+import {
+	type WebhookConfig,
+	webhookConfigSchema,
+} from "@dexion/api-sdk/index.ts";
+import { HTTP_STATUS } from "@dexion/shared";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -11,16 +13,16 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
-import { Field, FieldError, FieldLabel } from "@repo/ui/components/ui/field";
-import { Input } from "@repo/ui/components/ui/input";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Spinner } from "@repo/ui/components/ui/spinner";
+} from "@dexion/ui/components/ui/dialog";
+import { Field, FieldError, FieldLabel } from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Spinner } from "@dexion/ui/components/ui/spinner";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Webhook } from "lucide-react";
-import type React from "react";
+import { useAction } from "next-safe-action/hooks";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useServerAction } from "zsa-react";
 import {
 	createWebhookConfigAction,
 	deleteWebhookConfigAction,
@@ -39,7 +41,7 @@ export function WebhookSettingsDialog({
 	config,
 }: WebhookSettingsDialogProps) {
 	const form = useForm<WebhookConfig>({
-		resolver: zodResolver(webhookConfigSchema),
+		resolver: standardSchemaResolver(webhookConfigSchema),
 		defaultValues: {
 			webhookUrl: "",
 			bearerToken: "",
@@ -54,73 +56,89 @@ export function WebhookSettingsDialog({
 		}
 	}, [config, open, form]);
 
-	const { isPending: isCreatePending, execute: executeCreate } =
-		useServerAction(createWebhookConfigAction);
-	const { isPending: isUpdatePending, execute: executeUpdate } =
-		useServerAction(updateWebhookConfigAction);
-	const { isPending: isDeletePending, execute: executeDelete } =
-		useServerAction(deleteWebhookConfigAction);
+	const { execute: executeCreate, status: createStatus } = useAction(
+		createWebhookConfigAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.CREATED) {
+					toast.success("Configuration saved successfully");
+					form.reset();
+					onOpenChange(false);
+				} else {
+					toast.error(data.data?.message || "Failed to save configuration");
+				}
+			},
+			onError: ({ error: { serverError } }) => {
+				toast.error(
+					serverError?.errorMessage || "Failed to save configuration",
+				);
+			},
+		},
+	);
 
-	const isPending = isCreatePending || isUpdatePending || isDeletePending;
+	const { execute: executeUpdate, status: updateStatus } = useAction(
+		updateWebhookConfigAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Configuration saved successfully");
+					form.reset();
+					onOpenChange(false);
+				} else {
+					toast.error(data.data?.message || "Failed to save configuration");
+				}
+			},
+			onError: ({ error: { serverError } }) => {
+				toast.error(
+					serverError?.errorMessage || "Failed to save configuration",
+				);
+			},
+		},
+	);
+
+	const { execute: executeDelete, status: deleteStatus } = useAction(
+		deleteWebhookConfigAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Configuration deleted successfully");
+					form.reset();
+					onOpenChange(false);
+				} else {
+					toast.error(data.data?.message || "Failed to delete configuration");
+				}
+			},
+			onError: ({ error: { serverError } }) => {
+				toast.error(
+					serverError?.errorMessage || "Failed to delete configuration",
+				);
+			},
+		},
+	);
+
+	const isPending =
+		createStatus === "executing" ||
+		updateStatus === "executing" ||
+		deleteStatus === "executing";
 
 	const handleSubmit = (data: WebhookConfig) => {
-		const action = config ? executeUpdate(data) : executeCreate(data);
-		const promise = action.then((response) => {
-			if (!response?.[0]) throw new Error("No response received");
-			const result = response[0];
-			if (
-				result.status === HTTP_STATUS.OK ||
-				result.status === HTTP_STATUS.CREATED
-			) {
-				return result;
-			}
-			throw {
-				status: result.status,
-				message: result.message || "Failed to save configuration",
-			};
-		});
-
-		toast.promise(promise, {
-			richColors: true,
-			loading: "Saving configuration...",
-			success: () => {
-				form.reset();
-				onOpenChange(false);
-				return "Configuration saved successfully";
-			},
-			error: (err) => err.message || "Failed to save configuration",
-		});
+		if (config) {
+			executeUpdate(data);
+		} else {
+			executeCreate(data);
+		}
 	};
 
 	const handleDelete = () => {
-		const promise = executeDelete().then((response) => {
-			if (!response?.[0]) throw new Error("No response received");
-			const result = response[0];
-			if (result.status === HTTP_STATUS.OK) return result;
-			throw {
-				status: result.status,
-				message: result.message || "Failed to delete configuration",
-			};
-		});
-
-		toast.promise(promise, {
-			richColors: true,
-			loading: "Deleting configuration...",
-			success: () => {
-				form.reset();
-				onOpenChange(false);
-				return "Configuration deleted successfully";
-			},
-			error: (err) => err.message || "Failed to delete configuration",
-		});
+		executeDelete();
 	};
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-xl">
+			<DialogContent className="max-w-xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
 							<Webhook className="h-5 w-5 text-primary" />
 						</div>
 						<div>
@@ -133,7 +151,7 @@ export function WebhookSettingsDialog({
 				</DialogHeader>
 
 				<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-					<div className="space-y-4 rounded-lg border border-border p-4 bg-muted/30">
+					<div className="space-y-4 rounded-lg border border-border p-3 sm:p-4 bg-muted/30">
 						<div className="space-y-1">
 							<p className="text-sm text-muted-foreground">
 								When configured, all triggered alerts will send a POST request
@@ -154,7 +172,7 @@ export function WebhookSettingsDialog({
 										id="webhook_url"
 										type="url"
 										placeholder="https://your-api.com/webhook"
-										className="font-mono"
+										className="font-mono text-sm"
 									/>
 									<p className="text-xs text-muted-foreground">
 										The endpoint that will receive alert notifications
@@ -179,7 +197,7 @@ export function WebhookSettingsDialog({
 										id="bearer_token"
 										type="password"
 										placeholder="Your authentication token"
-										className="font-mono"
+										className="font-mono text-sm"
 									/>
 									<p className="text-xs text-muted-foreground">
 										Token will be sent in the Authorization header as "Bearer
@@ -193,7 +211,7 @@ export function WebhookSettingsDialog({
 						/>
 					</div>
 
-					<div className="rounded-lg border border-border p-4 bg-muted/20">
+					<div className="rounded-lg border border-border p-3 sm:p-4 bg-muted/20">
 						<h4 className="text-sm font-semibold mb-2">
 							Webhook Payload Example
 						</h4>
@@ -210,11 +228,12 @@ export function WebhookSettingsDialog({
 						</pre>
 					</div>
 
-					<DialogFooter>
+					<DialogFooter className="flex-col sm:flex-row gap-2">
 						<Button
 							type="button"
 							variant="outline"
 							onClick={() => onOpenChange(false)}
+							className="w-full sm:w-auto"
 						>
 							Cancel
 						</Button>
@@ -224,11 +243,16 @@ export function WebhookSettingsDialog({
 								variant="destructive"
 								onClick={handleDelete}
 								disabled={isPending}
+								className="w-full sm:w-auto"
 							>
-								{isDeletePending && <Spinner />} Delete
+								{deleteStatus === "executing" && <Spinner />} Delete
 							</Button>
 						)}
-						<Button type="submit" disabled={isPending}>
+						<Button
+							type="submit"
+							disabled={isPending}
+							className="w-full sm:w-auto"
+						>
 							{isPending && <Spinner />} Save Configuration
 						</Button>
 					</DialogFooter>

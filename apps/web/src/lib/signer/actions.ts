@@ -6,20 +6,19 @@ import {
 	SigningError,
 	type StacksSigner,
 	ValidationError,
-} from "@repo/signer";
-import z from "zod";
+} from "@dexion/signer";
+import { z } from "zod";
 import { authenticatedAction } from "../safe-action";
 import { getSigner } from "./getSigner";
 
 export const transferStx = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			recipient: z.string(),
 			amount: z.number(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			console.log(input);
 			let signer: StacksSigner;
@@ -48,8 +47,9 @@ export const transferStx = authenticatedAction
 
 			try {
 				const bRes = await signer.broadcastTransaction(tx);
+
 				return {
-					success: true,
+					success: !("error" in bRes),
 					...bRes,
 				};
 			} catch (error) {
@@ -78,8 +78,7 @@ export const transferStx = authenticatedAction
 	});
 
 export const callContract = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			contractAddress: z.string(),
 			contractName: z.string(),
@@ -89,7 +88,7 @@ export const callContract = authenticatedAction
 			fee: z.number().optional(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			console.log(input);
 			let signer: StacksSigner;

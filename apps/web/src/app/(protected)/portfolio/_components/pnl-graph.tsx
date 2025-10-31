@@ -5,7 +5,7 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@dexion/ui/components/ui/card";
 import { useEffect, useRef } from "react";
 
 declare global {

@@ -4,15 +4,15 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@dexion/ui/components/ui/avatar";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Credenza,
 	CredenzaContent,
 	CredenzaHeader,
-} from "@repo/ui/components/ui/credenza";
-import { DialogTitle } from "@repo/ui/components/ui/dialog";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/credenza";
+import { DialogTitle } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { IKUpload, ImageKitProvider } from "imagekitio-next";
 import { Upload, User, X } from "lucide-react";
 import type React from "react";

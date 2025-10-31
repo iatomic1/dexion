@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -7,9 +7,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Spinner } from "@repo/ui/components/ui/spinner";
+} from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

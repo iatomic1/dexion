@@ -3,8 +3,9 @@ import {
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import BalanceSection from "./_components/balance";
 import Performance from "./_components/performance";
 import TransactionsTable from "./_components/transactions-table";
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
+	notFound();
+
 	return (
 		<div className="flex min-h-screen flex-col bg-background">
 			<div className="flex flex-1">

@@ -20,6 +20,8 @@ func Init() {
 		zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	case "error":
 		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	case "info":
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	default:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}

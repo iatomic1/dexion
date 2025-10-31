@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"backend/api/http"
+	_ "backend/internal/db/repository"
 	"errors"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func (h *WebhookHandler) GetWebhookConfig(c *gin.Context, userID string) {
 	ctx := c.Request.Context()
 
 	cachedConfig, err := h.getCachedWebhookConfig(ctx, userID)
+
 	if err == nil && cachedConfig != nil {
 		http.SendSuccess(c, cachedConfig, http.WithMessage("Webhook config retrieved successfully from cache"))
 		return

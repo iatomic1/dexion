@@ -1,16 +1,13 @@
-import {
-	STX_TOOLS_API_BASE_URL,
-	STXWATCH_API_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
+import { STX_TOOLS_API_BASE_URL, STXWATCH_API_BASE_URL } from "@dexion/shared";
 import {
 	getSearch,
 	getTokenMetadata,
 	searchStxCity,
-} from "@repo/tokens/services";
+} from "@dexion/tokens/services";
 import {
 	transformToTokenMetadata,
 	validateContractAddress,
-} from "@repo/tokens/utils";
+} from "@dexion/tokens/utils";
 import axios from "axios";
 import { Hono } from "hono";
 import { STX_WATCH_API_KEY } from "../../config/env";

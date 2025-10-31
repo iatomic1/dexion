@@ -1,9 +1,9 @@
-import { STX_TOOLS_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { STX_TOOLS_API_BASE_URL } from "@dexion/shared";
 import type {
 	ApiRes,
 	FilterTokenSwapTransaction,
 	TokenMetadata,
-} from "@repo/tokens/types";
+} from "@dexion/tokens/types";
 
 export const getTokenMetadata = async (
 	ca: string,

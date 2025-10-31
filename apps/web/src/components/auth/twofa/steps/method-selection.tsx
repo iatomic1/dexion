@@ -1,11 +1,14 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
-import { Label } from "@repo/ui/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@repo/ui/components/ui/radio-group";
+} from "@dexion/ui/components/ui/dialog";
+import { Label } from "@dexion/ui/components/ui/label";
+import {
+	RadioGroup,
+	RadioGroupItem,
+} from "@dexion/ui/components/ui/radio-group";
 import { ArrowLeft, CheckCircle, Mail, Shield, Smartphone } from "lucide-react";
 import type React from "react";
 import type { TwoFAMethod, TwoFAState } from "~/types/twofa";

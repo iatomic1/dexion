@@ -1,4 +1,4 @@
-import { NetworkType, type SignerConfig, SignerFactory } from "@repo/signer";
+import { NetworkType, type SignerConfig, SignerFactory } from "@dexion/signer";
 import { turnkeyConfig } from "~/config/turnkey";
 import type { User } from "~/types/auth";
 

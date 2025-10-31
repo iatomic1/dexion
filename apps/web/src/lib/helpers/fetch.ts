@@ -2,7 +2,7 @@ import {
 	API_BASE_URL,
 	HIRO_API_BASE_URL,
 	STXWATCH_API_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
+} from "@dexion/shared";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
 
 import {
 	Command,
@@ -11,14 +11,14 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from "@repo/ui/components/ui/command";
+} from "@dexion/ui/components/ui/command";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@repo/ui/components/ui/popover";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/popover";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { cn } from "@dexion/ui/lib/utils";
 import type { Column } from "@tanstack/react-table";
 import { Check, Filter } from "lucide-react";
 

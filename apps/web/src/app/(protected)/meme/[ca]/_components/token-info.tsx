@@ -1,23 +1,20 @@
-import {
-	EXPLORER_BASE_URL,
-	PUBLIC_BASE_URL,
-} from "@repo/shared-constants/constants.ts";
-import type { TokenMetadata } from "@repo/tokens/types";
+import { EXPLORER_BASE_URL, PUBLIC_BASE_URL } from "@dexion/shared";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/avatar";
+import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tooltip";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { Markup } from "interweave";
 import { Copy, ExternalLink, Share2 } from "lucide-react";
 import { ToggleWatchlist } from "~/components/watchlist/toggle-watchlist";
@@ -61,7 +58,7 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
                                         ? truncateString(token.name, 6, 4)
                                         : token.name} */}
 										{/* </span> */}
-										<span className="inline-block max-w-[40px] overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted-foreground">
+										<span className="inline-block max-w-10 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted-foreground">
 											{token.symbol}
 										</span>
 									</TooltipContent>

@@ -1,6 +1,6 @@
 "use client";
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import { type ParsedTransaction } from "@repo/tokens/parser";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import { type ParsedTransaction } from "@dexion/tokens/parser";
 import { validateStacksAddress } from "@stacks/transactions";
 import usePartySocket from "partysocket/react";
 import React, { createContext, useCallback, useContext } from "react";

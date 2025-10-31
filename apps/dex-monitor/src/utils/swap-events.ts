@@ -1,7 +1,7 @@
 import { logger } from "@/config/logger";
 import type { CachedUserProfile } from "@/lib/redis/user-profile";
 import type { Alert } from "@/workers/swap-events-worker";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 
 export function getMetricValue(metric: string, token: TokenMetadata): number {
 	const metricMap: Record<string, number> = {

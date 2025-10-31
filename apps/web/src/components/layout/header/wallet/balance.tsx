@@ -1,27 +1,27 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Drawer,
 	DrawerContent,
 	DrawerHeader,
 	DrawerTrigger,
-} from "@repo/ui/components/ui/drawer";
+} from "@dexion/ui/components/ui/drawer";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@repo/ui/components/ui/popover";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/popover";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
+} from "@dexion/ui/components/ui/tooltip";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";

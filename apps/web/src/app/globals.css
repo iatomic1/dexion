@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@dexion/ui/globals.css";
 @source "../node_modules/@ferrucc-io/emoji-picker";
 @source "../node_modules/@daveyplate/better-auth-ui";
 

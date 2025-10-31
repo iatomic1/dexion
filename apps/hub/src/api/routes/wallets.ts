@@ -1,4 +1,4 @@
-import { STX_TOOLS_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { STX_TOOLS_API_BASE_URL } from "@dexion/shared";
 import { validateStacksAddress } from "@stacks/transactions";
 import { Hono } from "hono";
 

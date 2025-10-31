@@ -1,4 +1,4 @@
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getTransactions, searchTokens } from "~/lib/queries/hiro";

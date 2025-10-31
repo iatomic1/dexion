@@ -1,7 +1,7 @@
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { useEffect, useState } from "react";
 
 // Helper function to define consistent column widths (same as original)

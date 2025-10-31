@@ -1,13 +1,12 @@
 "use server";
-import { createServerSDK } from "@repo/api-sdk/DexionApiSDK.ts";
-import { WebhookConfig, webhookConfigSchema } from "@repo/api-sdk/index.ts";
+import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
+import { webhookConfigSchema } from "@dexion/api-sdk/index.ts";
 import { authenticatedAction } from "~/lib/safe-action";
 import { revalidateTagServer } from "./revalidate";
 
 export const createWebhookConfigAction = authenticatedAction
-	.createServerAction()
-	.input(webhookConfigSchema)
-	.handler(async ({ input, ctx: { user } }) => {
+	.inputSchema(webhookConfigSchema)
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const webhookConfig = await sdk.webhooks.createWebhook(input);
@@ -17,13 +16,14 @@ export const createWebhookConfigAction = authenticatedAction
 			return webhookConfig;
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});
 
 export const updateWebhookConfigAction = authenticatedAction
-	.createServerAction()
-	.input(webhookConfigSchema)
-	.handler(async ({ input, ctx: { user } }) => {
+	.inputSchema(webhookConfigSchema)
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const webhookConfig = await sdk.webhooks.updateWebhook(input);
@@ -33,12 +33,13 @@ export const updateWebhookConfigAction = authenticatedAction
 			return webhookConfig;
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});
 
-export const getWebhookConfigAction = authenticatedAction
-	.createServerAction()
-	.handler(async ({ ctx: { user } }) => {
+export const getWebhookConfigAction = authenticatedAction.action(
+	async ({ ctx: { user } }) => {
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const webhookConfig = await sdk.webhooks.getWebhook({
@@ -50,12 +51,14 @@ export const getWebhookConfigAction = authenticatedAction
 			return webhookConfig;
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
-	});
+	},
+);
 
-export const deleteWebhookConfigAction = authenticatedAction
-	.createServerAction()
-	.handler(async ({ ctx: { user } }) => {
+export const deleteWebhookConfigAction = authenticatedAction.action(
+	async ({ ctx: { user } }) => {
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const res = await sdk.webhooks.deleteWebhook();
@@ -65,5 +68,8 @@ export const deleteWebhookConfigAction = authenticatedAction
 			return res;
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
-	});
+	},
+);

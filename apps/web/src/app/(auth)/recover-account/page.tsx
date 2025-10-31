@@ -1,22 +1,22 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@dexion/ui/components/ui/card";
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/ui/field";
-import InputPassword from "@repo/ui/components/ui/input-password";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/field";
+import InputPassword from "@dexion/ui/components/ui/input-password";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -60,7 +60,7 @@ export default function RecoverAccountPage() {
 	}, []);
 
 	const form = useForm<RecoverFormValues>({
-		resolver: zodResolver(recoverSchema),
+		resolver: standardSchemaResolver(recoverSchema),
 		defaultValues: {
 			password: "",
 			confirmPassword: "",

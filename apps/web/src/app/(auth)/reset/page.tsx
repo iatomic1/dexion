@@ -1,15 +1,15 @@
 "use client";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/card";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Label } from "@dexion/ui/components/ui/label";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
 

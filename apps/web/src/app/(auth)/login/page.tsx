@@ -1,22 +1,22 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
+} from "@dexion/ui/components/ui/card";
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/ui/field";
-import { Input } from "@repo/ui/components/ui/input";
-import InputPassword from "@repo/ui/components/ui/input-password";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
+import InputPassword from "@dexion/ui/components/ui/input-password";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,7 +25,7 @@ import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
 import ContinueWithGoogle from "~/components/auth/continue-with-google";
 import ContinueWithWallet from "~/components/auth/continue-with-wallet";
-import OtpModal from "~/components/auth/otp-modal"; // Adjust path as needed
+import OtpModal from "~/components/auth/otp-modal";
 import { authClient } from "~/lib/auth-client";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -40,7 +40,7 @@ export default function LoginPage() {
 	const router = useRouter();
 
 	const form = useForm<LoginFormValues>({
-		resolver: zodResolver(loginSchema),
+		resolver: standardSchemaResolver(loginSchema),
 		defaultValues: {
 			email: "",
 			password: "",

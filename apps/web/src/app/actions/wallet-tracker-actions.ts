@@ -7,15 +7,14 @@ import type { AuthSuccess } from "~/types/auth";
 import type { UserWallet } from "~/types/wallets";
 
 export const trackWalletAction = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			emoji: z.string(),
 			nickname: z.string(),
 			walletAddress: z.string(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			return await makeFetch<ApiResponse<UserWallet>>(
 				"dexion",
@@ -36,27 +35,24 @@ export const trackWalletAction = authenticatedAction
 			)();
 		} catch (err) {
 			console.error(err);
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});
 
 export const updateWalletPreferences = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			nickname: z.string().optional(),
 			notifications: z.boolean().optional(),
 			walletAddress: z.string(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			const body = {
 				nickname: input.nickname,
 				notifcations: input.notifications,
-				// ...(input.nickname !== undefined ? { nickname: input.nickname } : {}),
-				// ...(input.notifications !== undefined
-				//   ? { notifications: input.notifications }
-				//   : {}),
 			};
 
 			return await makeFetch<ApiResponse<UserWallet>>(
@@ -78,13 +74,12 @@ export const updateWalletPreferences = authenticatedAction
 	});
 
 export const untrackWalletAction = authenticatedAction
-	.createServerAction()
-	.input(
+	.inputSchema(
 		z.object({
 			walletAddress: z.string(),
 		}),
 	)
-	.handler(async ({ input, ctx: { user } }) => {
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
 			return await makeFetch<ApiResponse<AuthSuccess>>(
 				"dexion",
@@ -99,5 +94,7 @@ export const untrackWalletAction = authenticatedAction
 			)();
 		} catch (err) {
 			console.error(err);
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
 		}
 	});

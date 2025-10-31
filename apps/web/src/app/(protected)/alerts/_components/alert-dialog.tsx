@@ -1,19 +1,16 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-// import type { Alert } from "@/types/alert";
 import {
-	AddAlertInput,
-	addNewAlertSchema,
-	Channel,
-	UpdateAlertInput,
-	UserAlert,
+	type Channel,
+	type UpdateAlertInput,
+	type UserAlert,
+	// updateAlertSchema,
+	type UserAlertChannels,
 	updateAlertSchema,
-} from "@repo/api-sdk/index.ts";
-import { HTTP_STATUS } from "@repo/shared-constants/constants.ts";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
-import { Checkbox } from "@repo/ui/components/ui/checkbox";
+} from "@dexion/api-sdk/index.ts";
+import { HTTP_STATUS } from "@dexion/shared";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Checkbox } from "@dexion/ui/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -21,7 +18,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+} from "@dexion/ui/components/ui/dialog";
 import {
 	Field,
 	FieldContent,
@@ -31,24 +28,30 @@ import {
 	FieldLabel,
 	FieldLegend,
 	FieldSet,
-} from "@repo/ui/components/ui/field";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
+} from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@repo/ui/components/ui/select";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Spinner } from "@repo/ui/components/ui/spinner";
-import { Switch } from "@repo/ui/components/ui/switch";
+} from "@dexion/ui/components/ui/select";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Spinner } from "@dexion/ui/components/ui/spinner";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@dexion/ui/components/ui/tooltip";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
-import type React from "react";
-import { useEffect, useState } from "react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useServerAction } from "zsa-react";
+import { z } from "zod";
 import {
 	createAlertAction,
 	updateAlertAction,
@@ -59,6 +62,7 @@ interface AlertDialogProps {
 	onOpenChange: (open: boolean) => void;
 	alert: UserAlert | null;
 	channels: Channel[];
+	availableUserChannels: UserAlertChannels;
 }
 
 const METRICS = [
@@ -83,9 +87,10 @@ export function AlertDialog({
 	onOpenChange,
 	alert,
 	channels,
+	availableUserChannels,
 }: AlertDialogProps) {
 	const form = useForm<UpdateAlertInput>({
-		resolver: zodResolver(updateAlertSchema),
+		resolver: standardSchemaResolver(updateAlertSchema),
 		defaultValues: {
 			ca: "",
 			metric: "marketcap",
@@ -122,86 +127,59 @@ export function AlertDialog({
 			});
 		}
 	}, [alert, open, form]);
-	const { isPending: isCreatePending, execute: executeCreateAlert } =
-		useServerAction(createAlertAction, {
-			onSuccess: async ({ data: res }) => res,
-		});
 
-	const { isPending: isEditPending, execute: executeUpdateAlert } =
-		useServerAction(updateAlertAction, {
-			onSuccess: async ({ data: res }) => res,
-		});
+	const { execute: executeUpdateAlert, status: updateStatus } = useAction(
+		updateAlertAction,
+		{
+			onSuccess: (serverData) => {
+				const data = serverData.data;
+				if (data?.status === HTTP_STATUS.OK) {
+					toast.success("Alert updated successfully");
+					form.reset();
+					onOpenChange(false);
+				} else {
+					toast.error(data?.message || "Failed to update alert");
+				}
+			},
+			onError: (error) => {
+				toast.error((error as any).serverError || "Failed to update alert");
+			},
+		},
+	);
+
+	const { execute: executeCreateAlert, status: createStatus } = useAction(
+		createAlertAction,
+		{
+			onSuccess: (serverData) => {
+				const data = serverData.data;
+				if (data?.status === HTTP_STATUS.CREATED) {
+					toast.success("Alert created successfully");
+					form.reset();
+					onOpenChange(false);
+				} else {
+					toast.error(data?.message || "Failed to create alert");
+				}
+			},
+			onError: (error) => {
+				toast.error((error as any).serverError || "Failed to create alert");
+			},
+		},
+	);
+
+	const isCreatePending = createStatus === "executing";
+	const isEditPending = updateStatus === "executing";
 
 	const handleSubmit = (data: UpdateAlertInput) => {
-		try {
-			if (alert) {
-				// --- UPDATE ALERT ---
-				const updateAlertPromise = executeUpdateAlert(data).then((response) => {
-					if (!response?.[0]) throw new Error("No response received");
-					const result = response[0];
-
-					if (result.status === HTTP_STATUS.OK) return result;
-					throw {
-						status: result.status,
-						message: result.message || "Failed to update alert",
-					};
-				});
-
-				toast.promise(updateAlertPromise, {
-					richColors: true,
-					loading: "Updating alert...",
-					success: () => {
-						form.reset();
-						onOpenChange(false);
-						return "Alert updated successfully";
-					},
-					error: (err) => {
-						if (err.status === HTTP_STATUS.NOT_FOUND) {
-							return "Alert not found";
-						}
-						if (err.status === HTTP_STATUS.UNAUTHORIZED) {
-							return "Unauthorized request";
-						}
-						return err.message || "Failed to update alert";
-					},
-				});
-			} else {
-				// --- CREATE NEW ALERT ---
-				const createAlertPromise = executeCreateAlert(data).then((response) => {
-					if (!response?.[0]) throw new Error("No response received");
-					const result = response[0];
-
-					if (result.status === HTTP_STATUS.CREATED) return result;
-					throw {
-						status: result.status,
-						message: result.message || "Failed to create alert",
-					};
-				});
-
-				toast.promise(createAlertPromise, {
-					richColors: true,
-					loading: "Creating alert...",
-					success: () => {
-						form.reset();
-						onOpenChange(false);
-						return "Alert created successfully";
-					},
-					error: (err) => {
-						if (err.status === HTTP_STATUS.UNAUTHORIZED) {
-							return "Unauthorized request";
-						}
-						return err.message || "Failed to create alert";
-					},
-				});
-			}
-		} catch (err) {
-			console.error(err);
+		if (alert) {
+			executeUpdateAlert(data);
+		} else {
+			executeCreateAlert(data);
 		}
 	};
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+			<DialogContent className="max-w-2xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>{alert ? "Edit Alert" : "Create New Alert"}</DialogTitle>
 					<DialogDescription>
@@ -226,7 +204,7 @@ export function AlertDialog({
 										id="ca"
 										aria-invalid={fieldState.invalid}
 										placeholder="SIPXXX..."
-										className="font-mono"
+										className="font-mono text-sm"
 										readOnly={alert ? true : false}
 										disabled={alert ? true : false}
 									/>
@@ -237,7 +215,7 @@ export function AlertDialog({
 							)}
 						/>
 
-						<FieldGroup className="grid grid-cols-2 gap-4">
+						<FieldGroup className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							<Controller
 								name="metric"
 								control={form.control}
@@ -254,7 +232,7 @@ export function AlertDialog({
 											<SelectTrigger
 												id="select-metric"
 												aria-invalid={fieldState.invalid}
-												className="min-w-[120px]"
+												className="min-w-full sm:min-w-[120px]"
 											>
 												<SelectValue placeholder="Select" />
 											</SelectTrigger>
@@ -291,7 +269,7 @@ export function AlertDialog({
 											<SelectTrigger
 												id="select-operator"
 												aria-invalid={fieldState.invalid}
-												className="min-w-[120px]"
+												className="min-w-full sm:min-w-[120px]"
 											>
 												<SelectValue placeholder="Select" />
 											</SelectTrigger>
@@ -328,7 +306,7 @@ export function AlertDialog({
 										step="any"
 										placeholder="0.00"
 										aria-invalid={fieldState.invalid}
-										className="font-mono"
+										className="font-mono text-sm"
 										onChange={(e) => {
 											const value = e.target.value;
 											field.onChange(value === "" ? undefined : Number(value));
@@ -351,27 +329,79 @@ export function AlertDialog({
 									<FieldDescription>
 										Click to toggle channels. At least one channel is required.
 									</FieldDescription>
+
 									<div className="flex flex-wrap gap-2">
-										{channels.map((channel) => {
-											const isSelected = field.value.includes(channel.id);
-											return (
-												<Badge
-													key={channel.id}
-													variant={isSelected ? "default" : "outline"}
-													className="cursor-pointer capitalize"
-													onClick={() => {
-														const newValue = isSelected
-															? field.value.filter((id) => id !== channel.id)
-															: [...field.value, channel.id];
-														field.onChange(newValue);
-													}}
-												>
-													{channel.name}
-													{isSelected && <X className="ml-1 h-3 w-3" />}
-												</Badge>
-											);
-										})}
+										<TooltipProvider>
+											{channels.map((channel) => {
+												const isSelected = field.value.includes(channel.id);
+
+												const isChannelAvailable =
+													channel.name === "webapp" ||
+													(channel.name === "email" &&
+														!!availableUserChannels.email) ||
+													(channel.name === "telegram" &&
+														!!availableUserChannels.telegram_id) ||
+													(channel.name === "webhook" &&
+														!!availableUserChannels.webhook);
+
+												const isDisabled = !isChannelAvailable;
+
+												let tooltipMessage = "";
+												if (isDisabled) {
+													switch (channel.name) {
+														case "email":
+															tooltipMessage =
+																"No email linked (wallet signup)";
+															break;
+														case "telegram":
+															tooltipMessage = "Link Telegram in settings";
+															break;
+														case "webhook":
+															tooltipMessage = "No webhook configured";
+															break;
+														default:
+															tooltipMessage = "Unavailable channel";
+													}
+												}
+
+												const badgeEl = (
+													<Badge
+														key={channel.id}
+														variant={isSelected ? "default" : "outline"}
+														className={`capitalize text-sm ${
+															isDisabled
+																? "opacity-50 cursor-not-allowed"
+																: "cursor-pointer"
+														}`}
+														onClick={() => {
+															if (isDisabled) return;
+															const newValue = isSelected
+																? field.value.filter((id) => id !== channel.id)
+																: [...field.value, channel.id];
+															field.onChange(newValue);
+														}}
+													>
+														{channel.name}
+														{isSelected && !isDisabled && (
+															<X className="ml-1 h-3 w-3" />
+														)}
+													</Badge>
+												);
+
+												return isDisabled ? (
+													<Tooltip key={channel.id}>
+														<TooltipTrigger asChild>{badgeEl}</TooltipTrigger>
+														<TooltipContent>
+															<p>{tooltipMessage}</p>
+														</TooltipContent>
+													</Tooltip>
+												) : (
+													badgeEl
+												);
+											})}
+										</TooltipProvider>
 									</div>
+
 									{fieldState.invalid && (
 										<FieldError errors={[fieldState.error]} />
 									)}
@@ -392,7 +422,7 @@ export function AlertDialog({
 										onCheckedChange={field.onChange}
 										id="repeatable-checkbox"
 										name={field.name}
-										className="flex-shrink-0 !w-5 h-5"
+										className="flex-shrink-0 !w-5 h-5 mt-0.5"
 									/>
 									<div className="space-y-1 leading-none">
 										<FieldLabel htmlFor="repeatable-checkbox">
@@ -410,15 +440,20 @@ export function AlertDialog({
 							)}
 						/>
 
-						<DialogFooter>
+						<DialogFooter className="flex-col sm:flex-row gap-2">
 							<Button
 								type="button"
 								variant="outline"
 								onClick={() => onOpenChange(false)}
+								className="w-full sm:w-auto"
 							>
 								Cancel
 							</Button>
-							<Button type="submit" disabled={isCreatePending || isEditPending}>
+							<Button
+								type="submit"
+								disabled={isCreatePending || isEditPending}
+								className="w-full sm:w-auto"
+							>
 								{(isCreatePending || isEditPending) && <Spinner />}
 								{alert ? "Update Alert" : "Create Alert"}
 							</Button>

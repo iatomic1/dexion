@@ -1,18 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Credenza,
 	CredenzaContent,
 	CredenzaFooter,
 	CredenzaTrigger,
-} from "@repo/ui/components/ui/credenza";
+} from "@dexion/ui/components/ui/credenza";
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from "@repo/ui/components/ui/field";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@dexion/ui/components/ui/field";
+import { Input } from "@dexion/ui/components/ui/input";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { RotateCcw, SlidersHorizontal } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,18 +20,10 @@ import { z } from "zod";
 const formSchema = z
 	.object({
 		address: z.string().min(1, {
-			message: "Address is required.",
+			error: "Address is required.",
 		}),
-		min: z.coerce
-			.number({
-				invalid_type_error: "Minimum value must be a number.",
-			})
-			.optional(),
-		max: z.coerce
-			.number({
-				invalid_type_error: "Maximum value must be a number.",
-			})
-			.optional(),
+		min: z.coerce.number().optional(),
+		max: z.coerce.number().optional(),
 	})
 	.refine(
 		(data) => {
@@ -48,7 +40,7 @@ const formSchema = z
 
 export default function FilterByAddressModal() {
 	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+		resolver: standardSchemaResolver(formSchema),
 		defaultValues: {
 			address: "",
 			min: undefined,

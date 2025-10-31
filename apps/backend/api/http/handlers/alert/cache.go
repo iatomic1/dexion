@@ -4,6 +4,7 @@ import (
 	"backend/internal/db/repository"
 	"backend/pkg/cacheutil"
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -98,4 +99,13 @@ func (h *AlertHandler) deleteCachedAlert(ctx context.Context, id uuid.UUID, ca s
 	if err := h.srv.RDB.SRem(ctx, caKey, id.String()).Err(); err != nil {
 		h.logger.Error().Err(err).Msg("redis srem failed")
 	}
+}
+
+func (h *AlertHandler) getUserChannels(ctx context.Context, userID string) (map[string]string, error) {
+	key := "user:" + userID
+	data, err := h.srv.RDB.HGetAll(ctx, key).Result()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user channels from redis: %w", err)
+	}
+	return data, nil
 }

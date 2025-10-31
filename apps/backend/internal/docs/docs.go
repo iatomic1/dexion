@@ -148,6 +148,70 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
+                "description": "Fetch all notification channels for a given user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Retrieve notification channels for a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User channels retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api_http_handlers_alert.UserChannelsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/channels/all": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Fetch all available channels in the system",
                 "consumes": [
                     "application/json"
@@ -1429,6 +1493,20 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "string"
+                }
+            }
+        },
+        "api_http_handlers_alert.UserChannelsResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "telegram_id": {
+                    "type": "string"
+                },
+                "webhook": {
+                    "$ref": "#/definitions/backend_internal_db_repository.WebhookConfig"
                 }
             }
         },

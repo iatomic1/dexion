@@ -2,8 +2,8 @@ package alerts
 
 import (
 	"backend/api/http"
-	"backend/internal/services/alert"
 	"backend/internal/db/repository"
+	"backend/internal/services/alert"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -46,9 +46,15 @@ type UpdateAlertParams struct {
 	Status     *string   `json:"status,omitempty"`
 }
 
+type UserChannelsResponse struct {
+	Email    *string                   `json:"email,omitempty"`
+	Telegram *string                   `json:"telegram_id,omitempty"`
+	Webhook  *repository.WebhookConfig `json:"webhook,omitempty"`
+}
+
 func NewAlertHandler(srv *http.Server) *AlertHandler {
 	logger := log.With().Str("service", "alerts").Logger()
-	alertService := alert.NewService(srv.DB, logger)
+	alertService := alert.NewService(srv.DB, srv.RDB, logger)
 	return &AlertHandler{
 		srv:          srv,
 		logger:       logger,

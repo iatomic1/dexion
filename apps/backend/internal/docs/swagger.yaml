@@ -26,6 +26,15 @@ definitions:
     - repeatable
     - value
     type: object
+  api_http_handlers_alert.UserChannelsResponse:
+    properties:
+      email:
+        type: string
+      telegram_id:
+        type: string
+      webhook:
+        $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
+    type: object
   backend_api_http.InternalServerErrorResponse:
     properties:
       errors: {}
@@ -569,6 +578,44 @@ paths:
       tags:
       - Alerts
   /alerts/channels:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all notification channels for a given user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User channels retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api_http_handlers_alert.UserChannelsResponse'
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve notification channels for a user
+      tags:
+      - Alerts
+  /alerts/channels/all:
     get:
       consumes:
       - application/json

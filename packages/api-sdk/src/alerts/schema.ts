@@ -5,9 +5,10 @@ import { webhookConfigSchema } from "../webhooks";
 export const addNewAlertSchema = z.object({
 	ca: z
 		.string()
-		.min(1, "Contract address is required.")
-		.describe("You must pass a valid CA"),
-
+		.refine(validateContractAddress, {
+			error: "You must provide a valid contract address",
+		})
+		.min(1, { error: "Contract address is required." }),
 	channels: z.array(z.string()).min(1, "At least one channel is required"),
 
 	metric: z.enum(["price", "volume", "tvl", "marketcap"]),

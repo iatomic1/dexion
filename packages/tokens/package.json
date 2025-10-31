@@ -12,11 +12,11 @@
 	"scripts": {},
 	"devDependencies": {
 		"@dexion/typescript-config": "workspace:*",
-		"@dexion/shared": "workspace:*",
 		"typescript": "^5.3.3"
 	},
 	"dependencies": {
 		"@stacks/blockchain-api-client": "^8.10.0",
+		"@dexion/shared": "workspace:*",
 		"@stacks/transactions": "^7.2.0",
 		"axios": "^1.9.0"
 	}

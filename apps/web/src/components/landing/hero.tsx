@@ -6,13 +6,6 @@ const HeroSection = () => {
 	return (
 		<section className="relative min-h-screen flex items-center justify-center overflow-hidden">
 			<div className="absolute inset-0 bg-gradient-hero">
-				{/*<Image
-          src="/hero-bg.jpg"
-          alt="Blockchain network visualization"
-          fill
-          className="object-cover opacity-20 mix-blend-overlay"
-          priority
-        />*/}
 				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/80" />
 			</div>
 
@@ -31,16 +24,6 @@ const HeroSection = () => {
 					</p>
 
 					<div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-						{/*<Button variant="default" size="lg" className="w-full sm:w-auto">
-              Get Started
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto bg-transparent"
-            >
-              Join Waitlist
-            </Button>*/}
 						<AuthController />
 					</div>
 

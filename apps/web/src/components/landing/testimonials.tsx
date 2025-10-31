@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
 					))}
 				</div>
 
-				<div className="text-center mt-16">
+				{/*<div className="text-center mt-16">
 					<div className="inline-flex items-center space-x-8 bg-gradient-card rounded-lg p-6 border border-border/50">
 						<div className="text-center">
 							<div className="text-3xl font-bold text-accent mb-1">1,000+</div>
@@ -106,7 +106,7 @@ const TestimonialsSection = () => {
 							<div className="text-sm text-muted-foreground">Uptime</div>
 						</div>
 					</div>
-				</div>
+				</div>*/}
 			</div>
 		</section>
 	);

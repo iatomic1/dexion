@@ -1,7 +1,9 @@
 import { useState } from "react";
+import siteConfig from "~/config/site";
+import { authClient } from "~/lib/auth-client";
 import type { TwoFAState } from "../types/twofa";
 
-export const useTwoFA = (authClient: any, _userEmail: string) => {
+export const useTwoFA = () => {
 	const [state, setState] = useState<TwoFAState>({
 		step: 1,
 		password: "",
@@ -23,11 +25,19 @@ export const useTwoFA = (authClient: any, _userEmail: string) => {
 		e.preventDefault();
 		updateState({ isLoading: true, error: "" });
 
-		// Just move to method selection step - don't enable 2FA yet
 		try {
+			const { data, error } = await authClient.twoFactor.getTotpUri({
+				password: state.password,
+			});
+
+			if (error) {
+				throw new Error(error.message || "Invalid password");
+			}
+
+			// Password is valid, move to method selection
 			updateState({ step: 2 });
 		} catch (err: any) {
-			updateState({ error: err.message || "Something went wrong" });
+			updateState({ error: err.message || "Invalid password" });
 		} finally {
 			updateState({ isLoading: false });
 		}
@@ -35,27 +45,41 @@ export const useTwoFA = (authClient: any, _userEmail: string) => {
 
 	const handleMethodSelection = async () => {
 		updateState({ isLoading: true, error: "" });
-		const { data, error } = await authClient.twoFactor.enable({
-			password: state.password,
-		});
+
 		try {
 			if (state.selectedMethod === "authenticator") {
 				// For TOTP: Call enable with password to get totpURI and backupCodes
 				const { data, error } = await authClient.twoFactor.enable({
 					password: state.password,
+					issuer: siteConfig.title,
 				});
 
 				if (error) throw new Error(error.message);
+
 				updateState({
 					totpUri: data?.totpURI || "",
 					backupCodes: data?.backupCodes || [],
 					step: 3,
 				});
 			} else {
-				// For email OTP: Send OTP
+				// For email OTP: First enable 2FA to get backup codes
+				const { data, error } = await authClient.twoFactor.enable({
+					password: state.password,
+					issuer: siteConfig.title,
+				});
+
+				if (error) throw new Error(error.message);
+
+				// Then send OTP
 				const { error: otpError } = await authClient.twoFactor.sendOtp();
+
 				if (otpError) throw new Error(otpError.message);
-				updateState({ emailSent: true, step: 3 });
+
+				updateState({
+					emailSent: true,
+					backupCodes: data?.backupCodes || [],
+					step: 3,
+				});
 			}
 		} catch (err: any) {
 			updateState({ error: err.message || "Failed to set up 2FA" });
@@ -73,26 +97,18 @@ export const useTwoFA = (authClient: any, _userEmail: string) => {
 				// For TOTP: Verify the code to complete setup
 				const { error: verifyError } = await authClient.twoFactor.verifyTotp({
 					code: state.verificationCode,
+					trustDevice: true,
 				});
+
 				if (verifyError) throw new Error(verifyError.message);
 			} else {
 				// For email OTP: Verify the code
 				const { error: verifyError } = await authClient.twoFactor.verifyOtp({
 					code: state.verificationCode,
+					trustDevice: true,
 				});
-				if (verifyError) throw new Error(verifyError.message);
 
-				// For email OTP, we might need to generate backup codes separately
-				if (state.backupCodes.length === 0) {
-					const { data, error: backupError } =
-						await authClient.twoFactor.generateBackupCodes({
-							password: state.password,
-						});
-					if (backupError) throw new Error(backupError.message);
-					if (data?.backupCodes) {
-						updateState({ backupCodes: data.backupCodes });
-					}
-				}
+				if (verifyError) throw new Error(verifyError.message);
 			}
 
 			updateState({ step: 4 });
@@ -108,7 +124,9 @@ export const useTwoFA = (authClient: any, _userEmail: string) => {
 
 		try {
 			const { error: otpError } = await authClient.twoFactor.sendOtp();
+
 			if (otpError) throw new Error(otpError.message);
+
 			updateState({ emailSent: true });
 		} catch (err: any) {
 			updateState({ error: err.message || "Failed to send verification code" });

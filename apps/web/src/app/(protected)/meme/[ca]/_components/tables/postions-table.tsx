@@ -22,7 +22,6 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useEffect } from "react";
 import { formatPrice } from "~/lib/helpers/numbers";
 import { getUserPortfolio } from "~/lib/queries/token-watcher";
 import { calculatePnl, calculateTokenValue } from "~/lib/utils/token";
@@ -174,7 +173,7 @@ export default function PositionsTable({
 		enabled: !!userAddress,
 	});
 
-	const currentTokenPostion = positionsData?.fungible_tokens.find(
+	const currentTokenPosition = positionsData?.fungible_tokens?.find(
 		(ft) =>
 			ft.token.contract_id === token.contract_id && Number(ft.balance) > 0,
 	);
@@ -182,7 +181,7 @@ export default function PositionsTable({
 	const isMobile = useIsMobile();
 
 	const table = useReactTable({
-		data: currentTokenPostion ? [currentTokenPostion] : [],
+		data: currentTokenPosition ? [currentTokenPosition] : [],
 		columns: tableColumns(token, isMobile),
 		getCoreRowModel: getCoreRowModel(),
 	});
@@ -199,7 +198,7 @@ export default function PositionsTable({
 	}
 
 	// Don't render if no position found
-	if (!currentTokenPostion) {
+	if (!currentTokenPosition) {
 		return (
 			<div className="flex h-full w-full flex-col border-t">
 				<div className="flex h-24 w-full items-center justify-center">

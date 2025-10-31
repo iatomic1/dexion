@@ -48,7 +48,7 @@ export function AccountSecurityModal({
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [credenzaOpen, setCredenzaOpen] = useState(false);
 	const copy = useCopyToClipboard();
-	// const { data: session } = useSession();
+
 	const router = useRouter();
 
 	const handleOpenChange = (open: boolean) => {

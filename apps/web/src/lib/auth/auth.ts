@@ -180,7 +180,7 @@ export const auth = betterAuth({
 	account: {
 		accountLinking: {
 			enabled: true,
-			trustedProviders: ["email-password", "google"],
+			allowDifferentEmails: false,
 		},
 	},
 	emailAndPassword: {

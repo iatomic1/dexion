@@ -5,10 +5,10 @@ import Link from "next/link";
 export default function AuthController() {
 	return (
 		<div className="flex gap-4">
-			<Button asChild>
+			<Button asChild size="lg">
 				<Link href="/signup">Sign Up</Link>
 			</Button>
-			<Button variant="outline" asChild>
+			<Button variant="outline" size="lg" asChild>
 				<Link href="/login">Login</Link>
 			</Button>
 		</div>

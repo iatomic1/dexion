@@ -2,3 +2,4 @@
 extract-env-keys.ts
 
 .trigger
+.next

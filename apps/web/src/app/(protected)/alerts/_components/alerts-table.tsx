@@ -43,21 +43,18 @@ interface AlertsTableProps {
 
 export function AlertsTable({ alerts, onEdit }: AlertsTableProps) {
 	const [searchQuery, setSearchQuery] = useState("");
-	const { status: deleteStatus, execute: executeDeleteAlert } = useAction(
-		deleteAlertAction,
-		{
-			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert deleted successfully");
-				} else {
-					toast.error(data.data?.message || "Failed to delete alert");
-				}
-			},
-			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to delete alert");
-			},
+	const { execute: executeDeleteAlert } = useAction(deleteAlertAction, {
+		onSuccess: (data) => {
+			if (data.data?.status === HTTP_STATUS.OK) {
+				toast.success("Alert deleted successfully");
+			} else {
+				toast.error(data.data?.message || "Failed to delete alert");
+			}
 		},
-	);
+		onError: (error) => {
+			toast.error((error as any).serverError || "Failed to delete alert");
+		},
+	});
 
 	const filteredAlerts = alerts.filter(
 		(alert) =>

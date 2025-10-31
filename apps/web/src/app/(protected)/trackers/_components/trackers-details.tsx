@@ -2,7 +2,6 @@
 
 import { Button } from "@dexion/ui/components/ui/button";
 import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
-import { StickyBanner } from "@dexion/ui/components/ui/sticky-banner";
 import {
 	Tabs,
 	TabsContent,

@@ -16,11 +16,7 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
 	const theme = useTheme();
 	const [currentTheme, setCurrentTheme] = useState(theme.resolvedTheme);
 	const containerRef = useRef<HTMLDivElement>(null);
-	// const [timeframe, setTimeframe] = useState("1D");
 	const [widgetInstance, setWidgetInstance] = useState<any>(null);
-	useEffect(() => {
-		console.log(theme, "fucking theme");
-	}, [theme]);
 
 	useEffect(() => {
 		// Create a unique container ID

@@ -46,12 +46,10 @@ import {
 	TooltipTrigger,
 } from "@dexion/ui/components/ui/tooltip";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import {
 	createAlertAction,
 	updateAlertAction,

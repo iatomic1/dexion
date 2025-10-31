@@ -1,7 +1,7 @@
 "use client";
-import React, { type SVGProps, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { cn } from "@dexion/ui/lib/utils";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import React, { type SVGProps, useState } from "react";
 
 export const StickyBanner = ({
 	className,
@@ -16,7 +16,6 @@ export const StickyBanner = ({
 	const { scrollY } = useScroll();
 
 	useMotionValueEvent(scrollY, "change", (latest) => {
-		console.log(latest);
 		if (hideOnScroll && latest > 40) {
 			setOpen(false);
 		} else {

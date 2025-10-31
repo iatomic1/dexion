@@ -1,7 +1,6 @@
 "use client";
 import {
 	Banner,
-	BannerAction,
 	BannerClose,
 	BannerIcon,
 	BannerTitle,

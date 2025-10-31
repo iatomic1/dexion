@@ -1,4 +1,3 @@
-import { Button } from "@dexion/ui/components/ui/button";
 import Image from "next/image";
 import AuthController from "../auth/auth-controller";
 

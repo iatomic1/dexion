@@ -6,7 +6,6 @@ import {
 import { Button } from "@dexion/ui/components/ui/button";
 import { DialogClose, DialogTitle } from "@dexion/ui/components/ui/dialog";
 import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
-import { Separator } from "@dexion/ui/components/ui/separator";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftRight, X } from "lucide-react";

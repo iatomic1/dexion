@@ -1,7 +1,6 @@
 "use client";
 
 import { EXPLORER_BASE_URL } from "@dexion/shared";
-import { SignerError, SigningError } from "@dexion/signer";
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Field,

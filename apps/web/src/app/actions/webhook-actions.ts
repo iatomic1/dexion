@@ -1,7 +1,6 @@
 "use server";
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
 import { webhookConfigSchema } from "@dexion/api-sdk/index.ts";
-import { z } from "zod";
 import { authenticatedAction } from "~/lib/safe-action";
 import { revalidateTagServer } from "./revalidate";
 

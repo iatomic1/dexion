@@ -1,6 +1,5 @@
 import { createMiddleware, createSafeActionClient } from "next-safe-action";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
-import { handleReturnedServerError, PublicError } from "./errors";
 
 export const unauthenticatedAction = createSafeActionClient({});
 

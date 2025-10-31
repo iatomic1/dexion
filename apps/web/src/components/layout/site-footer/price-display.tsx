@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
 import Image from "next/image";
 import { formatPrice } from "~/lib/helpers/numbers";
 import type { CryptoAsset } from "~/types/xverse";
@@ -24,7 +24,7 @@ export function PriceDisplay({ prices }: PriceDisplayProps) {
 	}
 
 	return (
-		<>
+		<div className="flex items-center gap-1">
 			{prices.map((asset) => (
 				<Tooltip key={asset.symbol}>
 					<TooltipTrigger asChild>
@@ -50,6 +50,6 @@ export function PriceDisplay({ prices }: PriceDisplayProps) {
 					</TooltipContent>
 				</Tooltip>
 			))}
-		</>
+		</div>
 	);
 }

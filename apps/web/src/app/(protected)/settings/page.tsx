@@ -1,16 +1,16 @@
 "use client";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@repo/ui/components/ui/select";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/select";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { cn } from "@dexion/ui/lib/utils";
 import { Copy, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -34,16 +34,16 @@ export default function AccountPage() {
 	const router = useRouter();
 
 	return (
-		<div className="min-h-screen bg-black text-white">
+		<div className="min-h-screen bg-background text-foreground">
 			<div className="mx-auto max-w-3xl px-6 py-12">
 				<h1 className="text-3xl font-semibold mb-8">Settings</h1>
 
 				<div className="mb-12">
-					<h2 className="text-sm font-medium text-neutral-500 mb-3 uppercase tracking-wider">
+					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Profile
 					</h2>
 
-					<div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950">
+					<div className="border border-border rounded-lg overflow-hidden bg-card">
 						<div className="p-6">
 							{session ? (
 								<div className="flex items-start gap-4">
@@ -64,14 +64,14 @@ export default function AccountPage() {
 											</h3>
 											<div className="w-2 h-2 rounded-full bg-green-500" />
 										</div>
-										<div className="flex items-center text-sm text-neutral-400 mb-3">
+										<div className="flex items-center text-sm text-muted-foreground mb-3">
 											<span>
 												User ID: {truncateString(session?.user.id as string)}
 											</span>
 											<Button
 												variant="ghost"
 												size="icon"
-												className="h-5 w-5 ml-1 text-neutral-400 hover:text-white"
+												className="h-5 w-5 ml-1 text-muted-foreground hover:text-foreground"
 												onClick={() => {
 													copy(session?.user.id as string);
 													toast.copy("UserID copied to clipboard");
@@ -81,26 +81,26 @@ export default function AccountPage() {
 											</Button>
 										</div>
 										<div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-											<div className="hidden min-[525px]:flex text-neutral-500">
+											<div className="hidden min-[525px]:flex text-muted-foreground">
 												Rewards Level
 											</div>
-											<div className="flex items-center text-white">
-												<span className="border-b border-dotted border-neutral-600">
+											<div className="flex items-center text-foreground">
+												<span className="border-b border-dotted border-border">
 													Bronze
 												</span>
-												<Info className="h-3 w-3 ml-1 text-neutral-500" />
+												<Info className="h-3 w-3 ml-1 text-muted-foreground" />
 											</div>
-											<div className="text-neutral-500">Last Login</div>
-											<div className="text-white">
+											<div className="text-muted-foreground">Last Login</div>
+											<div className="text-foreground">
 												{formatRelativeTime(session?.session.createdAt)}
 											</div>
 											{session?.user.inviteCode ? (
-												<div className="flex items-center text-white">
+												<div className="flex items-center text-foreground">
 													<span>@{session?.user.inviteCode}</span>
 													<Button
 														variant="ghost"
 														size="icon"
-														className="h-5 w-5 ml-1 text-neutral-400 hover:text-white"
+														className="h-5 w-5 ml-1 text-muted-foreground hover:text-foreground"
 														onClick={() => {
 															copy(`@${session.user.inviteCode}`);
 															toast.copy("Referral link copied to clipboard");
@@ -148,11 +148,11 @@ export default function AccountPage() {
 				</div>
 
 				<div className="mb-12">
-					<h2 className="text-sm font-medium text-neutral-500 mb-3 uppercase tracking-wider">
+					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Security
 					</h2>
 
-					<div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950">
+					<div className="border border-border rounded-lg overflow-hidden bg-card">
 						{session ? (
 							<DarkSettingsSection
 								title="Recovery Key"
@@ -162,7 +162,7 @@ export default function AccountPage() {
 										variant="secondary"
 										size="sm"
 										disabled
-										className="bg-neutral-800 hover:bg-neutral-700 border-0"
+										className="border-0"
 									>
 										View Recovery Key
 									</Button>
@@ -189,7 +189,7 @@ export default function AccountPage() {
 												<Button
 													variant="secondary"
 													size="sm"
-													className="bg-neutral-800 hover:bg-neutral-700 border-0"
+													className="border-0"
 												>
 													Disable 2FA
 												</Button>
@@ -205,7 +205,7 @@ export default function AccountPage() {
 												<Button
 													variant="secondary"
 													size="sm"
-													className="bg-neutral-800 hover:bg-neutral-700 border-0"
+													className="border-0"
 												>
 													Enable 2FA
 												</Button>
@@ -216,7 +216,7 @@ export default function AccountPage() {
 								hasBorder
 							/>
 						) : (
-							<div className="p-6 border-t border-neutral-800 flex items-center justify-between">
+							<div className="p-6 border-t border-border flex items-center justify-between">
 								<div className="space-y-1">
 									<Skeleton className="h-5 w-24" />
 									<Skeleton className="h-4 w-32" />
@@ -228,11 +228,11 @@ export default function AccountPage() {
 				</div>
 
 				<div className="mb-12">
-					<h2 className="text-sm font-medium text-neutral-500 mb-3 uppercase tracking-wider">
+					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Integrations
 					</h2>
 
-					<div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950">
+					<div className="border border-border rounded-lg overflow-hidden bg-card">
 						{session ? (
 							<DarkSettingsSection
 								title="Sign in to your account on telegram"
@@ -257,7 +257,7 @@ export default function AccountPage() {
 								hasBorder
 							/>
 						) : (
-							<div className="p-6 border-t border-neutral-800 flex items-center justify-between">
+							<div className="p-6 border-t border-border flex items-center justify-between">
 								<div className="space-y-1">
 									<Skeleton className="h-5 w-24" />
 									<Skeleton className="h-4 w-32" />
@@ -269,18 +269,18 @@ export default function AccountPage() {
 				</div>
 
 				<div className="mb-12">
-					<h2 className="text-sm font-medium text-neutral-500 mb-3 uppercase tracking-wider">
+					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Preferences
 					</h2>
 
-					<div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950">
+					<div className="border border-border rounded-lg overflow-hidden bg-card">
 						{session ? (
 							<DarkSettingsSection
 								title="Language"
 								description="Change the application language"
 								action={
 									<Select defaultValue="english" disabled>
-										<SelectTrigger className="w-[180px] bg-neutral-900 border-neutral-800">
+										<SelectTrigger className="w-[180px] bg-muted border-border">
 											<div className="flex items-center gap-2">
 												<span className="text-sm">🇺🇸</span>
 												<SelectValue placeholder="Select language" />
@@ -307,18 +307,18 @@ export default function AccountPage() {
 				</div>
 
 				<div>
-					<h2 className="text-sm font-medium text-neutral-500 mb-3 uppercase tracking-wider">
+					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Account Actions
 					</h2>
 
-					<div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950">
+					<div className="border border-border rounded-lg overflow-hidden bg-card">
 						{session ? (
 							<div className="p-6 flex items-center justify-between">
 								<div className="flex-1">
 									<h3 className="text-base font-medium mb-1 text-red-500">
 										Log Out
 									</h3>
-									<p className="text-sm text-neutral-400">
+									<p className="text-sm text-muted-foreground">
 										Log out of your account
 									</p>
 								</div>
@@ -388,12 +388,12 @@ function DarkSettingsSection({
 		<div
 			className={cn(
 				"p-6 flex items-center justify-between",
-				hasBorder && "border-t border-neutral-800",
+				hasBorder && "border-t border-border",
 			)}
 		>
 			<div className="flex-1">
 				<h3 className="text-base font-medium mb-1">{title}</h3>
-				<p className="text-sm text-neutral-400">{description}</p>
+				<p className="text-sm text-muted-foreground">{description}</p>
 			</div>
 			<div className="ml-6">{action}</div>
 		</div>

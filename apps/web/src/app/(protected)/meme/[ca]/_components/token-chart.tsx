@@ -1,4 +1,5 @@
 "use client";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
 declare global {
@@ -12,9 +13,14 @@ interface TokenChartProps {
 }
 
 export default function TokenChart({ tokenSymbol }: TokenChartProps) {
+	const theme = useTheme();
+	const [currentTheme, setCurrentTheme] = useState(theme.resolvedTheme);
 	const containerRef = useRef<HTMLDivElement>(null);
 	// const [timeframe, setTimeframe] = useState("1D");
 	const [widgetInstance, setWidgetInstance] = useState<any>(null);
+	useEffect(() => {
+		console.log(theme, "fucking theme");
+	}, [theme]);
 
 	useEffect(() => {
 		// Create a unique container ID
@@ -34,10 +40,10 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
 
 				const widget = new window.TradingView.widget({
 					autosize: true,
-					symbol: "BINANCE:BTCUSDT", // In a real app, use the actual token symbol
+					symbol: "BINANCE:BTCUSDT",
 					// interval: timeframe,
 					timezone: "Etc/UTC",
-					theme: "dark",
+					theme: currentTheme,
 					style: "1",
 					locale: "en",
 					toolbar_bg: "#f1f3f6",
@@ -78,20 +84,7 @@ export default function TokenChart({ tokenSymbol }: TokenChartProps) {
 		<div className="flex h-full flex-col">
 			<div className="flex-1 relative">
 				<div ref={containerRef} className="h-full w-full" />
-				<div className="absolute bottom-4 left-4 z-10">
-					{/* <Tabs */}
-					{/*   defaultValue="1D" */}
-					{/*   value={timeframe} */}
-					{/*   onValueChange={setTimeframe} */}
-					{/* > */}
-					{/*   <TabsList> */}
-					{/*     <TabsTrigger value="3M">3M</TabsTrigger> */}
-					{/*     <TabsTrigger value="1M">1M</TabsTrigger> */}
-					{/*     <TabsTrigger value="5D">5D</TabsTrigger> */}
-					{/*     <TabsTrigger value="1D">1D</TabsTrigger> */}
-					{/*   </TabsList> */}
-					{/* </Tabs> */}
-				</div>
+				<div className="absolute bottom-4 left-4 z-10" />
 			</div>
 		</div>
 	);

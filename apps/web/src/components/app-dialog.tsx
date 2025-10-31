@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -7,8 +7,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/dialog";
+import { cn } from "@dexion/ui/lib/utils";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 

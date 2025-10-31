@@ -1,5 +1,5 @@
 "use client";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getUserWatchlist } from "~/app/actions/watchlist-actions";

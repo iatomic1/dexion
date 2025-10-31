@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import { ArrowRight, Users } from "lucide-react";
 
 const CTASection = () => {

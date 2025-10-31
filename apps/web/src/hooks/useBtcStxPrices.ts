@@ -1,4 +1,4 @@
-import { TOKEN_WATCHER_API_BASE_URL } from "@repo/shared-constants/constants.ts";
+import { TOKEN_WATCHER_API_BASE_URL } from "@dexion/shared";
 import { useQuery } from "@tanstack/react-query";
 import type { CryptoAsset } from "~/types/xverse";
 

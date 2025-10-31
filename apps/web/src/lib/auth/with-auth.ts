@@ -15,6 +15,6 @@ export function withAuth<P extends { session: Session }>(
 			redirect("/");
 		}
 
-		return component({ ...props, session } as P);
+		return component({ ...props, session } as unknown as P);
 	};
 }

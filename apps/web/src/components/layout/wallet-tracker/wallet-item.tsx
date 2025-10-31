@@ -1,19 +1,17 @@
-import {
-	EXPLORER_BASE_URL,
-	HTTP_STATUS,
-} from "@repo/shared-constants/constants.ts";
-import { Button } from "@repo/ui/components/ui/button";
-import { Input } from "@repo/ui/components/ui/input";
-import { toast } from "@repo/ui/components/ui/sonner";
+"use client";
+import { EXPLORER_BASE_URL, HTTP_STATUS } from "@dexion/shared";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Input } from "@dexion/ui/components/ui/input";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
 import { Bell, Copy, Pencil, Trash } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
 import { useEffect, useRef, useState } from "react";
-import { useServerAction } from "zsa-react";
 import { revalidateTagServer } from "~/app/actions/revalidate";
 import {
 	untrackWalletAction,
@@ -45,33 +43,43 @@ export const WalletItem = ({
 	const [notifications, setNotifications] = useState(wallet.notifications);
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	const { isPending: isUntrackPending, execute: executeUntrack } =
-		useServerAction(untrackWalletAction, {
-			onSuccess: async ({ data: res }) => {
-				if (res.status === HTTP_STATUS.NOT_FOUND) {
-					toast.error("You can't untrack a wallet you were not tracking");
-					return;
+	const { execute: executeUntrack, status: untrackStatus } = useAction(
+		untrackWalletAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Wallet removed successfully");
+					revalidateTagServer("wallets");
+				} else {
+					toast.error(data.data?.message || "Failed to untrack wallet");
 				}
-				revalidateTagServer("wallets");
-				toast.success("Wallet removed successfully");
 			},
-		});
 
-	const { isPending: isUpdatePending, execute: executeUpdate } =
-		useServerAction(updateWalletPreferences, {
-			onSuccess: async ({ data: res }) => {
-				if (res.status === HTTP_STATUS.NOT_FOUND) {
-					toast.error("Wallet not found");
-					return;
+			onError: ({ error: { serverError } }) => {
+				toast.error(serverError?.errorMessage || "Failed to untrack wallet");
+			},
+		},
+	);
+
+	const { execute: executeUpdate, status: updateStatus } = useAction(
+		updateWalletPreferences,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Wallet updated successfully");
+					revalidateTagServer("wallets");
+				} else {
+					toast.error(data.data?.message || "Failed to update wallet");
 				}
-				revalidateTagServer("wallets");
-				toast.success("Wallet updated successfully");
 			},
-			onError: (error) => {
-				toast.error("Failed to update wallet preferences");
-				console.error(error);
+			onError: ({ error: { serverError } }) => {
+				toast.error(serverError?.errorMessage || "Failed to update wallet");
 			},
-		});
+		},
+	);
+
+	const isUntrackPending = untrackStatus === "executing";
+	const isUpdatePending = updateStatus === "executing";
 
 	useEffect(() => {
 		if (isEditing && inputRef.current) {
@@ -81,7 +89,7 @@ export const WalletItem = ({
 
 	const handleEditSave = async () => {
 		if (nickname !== wallet.nickname) {
-			await executeUpdate({
+			executeUpdate({
 				walletAddress: wallet.address,
 				nickname: nickname,
 				notifications: wallet.notifications,
@@ -93,7 +101,7 @@ export const WalletItem = ({
 	const toggleNotifications = async () => {
 		const newNotificationState = !notifications;
 		setNotifications(newNotificationState);
-		await executeUpdate({
+		executeUpdate({
 			walletAddress: wallet.address,
 			notifications: newNotificationState,
 			nickname: wallet.nickname,
@@ -225,7 +233,7 @@ export const WalletItem = ({
 					size="icon"
 					className="h-6 w-6"
 					onClick={async () => {
-						await executeUntrack({ walletAddress: wallet.address });
+						executeUntrack({ walletAddress: wallet.address });
 					}}
 					disabled={isUntrackPending || isUpdatePending}
 				>

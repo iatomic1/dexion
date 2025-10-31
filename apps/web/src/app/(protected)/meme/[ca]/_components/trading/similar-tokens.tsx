@@ -1,16 +1,16 @@
 "use client";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
+} from "@dexion/ui/components/ui/avatar";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@repo/ui/components/ui/collapsible";
+} from "@dexion/ui/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { type SimilarToken, useSimilarTokens } from "~/hooks/useSimilarTokens";

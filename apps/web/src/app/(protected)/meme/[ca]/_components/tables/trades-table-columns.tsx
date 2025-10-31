@@ -1,12 +1,12 @@
 "use client";
 
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import type { TokenMetadata, TokenSwapTransaction } from "@repo/tokens/types";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import type { TokenMetadata, TokenSwapTransaction } from "@dexion/tokens/types";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ExternalLink, FilterIcon as Funnel, Worm } from "lucide-react";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";

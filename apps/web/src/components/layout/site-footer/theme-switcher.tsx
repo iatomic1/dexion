@@ -1,5 +1,5 @@
 "use client";
-import { ThemeSwitcher } from "@repo/ui/components/ui/theme-switcher";
+import { ThemeSwitcher } from "@dexion/ui/components/ui/theme-switcher";
 import { useTheme } from "next-themes";
 
 const ThemeSwitcherTab = () => {

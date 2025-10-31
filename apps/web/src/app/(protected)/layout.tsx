@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import WalletTrackerBanner from "~/components/layout/banners/wallet-tracker-banner";
 import SiteHeader from "~/components/layout/header/site-header";
 import SiteFooter from "~/components/layout/site-footer/site-footer";
 import { WatchListBanner } from "~/components/layout/watchlist-banner";
@@ -16,6 +17,7 @@ export default async function ProtectedLayout({
 }) {
 	return (
 		<BtcStxPriceProvider>
+			<WalletTrackerBanner />
 			<WatchlistProvider>
 				<SiteHeader />
 				<div className="hidden sm:block">

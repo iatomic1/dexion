@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { Card, CardContent } from "@dexion/ui/components/ui/card";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import Image from "next/image";
 

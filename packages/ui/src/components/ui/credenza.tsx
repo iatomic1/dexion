@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@dexion/ui/lib/utils";
 import {
   Dialog,
   DialogClose,
@@ -23,7 +23,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./drawer";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 
 interface BaseProps {
   children: React.ReactNode;

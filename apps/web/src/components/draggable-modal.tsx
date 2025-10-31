@@ -1,6 +1,6 @@
 "use client";
-import { Dialog, DialogTrigger } from "@repo/ui/components/ui/dialog";
-import { cn } from "@repo/ui/lib/utils";
+import { Dialog, DialogTrigger } from "@dexion/ui/components/ui/dialog";
+import { cn } from "@dexion/ui/lib/utils";
 import * as React from "react";
 import Draggable, {
 	type DraggableData,

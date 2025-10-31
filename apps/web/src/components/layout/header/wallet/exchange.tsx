@@ -1,10 +1,10 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import { type ReactNode, useState } from "react";
 import { AppDialog } from "~/components/app-dialog";
 import Deposit from "./deposit";

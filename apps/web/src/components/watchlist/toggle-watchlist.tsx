@@ -1,6 +1,6 @@
-import { Button } from "@repo/ui/components/ui/button";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { cn } from "@dexion/ui/lib/utils";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { revalidateTagServer } from "~/app/actions/revalidate";

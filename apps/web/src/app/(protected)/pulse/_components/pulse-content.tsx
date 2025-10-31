@@ -1,22 +1,22 @@
 "use client";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+} from "@dexion/ui/components/ui/avatar";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
+} from "@dexion/ui/components/ui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import { memo, useMemo } from "react";

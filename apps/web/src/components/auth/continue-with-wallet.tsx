@@ -1,8 +1,8 @@
-import { DOMAIN_NAME } from "@repo/shared-constants/constants.ts";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { Spinner } from "@repo/ui/components/ui/spinner";
+import { DOMAIN_NAME } from "@dexion/shared";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { Spinner } from "@dexion/ui/components/ui/spinner";
 import {
 	connect,
 	disconnect,

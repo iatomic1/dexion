@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@repo/ui/components/ui/card";
+import { Card, CardContent } from "@dexion/ui/components/ui/card";
 import {
 	Bell,
 	BookMarked,

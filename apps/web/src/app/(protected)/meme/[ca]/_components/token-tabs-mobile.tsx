@@ -1,13 +1,13 @@
 "use client";
-import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { ScrollArea, ScrollBar } from "@dexion/ui/components/ui/scroll-area";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tabs";
+import { cn } from "@dexion/ui/lib/utils";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";
 import HoldersTableSkeleton from "./skeleton/holders-table-skeleton";
 import DevTokensTable from "./tables/dev-tokens-table";

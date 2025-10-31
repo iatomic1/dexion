@@ -1,5 +1,5 @@
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { cn } from "@repo/ui/lib/utils";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { cn } from "@dexion/ui/lib/utils";
 
 export default function TokenInfoSkeleton() {
 	return (

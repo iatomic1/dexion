@@ -2,7 +2,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
+} from "@dexion/ui/components/ui/dialog";
 import type React from "react";
 import { useTwoFA } from "~/hooks/useTwoFA";
 import type { Enable2FADialogProps, TwoFAMethod } from "~/types/twofa";

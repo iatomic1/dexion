@@ -1,9 +1,9 @@
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@repo/ui/components/ui/collapsible";
+} from "@dexion/ui/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";

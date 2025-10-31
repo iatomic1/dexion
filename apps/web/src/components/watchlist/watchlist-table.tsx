@@ -1,16 +1,16 @@
 "use client";
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Button } from "@repo/ui/components/ui/button";
-import { Label } from "@repo/ui/components/ui/label";
-import { ScrollArea } from "@repo/ui/components/ui/scroll-area";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/avatar";
+import { Button } from "@dexion/ui/components/ui/button";
+import { Label } from "@dexion/ui/components/ui/label";
+import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { cn } from "@dexion/ui/lib/utils";
 import {
 	type ColumnDef,
 	flexRender,

@@ -1,4 +1,4 @@
-import { toast } from "@repo/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { Copy } from "lucide-react";
 import Image from "next/image";
 import { QrcodeCanvas } from "react-qrcode-pretty";

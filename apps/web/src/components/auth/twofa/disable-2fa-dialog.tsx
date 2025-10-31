@@ -1,7 +1,7 @@
 "use client";
 
-import { Alert, AlertDescription } from "@repo/ui/components/ui/alert";
-import { Button } from "@repo/ui/components/ui/button";
+import { Alert, AlertDescription } from "@dexion/ui/components/ui/alert";
+import { Button } from "@dexion/ui/components/ui/button";
 
 import {
 	Dialog,
@@ -10,9 +10,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
+} from "@dexion/ui/components/ui/dialog";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Label } from "@dexion/ui/components/ui/label";
 import {
 	AlertTriangle,
 	CheckCircle,

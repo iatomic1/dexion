@@ -1,6 +1,6 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import {
 	keepPreviousData,
 	useQuery,

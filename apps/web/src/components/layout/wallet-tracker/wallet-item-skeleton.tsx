@@ -1,4 +1,4 @@
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 
 interface WalletSkeletonProps {
 	count?: number;

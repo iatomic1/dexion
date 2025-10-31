@@ -3,8 +3,8 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
-} from "@repo/ui/components/ui/card";
-import { Progress } from "@repo/ui/components/ui/progress";
+} from "@dexion/ui/components/ui/card";
+import { Progress } from "@dexion/ui/components/ui/progress";
 
 export default function Performance() {
 	return (

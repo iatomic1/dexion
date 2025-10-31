@@ -1,21 +1,21 @@
 "use client";
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import type { TokenSwapTransaction } from "@repo/tokens/types";
-import { Button } from "@repo/ui/components/ui/button";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import type { TokenSwapTransaction } from "@dexion/tokens/types";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from "@repo/ui/components/ui/hover-card";
-import { Separator } from "@repo/ui/components/ui/separator";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/hover-card";
+import { Separator } from "@dexion/ui/components/ui/separator";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@repo/ui/components/ui/tooltip";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/tooltip";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { Markup } from "interweave";
 import {
 	ArrowDown,

@@ -1,4 +1,4 @@
-import { Separator } from "@repo/ui/components/ui/separator";
+import { Separator } from "@dexion/ui/components/ui/separator";
 import {
 	Book,
 	FileText,

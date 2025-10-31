@@ -1,6 +1,6 @@
 "use client";
 
-import type { TokenMetadata } from "@repo/tokens/types";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import { memo, Suspense } from "react";
 import { useTokenMetadata } from "~/contexts/TokenWatcherSocketContext";
 import TokenInfoSkeleton from "../skeleton/token-info-skeleton";

@@ -1,16 +1,16 @@
 "use client";
 
-import { EXPLORER_BASE_URL } from "@repo/shared-constants/constants.ts";
-import { type ParsedTransaction } from "@repo/tokens/parser";
+import { EXPLORER_BASE_URL } from "@dexion/shared";
+import { type ParsedTransaction } from "@dexion/tokens/parser";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from "@repo/ui/components/ui/avatar";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
-import { toast } from "@repo/ui/components/ui/sonner";
-import { cn } from "@repo/ui/lib/utils";
+} from "@dexion/ui/components/ui/avatar";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
+import { cn } from "@dexion/ui/lib/utils";
 import { Copy, ExternalLink } from "lucide-react";
 import useCopyToClipboard from "~/hooks/useCopy";
 import openInNewPage from "~/lib/helpers/openInNewPage";

@@ -1,4 +1,4 @@
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { auth } from "~/lib/auth/auth";
@@ -30,7 +30,7 @@ export default async function SiteFooter() {
 					)}
 				</div>
 
-				<div className="flex items-center gap-0.5">
+				<div className="flex flex-row-reverse sm:flex-row items-center gap-0.5 justify-between w-full sm:w-fit">
 					<ThemeSwitcherTab />
 					<Suspense fallback={<PriceDisplaySkeleton />}>
 						<PriceDisplayContainer />

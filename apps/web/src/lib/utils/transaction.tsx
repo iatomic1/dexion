@@ -1,4 +1,4 @@
-import { Badge } from "@repo/ui/components/ui/badge";
+import { Badge } from "@dexion/ui/components/ui/badge";
 import type { Transaction } from "@stacks/blockchain-api-client";
 import {
 	ArrowDownLeft,

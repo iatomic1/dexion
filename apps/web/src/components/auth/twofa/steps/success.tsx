@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from "@repo/ui/components/ui/alert";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
+import { Alert, AlertDescription } from "@dexion/ui/components/ui/alert";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@repo/ui/components/ui/dialog";
+} from "@dexion/ui/components/ui/dialog";
 import { AlertTriangle, CheckCircle, Copy, Key, Shield } from "lucide-react";
 import type React from "react";
 import type { TwoFAState } from "~/types/twofa";

@@ -1,8 +1,8 @@
 "use client";
 
-import { Alert, AlertDescription } from "@repo/ui/components/ui/alert";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Button } from "@repo/ui/components/ui/button";
+import { Alert, AlertDescription } from "@dexion/ui/components/ui/alert";
+import { Badge } from "@dexion/ui/components/ui/badge";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -10,10 +10,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { Label } from "@repo/ui/components/ui/label";
-import { toast } from "@repo/ui/components/ui/sonner";
+} from "@dexion/ui/components/ui/dialog";
+import { Input } from "@dexion/ui/components/ui/input";
+import { Label } from "@dexion/ui/components/ui/label";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Clock,
 	Copy,

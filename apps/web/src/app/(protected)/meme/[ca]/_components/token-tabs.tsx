@@ -1,17 +1,17 @@
 "use client";
-import type { TokenMetadata } from "@repo/tokens/types";
-import { Skeleton } from "@repo/ui/components/ui/skeleton";
+import type { TokenMetadata } from "@dexion/tokens/types";
+import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@repo/ui/components/ui/tabs";
+} from "@dexion/ui/components/ui/tabs";
 import {
 	ToggleGroup,
 	ToggleGroupItem,
-} from "@repo/ui/components/ui/toggle-group";
+} from "@dexion/ui/components/ui/toggle-group";
 import { Funnel, User2 } from "lucide-react";
 import { useState } from "react";
 import { useTokenData } from "~/contexts/TokenWatcherSocketContext";

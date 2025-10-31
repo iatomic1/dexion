@@ -1,10 +1,10 @@
 "use client";
 
-import type { TokenMetadata, TokenSwapTransaction } from "@repo/tokens/types";
-import { Button } from "@repo/ui/components/ui/button";
-import { ScrollArea, ScrollBar } from "@repo/ui/components/ui/scroll-area";
-import { useIsMobile } from "@repo/ui/hooks/use-is-mobile";
-import { cn } from "@repo/ui/lib/utils";
+import type { TokenMetadata, TokenSwapTransaction } from "@dexion/tokens/types";
+import { Button } from "@dexion/ui/components/ui/button";
+import { ScrollArea, ScrollBar } from "@dexion/ui/components/ui/scroll-area";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
 	flexRender,

@@ -4,7 +4,7 @@ import type {
 	TokenHolder,
 	TokenMetadata,
 	TokenSwapTransaction,
-} from "@repo/tokens/types";
+} from "@dexion/tokens/types";
 import { usePathname } from "next/navigation";
 import {
 	createContext,

@@ -1,6 +1,6 @@
+import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { SiGoogle } from "@icons-pack/react-simple-icons";
-import { Button } from "@repo/ui/components/ui/button";
-import { toast } from "@repo/ui/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { auth } from "~/lib/auth/auth";
@@ -16,6 +16,7 @@ export default function ContinueWithGoogle() {
 				{
 					provider: "google",
 					requestSignUp: true,
+					callbackURL: "/alerts",
 				},
 				{
 					onRequest: (_ctx) => {
@@ -23,10 +24,6 @@ export default function ContinueWithGoogle() {
 					},
 					onResponse(_context) {
 						setIsLoading(false);
-					},
-					onSuccess: (ctx) => {
-						router.push("/portfolio");
-						toast.success("Authenticated");
 					},
 					onError: (ctx) => {
 						toast.error(ctx.error.message);

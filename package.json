@@ -9,7 +9,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.0",
-		"@repo/typescript-config": "workspace:*",
+		"@dexion/typescript-config": "workspace:*",
 		"prettier": "^3.3.3",
 		"turbo": "2.1.1"
 	},
@@ -23,7 +23,7 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"lint": "turbo lint",
-		"ui": "bun --filter @repo/ui ui"
+		"ui": "bun --filter @dexion/ui ui"
 	},
 	"resolutions": {
 		"ioredis": "5.8.1"
@@ -31,5 +31,8 @@
 	"workspaces": [
 		"apps/*",
 		"packages/*"
-	]
+	],
+	"dependencies": {
+		"next-safe-action": "^8.0.11"
+	}
 }

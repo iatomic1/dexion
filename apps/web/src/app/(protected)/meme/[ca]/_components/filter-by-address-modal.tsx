@@ -22,8 +22,8 @@ const formSchema = z
 		address: z.string().min(1, {
 			error: "Address is required.",
 		}),
-		min: z.coerce.number().optional(),
-		max: z.coerce.number().optional(),
+		min: z.union([z.number(), z.undefined()]),
+		max: z.union([z.number(), z.undefined()]),
 	})
 	.refine(
 		(data) => {

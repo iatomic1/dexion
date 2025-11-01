@@ -1,6 +1,5 @@
 import { FRONTEND_URL } from "@dexion/shared";
 import type { Metadata } from "next";
-
 import RecoverAccountContent from "./_components/recover-account-content";
 
 export const metadata: Metadata = {

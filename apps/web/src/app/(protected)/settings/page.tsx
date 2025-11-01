@@ -1,13 +1,4 @@
 "use client";
-import type { Metadata } from "next";
-
-// export const metadata: Metadata = {
-// 	title: "Settings",
-// 	robots: {
-// 		index: false,
-// 		follow: false,
-// 	},
-// };
 
 import { Button } from "@dexion/ui/components/ui/button";
 import {
@@ -21,6 +12,7 @@ import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { Copy, Info } from "lucide-react";
+import type { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";

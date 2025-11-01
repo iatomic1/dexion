@@ -1,5 +1,4 @@
 "use client";
-import { FRONTEND_URL } from "@dexion/shared";
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Field,
@@ -11,7 +10,6 @@ import { Input } from "@dexion/ui/components/ui/input";
 import InputPassword from "@dexion/ui/components/ui/input-password";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import type { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";

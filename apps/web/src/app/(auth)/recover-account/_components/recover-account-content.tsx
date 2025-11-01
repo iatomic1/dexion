@@ -1,5 +1,4 @@
 "use client";
-import { FRONTEND_URL } from "@dexion/shared";
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,
@@ -17,8 +16,7 @@ import {
 import InputPassword from "@dexion/ui/components/ui/input-password";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
-import type { Metadata } from "next";
+import { XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -44,9 +42,7 @@ export default function RecoverAccountContent() {
 	const [token, setToken] = useState<string | null>(null);
 	const [tokenError, setTokenError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
 
-	// ✅ Extract token from URL
 	useEffect(() => {
 		const urlParams = new URLSearchParams(window.location.search);
 		const resetToken = urlParams.get("token");
@@ -89,7 +85,6 @@ export default function RecoverAccountContent() {
 				{
 					async onSuccess() {
 						await authClient.revokeSessions();
-						setIsSuccess(true);
 						toast.success("Password updated successfully!");
 						router.push("/login");
 					},

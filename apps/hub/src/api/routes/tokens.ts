@@ -1,6 +1,7 @@
 import { STX_TOOLS_API_BASE_URL, STXWATCH_API_BASE_URL } from "@dexion/shared";
 import {
 	getSearch,
+	getStxCityTokenMetadata,
 	getTokenMetadata,
 	searchStxCity,
 } from "@dexion/tokens/services";
@@ -135,17 +136,53 @@ tokens.post("/get_batch_token_data", async (c) => {
 			return c.json({ error: "contract_ids must be an array" }, 400);
 		}
 
+		// ------------- Batch fetch sources from Redis -------------
+		// Using MGET to avoid N calls
+
+		// ------------- Batch fetch sources from Redis -------------
+		const redisKeys = contract_ids.map((id) => `source:${id}`);
+		const sources = await redisClient.mget(redisKeys);
+
+		const sourceMap: Record<string, string | null> = {};
+
+		contract_ids.forEach((id, idx) => {
+			sourceMap[id] = sources[idx] ?? null;
+		});
+
+		// ------------- Fetch token data based on source -------------
 		const tokenDataPromises = contract_ids.map(async (contractId) => {
 			try {
-				return await getTokenMetadata(contractId);
+				const src = sourceMap[contractId];
+
+				if (src === "stxcity") {
+					const raw = await getStxCityTokenMetadata(contractId, true);
+
+					if (!raw) {
+						return { contractId, error: "No stxcity metadata found" };
+					}
+
+					return transformToTokenMetadata(raw);
+				}
+
+				if (src === "stxtools") {
+					return await getTokenMetadata(contractId);
+				}
+
+				// If source undefined OR marked "fak"
+				return {
+					contractId,
+					error:
+						src === "fak"
+							? "Fake token — metadata disabled"
+							: "Unknown token source",
+				};
 			} catch (error) {
 				console.error(`Failed to get metadata for ${contractId}:`, error);
-				return { contractId, error: error.message };
+				return { contractId, error: error?.message ?? "Unknown error" };
 			}
 		});
 
 		const results = await Promise.all(tokenDataPromises);
-
 		return c.json(results);
 	} catch (error) {
 		console.error("Error in get_batch_token_data:", error);

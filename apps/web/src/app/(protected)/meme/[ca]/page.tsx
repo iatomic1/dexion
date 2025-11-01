@@ -1,10 +1,26 @@
 import { BitflowSDK } from "@bitflowlabs/core-sdk";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NotificationProvider } from "~/contexts/WalletTrackerSocketContext";
 import { withAuth } from "~/lib/auth/with-auth";
 import { validateContractAddress } from "~/lib/utils/contract";
 import type { Session } from "~/types/auth";
 import TokenDetailPage from "./_components/token-details/token-details";
+
+type Props = {
+	params: Promise<{ ca: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const ca = (await params).ca;
+
+	const bitflowToken = await getMemeFromBitflow(ca);
+	const tokenName = bitflowToken?.name || ca;
+
+	return {
+		title: `${tokenName}`,
+	};
+}
 
 const getMemeFromBitflow = async (ca: string) => {
 	try {

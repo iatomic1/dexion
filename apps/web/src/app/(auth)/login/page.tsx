@@ -1,4 +1,17 @@
-"use client";
+import { FRONTEND_URL } from "@dexion/shared";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Login to Dexion",
+	description:
+		"Access your Dexion account to manage your Web3 trading activities.",
+	alternates: {
+		canonical: `${FRONTEND_URL}/login`,
+	},
+};
+
+("use client");
+
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,

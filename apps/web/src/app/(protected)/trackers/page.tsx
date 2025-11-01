@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Trackers",
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
+
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
 import makeFetch from "~/lib/helpers/fetch";
 import type { ApiResponse } from "~/types";
-import type { Session } from "~/types/auth";
 import type { UserWallet } from "~/types/wallets";
 import TrackersDetails from "./_components/trackers-details";
 

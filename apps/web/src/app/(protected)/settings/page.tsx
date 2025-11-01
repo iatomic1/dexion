@@ -1,4 +1,13 @@
 "use client";
+import type { Metadata } from "next";
+
+// export const metadata: Metadata = {
+// 	title: "Settings",
+// 	robots: {
+// 		index: false,
+// 		follow: false,
+// 	},
+// };
 
 import { Button } from "@dexion/ui/components/ui/button";
 import {

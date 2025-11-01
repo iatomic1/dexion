@@ -1,4 +1,17 @@
-"use client";
+import { FRONTEND_URL } from "@dexion/shared";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Sign Up for Dexion",
+	description:
+		"Create a new Dexion account to start trading on Stacks with our advanced Web3 trading bot.",
+	alternates: {
+		canonical: `${FRONTEND_URL}/signup`,
+	},
+};
+
+("use client");
+
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,

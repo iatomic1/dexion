@@ -1,4 +1,17 @@
-"use client";
+import { FRONTEND_URL } from "@dexion/shared";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Reset Your Dexion Password",
+	description:
+		"Reset your Dexion account password to regain access to your Web3 trading dashboard.",
+	alternates: {
+		canonical: `${FRONTEND_URL}/reset`,
+	},
+};
+
+("use client");
+
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Card,

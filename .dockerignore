@@ -1,0 +1,56 @@
+# Dependencies
+**/node_modules
+**/.pnp
+.pnp.js
+
+# Testing
+**/coverage
+**/*.test.ts
+**/*.spec.ts
+**/__tests__
+
+# Build outputs
+**/dist
+**/build
+**/.next
+**/.turbo
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+**/.env
+**/.env.local
+**/.env*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Misc
+**/.cache
+**/tmp
+**/temp
+
+# Exclude apps we're not deploying
+apps/backend
+apps/dex-bot
+apps/docs
+apps/hub
+apps/partykit
+apps/wallet-tracker
+apps/web

@@ -1,96 +1,184 @@
 "use client";
 
-import type {
-	Channel,
-	UserAlert,
-	UserAlertChannels,
-	WebhookConfig,
+import {
+	type Channel,
+	type UserAlert,
+	type UserAlertChannels,
+	type WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
-import { Button } from "@dexion/ui/components/ui/button";
-import { Bell, Plus, Settings } from "lucide-react";
-import { useState } from "react";
-import { AlertDialog } from "./alert-dialog";
-import { AlertsTable } from "./alerts-table";
-import { WebhookSettingsDialog } from "./webhook-settings-dialog";
+import { SOCIALS } from "@dexion/shared";
+import {
+	ColumnFiltersState,
+	getCoreRowModel,
+	getFacetedUniqueValues,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	PaginationState,
+	SortingState,
+	useReactTable,
+	VisibilityState,
+} from "@tanstack/react-table";
+import { useId, useMemo, useState } from "react";
+import { useAlertsTokenData } from "~/hooks/useAlertsTokenData";
+import { DataTable } from "./alerts-table/data-table";
+import { TablePagination } from "./alerts-table/pagination";
+import { TableActions } from "./alerts-table/table-actions";
+import { TableFilters } from "./alerts-table/table-filters";
+import { columns } from "./columns";
 
-export function AlertsManager({
-	alerts,
-	channels,
-	webhookConfig,
-	availableUserChannels,
-}: {
-	alerts: UserAlert[];
+type AlertsTableProps = {
 	channels: Channel[];
-	webhookConfig: WebhookConfig;
 	availableUserChannels: UserAlertChannels;
-}) {
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [isWebhookDialogOpen, setIsWebhookDialogOpen] = useState(false);
-	const [editingAlert, setEditingAlert] = useState<UserAlert | null>(null);
+	alerts: UserAlert[];
+	webhookConfig: WebhookConfig | null;
+};
 
-	const handleCreate = () => {
-		setEditingAlert(null);
-		setIsDialogOpen(true);
+export default function AlertsManager({
+	alerts: data,
+	channels,
+	availableUserChannels,
+	webhookConfig,
+}: AlertsTableProps) {
+	const id = useId();
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: 10,
+	});
+
+	const [sorting, setSorting] = useState<SortingState>([
+		{
+			id: "ca",
+			desc: false,
+		},
+	]);
+
+	const handleDeleteRows = () => {
+		const selectedRows = table.getSelectedRowModel().rows;
+		const updatedData = data.filter(
+			(item) => !selectedRows.some((row) => row.original.id === item.id),
+		);
+		table.resetRowSelection();
 	};
 
-	const handleEdit = (alert: UserAlert) => {
-		setEditingAlert(alert);
-		setIsDialogOpen(true);
+	const table = useReactTable({
+		data,
+		columns: columns,
+		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		onSortingChange: setSorting,
+		enableSortingRemoval: false,
+		getPaginationRowModel: getPaginationRowModel(),
+		onPaginationChange: setPagination,
+		onColumnFiltersChange: setColumnFilters,
+		onColumnVisibilityChange: setColumnVisibility,
+		getFilteredRowModel: getFilteredRowModel(),
+		getFacetedUniqueValues: getFacetedUniqueValues(),
+		getRowId: (row) => row.id,
+		state: {
+			sorting,
+			pagination,
+			columnFilters,
+			columnVisibility,
+		},
+	});
+
+	const visibleAlerts = useMemo(() => {
+		return table.getRowModel().rows.map((row) => row.original);
+	}, [table.getRowModel().rows]);
+
+	const { tokenDataMap, isLoading: isLoadingTokens } =
+		useAlertsTokenData(visibleAlerts);
+	table.setOptions((prev) => ({
+		...prev,
+		meta: {
+			tokenDataMap,
+			isLoadingTokens,
+			channels,
+			availableUserChannels,
+		},
+	}));
+
+	const uniqueStatusValues = useMemo(() => {
+		const statusColumn = table.getColumn("status");
+		if (!statusColumn) return [];
+		const values = Array.from(statusColumn.getFacetedUniqueValues().keys());
+		return values.sort();
+	}, [table.getColumn("status")?.getFacetedUniqueValues()]);
+
+	const statusCounts = useMemo(() => {
+		const statusColumn = table.getColumn("status");
+		if (!statusColumn) return new Map();
+		return statusColumn.getFacetedUniqueValues();
+	}, [table.getColumn("status")?.getFacetedUniqueValues()]);
+
+	const selectedStatuses = useMemo(() => {
+		const filterValue = table.getColumn("status")?.getFilterValue() as string[];
+		return filterValue ?? [];
+	}, [table.getColumn("status")?.getFilterValue()]);
+
+	const handleStatusChange = (checked: boolean, value: string) => {
+		const filterValue = table.getColumn("status")?.getFilterValue() as string[];
+		const newFilterValue = filterValue ? [...filterValue] : [];
+
+		if (checked) {
+			newFilterValue.push(value);
+		} else {
+			const index = newFilterValue.indexOf(value);
+			if (index > -1) {
+				newFilterValue.splice(index, 1);
+			}
+		}
+
+		table
+			.getColumn("status")
+			?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
 	};
 
 	return (
-		<div className="mx-auto py-4 sm:py-8 px-4 max-w-7xl">
-			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
-				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
-						<Bell className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-					</div>
-					<div>
-						<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-							Alerts
-						</h1>
-						<p className="text-sm text-muted-foreground">
-							Manage your contract monitoring alerts
-						</p>
-					</div>
-				</div>
-				<div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-					<Button
-						onClick={() => setIsWebhookDialogOpen(true)}
-						variant="outline"
-						size="lg"
-						className="gap-2 w-full sm:w-auto"
-					>
-						<Settings className="h-4 w-4" />
-						<span className="hidden sm:inline">Webhook Settings</span>
-						<span className="sm:hidden">Webhook</span>
-					</Button>
-					<Button
-						onClick={handleCreate}
-						size="lg"
-						className="gap-2 w-full sm:w-auto"
-					>
-						<Plus className="h-4 w-4" />
-						Create Alert
-					</Button>
-				</div>
+		<div className="space-y-4 py-4 px-3">
+			{/* Filters */}
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<TableFilters
+					table={table}
+					uniqueStatusValues={uniqueStatusValues}
+					statusCounts={statusCounts}
+					selectedStatuses={selectedStatuses}
+					onStatusChange={handleStatusChange}
+				/>
+				<TableActions
+					table={table}
+					onDeleteRows={handleDeleteRows}
+					availableUserChannels={availableUserChannels}
+					channels={channels}
+					webhookConfig={webhookConfig}
+				/>
 			</div>
 
-			<AlertsTable alerts={alerts} onEdit={handleEdit} />
-
-			<AlertDialog
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-				alert={editingAlert}
-				availableUserChannels={availableUserChannels}
-				channels={channels}
+			{/* Table */}
+			<DataTable
+				table={table}
+				columns={columns}
+				tokenDataMap={tokenDataMap}
+				isLoadingTokens={isLoadingTokens}
 			/>
 
-			<WebhookSettingsDialog
-				open={isWebhookDialogOpen}
-				onOpenChange={setIsWebhookDialogOpen}
-				config={webhookConfig}
-			/>
+			{/* Pagination */}
+			<TablePagination table={table} id={id} />
+
+			<p className="mt-4 text-center text-sm text-muted-foreground">
+				Report bugs in the
+				<a
+					className="underline hover:text-foreground"
+					href={SOCIALS.DISCORD}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Community
+				</a>
+			</p>
 		</div>
 	);
 }

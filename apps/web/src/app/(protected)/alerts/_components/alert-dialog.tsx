@@ -18,6 +18,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
 import {
 	Field,
@@ -48,7 +49,7 @@ import {
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
 	createAlertAction,
@@ -56,19 +57,19 @@ import {
 } from "~/app/actions/price-alert-actions";
 
 interface AlertDialogProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
+	// open: boolean;
+	// onOpenChange: (open: boolean) => void;
 	alert: UserAlert | null;
 	channels: Channel[];
 	availableUserChannels: UserAlertChannels;
+	children: ReactNode;
 }
 
 const METRICS = [
-	{ value: "price", label: "Price (USD)" },
-	{ value: "tvl", label: "TVL (USD)" },
-	// { value: "holders", label: "Holders" },
-	{ value: "volume", label: "24h Volume" },
 	{ value: "marketcap", label: "Market Cap" },
+	{ value: "price", label: "Price (USD)" },
+	{ value: "holders", label: "Holders" },
+	{ value: "liquidity", label: "Total Liquidity" },
 ];
 
 const CONDITIONS = [
@@ -81,12 +82,12 @@ const CONDITIONS = [
 ];
 
 export function AlertDialog({
-	open,
-	onOpenChange,
 	alert,
 	channels,
 	availableUserChannels,
+	children,
 }: AlertDialogProps) {
+	const [open, setOpen] = useState(false);
 	const form = useForm<UpdateAlertInput>({
 		resolver: standardSchemaResolver(updateAlertSchema),
 		defaultValues: {
@@ -134,7 +135,7 @@ export function AlertDialog({
 				if (data?.status === HTTP_STATUS.OK) {
 					toast.success("Alert updated successfully");
 					form.reset();
-					onOpenChange(false);
+					setOpen(false);
 				} else {
 					toast.error(data?.message || "Failed to update alert");
 				}
@@ -153,7 +154,7 @@ export function AlertDialog({
 				if (data?.status === HTTP_STATUS.CREATED) {
 					toast.success("Alert created successfully");
 					form.reset();
-					onOpenChange(false);
+					setOpen(false);
 				} else {
 					toast.error(data?.message || "Failed to create alert");
 				}
@@ -176,8 +177,9 @@ export function AlertDialog({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogContent className="max-w-xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>{alert ? "Edit Alert" : "Create New Alert"}</DialogTitle>
 					<DialogDescription>
@@ -330,7 +332,7 @@ export function AlertDialog({
 
 									<div className="flex flex-wrap gap-2">
 										<TooltipProvider>
-											{channels.map((channel) => {
+											{channels?.map((channel) => {
 												const isSelected = field.value.includes(channel.id);
 
 												const isChannelAvailable =
@@ -442,7 +444,7 @@ export function AlertDialog({
 							<Button
 								type="button"
 								variant="outline"
-								onClick={() => onOpenChange(false)}
+								onClick={() => setOpen(false)}
 								className="w-full sm:w-auto"
 							>
 								Cancel

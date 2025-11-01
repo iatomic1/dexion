@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Alerts",
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
+
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
+import { Bell } from "lucide-react";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
 import { Session } from "~/types/auth";
-import { AlertsManager } from "./_components/alerts-manager";
+import AlertsManager from "./_components/alerts-manager";
 
 const getAlertsAndChannels = async () => {
 	const session = await assertUserAuthenticated();
@@ -14,16 +25,18 @@ const getAlertsAndChannels = async () => {
 				next: { tags: ["alerts", `user-alerts-${session.userId}`] },
 			}),
 			sdk.alerts.getAlertChannels({
-				next: { revalidate: 43200 },
+				next: { revalidate: 86400 },
 			}),
 			(async () => {
 				try {
 					return await sdk.webhooks.getWebhook({
-						next: { tags: [`user-webhook-config-${session.userId}`] },
+						next: {
+							tags: [`user-webhook-config-${session.userId}`],
+							revalidate: 3600,
+						},
 					});
 				} catch (err: any) {
 					if (err.statusCode === 404) {
-						// no config yet, return null instead of throwing
 						return {
 							data: null as any,
 							message: "Webhook configuration not found",
@@ -54,15 +67,36 @@ async function AlertsPage(props: { session: Session }) {
 			</div>
 		);
 	}
+	console.log(data.alerts);
 
 	return (
 		<div className="min-h-screen bg-background">
+			<div className="flex items-center gap-3 py-4 px-3">
+				<div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
+					<Bell className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+				</div>
+				<div>
+					<h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+						Alerts
+					</h1>
+					<p className="text-sm text-muted-foreground wrap-break-word">
+						Manage your contract monitoring alerts
+					</p>
+				</div>
+			</div>
 			<AlertsManager
+				alerts={data?.alerts?.data}
+				channels={data?.channels?.data ?? []}
+				availableUserChannels={data?.userChannels.data ?? null}
+				webhookConfig={data?.webhookConfig?.data ?? null}
+			/>
+
+			{/*<AlertsManager
 				alerts={data?.alerts?.data ?? []}
 				channels={data?.channels?.data ?? []}
-				webhookConfig={data?.webhookConfig?.data ?? null}
 				availableUserChannels={data?.userChannels.data ?? null}
-			/>
+				webhookConfig={data?.webhookConfig?.data ?? null}
+			/>*/}
 		</div>
 	);
 }

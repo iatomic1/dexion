@@ -1,12 +1,12 @@
+import { type NotificationButton, NotifierClient } from "@dexion/notifier";
+import { FRONTEND_URL, SOCIALS } from "@dexion/shared";
 import { Job, Worker } from "bullmq";
+import { config } from "@/config";
+import { logger } from "@/config/logger";
+import { bullMqRedisConnection } from "@/config/redis";
+import { getAlertHtmlMessage } from "@/lib/messages/telegram";
 import { telegramQueue, telegramQueueDlq } from "@/queues";
 import type { SendTelegramAlertJobData } from "@/queues/types";
-import { bullMqRedisConnection } from "@/config/redis";
-import { logger } from "@/config/logger";
-import { NotifierClient, type NotificationButton } from "@dexion/notifier";
-import { config } from "@/config";
-import { getAlertHtmlMessage } from "@/lib/messages/telegram";
-import { FRONTEND_URL, SOCIALS } from "@dexion/shared";
 
 const telegramWorker = new Worker(
 	telegramQueue.name,

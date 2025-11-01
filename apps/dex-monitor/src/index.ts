@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
-import { createApp } from "./routes";
 import { logger } from "./config/logger";
+import { createApp } from "./routes";
 
 const startServer = () => {
 	const app = createApp();

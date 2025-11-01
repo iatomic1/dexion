@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@dexion/ui/components/ui/button";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { SiGoogle } from "@icons-pack/react-simple-icons";

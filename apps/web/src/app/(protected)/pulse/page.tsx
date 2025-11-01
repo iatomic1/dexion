@@ -8,8 +8,6 @@ export const metadata: Metadata = {
 	},
 };
 
-("use client");
-
 import PulseContent from "./_components/pulse-content";
 
 export default function PulsePage() {

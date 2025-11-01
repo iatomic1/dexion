@@ -1,3 +1,4 @@
+"use client";
 import { DOMAIN_NAME } from "@dexion/shared";
 import { Badge } from "@dexion/ui/components/ui/badge";
 import { Button } from "@dexion/ui/components/ui/button";

@@ -10,7 +10,7 @@ import {
 } from "@dexion/ui/components/ui/dialog";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
-import { Send } from "lucide-react";
+import { CheckCircle2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import siteConfig from "~/config/site";
@@ -26,12 +26,17 @@ type LinkTelegramResponse = {
 	error?: unknown;
 };
 
+type LinkStep = "link" | "start-bot";
+
 export default function LinkTelegramAccount({ user }: { user: User }) {
 	const [isLinking, setIsLinking] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [linkStep, setLinkStep] = useState<LinkStep>("link");
 	const router = useRouter();
+
+	const BOT_USERNAME = "dexionpro_bot";
 
 	useEffect(() => {
 		console.log(user, "user");
@@ -39,7 +44,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 
 	// 🔗 Initialize Telegram widget when dialog opens
 	useEffect(() => {
-		if (isDialogOpen && !isLinking) {
+		if (isDialogOpen && !isLinking && linkStep === "link") {
 			const initWidget = async () => {
 				setIsLinking(true);
 				try {
@@ -59,8 +64,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 										"Telegram account linked successfully"
 								) {
 									toast.success("Telegram linked successfully");
-									setIsDialogOpen(false);
-									router.refresh();
+									setLinkStep("start-bot");
 								} else {
 									toast.error(
 										linkRes?.data?.error || "Failed to link Telegram account",
@@ -89,8 +93,26 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 			const container = document.getElementById("telegram-link-container");
 			if (container) container.innerHTML = "";
 			setIsLinking(false);
+			setLinkStep("link"); // Reset to first step
 		}
-	}, [isDialogOpen]);
+	}, [isDialogOpen, linkStep]);
+
+	const handleStartBot = () => {
+		const startParam = `user_${user.id}`;
+		const deeplink = `https://t.me/${BOT_USERNAME}?start=${startParam}`;
+
+		window.open(deeplink, "_blank");
+
+		toast.success(
+			"Opening Telegram... Start the bot to receive notifications!",
+		);
+
+		// Close dialog and refresh after a short delay
+		setTimeout(() => {
+			setIsDialogOpen(false);
+			router.refresh();
+		}, 1000);
+	};
 
 	// ❌ Unlink Telegram handler
 	const handleUnlink = async () => {
@@ -139,23 +161,66 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 			</DialogTrigger>
 
 			<DialogContent className="sm:max-w-md">
-				<DialogHeader>
-					<DialogTitle>Link Telegram Account</DialogTitle>
-					<DialogDescription>
-						Connect your Telegram account to enable notifications and quick
-						access.
-					</DialogDescription>
-				</DialogHeader>
+				{linkStep === "link" ? (
+					<>
+						<DialogHeader>
+							<DialogTitle>Link Telegram Account</DialogTitle>
+							<DialogDescription>
+								Connect your Telegram account to enable notifications and quick
+								access.
+							</DialogDescription>
+						</DialogHeader>
 
-				<div className="flex flex-col items-center justify-center py-6">
-					{isLinking ? (
-						<div className="flex items-center gap-2">
-							<Spinner />
-							<span>Loading Telegram widget...</span>
+						<div className="flex flex-col items-center justify-center py-6">
+							{isLinking ? (
+								<div className="flex items-center gap-2">
+									<Spinner />
+									<span>Loading Telegram widget...</span>
+								</div>
+							) : null}
+							<div id="telegram-link-container" className="min-h-[60px]" />
 						</div>
-					) : null}
-					<div id="telegram-link-container" className="min-h-[60px]" />
-				</div>
+					</>
+				) : (
+					<>
+						<DialogHeader>
+							<DialogTitle className="flex items-center gap-2">
+								<CheckCircle2 className="h-5 w-5 text-green-500" />
+								Account Linked Successfully
+							</DialogTitle>
+							<DialogDescription>
+								One more step! Start the bot to receive notifications.
+							</DialogDescription>
+						</DialogHeader>
+
+						<div className="flex flex-col items-center justify-center gap-4 py-6">
+							<div className="text-center space-y-2">
+								<p className="text-sm text-muted-foreground">
+									Click the button below to open Telegram and start our bot.
+								</p>
+								<p className="text-sm text-muted-foreground">
+									This will enable us to send you notifications and updates.
+								</p>
+							</div>
+
+							<Button onClick={handleStartBot} size="lg" className="w-full">
+								<Send className="h-5 w-5 mr-2" />
+								Start Bot in Telegram
+							</Button>
+
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={() => {
+									setIsDialogOpen(false);
+									router.refresh();
+								}}
+							>
+								Skip for now
+							</Button>
+						</div>
+					</>
+				)}
 			</DialogContent>
 		</Dialog>
 	);

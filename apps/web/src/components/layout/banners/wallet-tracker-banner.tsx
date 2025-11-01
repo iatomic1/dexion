@@ -9,7 +9,6 @@ import { CircleAlert } from "lucide-react";
 import { usePathname } from "next/navigation";
 export default function WalletTrackerBanner() {
 	const pathname = usePathname();
-	console.log(pathname);
 	if (pathname !== "/trackers") {
 		return <></>;
 	}

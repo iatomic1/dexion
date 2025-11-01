@@ -11,4 +11,3 @@ if (!parsedConfig.success) {
 }
 
 export const config = parsedConfig.data;
-

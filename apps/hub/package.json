@@ -8,18 +8,20 @@
 	"scripts": {
 		"start": "bun run src/index.ts",
 		"build": "bun build ./src/index.ts --target bun --outdir ./dist",
-		"dev": "bun run --hot src/index.ts"
+		"dev": "doppler run -p dexion -c dev_hub -- bun run --hot src/index.ts"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
 	},
 	"dependencies": {
-		"@hono/node-server": "^1.14.3",
 		"@dexion/notifier": "workspace:*",
 		"@dexion/shared": "workspace:*",
 		"@dexion/tokens": "workspace:*",
+		"@hono/node-server": "^1.14.3",
+		"@stacks/blockchain-api-client": "^8.13.2",
 		"@stacks/transactions": "^7.2.0",
 		"axios": "^1.10.0",
+		"dotenv": "^17.2.3",
 		"hono": "^4.7.8",
 		"ioredis": "^5.6.1",
 		"railway": "^2.0.17",

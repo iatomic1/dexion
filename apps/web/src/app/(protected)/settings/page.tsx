@@ -12,6 +12,7 @@ import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { Copy, Info } from "lucide-react";
+import type { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";

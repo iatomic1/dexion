@@ -1,6 +1,7 @@
+import type { DexionClient } from "../DexionApiSDK";
 import {
-	DexionError,
 	type ApiResponse,
+	DexionError,
 	type FetchOptions,
 } from "../types/index";
 import type {
@@ -8,7 +9,6 @@ import type {
 	DeleteWatchlistInput,
 	UserWatchlist,
 } from "./types";
-import type { DexionClient } from "../DexionApiSDK";
 
 export class WatchlistManager {
 	constructor(private client: DexionClient) {}

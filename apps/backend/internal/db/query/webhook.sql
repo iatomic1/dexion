@@ -16,7 +16,14 @@ SET
     webhook_url = COALESCE(sqlc.arg('webhook_url'), webhook_url),
     bearer_token = COALESCE(sqlc.arg('bearer_token'), bearer_token),
     enabled = COALESCE(sqlc.arg('enabled'), enabled),
-    status = COALESCE(sqlc.arg('status'), status),
+    updated_at = now()
+WHERE user_id = sqlc.arg('user_id')
+RETURNING *;
+
+-- name: UpdateWebhookConfigStatus :one
+UPDATE webhook_config
+SET
+    enabled = COALESCE(sqlc.arg('enabled'), enabled),
     updated_at = now()
 WHERE user_id = sqlc.arg('user_id')
 RETURNING *;

@@ -11,7 +11,7 @@ export const addNewAlertSchema = z.object({
 		.min(1, { error: "Contract address is required." }),
 	channels: z.array(z.string()).min(1, "At least one channel is required"),
 
-	metric: z.enum(["price", "volume", "tvl", "marketcap"]),
+	metric: z.enum(["price", "liquidity", "marketcap", "holders"]),
 
 	operator: z.enum([">", "<", ">=", "<=", "=", "!="]),
 	repeatable: z.boolean(),

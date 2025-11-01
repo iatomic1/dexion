@@ -241,8 +241,6 @@ definitions:
         type: string
       enabled:
         type: boolean
-      status:
-        type: string
       userId:
         type: string
       webhookUrl:

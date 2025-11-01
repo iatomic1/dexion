@@ -1,4 +1,10 @@
-import { Job, Queue, Worker, type BackoffOptions } from "bullmq";
+import { getTokenMetadata } from "@dexion/tokens/services";
+import { type BackoffOptions, Job, Queue, Worker } from "bullmq";
+import { logger } from "@/config/logger";
+import { bullMqRedisConnection } from "@/config/redis";
+import { ALERT_CHANNELS } from "@/lib/constants";
+import { getActiveAlertsByCa } from "@/lib/redis/alerts";
+import { getCachedUserProfile } from "@/lib/redis/user-profile";
 import {
 	emailQueue,
 	swapQueue,
@@ -6,14 +12,8 @@ import {
 	telegramQueue,
 	webhookQueue,
 } from "@/queues";
-import { getActiveAlertsByCa } from "@/lib/redis/alerts";
 import type { SwapEventJobData } from "@/queues/types";
-import { getTokenMetadata } from "@dexion/tokens/services";
-import { bullMqRedisConnection } from "@/config/redis";
-import { getCachedUserProfile } from "@/lib/redis/user-profile";
-import { ALERT_CHANNELS } from "@/lib/constants";
 import { evaluateAlert, getMetricValue, hasChannel } from "@/utils/swap-events";
-import { logger } from "@/config/logger";
 
 export type Alert = Awaited<ReturnType<typeof getActiveAlertsByCa>>[number];
 

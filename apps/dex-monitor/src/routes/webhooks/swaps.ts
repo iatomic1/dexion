@@ -1,7 +1,7 @@
+import { type Context, Hono } from "hono";
+import { logger } from "@/config/logger";
 import { swapQueue } from "@/queues";
 import { extractAssetContracts } from "@/utils";
-import { Hono, type Context } from "hono";
-import { logger } from "@/config/logger";
 
 const swaps = new Hono();
 

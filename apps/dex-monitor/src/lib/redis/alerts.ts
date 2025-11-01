@@ -1,5 +1,5 @@
-import { normalRedisConnection } from "@/config/redis";
 import { logger } from "@/config/logger";
+import { normalRedisConnection } from "@/config/redis";
 
 export interface Alert {
 	channels: string[];

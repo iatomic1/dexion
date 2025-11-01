@@ -1,7 +1,7 @@
-import { getMetricSign, getMetricValue } from "@/utils/swap-events";
-import type { Alert } from "@/workers/swap-events-worker";
 import { SOCIALS } from "@dexion/shared";
 import type { TokenMetadata } from "@dexion/tokens/types";
+import { getMetricSign, getMetricValue } from "@/utils/swap-events";
+import type { Alert } from "@/workers/swap-events-worker";
 
 /*
   HTML helpers that escape content and return small tag fragments.

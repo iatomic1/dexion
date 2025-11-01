@@ -1,8 +1,8 @@
 import type z from "zod";
 import type {
-	updateAlertSchema,
-	removeAlertSchema,
 	addNewAlertSchema,
+	removeAlertSchema,
+	updateAlertSchema,
 	userAlertChannelSchema,
 } from "./schema";
 

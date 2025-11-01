@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import swaps from "./swaps";
 import { bearerAuth } from "hono/bearer-auth";
 import { config } from "@/config";
+import swaps from "./swaps";
 
 const webhooks = new Hono();
 // TODO: UNCOMMENT LATER

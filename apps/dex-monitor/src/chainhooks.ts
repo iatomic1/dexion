@@ -1,7 +1,7 @@
 import {
 	CHAINHOOKS_BASE_URL,
-	ChainhooksClient,
 	type Chainhook,
+	ChainhooksClient,
 	type PaginatedChainhookResponse,
 } from "@hirosystems/chainhooks-client";
 import { logger } from "./config/logger";

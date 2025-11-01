@@ -1,8 +1,8 @@
 import { Job, Worker } from "bullmq";
+import { logger } from "@/config/logger";
+import { bullMqRedisConnection } from "@/config/redis";
 import { webhookQueue, webhookQueueDlq } from "@/queues";
 import type { SendWebhookAlertJobData } from "@/queues/types";
-import { bullMqRedisConnection } from "@/config/redis";
-import { logger } from "@/config/logger";
 
 const webhookWorker = new Worker(
 	webhookQueue.name,

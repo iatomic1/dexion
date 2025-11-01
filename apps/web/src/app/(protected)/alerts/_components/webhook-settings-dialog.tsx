@@ -13,6 +13,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@dexion/ui/components/ui/field";
 import { Input } from "@dexion/ui/components/ui/input";
@@ -21,7 +22,7 @@ import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Webhook } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
 	createWebhookConfigAction,
@@ -30,16 +31,15 @@ import {
 } from "~/app/actions/webhook-actions";
 
 interface WebhookSettingsDialogProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
 	config: WebhookConfig | null;
+	children: ReactNode;
 }
 
 export function WebhookSettingsDialog({
-	open,
-	onOpenChange,
 	config,
+	children,
 }: WebhookSettingsDialogProps) {
+	const [open, setOpen] = useState(false);
 	const form = useForm<WebhookConfig>({
 		resolver: standardSchemaResolver(webhookConfigSchema),
 		defaultValues: {
@@ -63,7 +63,7 @@ export function WebhookSettingsDialog({
 				if (data.data?.status === HTTP_STATUS.CREATED) {
 					toast.success("Configuration saved successfully");
 					form.reset();
-					onOpenChange(false);
+					setOpen(false);
 				} else {
 					toast.error(data.data?.message || "Failed to save configuration");
 				}
@@ -83,7 +83,7 @@ export function WebhookSettingsDialog({
 				if (data.data?.status === HTTP_STATUS.OK) {
 					toast.success("Configuration saved successfully");
 					form.reset();
-					onOpenChange(false);
+					setOpen(false);
 				} else {
 					toast.error(data.data?.message || "Failed to save configuration");
 				}
@@ -103,7 +103,7 @@ export function WebhookSettingsDialog({
 				if (data.data?.status === HTTP_STATUS.OK) {
 					toast.success("Configuration deleted successfully");
 					form.reset();
-					onOpenChange(false);
+					setOpen(false);
 				} else {
 					toast.error(data.data?.message || "Failed to delete configuration");
 				}
@@ -134,7 +134,8 @@ export function WebhookSettingsDialog({
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="max-w-xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -232,7 +233,7 @@ export function WebhookSettingsDialog({
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => onOpenChange(false)}
+							onClick={() => setOpen(false)}
 							className="w-full sm:w-auto"
 						>
 							Cancel

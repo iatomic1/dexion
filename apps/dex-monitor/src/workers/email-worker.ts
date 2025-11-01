@@ -1,11 +1,11 @@
 import { Job, Queue, Worker } from "bullmq";
+import { Resend } from "resend";
+import { config } from "@/config";
+import { logger } from "@/config/logger";
+import { bullMqRedisConnection } from "@/config/redis";
+import { getAlertEmail } from "@/lib/messages/email";
 import { emailQueue, emailQueueDlq } from "@/queues";
 import type { SendEmailAlertJobData } from "@/queues/types";
-import { bullMqRedisConnection } from "@/config/redis";
-import { Resend } from "resend";
-import { getAlertEmail } from "@/lib/messages/email";
-import { logger } from "@/config/logger";
-import { config } from "@/config";
 
 const resend = new Resend(config.RESEND_API_KEY);
 

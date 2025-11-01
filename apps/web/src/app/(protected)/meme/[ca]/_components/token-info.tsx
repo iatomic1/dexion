@@ -27,7 +27,6 @@ import TokenAudit from "./trading/token-audit";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
 	const copy = useCopyToClipboard();
-	console.log(token);
 	const progress = Number(token?.progress);
 	return (
 		<div className="border-b bg-background px-4 pb-2 sm:p-4 h-fit sm:flex justify-between items-center">
@@ -189,7 +188,7 @@ const Actions = ({
 				variant={isMobile ? "secondary" : "ghost"}
 				size={"icon"}
 				className={cn(
-					"hover:text-indigo-500 transition-colors duration-150 case-in-out",
+					"hover:text-indigo-500 transition-colors duration-150 ease-in-out",
 					isMobile && "rounded-full",
 				)}
 				onClick={() => {

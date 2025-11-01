@@ -27,6 +27,8 @@ import TokenAudit from "./trading/token-audit";
 
 export default function TokenInfo({ token }: { token: TokenMetadata }) {
 	const copy = useCopyToClipboard();
+	console.log(token);
+	const progress = Number(token?.progress);
 	return (
 		<div className="border-b bg-background px-4 pb-2 sm:p-4 h-fit sm:flex justify-between items-center">
 			<div className=" flex flex-col gap-3 md:flex-row md:gap-6">
@@ -145,12 +147,12 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
 									)
 						}
 					/>
-					{token.progress && token.progress < 100 && (
+					{progress && progress < 100 && (
 						<MetricItem
 							label="B%"
-							value={`${token.progress.toFixed(2).toString()}%`}
+							value={`${progress.toFixed(2).toString()}%`}
 							valueClassName={cn(
-								token.progress < 50 ? "text-destructive" : "text-emerald-500",
+								progress < 50 ? "text-destructive" : "text-emerald-500",
 							)}
 						/>
 					)}
@@ -187,7 +189,7 @@ const Actions = ({
 				variant={isMobile ? "secondary" : "ghost"}
 				size={"icon"}
 				className={cn(
-					"hover:text-indigo-500 transition-colors duration-150 ease-in-out",
+					"hover:text-indigo-500 transition-colors duration-150 case-in-out",
 					isMobile && "rounded-full",
 				)}
 				onClick={() => {

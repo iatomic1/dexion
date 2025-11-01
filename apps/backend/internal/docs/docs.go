@@ -1817,9 +1817,6 @@ const docTemplate = `{
                 "enabled": {
                     "type": "boolean"
                 },
-                "status": {
-                    "type": "string"
-                },
                 "userId": {
                     "type": "string"
                 },

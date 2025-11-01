@@ -57,6 +57,7 @@ type Querier interface {
 	UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error)
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
 	UpdateWebhookConfig(ctx context.Context, arg UpdateWebhookConfigParams) (*WebhookConfig, error)
+	UpdateWebhookConfigStatus(ctx context.Context, arg UpdateWebhookConfigStatusParams) (*WebhookConfig, error)
 	UpsertTelegramUserWallet(ctx context.Context, arg UpsertTelegramUserWalletParams) (*TelegramUserWallet, error)
 	UpsertUserWallet(ctx context.Context, arg UpsertUserWalletParams) (*UserWallet, error)
 	WalletExists(ctx context.Context, address string) (bool, error)

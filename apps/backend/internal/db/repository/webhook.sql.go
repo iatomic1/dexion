@@ -77,9 +77,8 @@ SET
     webhook_url = COALESCE($1, webhook_url),
     bearer_token = COALESCE($2, bearer_token),
     enabled = COALESCE($3, enabled),
-    status = COALESCE($4, status),
     updated_at = now()
-WHERE user_id = $5
+WHERE user_id = $4
 RETURNING id, user_id, webhook_url, bearer_token, enabled, status, updated_at, created_at
 `
 
@@ -87,7 +86,6 @@ type UpdateWebhookConfigParams struct {
 	WebhookUrl  string `json:"webhookUrl"`
 	BearerToken string `json:"bearerToken"`
 	Enabled     *bool  `json:"enabled"`
-	Status      string `json:"status"`
 	UserID      string `json:"userId"`
 }
 
@@ -96,9 +94,38 @@ func (q *Queries) UpdateWebhookConfig(ctx context.Context, arg UpdateWebhookConf
 		arg.WebhookUrl,
 		arg.BearerToken,
 		arg.Enabled,
-		arg.Status,
 		arg.UserID,
 	)
+	var i WebhookConfig
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.WebhookUrl,
+		&i.BearerToken,
+		&i.Enabled,
+		&i.Status,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return &i, err
+}
+
+const updateWebhookConfigStatus = `-- name: UpdateWebhookConfigStatus :one
+UPDATE webhook_config
+SET
+    enabled = COALESCE($1, enabled),
+    updated_at = now()
+WHERE user_id = $2
+RETURNING id, user_id, webhook_url, bearer_token, enabled, status, updated_at, created_at
+`
+
+type UpdateWebhookConfigStatusParams struct {
+	Enabled *bool  `json:"enabled"`
+	UserID  string `json:"userId"`
+}
+
+func (q *Queries) UpdateWebhookConfigStatus(ctx context.Context, arg UpdateWebhookConfigStatusParams) (*WebhookConfig, error) {
+	row := q.db.QueryRow(ctx, updateWebhookConfigStatus, arg.Enabled, arg.UserID)
 	var i WebhookConfig
 	err := row.Scan(
 		&i.ID,

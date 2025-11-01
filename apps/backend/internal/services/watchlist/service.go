@@ -29,21 +29,10 @@ func NewService(db *pgxpool.Pool, logger zerolog.Logger) Service {
 }
 
 func (s *service) CreateWatchlist(ctx context.Context, params repository.CreateWatchlistParams) (*repository.Watchlist, error) {
-	tx, err := s.db.Begin(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback(ctx)
-
-	qtx := repository.New(tx)
-
-	watchlist, err := qtx.CreateWatchlist(ctx, params)
+	q := repository.New(s.db)
+	watchlist, err := q.CreateWatchlist(ctx, params)
 	if err != nil {
 		return nil, err
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		return nil, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return watchlist, nil

@@ -12,9 +12,12 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@dexion/ui/components",
-    "ui": "@dexion/ui/components/ui",
     "utils": "@dexion/ui/lib/utils",
+    "ui": "@dexion/ui/components/ui",
     "lib": "@dexion/ui/lib",
     "hooks": "@dexion/ui/hooks"
+  },
+  "registries": {
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
   }
 }

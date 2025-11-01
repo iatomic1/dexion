@@ -26,7 +26,7 @@ import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { cn } from "@dexion/ui/lib/utils";
-import { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
+import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { EllipsisIcon, TrendingDown, TrendingUp } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { deleteAlertAction } from "~/app/actions/price-alert-actions";
@@ -134,7 +134,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 		},
 	},
 	{
-		header: "Condtion",
+		header: "Condition",
 		accessorKey: "condition",
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">

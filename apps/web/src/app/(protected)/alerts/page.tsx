@@ -67,7 +67,6 @@ async function AlertsPage(props: { session: Session }) {
 			</div>
 		);
 	}
-	console.log(data.alerts);
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -90,13 +89,6 @@ async function AlertsPage(props: { session: Session }) {
 				availableUserChannels={data?.userChannels.data ?? null}
 				webhookConfig={data?.webhookConfig?.data ?? null}
 			/>
-
-			{/*<AlertsManager
-				alerts={data?.alerts?.data ?? []}
-				channels={data?.channels?.data ?? []}
-				availableUserChannels={data?.userChannels.data ?? null}
-				webhookConfig={data?.webhookConfig?.data ?? null}
-			/>*/}
 		</div>
 	);
 }

@@ -7,6 +7,7 @@ import {
 	type WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
 import { SOCIALS } from "@dexion/shared";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	ColumnFiltersState,
 	getCoreRowModel,
@@ -56,11 +57,12 @@ export default function AlertsManager({
 	]);
 
 	const handleDeleteRows = () => {
-		const selectedRows = table.getSelectedRowModel().rows;
-		const updatedData = data.filter(
-			(item) => !selectedRows.some((row) => row.original.id === item.id),
-		);
-		table.resetRowSelection();
+		toast.info("Not implemented yet");
+		// const selectedRows = table.getSelectedRowModel().rows;
+		// const updatedData = data.filter(
+		// 	(item) => !selectedRows.some((row) => row.original.id === item.id),
+		// );
+		// table.resetRowSelection();
 	};
 
 	const table = useReactTable({

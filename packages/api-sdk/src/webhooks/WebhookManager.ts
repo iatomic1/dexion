@@ -1,6 +1,6 @@
+import type { DexionClient } from "../DexionApiSDK";
 import type { ApiResponse, FetchOptions } from "../types/index";
 import type { WebhookConfig } from "./types";
-import type { DexionClient } from "../DexionApiSDK";
 
 export class WebhookManager {
 	constructor(private client: DexionClient) {}

@@ -5,8 +5,8 @@
 import { API_BASE_URL } from "@dexion/shared";
 import { AlertManager } from "./alerts";
 import {
-	DexionError,
 	type DexionConfig,
+	DexionError,
 	type FetchOptions,
 	type ServiceType,
 } from "./types";

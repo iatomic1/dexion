@@ -1,16 +1,15 @@
+import type { DexionClient } from "../DexionApiSDK";
 import {
-	DexionError,
 	type ApiResponse,
+	DexionError,
 	type FetchOptions,
 } from "../types/index";
-
 import type {
 	AddWalletInput,
 	RemoveWalletInput,
 	UpdateWalletInput,
 	UserWallet,
 } from "./types";
-import type { DexionClient } from "../DexionApiSDK";
 
 export class WalletManager {
 	constructor(private client: DexionClient) {}

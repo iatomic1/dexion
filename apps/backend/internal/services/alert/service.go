@@ -3,9 +3,11 @@ package alert
 import (
 	"backend/internal/db/repository"
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -85,22 +87,14 @@ func (s *service) DeleteAlert(ctx context.Context, id uuid.UUID, userID string) 
 
 	qtx := repository.New(tx)
 
-	exists, err := qtx.HasAlert(ctx, repository.HasAlertParams{
-		ID:     id,
-		UserID: userID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, fmt.Errorf("alert not found")
-	}
-
 	alert, err := qtx.DeleteAlert(ctx, repository.DeleteAlertParams{
 		ID:     id,
 		UserID: userID,
 	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("alert not found")
+		}
 		return nil, err
 	}
 

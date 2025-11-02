@@ -24,8 +24,8 @@ COPY --chown=appuser:appgroup packages/shared ./packages/shared
 COPY --chown=appuser:appgroup packages/tokens ./packages/tokens
 COPY --chown=appuser:appgroup packages/typescript-config ./packages/typescript-config
 
-# Copy dex-monitor package.json for dependency resolution
-COPY --chown=appuser:appgroup apps/dex-monitor/package.json ./apps/dex-monitor/
+# Copy hub package.json for dependency resolution
+COPY --chown=appuser:appgroup apps/hub/package.json ./apps/hub/
 
 # Install all dependencies
 RUN bun install --frozen-lockfile
@@ -43,8 +43,8 @@ COPY --from=deps --chown=appuser:appgroup /app/packages ./packages
 # Copy package files
 COPY --chown=appuser:appgroup package.json bun.lockb* ./
 
-# Copy dex-monitor source
-COPY --chown=appuser:appgroup apps/dex-monitor ./apps/dex-monitor
+# Copy hub source
+COPY --chown=appuser:appgroup apps/hub ./apps/hub
 
 # Prune dev dependencies
 RUN bun install --frozen-lockfile --production
@@ -61,7 +61,7 @@ ENV NODE_ENV=production \
 # Copy production dependencies
 COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appgroup /app/packages ./packages
-COPY --from=builder --chown=appuser:appgroup /app/apps/dex-monitor ./apps/dex-monitor
+COPY --from=builder --chown=appuser:appgroup /app/apps/hub ./apps/hub
 COPY --from=builder --chown=appuser:appgroup /app/package.json ./
 
 USER appuser
@@ -71,4 +71,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --quiet --spider http://localhost:3000/healthz || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "apps/dex-monitor/src/index.ts"]
+CMD ["bun", "run", "apps/hub/src/index.ts"]

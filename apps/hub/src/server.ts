@@ -77,6 +77,20 @@ export class TokenWatcherServer {
 				"Content-Type": "text/plain",
 			}),
 		);
+
+		this.app.get("/healthz", async (c) => {
+			try {
+				const redisStatus = await redisClient.ping();
+				if (redisStatus === "PONG") {
+					return c.json({ status: "ok", redis: "ok" });
+				}
+				return c.json({ status: "error", redis: "fail" }, 503);
+			} catch (e) {
+				console.error("Health check failed", e);
+				return c.json({ status: "error", redis: "fail" }, 503);
+			}
+		});
+
 		this.app.route("/", routes);
 		this.app.all("*", (c) => c.notFound());
 	}

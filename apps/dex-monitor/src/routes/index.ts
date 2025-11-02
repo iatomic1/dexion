@@ -1,17 +1,20 @@
 import { HonoAdapter } from "@bull-board/hono";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
+import { basicAuth } from "hono/basic-auth";
+import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { setupBullBoard } from "@/config/bullmq";
 import emailWorker from "@/workers/email-worker";
 import swapEventsWorker from "@/workers/swap-events-worker";
 import telegramWorker from "@/workers/telegram-worker";
 import webhookWorker from "@/workers/webhook-worker";
+import health from "./health";
 import webhooks from "./webhooks";
 
 export const createApp = () => {
 	const app = new Hono();
-	// app.use(logger());
+	if (process.env.NODE_ENV === "production") app.use(logger());
 	app.use(prettyJSON());
 	if (!swapEventsWorker.isRunning()) swapEventsWorker.run();
 	if (!emailWorker.isRunning()) emailWorker.run();
@@ -22,8 +25,18 @@ export const createApp = () => {
 	bullBoardServerAdapter.setBasePath("/ui");
 
 	const lll = setupBullBoard(bullBoardServerAdapter);
+
+	app.use(
+		"/ui/*",
+		basicAuth({
+			username: "atomic",
+			password: "atomic",
+		}),
+	);
+
 	app.route("/ui", bullBoardServerAdapter.registerPlugin());
 
 	app.route("/webhooks", webhooks);
+	app.route("/", health);
 	return app;
 };

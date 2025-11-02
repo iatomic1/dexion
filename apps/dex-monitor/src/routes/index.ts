@@ -29,8 +29,8 @@ export const createApp = () => {
 	app.use(
 		"/ui/*",
 		basicAuth({
-			username: "atomic",
-			password: "atomic",
+			username: process.env.BULLBOARD_USERNAME!,
+			password: process.env.BULLBOARD_PASSWORD!,
 		}),
 	);
 

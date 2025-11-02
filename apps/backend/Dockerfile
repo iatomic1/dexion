@@ -1,25 +1,49 @@
-
-# Stage 1: Build
-FROM golang:1.24 AS builder
+# ============================
+# Stage 1 - Builder
+# ============================
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
+# Dependencies and timezone
+RUN apk add --no-cache git tzdata ca-certificates
+
+# Cache modules
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy entire source
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o out ./cmd/server
+# Build binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
 
-# Stage 2: Run
-FROM debian:bookworm-slim
+# ============================
+# Stage 2 - Runtime
+# ============================
+FROM alpine:3.20
 
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-WORKDIR /root/
+RUN apk add --no-cache ca-certificates tzdata dumb-init
 
-COPY --from=builder /app/out ./out
+# Copy built binary
+COPY --from=builder /app/server .
+
+# Optional: copy migrations or config if used at runtime
+COPY --from=builder /app/internal/db/migrations ./migrations
+COPY --from=builder /app/config ./config
+
+# Env vars
+ENV PORT=8080 \
+    GIN_MODE=release \
+    TZ=UTC
 
 EXPOSE 8080
 
-CMD ["./out"]
+# Security: non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["./server"]

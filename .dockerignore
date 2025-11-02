@@ -47,7 +47,6 @@ Thumbs.db
 **/temp
 
 # Exclude apps we're not deploying
-apps/backend
 apps/dex-bot
 apps/docs
 apps/partykit

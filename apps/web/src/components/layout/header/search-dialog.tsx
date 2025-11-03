@@ -367,7 +367,7 @@ const HistoryItem = ({
 								</Tooltip>
 							</div>
 							<div className="flex gap-3">
-								<span className="text-sm">3d</span>
+								{/*<span className="text-sm">3d</span>*/}
 							</div>
 						</div>
 					</div>

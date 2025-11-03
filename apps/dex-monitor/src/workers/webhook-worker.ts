@@ -3,31 +3,10 @@ import { Job, Worker } from "bullmq";
 import { config } from "@/config";
 import { logger } from "@/config/logger";
 import { bullMqRedisConnection } from "@/config/redis";
+import { updateWebhookStatus } from "@/lib/api";
 import { webhookQueue, webhookQueueDlq } from "@/queues";
 import type { SendWebhookAlertJobData } from "@/queues/types";
 import { decryptToken } from "@/utils/crypto";
-
-async function updateWebhookStatus(userId: string, status: string) {
-	try {
-		const res = await fetch(`${API_BASE_URL}webhooks/status`, {
-			method: "PATCH",
-			headers: {
-				"Content-Type": "application/json",
-				"X-Internal-Secret": config.INTERNAL_SECRET,
-			},
-			body: JSON.stringify({ user_id: userId, status }),
-		});
-
-		if (!res.ok) {
-			const text = await res.text();
-			throw new Error(`Failed to update webhook status: ${res.status} ${text}`);
-		}
-
-		logger.info({ userId, status }, "Webhook status updated");
-	} catch (err) {
-		logger.error(err, "Failed to call UpdateWebhookStatus");
-	}
-}
 
 const webhookWorker = new Worker(
 	webhookQueue.name,

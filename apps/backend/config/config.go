@@ -7,16 +7,14 @@ import (
 )
 
 type Config struct {
-	AccessJwtKey string `mapstructure:"ACCESS_JWT_KEY"`
-	Environment  string `mapstructure:"ENVIROMENT"`
-	DbType       string `mapstructure:"DB_TYPE"`
-	ApiPrefixStr string `mapstructure:"API_V1_PREFIX_STRING"`
-	DbURL        string `mapstructure:"DB_URL"`
-	HttpAddress  string `mapstructure:"HTTP_SERVER_ADDRESS"`
-	Host         string `mapstructure:"HOST"`
-	CoudinaryURL string `mapstructure:"CLOUDINARY_URL"`
-	FrontendURL  string `mapstructure:"FRONTEND_URL"`
-	RdbURL       string `mapstructure:"REDIS_URL"`
+	Environment    string `mapstructure:"ENVIROMENT"`
+	ApiPrefixStr   string `mapstructure:"API_V1_PREFIX_STRING"`
+	DbURL          string `mapstructure:"DB_URL"`
+	HttpAddress    string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	Host           string `mapstructure:"HOST"`
+	FrontendURL    string `mapstructure:"FRONTEND_URL"`
+	RdbURL         string `mapstructure:"REDIS_URL"`
+	InternalSecret string `mapstructure:"INTERNAL_SECRET"`
 	// AllowedOrigins specifies the list of allowed origins for CORS configuration.
 	// Expected format: comma-separated list of origins (e.g., "https://example.com,https://another.com").
 	// Used to configure CORS middleware to restrict cross-origin requests.
@@ -51,14 +49,8 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 
 	// String variables
 
-	if val := os.Getenv("ACCESS_JWT_KEY"); val != "" {
-		cfg.AccessJwtKey = val
-	}
 	if val := os.Getenv("ENVIROMENT"); val != "" {
 		cfg.Environment = val
-	}
-	if val := os.Getenv("DB_TYPE"); val != "" {
-		cfg.DbType = val
 	}
 
 	if val := os.Getenv("API_V1_PREFIX_STRING"); val != "" {
@@ -74,9 +66,7 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 	if val := os.Getenv("HOST"); val != "" {
 		cfg.Host = val
 	}
-	if val := os.Getenv("CLOUDINARY_URL"); val != "" {
-		cfg.CoudinaryURL = val
-	}
+
 	if val := os.Getenv("FRONTEND_URL"); val != "" {
 		cfg.FrontendURL = val
 	}
@@ -86,6 +76,9 @@ func LoadEnvironmentVariables(p string, env string) (*Config, error) {
 	}
 	if val := os.Getenv("ALLOWED_ORIGINS"); val != "" {
 		cfg.AllowedOrigins = val
+	}
+	if val := os.Getenv("INTERNAL_SECRET"); val != "" {
+		cfg.InternalSecret = val
 	}
 
 	return cfg, nil

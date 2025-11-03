@@ -39,11 +39,6 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 	const BOT_USERNAME = "dexionpro_bot";
 
 	useEffect(() => {
-		console.log(user, "user");
-	}, [user]);
-
-	// 🔗 Initialize Telegram widget when dialog opens
-	useEffect(() => {
 		if (isDialogOpen && !isLinking && linkStep === "link") {
 			const initWidget = async () => {
 				setIsLinking(true);

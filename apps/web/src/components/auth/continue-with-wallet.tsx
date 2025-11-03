@@ -27,7 +27,7 @@ export default function ContinueWithWallet() {
 				disconnect();
 			}
 
-			const connectionResult = await connect();
+			const connectionResult = await connect({ network: "mainnet" });
 			if (!isConnected()) {
 				toast.error("Failed to connect to wallet");
 				return;

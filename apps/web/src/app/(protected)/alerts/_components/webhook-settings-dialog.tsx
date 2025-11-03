@@ -171,7 +171,12 @@ export function WebhookSettingsDialog({
 									<Input
 										{...field}
 										id="webhook_url"
-										type="url"
+										type="text"
+										inputMode="url"
+										autoComplete="off"
+										autoCorrect="off"
+										autoCapitalize="none"
+										spellCheck={false}
 										placeholder="https://your-api.com/webhook"
 										className="font-mono text-sm"
 									/>
@@ -197,6 +202,10 @@ export function WebhookSettingsDialog({
 										{...field}
 										id="bearer_token"
 										type="password"
+										autoComplete="off"
+										autoCorrect="off"
+										autoCapitalize="none"
+										spellCheck={false}
 										placeholder="Your authentication token"
 										className="font-mono text-sm"
 									/>

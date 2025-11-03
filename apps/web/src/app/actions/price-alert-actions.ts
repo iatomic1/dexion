@@ -34,6 +34,23 @@ export const updateAlertAction = authenticatedAction
 		return alert;
 	});
 
+export const pauseAlertAction = authenticatedAction
+	.inputSchema(
+		z.object({
+			id: z.string(),
+		}),
+	)
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
+		const sdk = createServerSDK(user.accessToken, user.userId);
+		const alert = await sdk.alerts.pauseAlert(input);
+
+		if (alert.status === "OK") {
+			revalidateTagServer(`user-alerts-${user.userId}`);
+		}
+
+		return alert;
+	});
+
 export const deleteAlertAction = authenticatedAction
 	.inputSchema(
 		z.object({
@@ -44,6 +61,26 @@ export const deleteAlertAction = authenticatedAction
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const res = await sdk.alerts.removeAlert({ id: input.id });
+
+			revalidateTagServer(`user-alerts-${user.userId}`);
+			return res;
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) throw err;
+			throw new Error("An unknown error occurred");
+		}
+	});
+
+export const deleteAlertsAction = authenticatedAction
+	.inputSchema(
+		z.object({
+			ids: z.string().array(),
+		}),
+	)
+	.action(async ({ parsedInput: input, ctx: { user } }) => {
+		try {
+			const sdk = createServerSDK(user.accessToken, user.userId);
+			const res = await sdk.alerts.deleteAlerts({ ids: input.ids });
 
 			revalidateTagServer(`user-alerts-${user.userId}`);
 			return res;

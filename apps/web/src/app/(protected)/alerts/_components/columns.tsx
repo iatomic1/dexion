@@ -29,7 +29,10 @@ import { cn } from "@dexion/ui/lib/utils";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { EllipsisIcon, TrendingDown, TrendingUp } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { deleteAlertAction } from "~/app/actions/price-alert-actions";
+import {
+	deleteAlertAction,
+	pauseAlertAction,
+} from "~/app/actions/price-alert-actions";
 import { truncateString } from "~/lib/helpers/strings";
 import { AlertDialog as UserAlertDialog } from "./alert-dialog";
 
@@ -138,6 +141,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 		accessorKey: "condition",
 		cell: ({ row }) => (
 			<div className="flex items-center gap-2">
+				<span className="text-sm capitalize">{row.original.metric}</span>
 				<Badge variant="outline" className="gap-1 font-mono text-xs">
 					{getConditionIcon(row.original.operator)}
 					{row.original.operator} {row.original.value.toLocaleString()}
@@ -149,17 +153,26 @@ export const columns: ColumnDef<UserAlert>[] = [
 	{
 		header: "Status",
 		accessorKey: "status",
-		cell: ({ row }) => (
-			<Badge
-				className={cn(
-					row.getValue("status") === "Inactive" &&
-						"bg-muted-foreground/60 text-primary-foreground",
-					"capitalize",
-				)}
-			>
-				{row.getValue("status")}
-			</Badge>
-		),
+		cell: ({ row }) => {
+			const statusStyles: Record<string, string> = {
+				active: "bg-primary text-primary-foreground",
+				paused: "bg-yellow-500/20 text-yellow-700",
+				completed: "bg-green-500/20 text-green-700",
+			};
+			const value = row.getValue("status") as string;
+
+			return (
+				<Badge
+					className={cn(
+						statusStyles[value?.toLowerCase()] ??
+							"bg-muted-foreground/60 text-primary-foreground",
+						"capitalize",
+					)}
+				>
+					{value}
+				</Badge>
+			);
+		},
 		size: 100,
 		filterFn: statusFilterFn,
 	},
@@ -240,6 +253,22 @@ function RowActions({
 		},
 	);
 
+	const { execute: executePauseAlert, status: pauseStatus } = useAction(
+		pauseAlertAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Alert paused successfully");
+				} else {
+					toast.error(data.data?.message || "Failed to pause alert");
+				}
+			},
+			onError: (error) => {
+				toast.error((error as any).serverError || "Failed to pause alert");
+			},
+		},
+	);
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -267,8 +296,15 @@ function RowActions({
 						</DropdownMenuItem>
 					</UserAlertDialog>
 
-					<DropdownMenuItem>
-						<span>Pause</span>
+					<DropdownMenuItem
+						onClick={(e) => {
+							e.preventDefault();
+							executePauseAlert({ id: alert.id });
+						}}
+						disabled={pauseStatus === "executing"}
+					>
+						{pauseStatus === "executing" && <Spinner />}
+						<span>{pauseStatus === "executing" ? "Pausing" : "Pause"}</span>
 						<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>

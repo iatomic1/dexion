@@ -2,6 +2,7 @@ import { getTokenMetadata } from "@dexion/tokens/services";
 import { type BackoffOptions, Job, Queue, Worker } from "bullmq";
 import { logger } from "@/config/logger";
 import { bullMqRedisConnection } from "@/config/redis";
+import { updateAlertStatus } from "@/lib/api";
 import { ALERT_CHANNELS } from "@/lib/constants";
 import { getActiveAlertsByCa } from "@/lib/redis/alerts";
 import { getCachedUserProfile } from "@/lib/redis/user-profile";
@@ -145,7 +146,11 @@ const swapEventsWorker = new Worker(
 									{ jobId: job.id, alertId: alert.id },
 									"Non-repeatable alert, marking for completion",
 								);
-								// TODO: Mark alert as completed or delete from cache
+								await updateAlertStatus({
+									id: alert.id,
+									status: "completed",
+									userId: alert.userId,
+								});
 							}
 						}),
 					);

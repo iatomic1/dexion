@@ -16,7 +16,9 @@ import (
 type Service interface {
 	CreateAlert(ctx context.Context, params repository.CreateAlertParams, channels []string) (*repository.Alert, error)
 	DeleteAlert(ctx context.Context, id uuid.UUID, userID string) (*repository.Alert, error)
+	DeleteAlerts(ctx context.Context, ids []uuid.UUID, userID string) ([]*repository.Alert, error)
 	UpdateAlert(ctx context.Context, params repository.UpdateAlertParams, channels []uuid.UUID) (*repository.Alert, error)
+	UpdateAlertStatus(ctx context.Context, alertID uuid.UUID, userID string, status string) (*repository.Alert, error)
 	GetUserAlerts(ctx context.Context, userID string) ([]*repository.GetUserAlertsRow, error)
 	GetAlertByID(ctx context.Context, id uuid.UUID, userID string) (*repository.Alert, error)
 	GetUserChannelsFromCache(ctx context.Context, userID string) (map[string]string, error)
@@ -105,6 +107,14 @@ func (s *service) DeleteAlert(ctx context.Context, id uuid.UUID, userID string) 
 	return alert, nil
 }
 
+func (s *service) DeleteAlerts(ctx context.Context, ids []uuid.UUID, userID string) ([]*repository.Alert, error) {
+	repo := repository.New(s.db)
+	return repo.DeleteAlerts(ctx, repository.DeleteAlertsParams{
+		Ids:    ids,
+		UserID: userID,
+	})
+}
+
 func (s *service) UpdateAlert(ctx context.Context, params repository.UpdateAlertParams, channels []uuid.UUID) (*repository.Alert, error) {
 	tx, err := s.db.Begin(ctx)
 	if err != nil {
@@ -149,6 +159,15 @@ func (s *service) GetAlertByID(ctx context.Context, id uuid.UUID, userID string)
 	return repo.GetAlertById(ctx, repository.GetAlertByIdParams{
 		ID:     id,
 		UserID: userID,
+	})
+}
+
+func (s *service) UpdateAlertStatus(ctx context.Context, alertID uuid.UUID, userID string, status string) (*repository.Alert, error) {
+	repo := repository.New(s.db)
+	return repo.UpdateAlertStatus(ctx, repository.UpdateAlertStatusParams{
+		ID:     alertID,
+		UserID: userID,
+		Status: status,
 	})
 }
 

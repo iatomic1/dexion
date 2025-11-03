@@ -157,3 +157,18 @@ WHERE metric = $1 AND status = 'active';
 SELECT id, name, description, created_at
 FROM channels
 ORDER BY name;
+
+-- name: UpdateAlertStatus :one
+UPDATE alerts
+SET
+    status = COALESCE(sqlc.arg('status'), status),
+    updated_at = now()
+WHERE id = sqlc.arg('id') AND user_id = sqlc.arg('user_id')
+RETURNING *;
+
+
+-- name: DeleteAlerts :many
+DELETE FROM alerts
+WHERE id = ANY(sqlc.arg(ids))
+  AND user_id = sqlc.arg(user_id)
+RETURNING *;

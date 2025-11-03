@@ -21,6 +21,7 @@ type Querier interface {
 	CreateWebhookConfig(ctx context.Context, arg CreateWebhookConfigParams) (*WebhookConfig, error)
 	DeleteAlert(ctx context.Context, arg DeleteAlertParams) (*Alert, error)
 	DeleteAlertChannels(ctx context.Context, alertID uuid.UUID) error
+	DeleteAlerts(ctx context.Context, arg DeleteAlertsParams) ([]*Alert, error)
 	DeleteAllInactiveAlerts(ctx context.Context, userID string) error
 	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	DeleteWebhookConfig(ctx context.Context, userID string) error
@@ -52,6 +53,7 @@ type Querier interface {
 	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
 	UntrackWalletTelegram(ctx context.Context, arg UntrackWalletTelegramParams) error
 	UpdateAlert(ctx context.Context, arg UpdateAlertParams) (*Alert, error)
+	UpdateAlertStatus(ctx context.Context, arg UpdateAlertStatusParams) (*Alert, error)
 	// 👇 force dependency on inserted
 	UpdateAlertWithChannels(ctx context.Context, arg UpdateAlertWithChannelsParams) (*UpdateAlertWithChannelsRow, error)
 	UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error)

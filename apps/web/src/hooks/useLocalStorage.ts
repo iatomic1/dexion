@@ -1,3 +1,4 @@
+"use client";
 import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -70,20 +71,17 @@ export default function useLocalStorage<T>(
 
 	// Get from local storage then
 	// parse stored json or return initialValue
+
 	const readValue = useCallback((): T => {
 		const initialValueToUse =
 			initialValue instanceof Function ? initialValue() : initialValue;
 
-		// Prevent build error "window is undefined" but keep working
-		if (IS_SERVER) {
-			return initialValueToUse;
-		}
+		if (IS_SERVER) return initialValueToUse;
 
 		try {
 			const raw = window.localStorage.getItem(key);
 			return raw ? deserializer(raw) : initialValueToUse;
-		} catch (error) {
-			console.warn(`Error reading localStorage key “${key}”:`, error);
+		} catch {
 			return initialValueToUse;
 		}
 	}, [initialValue, key, deserializer]);
@@ -98,26 +96,17 @@ export default function useLocalStorage<T>(
 
 	// Return a wrapped version of useState's setter function that ...
 	// ... persists the new value to localStorage.
+
 	const setValue: Dispatch<SetStateAction<T>> = useCallback(
 		(value) => {
-			// Prevent build error "window is undefined" but keeps working
-			if (IS_SERVER) {
-				console.warn(
-					`Tried setting localStorage key “${key}” even though environment is not a client`,
-				);
-			}
+			if (IS_SERVER) return; // ✅ don't run anything on server
 
 			try {
-				// Allow value to be a function so we have the same API as useState
 				const newValue = value instanceof Function ? value(readValue()) : value;
 
-				// Save to local storage
 				window.localStorage.setItem(key, serializer(newValue));
-
-				// Save state
 				setStoredValue(newValue);
 
-				// We dispatch a custom event so every similar useLocalStorage hook is notified
 				window.dispatchEvent(new StorageEvent("local-storage", { key }));
 			} catch (error) {
 				console.warn(`Error setting localStorage key “${key}”:`, error);
@@ -127,25 +116,16 @@ export default function useLocalStorage<T>(
 	);
 
 	const removeValue = useCallback(() => {
-		// Prevent build error "window is undefined" but keeps working
-		if (IS_SERVER) {
-			console.warn(
-				`Tried removing localStorage key “${key}” even though environment is not a client`,
-			);
-		}
+		if (IS_SERVER) return; // ✅ no server access
 
 		const defaultValue =
 			initialValue instanceof Function ? initialValue() : initialValue;
 
-		// Remove the key from local storage
 		window.localStorage.removeItem(key);
-
-		// Save state with default value
 		setStoredValue(defaultValue);
 
-		// We dispatch a custom event so every similar useLocalStorage hook is notified
 		window.dispatchEvent(new StorageEvent("local-storage", { key }));
-	}, [key]);
+	}, [key, initialValue]);
 
 	useEffect(() => {
 		setStoredValue(readValue());

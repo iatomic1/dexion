@@ -48,3 +48,41 @@ func (h *WebhookHandler) UpdateWebhookConfig(c *gin.Context, userID string) {
 
 	http.SendSuccess(c, webhookConfig, http.WithMessage("Webhook config updated successfully"))
 }
+
+// UpdateWebhookConfigStatus godoc
+//
+// @Summary        Update webhook configuration status
+// @Description    Update the status of a webhook configuration
+// @Tags           Webhooks
+// @Security       ApiKeyAuth
+// @Accept         json
+// @Produce        json
+// @Param          WebhookRequest    body        repository.UpdateWebhookConfigStatusParams    true    "Webhook configuration status data"
+// @Success        200             {object}    http.Response{data=repository.WebhookConfig}    "Webhook configuration status updated successfully"
+// @Failure        400             {object}    map[string]string                        "Invalid request data"
+// @Failure        404             {object}    map[string]string                        "Webhook configuration not found"
+// @Failure        500             {object}    http.InternalServerErrorResponse        "Internal server error"
+// @Router         /webhooks/status [patch]
+func (h *WebhookHandler) UpdateWebhookConfigStatus(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	var req repository.UpdateWebhookConfigStatusParams
+	if err := c.ShouldBindJSON(&req); err != nil {
+		http.SendValidationError(c, err)
+		return
+	}
+
+	webhookConfig, err := h.webhookService.UpdateWebhookConfigStatus(ctx, req)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.SendNotFound(c, err, http.WithMessage("Webhook configuration not found"))
+			return
+		}
+		http.SendInternalServerError(c, err)
+		return
+	}
+
+	h.cacheWebhookConfig(ctx, webhookConfig)
+
+	http.SendSuccess(c, webhookConfig, http.WithMessage("Webhook config status updated successfully"))
+}

@@ -7,6 +7,7 @@ import {
 import type {
 	AddAlertInput,
 	Channel,
+	DeleteAlerts,
 	RawUserAlert,
 	RemoveAlertInput,
 	UpdateAlertInput,
@@ -56,6 +57,21 @@ export class AlertManager {
 		});
 	}
 
+	async pauseAlert(
+		data: { id: string },
+		options?: FetchOptions,
+	): Promise<ApiResponse<UserAlert>> {
+		const { id } = data;
+		return this.client.fetch<ApiResponse<UserAlert>>(
+			"dexion",
+			`alerts/${id}/pause`,
+			{
+				method: "PATCH",
+				fetchOptions: options,
+			},
+		);
+	}
+
 	async removeAlert(
 		data: RemoveAlertInput,
 		options?: FetchOptions,
@@ -64,6 +80,23 @@ export class AlertManager {
 			method: "DELETE",
 			fetchOptions: options,
 		});
+	}
+
+	async deleteAlerts(
+		data: DeleteAlerts,
+		options?: FetchOptions,
+	): Promise<ApiResponse<{ deleted: number }>> {
+		return this.client.fetch<ApiResponse<{ deleted: number }>>(
+			"dexion",
+			"alerts/delete",
+			{
+				method: "POST",
+				body: {
+					ids: data.ids,
+				},
+				fetchOptions: options,
+			},
+		);
 	}
 
 	async getAlertChannels(

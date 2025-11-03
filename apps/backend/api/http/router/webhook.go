@@ -12,6 +12,13 @@ import (
 func RegisterWebhookRoutes(srv *http.Server, router *gin.RouterGroup) {
 	webhookHandler := webhook.NewWebhookHandler(srv)
 
+	// Internal route for updating status
+	internalWebhookGroup := router.Group("")
+	internalWebhookGroup.Use(middleware.InternalAuthMiddleware(srv.Config))
+	{
+		internalWebhookGroup.PATCH("/status", webhookHandler.UpdateWebhookConfigStatus)
+	}
+
 	webhookGroup := router
 	webhookGroup.Use(middleware.AccessTokenMiddleware(srv.Config))
 	{

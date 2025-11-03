@@ -3,6 +3,7 @@ import {
 	type UserAlertChannels,
 	type WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
+import { HTTP_STATUS } from "@dexion/shared";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -15,33 +16,62 @@ import {
 	AlertDialogTrigger,
 } from "@dexion/ui/components/ui/alert-dialog";
 import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/sonner";
 import { Table } from "@tanstack/react-table";
 import { CircleAlertIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { deleteAlertsAction } from "~/app/actions/price-alert-actions";
 import { AlertDialog as UserAlertDialog } from "../alert-dialog";
 import { WebhookSettingsDialog } from "../webhook-settings-dialog";
 
-interface TableActionsProps<TData> {
+interface TableActionsProps<TData extends { id: string }> {
 	table: Table<TData>;
-	onDeleteRows: () => void;
 	channels: Channel[];
 	webhookConfig: WebhookConfig | null;
 	availableUserChannels: UserAlertChannels;
 }
 
-export function TableActions<TData>({
+export function TableActions<TData extends { id: string }>({
 	table,
-	onDeleteRows,
 	availableUserChannels,
 	channels,
 	webhookConfig,
 }: TableActionsProps<TData>) {
-	const selectedRowsCount = table.getSelectedRowModel().rows.length;
+	const [open, setOpen] = useState(false);
+
+	const selectedRows = table.getSelectedRowModel().rows;
+	const selectedRowsCount = selectedRows.length;
+
+	// ✅ memoize IDs to avoid unnecessary re-renders
+	const selectedRowsAlertsIds = useMemo(
+		() => selectedRows.map((row) => row.original.id),
+		[selectedRows],
+	);
+
+	const { execute: executeDeleteAlerts, status: deleteStatus } = useAction(
+		deleteAlertsAction,
+		{
+			onSuccess: (data) => {
+				if (data.data?.status === HTTP_STATUS.OK) {
+					toast.success("Alerts deleted successfully");
+					setOpen(false); // ✅ manually close dialog
+					table.resetRowSelection(); // ✅ clear selection
+				} else {
+					toast.error(data.data?.message || "Failed to delete alerts");
+				}
+			},
+			onError: (error) => {
+				toast.error((error as any).serverError || "Failed to delete alerts");
+			},
+		},
+	);
 
 	return (
 		<div className="flex items-center gap-3">
 			{/* Delete button */}
 			{selectedRowsCount > 0 && (
-				<AlertDialog>
+				<AlertDialog open={open} onOpenChange={setOpen}>
 					<AlertDialogTrigger asChild>
 						<Button className="ml-auto" variant="outline">
 							<TrashIcon
@@ -73,14 +103,23 @@ export function TableActions<TData>({
 							</AlertDialogHeader>
 						</div>
 						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction onClick={onDeleteRows}>
-								Delete
+							<AlertDialogCancel disabled={deleteStatus === "executing"}>
+								Cancel
+							</AlertDialogCancel>
+							<AlertDialogAction
+								onClick={(e) => {
+									e.preventDefault();
+									executeDeleteAlerts({ ids: selectedRowsAlertsIds });
+								}}
+								disabled={deleteStatus === "executing"}
+							>
+								{deleteStatus === "executing" ? "Deleting..." : "Delete"}
 							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>
 			)}
+
 			<UserAlertDialog
 				alert={null}
 				availableUserChannels={availableUserChannels}
@@ -91,6 +130,7 @@ export function TableActions<TData>({
 					Create Alert
 				</Button>
 			</UserAlertDialog>
+
 			<WebhookSettingsDialog config={webhookConfig}>
 				<Button className="ml-auto" variant="secondary">
 					<PlusIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />

@@ -126,6 +126,49 @@ func (q *Queries) DeleteAlertChannels(ctx context.Context, alertID uuid.UUID) er
 	return err
 }
 
+const deleteAlerts = `-- name: DeleteAlerts :many
+DELETE FROM alerts
+WHERE id = ANY($1)
+  AND user_id = $2
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+`
+
+type DeleteAlertsParams struct {
+	Ids    []uuid.UUID `json:"ids"`
+	UserID string      `json:"userId"`
+}
+
+func (q *Queries) DeleteAlerts(ctx context.Context, arg DeleteAlertsParams) ([]*Alert, error) {
+	rows, err := q.db.Query(ctx, deleteAlerts, arg.Ids, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*Alert
+	for rows.Next() {
+		var i Alert
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Metric,
+			&i.Operator,
+			&i.Value,
+			&i.Ca,
+			&i.Repeatable,
+			&i.Status,
+			&i.UpdatedAt,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const deleteAllInactiveAlerts = `-- name: DeleteAllInactiveAlerts :exec
 DELETE FROM alerts
 WHERE user_id = $1
@@ -409,6 +452,39 @@ func (q *Queries) UpdateAlert(ctx context.Context, arg UpdateAlertParams) (*Aler
 		arg.ID,
 		arg.UserID,
 	)
+	var i Alert
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Metric,
+		&i.Operator,
+		&i.Value,
+		&i.Ca,
+		&i.Repeatable,
+		&i.Status,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return &i, err
+}
+
+const updateAlertStatus = `-- name: UpdateAlertStatus :one
+UPDATE alerts
+SET
+    status = COALESCE($1, status),
+    updated_at = now()
+WHERE id = $2 AND user_id = $3
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+`
+
+type UpdateAlertStatusParams struct {
+	Status string    `binding:"required" json:"status"`
+	ID     uuid.UUID `json:"id"`
+	UserID string    `json:"userId"`
+}
+
+func (q *Queries) UpdateAlertStatus(ctx context.Context, arg UpdateAlertStatusParams) (*Alert, error) {
+	row := q.db.QueryRow(ctx, updateAlertStatus, arg.Status, arg.ID, arg.UserID)
 	var i Alert
 	err := row.Scan(
 		&i.ID,

@@ -4,7 +4,6 @@ const nextConfig = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
-	serverExternalPackages: ["pino", "pino-pretty"],
 	images: {
 		remotePatterns: [
 			{

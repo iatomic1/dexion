@@ -25,6 +25,7 @@ export default function ResetPasswordForm() {
 				},
 				{
 					onSuccess: async () => {
+						setEmail("");
 						toast.info(
 							"If you have an account with us, check your email for a link to reset your password.",
 						);
@@ -40,7 +41,6 @@ export default function ResetPasswordForm() {
 				return;
 			}
 
-			// Explicitly handle successful completion
 			toast.success("Password reset request sent successfully!");
 		} catch (err: unknown) {
 			console.error("Unexpected error:", err);

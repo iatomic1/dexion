@@ -113,19 +113,19 @@ func (q *Queries) UpdateWebhookConfig(ctx context.Context, arg UpdateWebhookConf
 const updateWebhookConfigStatus = `-- name: UpdateWebhookConfigStatus :one
 UPDATE webhook_config
 SET
-    enabled = COALESCE($1, enabled),
+    status = COALESCE($1, status),
     updated_at = now()
 WHERE user_id = $2
 RETURNING id, user_id, webhook_url, bearer_token, enabled, status, updated_at, created_at
 `
 
 type UpdateWebhookConfigStatusParams struct {
-	Enabled *bool  `json:"enabled"`
-	UserID  string `json:"userId"`
+	Status string `json:"status"`
+	UserID string `json:"userId"`
 }
 
 func (q *Queries) UpdateWebhookConfigStatus(ctx context.Context, arg UpdateWebhookConfigStatusParams) (*WebhookConfig, error) {
-	row := q.db.QueryRow(ctx, updateWebhookConfigStatus, arg.Enabled, arg.UserID)
+	row := q.db.QueryRow(ctx, updateWebhookConfigStatus, arg.Status, arg.UserID)
 	var i WebhookConfig
 	err := row.Scan(
 		&i.ID,

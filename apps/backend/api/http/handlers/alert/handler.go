@@ -16,6 +16,10 @@ type AlertHandler struct {
 	alertService alert.Service
 }
 
+type DeleteAlertsResponse struct {
+	deleted int
+}
+
 type AlertChannel struct {
 	ID string `json:"id"`
 }

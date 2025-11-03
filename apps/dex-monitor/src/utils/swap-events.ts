@@ -14,8 +14,6 @@ export function getMetricValue(metric: string, token: TokenMetadata): number {
 
 	return metricMap[metric] ?? 0;
 }
-export const getMetricSign = (metric: string): string =>
-	metric === "holders" ? "" : "$";
 
 export function evaluateAlert(alert: Alert, token: TokenMetadata): boolean {
 	const currentValue = getMetricValue(alert.metric, token);

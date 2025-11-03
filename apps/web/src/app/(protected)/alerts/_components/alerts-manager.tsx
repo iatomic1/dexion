@@ -56,15 +56,6 @@ export default function AlertsManager({
 		},
 	]);
 
-	const handleDeleteRows = () => {
-		toast.info("Not implemented yet");
-		// const selectedRows = table.getSelectedRowModel().rows;
-		// const updatedData = data.filter(
-		// 	(item) => !selectedRows.some((row) => row.original.id === item.id),
-		// );
-		// table.resetRowSelection();
-	};
-
 	const table = useReactTable({
 		data,
 		columns: columns,
@@ -152,7 +143,6 @@ export default function AlertsManager({
 				/>
 				<TableActions
 					table={table}
-					onDeleteRows={handleDeleteRows}
 					availableUserChannels={availableUserChannels}
 					channels={channels}
 					webhookConfig={webhookConfig}
@@ -171,7 +161,7 @@ export default function AlertsManager({
 			<TablePagination table={table} id={id} />
 
 			<p className="mt-4 text-center text-sm text-muted-foreground">
-				Report bugs in the
+				Report bugs in the{" "}
 				<a
 					className="underline hover:text-foreground"
 					href={SOCIALS.DISCORD}

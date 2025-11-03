@@ -15,6 +15,7 @@ type Service interface {
 	CreateWebhookConfig(ctx context.Context, params repository.CreateWebhookConfigParams) (*repository.WebhookConfig, error)
 	GetWebhookConfig(ctx context.Context, userID string) (*repository.WebhookConfig, error)
 	UpdateWebhookConfig(ctx context.Context, params repository.UpdateWebhookConfigParams) (*repository.WebhookConfig, error)
+	UpdateWebhookConfigStatus(ctx context.Context, params repository.UpdateWebhookConfigStatusParams) (*repository.WebhookConfig, error)
 	DeleteWebhookConfig(ctx context.Context, userID string) error
 }
 
@@ -43,6 +44,11 @@ func (s *service) GetWebhookConfig(ctx context.Context, userID string) (*reposit
 func (s *service) UpdateWebhookConfig(ctx context.Context, params repository.UpdateWebhookConfigParams) (*repository.WebhookConfig, error) {
 	q := repository.New(s.db)
 	return q.UpdateWebhookConfig(ctx, params)
+}
+
+func (s *service) UpdateWebhookConfigStatus(ctx context.Context, params repository.UpdateWebhookConfigStatusParams) (*repository.WebhookConfig, error) {
+	q := repository.New(s.db)
+	return q.UpdateWebhookConfigStatus(ctx, params)
 }
 
 func (s *service) DeleteWebhookConfig(ctx context.Context, userID string) error {

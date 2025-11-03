@@ -1,6 +1,7 @@
 import { SOCIALS } from "@dexion/shared";
 import type { TokenMetadata } from "@dexion/tokens/types";
-import { getMetricSign, getMetricValue } from "@/utils/swap-events";
+import { formatNumberByMetric, getMetricSign } from "@/utils/formatters";
+import { getMetricValue } from "@/utils/swap-events";
 import type { Alert } from "@/workers/swap-events-worker";
 
 /*
@@ -53,13 +54,13 @@ export const getAlertHtmlMessage = ({
 	alert: Alert;
 }) => {
 	const metricValueRaw = getMetricValue(alert.metric, token);
-	const metricValue = String(metricValueRaw.toLocaleString());
+	const metricValue = formatNumberByMetric(alert.metric, metricValueRaw);
+	const conditionValue = formatNumberByMetric(alert.metric, alert.value);
 	const repeatable = alert.repeatable ? "Yes" : "No";
 	const tokenName = String(token.name ?? token.symbol ?? "Unknown");
 	const tokenSymbol = String(token.symbol ?? "");
 	const metric = String(alert.metric ?? "");
 	const operator = String(alert.operator ?? "");
-	const value = String(alert.value ?? "");
 	const tokenPage = `https://www.dexion.pro/meme/${encodeURIComponent(
 		token.contract_id ?? "",
 	)}`;
@@ -82,7 +83,7 @@ export const getAlertHtmlMessage = ({
 			escapeHtml(operator) +
 			" " +
 			sign +
-			Code(Number(value).toLocaleString()),
+			Code(conditionValue),
 		"📈 " + Bold("Current Value: ") + sign + Code(metricValue),
 		"🔁 " + Bold("Repeatable: ") + escapeHtml(repeatable),
 	].join("\n\n");

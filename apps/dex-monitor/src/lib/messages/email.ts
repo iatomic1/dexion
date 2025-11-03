@@ -1,4 +1,5 @@
 import type { TokenMetadata } from "@dexion/tokens/types";
+import { formatNumberByMetric, getMetricSign } from "@/utils/formatters";
 import { getMetricValue } from "@/utils/swap-events";
 import type { Alert } from "@/workers/swap-events-worker";
 
@@ -9,6 +10,17 @@ export const getAlertEmail = ({
 	token: TokenMetadata;
 	alert: Alert;
 }) => {
+	const metricValueRaw = getMetricValue(alert.metric, token);
+	const formattedCurrentValue = formatNumberByMetric(
+		alert.metric,
+		metricValueRaw,
+	);
+	const formattedConditionValue = formatNumberByMetric(
+		alert.metric,
+		alert.value,
+	);
+	const sign = getMetricSign(alert.metric);
+
 	return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
   <html dir="ltr" lang="en">
     <head>
@@ -106,15 +118,14 @@ export const getAlertEmail = ({
                                   style="margin-bottom:8px;margin-top:8px;padding-left:6px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale">
                                   <p
                                     style="font-size:15px;line-height:26.25px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#374151;margin:0 0 0px 0;margin-top:0;margin-right:0;margin-bottom:0px;margin-left:0">
-                                    <strong>Condition Set:</strong> ${alert.operator} ${alert.value}
-                                    $100
+                                    <strong>Condition Set:</strong> ${alert.operator} ${sign}${formattedConditionValue}
                                   </p>
                                 </li>
                                 <li
                                   style="margin-bottom:8px;margin-top:8px;padding-left:6px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale">
                                   <p
                                     style="font-size:15px;line-height:26.25px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#374151;margin:0 0 0px 0;margin-top:0;margin-right:0;margin-bottom:0px;margin-left:0">
-                                    <strong>Current Value:</strong> ${getMetricValue(alert.metric, token)}
+                                    <strong>Current Value:</strong> ${sign}${formattedCurrentValue}
                                   </p>
                                 </li>
                                 <li

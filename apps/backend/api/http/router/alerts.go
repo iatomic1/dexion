@@ -12,7 +12,13 @@ import (
 func RegisterAlertRoutes(srv *http.Server, router *gin.RouterGroup) {
 	alertHandler := alerts.NewAlertHandler(srv)
 
-	// Protected wallet routes requiring authentication
+	// Internal route for updating status
+	internalAlertGroup := router.Group("")
+	internalAlertGroup.Use(middleware.InternalAuthMiddleware(srv.Config))
+	{
+		internalAlertGroup.PATCH("/status", alertHandler.UpdateAlertStatus)
+	}
+
 	alertGroup := router
 	alertGroup.GET("/channels/all", alertHandler.GetAllChannels)
 
@@ -24,5 +30,7 @@ func RegisterAlertRoutes(srv *http.Server, router *gin.RouterGroup) {
 		alertGroup.GET("/:id", handlers.WithUser(alertHandler.GetAlertByID))
 		alertGroup.DELETE("/:id", handlers.WithUser(alertHandler.DeleteAlert))
 		alertGroup.PATCH("/:id", handlers.WithUser(alertHandler.UpdateAlert))
+		alertGroup.PATCH("/:id/pause", handlers.WithUser(alertHandler.PauseAlert))
+		alertGroup.POST("/delete", handlers.WithUser(alertHandler.DeleteAlerts))
 	}
 }

@@ -1,6 +1,5 @@
 import {
 	CHAINHOOKS_BASE_URL,
-	type Chainhook,
 	ChainhooksClient,
 	type PaginatedChainhookResponse,
 } from "@hirosystems/chainhooks-client";
@@ -21,8 +20,9 @@ const CHAINHOOK_OPTIONS = {
 };
 const WEBHOOK_BASE_URL =
 	"https://unhuntable-kristofer-unresident.ngrok-free.dev/webhooks/swaps/";
+const PROD_WEBHOOK_BASE_URL = "https://dexmonitor.dexion.pro/webhooks/swaps/";
 
-const registerSwapChainhooks = async () => {
+const registerSwapChainhooks = async (WEBHOOK_BASE_URL: string) => {
 	try {
 		const velarChainhook = await client.registerChainhook({
 			version: "1",
@@ -77,7 +77,7 @@ const registerSwapChainhooks = async () => {
 		logger.error(err, "Failed to register swap chainhooks:");
 	}
 };
-// await registerSwapChainhooks();
+await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
 
 const updateChainhookWebhookURL = async (
 	chainhooks: PaginatedChainhookResponse,
@@ -97,5 +97,5 @@ const updateChainhookWebhookURL = async (
 // await client.deleteChainhook("77cfa8d1-b9b0-4503-966d-3685de4e173c");
 const chainhooks2 = await client.getChainhooks();
 
-await updateChainhookWebhookURL(chainhooks2);
+// await updateChainhookWebhookURL(chainhooks2);
 logger.info(chainhooks2, "Chainhooks updated:");

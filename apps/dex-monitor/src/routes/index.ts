@@ -4,7 +4,9 @@ import { Hono } from "hono";
 import { basicAuth } from "hono/basic-auth";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { config } from "@/config";
 import { setupBullBoard } from "@/config/bullmq";
+import { configSchema } from "@/config/schema";
 import emailWorker from "@/workers/email-worker";
 import swapEventsWorker from "@/workers/swap-events-worker";
 import telegramWorker from "@/workers/telegram-worker";
@@ -29,8 +31,8 @@ export const createApp = () => {
 	app.use(
 		"/ui/*",
 		basicAuth({
-			username: process.env.BULLBOARD_USERNAME!,
-			password: process.env.BULLBOARD_PASSWORD!,
+			username: config.BULLBOARD_USERNAME,
+			password: config.BULLBOARD_PASSWORD,
 		}),
 	);
 

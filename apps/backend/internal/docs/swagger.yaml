@@ -26,6 +26,13 @@ definitions:
     - repeatable
     - value
     type: object
+  api_http_handlers_alert.DeleteAlertsRequest:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
   api_http_handlers_alert.UserChannelsResponse:
     properties:
       email:
@@ -173,6 +180,17 @@ definitions:
       walletAddress:
         type: string
     type: object
+  backend_internal_db_repository.UpdateAlertStatusParams:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+      userId:
+        type: string
+    required:
+    - status
+    type: object
   backend_internal_db_repository.UpdateAlertWithChannelsParams:
     properties:
       alertId:
@@ -244,6 +262,13 @@ definitions:
       userId:
         type: string
       webhookUrl:
+        type: string
+    type: object
+  backend_internal_db_repository.UpdateWebhookConfigStatusParams:
+    properties:
+      status:
+        type: string
+      userId:
         type: string
     type: object
   backend_internal_db_repository.UpsertTelegramUserWalletParams:
@@ -575,6 +600,50 @@ paths:
       summary: Update an existing alert
       tags:
       - Alerts
+  /alerts/{id}/pause:
+    patch:
+      consumes:
+      - application/json
+      description: Pause an alert belonging to the authenticated user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert paused successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.Alert'
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Pause an existing alert
+      tags:
+      - Alerts
   /alerts/channels:
     get:
       consumes:
@@ -639,6 +708,89 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Retrieve all channels
+      tags:
+      - Alerts
+  /alerts/delete:
+    post:
+      consumes:
+      - application/json
+      description: Remove multiple alerts belonging to the authenticated user
+      parameters:
+      - description: Alert IDs (UUIDs)
+        in: body
+        name: ids
+        required: true
+        schema:
+          $ref: '#/definitions/api_http_handlers_alert.DeleteAlertsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alerts deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete multiple alerts
+      tags:
+      - Alerts
+  /alerts/status:
+    patch:
+      consumes:
+      - application/json
+      description: Update the status of an alert
+      parameters:
+      - description: Alert update data
+        in: body
+        name: Alert
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateAlertStatusParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.Alert'
+              type: object
+        "400":
+          description: Invalid UUID format or request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing alert status
       tags:
       - Alerts
   /wallets:
@@ -1234,6 +1386,51 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update webhook configuration
+      tags:
+      - Webhooks
+  /webhooks/status:
+    patch:
+      consumes:
+      - application/json
+      description: Update the status of a webhook configuration
+      parameters:
+      - description: Webhook configuration status data
+        in: body
+        name: WebhookRequest
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateWebhookConfigStatusParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook configuration status updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Webhook configuration not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update webhook configuration status
       tags:
       - Webhooks
 schemes:

@@ -1,19 +1,18 @@
 # ============================
 # Stage 1 - Builder
 # ============================
-FROM golang:1.23-alpine AS builder
-
+FROM golang:1.24-alpine AS builder
 WORKDIR /app
 
 # Dependencies and timezone
 RUN apk add --no-cache git tzdata ca-certificates
 
-# Cache modules
+# Copy go.mod and go.sum
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy entire source
-COPY . .
+# Copy backend source
+COPY . ./
 
 # Build binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
@@ -22,7 +21,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
 # Stage 2 - Runtime
 # ============================
 FROM alpine:3.20
-
 WORKDIR /app
 
 RUN apk add --no-cache ca-certificates tzdata dumb-init
@@ -34,7 +32,7 @@ COPY --from=builder /app/server .
 COPY --from=builder /app/internal/db/migrations ./migrations
 COPY --from=builder /app/config ./config
 
-# Env vars
+# Environment
 ENV PORT=8080 \
     GIN_MODE=release \
     TZ=UTC

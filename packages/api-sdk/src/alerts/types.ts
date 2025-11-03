@@ -16,6 +16,10 @@ export type UpdateAlertInput = z.infer<typeof updateAlertSchema>;
 export type AddAlertInput = z.infer<typeof addNewAlertSchema>;
 export type RemoveAlertInput = z.infer<typeof removeAlertSchema>;
 
+export type DeleteAlerts = {
+	ids: string[];
+};
+
 export type RawUserAlert = Omit<UserAlert, "channels"> & { channels: string };
 export type UserAlert = Omit<AddAlertInput, "channels"> & {
 	id: string;

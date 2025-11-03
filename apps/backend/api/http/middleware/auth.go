@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/MicahParks/keyfunc/v2"
@@ -16,6 +17,8 @@ import (
 
 var (
 	jwks               *keyfunc.JWKS
+	jwksOnce           sync.Once
+	jwksInitErr        error
 	ErrInvalidIssuer   = errors.New("invalid issuer")
 	ErrInvalidAudience = errors.New("invalid audience")
 )
@@ -41,12 +44,18 @@ func setupJWKS(betterAuthBaseURL string) error {
 	return nil
 }
 
+// initJWKS ensures JWKS is initialized exactly once
+func initJWKS(cfg *config.Config) error {
+	jwksOnce.Do(func() {
+		jwksInitErr = setupJWKS(cfg.FrontendURL)
+	})
+	return jwksInitErr
+}
+
 // verifyBetterAuthJWT verifies a JWT token from better-auth
 func verifyBetterAuthJWT(tokenString string, cfg *config.Config) (*jwt.Token, error) {
-	if jwks == nil {
-		if err := setupJWKS(cfg.FrontendURL); err != nil {
-			return nil, err
-		}
+	if err := initJWKS(cfg); err != nil {
+		return nil, err
 	}
 
 	token, err := jwt.Parse(tokenString, jwks.Keyfunc)

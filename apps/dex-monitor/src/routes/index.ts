@@ -6,7 +6,6 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { config } from "@/config";
 import { setupBullBoard } from "@/config/bullmq";
-import { configSchema } from "@/config/schema";
 import emailWorker from "@/workers/email-worker";
 import swapEventsWorker from "@/workers/swap-events-worker";
 import telegramWorker from "@/workers/telegram-worker";

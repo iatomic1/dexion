@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { userAgent, userAgentFromString } from "next/server";
 
 export const metadata: Metadata = {
 	title: "Alerts",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
 import { Bell } from "lucide-react";
+import { headers } from "next/headers";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 import { withAuth } from "~/lib/auth/with-auth";
 import { Session } from "~/types/auth";

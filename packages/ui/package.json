@@ -69,10 +69,8 @@
 		"./globals.css": "./src/styles/globals.css",
 		"./postcss.config": "./postcss.config.mjs",
 		"./lib/*": "./src/lib/*.ts",
-		"./hooks/*": [
-			"./src/hooks/*.ts",
-			"./src/hooks/*.tsx"
-		],
+		"./hooks/*": "./src/hooks/*.tsx",
+
 		"./components/*": "./src/components/*.tsx"
 	}
 }

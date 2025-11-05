@@ -20,7 +20,7 @@ func RegisterDocsRoutes(router *gin.RouterGroup) {
 		content, err := scalargo.NewV2(
 			scalargo.WithSpecURL("/api/v1/docs/swagger.json"),
 			scalargo.WithMetaDataOpts(
-				scalargo.WithTitle("Unwind"),
+				scalargo.WithTitle("Dexion"),
 			),
 			scalargo.WithTheme(scalargo.ThemeDeepSpace),
 			scalargo.WithLayout(scalargo.LayoutModern),

@@ -8,7 +8,8 @@ export const addNewAlertSchema = z.object({
 		.refine(validateContractAddress, {
 			error: "You must provide a valid contract address",
 		})
-		.min(1, { error: "Contract address is required." }),
+		.min(1, { error: "Contract address is required." })
+		.trim(),
 	channels: z.array(z.string()).min(1, "At least one channel is required"),
 
 	metric: z.enum(["price", "liquidity", "marketcap", "holders"]),

@@ -33,7 +33,6 @@ export class AlertManager {
 		return this.client.fetch<ApiResponse<UserAlert>>("dexion", "alerts", {
 			method: "POST",
 			body: {
-				userId: auth.userId,
 				...data,
 				value: data.value.toString(),
 			},

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createMiddleware, createSafeActionClient } from "next-safe-action";
 import { assertUserAuthenticated } from "~/lib/auth/assert-user-authenticated";
 
@@ -6,6 +7,7 @@ export const unauthenticatedAction = createSafeActionClient({});
 export const authMiddleware = createMiddleware().define(
 	async ({ ctx, next }) => {
 		const user = await assertUserAuthenticated();
+		if (!user) redirect("/login");
 		return next({ ctx: { user } });
 	},
 );

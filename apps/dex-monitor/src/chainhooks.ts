@@ -77,7 +77,10 @@ const registerSwapChainhooks = async (WEBHOOK_BASE_URL: string) => {
 		logger.error(err, "Failed to register swap chainhooks:");
 	}
 };
-await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
+
+if (process.env.REGISTER_CHAINHOOKS_ON_LOAD === "true") {
+	await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
+}
 
 const updateChainhookWebhookURL = async (
 	chainhooks: PaginatedChainhookResponse,

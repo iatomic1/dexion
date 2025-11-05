@@ -7,7 +7,6 @@ export async function middleware(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);
 	const { pathname } = request.nextUrl;
 
-	// Exclude Next internals and API routes
 	if (
 		pathname.startsWith("/api") ||
 		pathname.startsWith("/_next") ||
@@ -22,10 +21,6 @@ export async function middleware(request: NextRequest) {
 
 	if (!sessionCookie && isProtectedRoute) {
 		return NextResponse.redirect(new URL("/login", request.url));
-	}
-
-	if (sessionCookie && guestOnlyRoutes.some((r) => pathname.startsWith(r))) {
-		return NextResponse.redirect(new URL("/settings", request.url));
 	}
 
 	return NextResponse.next();

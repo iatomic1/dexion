@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@dexion/shared";
 import { Job, Worker } from "bullmq";
 import { config } from "@/config";
 import { logger } from "@/config/logger";
@@ -17,10 +16,18 @@ const webhookWorker = new Worker(
 			const { alert, token, userProfile: user } = job.data;
 			const webhook = user.webhook;
 
-			if (!webhook?.webhookUrl || !webhook.enabled || !webhook.bearerToken) {
+			if (!webhook?.webhookUrl || !webhook.bearerToken) {
 				logger.warn(
 					{ userId: alert.userId },
-					"Webhook disabled or missing URL, skipping",
+					"Webhook url or bearerToken missing, skipping",
+				);
+				return;
+			}
+
+			if (!webhook.enabled || webhook.status === "interrupted") {
+				logger.warn(
+					{ userId: alert.userId },
+					"Webhook disabled or interrupted, skipping",
 				);
 				return;
 			}

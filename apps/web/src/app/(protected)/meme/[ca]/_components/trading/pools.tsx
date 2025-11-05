@@ -30,7 +30,7 @@ export default function Pools() {
 	const [isOpen, setIsOpen] = useState(true);
 	const { data: pools, isLoading: isPoolsLoading } = useTokenPools();
 
-	const isMobile = useIsMobile(640);
+	const isMobile = useIsMobile();
 	return isMobile ? (
 		<div className="grid max-[475px]:grid-cols-1 grid-cols-2 gap-4">
 			{isPoolsLoading ? (

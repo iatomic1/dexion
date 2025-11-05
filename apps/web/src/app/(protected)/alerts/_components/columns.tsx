@@ -27,15 +27,19 @@ import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { cn } from "@dexion/ui/lib/utils";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
-import { EllipsisIcon, TrendingDown, TrendingUp } from "lucide-react";
+import { Copy, EllipsisIcon, TrendingDown, TrendingUp } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import {
 	deleteAlertAction,
 	pauseAlertAction,
 } from "~/app/actions/price-alert-actions";
-import { truncateString } from "~/lib/helpers/strings";
-import { AlertDialog as UserAlertDialog } from "./alert-dialog";
+import { truncateBetween } from "~/lib/helpers/strings";
 
+const statusStyles: Record<string, string> = {
+	active: "bg-primary text-primary-foreground",
+	paused: "bg-yellow-500/20 text-yellow-700",
+	completed: "bg-green-500/20 text-green-700",
+};
 const multiColumnFilterFn: FilterFn<UserAlert> = (
 	row,
 	columnId,
@@ -83,10 +87,20 @@ export const columns: ColumnDef<UserAlert>[] = [
 	{
 		header: "Contract Address",
 		accessorKey: "ca",
-		cell: ({ row }) => {
+		cell: ({ row, table }) => {
+			const tableMeta: any = table.options.meta;
 			return (
 				<div className="font-medium">
-					{truncateString(row.getValue("ca"), 10, 10)}
+					<Button
+						size={"xs"}
+						variant={"outline"}
+						onClick={() => {
+							tableMeta.onCopy(row.getValue("ca"));
+						}}
+					>
+						{truncateBetween(row.getValue("ca"), ".", 4)}
+						<Copy className="h-2 w-2" />
+					</Button>
 				</div>
 			);
 		},
@@ -154,11 +168,6 @@ export const columns: ColumnDef<UserAlert>[] = [
 		header: "Status",
 		accessorKey: "status",
 		cell: ({ row }) => {
-			const statusStyles: Record<string, string> = {
-				active: "bg-primary text-primary-foreground",
-				paused: "bg-yellow-500/20 text-yellow-700",
-				completed: "bg-green-500/20 text-green-700",
-			};
 			const value = row.getValue("status") as string;
 
 			return (
@@ -219,6 +228,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 					alert={row.original}
 					availableUserChannels={tableMeta.availableUserChannels}
 					channels={tableMeta.channels}
+					onEditAlert={tableMeta.onEditAlert}
 				/>
 			);
 		},
@@ -232,10 +242,12 @@ function RowActions({
 	alert,
 	availableUserChannels,
 	channels,
+	onEditAlert,
 }: {
 	alert: UserAlert;
 	availableUserChannels: UserAlertChannels;
 	channels: Channel[];
+	onEditAlert?: (alert: UserAlert) => void;
 }) {
 	const { execute: executeDeleteAlert, status: deleteStatus } = useAction(
 		deleteAlertAction,
@@ -285,16 +297,15 @@ function RowActions({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuGroup>
-					<UserAlertDialog
-						alert={alert}
-						availableUserChannels={availableUserChannels}
-						channels={channels}
+					<DropdownMenuItem
+						onClick={(e) => {
+							e.preventDefault();
+							onEditAlert?.(alert);
+						}}
 					>
-						<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-							<span>Edit</span>
-							<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-						</DropdownMenuItem>
-					</UserAlertDialog>
+						<span>Edit</span>
+						<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
+					</DropdownMenuItem>
 
 					<DropdownMenuItem
 						onClick={(e) => {

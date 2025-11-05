@@ -18,6 +18,7 @@ import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
+import siteConfig from "~/config/site";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import { authClient } from "~/lib/auth-client";
 
@@ -206,7 +207,7 @@ export default function OtpModal({
 							if (onSuccess) {
 								onSuccess();
 							} else {
-								router.push("/portfolio");
+								router.push(siteConfig.authSuccessRedirectUrl);
 							}
 						},
 						onError(ctx) {

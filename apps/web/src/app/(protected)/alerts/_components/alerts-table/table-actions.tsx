@@ -17,10 +17,11 @@ import {
 } from "@dexion/ui/components/ui/alert-dialog";
 import { Button } from "@dexion/ui/components/ui/button";
 import { toast } from "@dexion/ui/components/ui/sonner";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { Table } from "@tanstack/react-table";
 import { CircleAlertIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { deleteAlertsAction } from "~/app/actions/price-alert-actions";
 import { AlertDialog as UserAlertDialog } from "../alert-dialog";
 import { WebhookSettingsDialog } from "../webhook-settings-dialog";
@@ -42,6 +43,7 @@ export function TableActions<TData extends { id: string }>({
 
 	const selectedRows = table.getSelectedRowModel().rows;
 	const selectedRowsCount = selectedRows.length;
+	const isMobile = useIsMobile();
 
 	// ✅ memoize IDs to avoid unnecessary re-renders
 	const selectedRowsAlertsIds = useMemo(
@@ -120,23 +122,35 @@ export function TableActions<TData extends { id: string }>({
 				</AlertDialog>
 			)}
 
-			<UserAlertDialog
-				alert={null}
-				availableUserChannels={availableUserChannels}
-				channels={channels}
-			>
-				<Button className="ml-auto" variant="default">
-					<PlusIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
-					Create Alert
-				</Button>
-			</UserAlertDialog>
+			{!isMobile && (
+				<>
+					<UserAlertDialog
+						alert={null}
+						availableUserChannels={availableUserChannels}
+						channels={channels}
+					>
+						<Button className="ml-auto" variant="default">
+							<PlusIcon
+								className="-ms-1 opacity-60"
+								size={16}
+								aria-hidden="true"
+							/>
+							Create Alert
+						</Button>
+					</UserAlertDialog>
 
-			<WebhookSettingsDialog config={webhookConfig}>
-				<Button className="ml-auto" variant="secondary">
-					<PlusIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
-					Webhook Config
-				</Button>
-			</WebhookSettingsDialog>
+					<WebhookSettingsDialog config={webhookConfig}>
+						<Button className="ml-auto" variant="secondary">
+							<PlusIcon
+								className="-ms-1 opacity-60"
+								size={16}
+								aria-hidden="true"
+							/>
+							Webhook Config
+						</Button>
+					</WebhookSettingsDialog>
+				</>
+			)}
 		</div>
 	);
 }

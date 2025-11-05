@@ -2,9 +2,9 @@ package alerts
 
 import (
 	"backend/api/http"
+	_ "backend/internal/db/repository"
 	"backend/internal/domain"
 	"errors"
-	_ "backend/internal/db/repository"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golodash/galidator/v2"

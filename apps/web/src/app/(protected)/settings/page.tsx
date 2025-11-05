@@ -1,5 +1,5 @@
 "use client";
-
+import { TwoFactorCard } from "@daveyplate/better-auth-ui";
 import { Button } from "@dexion/ui/components/ui/button";
 import {
 	Select,
@@ -11,27 +11,29 @@ import {
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { cn } from "@dexion/ui/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { Copy, Info } from "lucide-react";
-import type { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import type React from "react";
-import { useState } from "react";
 import LinkTelegramAccount from "~/components/auth/link-telegram-account";
 import OTTModal from "~/components/auth/ott-modal";
-import Disable2FADialog from "~/components/auth/twofa/disable-2fa-dialog";
-import Enable2FADialog from "~/components/auth/twofa/enable-2fa-dialog";
 import AvatarUpload from "~/components/layout/header/account/avatar-upload";
 import SetInviteCode from "~/components/layout/header/account/set-invite-code";
 import { useSession } from "~/contexts/AuthClientContext";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
 import { formatRelativeTime } from "~/lib/helpers/dayjs";
-import { truncateString } from "~/lib/helpers/strings";
+import { truncateBetween, truncateString } from "~/lib/helpers/strings";
 
 export default function AccountPage() {
-	const [dialogOpen, setDialogOpen] = useState(false);
 	const copy = useCopyToClipboard();
 	const { data: session } = useSession();
+	const { data: accounts, isPending } = useQuery({
+		queryKey: ["listAccounts"],
+		queryFn: () => authClient.listAccounts(),
+		enabled: !!session?.user.id,
+	});
+
 	const router = useRouter();
 
 	return (
@@ -61,7 +63,12 @@ export default function AccountPage() {
 									<div className="flex-1">
 										<div className="flex items-center gap-2 mb-2">
 											<h3 className="text-base font-medium">
-												{session?.user.inviteCode ?? session?.user.email}
+												{session?.user.inviteCode ??
+													truncateBetween(
+														"hazyyyyverylongasfweirdemail@gmail.com" as string,
+														"@",
+														7,
+													)}
 											</h3>
 											<div className="w-2 h-2 rounded-full bg-green-500" />
 										</div>
@@ -147,7 +154,6 @@ export default function AccountPage() {
 						</div>
 					</div>
 				</div>
-
 				<div className="mb-12">
 					<h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
 						Security
@@ -179,7 +185,16 @@ export default function AccountPage() {
 							</div>
 						)}
 
-						{session ? (
+						{accounts &&
+							accounts.data?.find((a) => a.providerId === "credential") && (
+								<TwoFactorCard
+									classNames={{
+										base: "border-none !border-t-1 rounded-none",
+									}}
+								/>
+							)}
+
+						{/*{session ? (
 							<DarkSettingsSection
 								title="Manage 2FA"
 								description="Manage your two-factor authentication"
@@ -224,7 +239,7 @@ export default function AccountPage() {
 								</div>
 								<Skeleton className="h-8 w-24" />
 							</div>
-						)}
+						)}*/}
 					</div>
 				</div>
 

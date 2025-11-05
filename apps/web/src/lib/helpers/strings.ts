@@ -37,3 +37,18 @@ export const truncateString = (
 
 // truncateAddress("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1", 10, 8, "···")
 // => "SP1Y5YSTAH···JECTMY4A1"
+
+export function truncateBetween(
+	str: string,
+	marker: string,
+	keep: number,
+): string {
+	const parts = str.split(marker);
+	if (parts.length < 2) return str;
+
+	const start = parts[0];
+	const end = marker + parts.slice(1).join(marker);
+
+	if (start.length <= keep) return str;
+	return start.slice(0, keep) + "..." + end;
+}

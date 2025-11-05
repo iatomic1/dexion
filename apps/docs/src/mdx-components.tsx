@@ -1,5 +1,7 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import Image from "next/image";
+import Link from "next/link";
 import {
 	Accordion,
 	AccordionContent,
@@ -22,9 +24,11 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
 				{...props}
 			/>
 		),
+		Image,
 		Accordion,
 		AccordionItem,
 		AccordionTrigger,
+		Link,
 		AccordionContent,
 		...components,
 	};

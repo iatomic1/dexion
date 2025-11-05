@@ -1,0 +1,39 @@
+---
+title: Developers Webhook Payload
+---
+
+If you enable **Webhook** as a delivery channel, Dexion will send an HTTP `POST` request to your provided endpoint whenever an alert triggers, if it results in an error, Dexion would set the webhook status to interrupted and you would be responsible to enabling it back again.
+
+### **Headers**
+```http
+Content-Type: application/json
+Authorization: Bearer <YOUR_WEBHOOK_TOKEN>
+```
+
+### **Payload Format**
+```json
+{
+  "alert": {
+    "id": "string (UUID)",
+    "metric": "string",
+    "operator": "string",
+    "value": "number",
+    "ca": "string",
+    "triggeredAt": "string (ISO 8601 datetime)"
+  },
+  "token": {
+    "symbol": "string",
+    "name": "string",
+    "contract_id": "string",
+    "image_url": "string (URL)",
+    "metrics": {
+      "price_usd": "number",
+      "marketcap_usd": "number",
+      "liquidity_usd": "number",
+      "volume_1d_usd": "number",
+      "price_change_1d": "number"
+    }
+  }
+}
+
+```

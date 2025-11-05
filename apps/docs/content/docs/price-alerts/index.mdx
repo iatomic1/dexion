@@ -1,0 +1,61 @@
+---
+title: Price Alerts
+description: Learn how to create and manage price alerts on Dexion, choose delivery channels, and understand the webhook payload format for developers.
+---
+
+# Price Alerts
+
+## Overview
+Price Alerts let you automatically track token changes on Dexion.
+You define a condition, and Dexion notifies you when it happens.
+
+<Image
+  src="/alerts-overview.png"
+  alt="Price Alerts Overview"
+  width={800}
+  height={450}
+/>
+
+---
+
+## Metrics Available
+Each alert can monitor one of the following metrics:
+
+- **Price** - Triggered when the token price crosses your target.
+- **Liquidity** - Alerts when liquidity increases or decreases past your threshold.
+- **Market Cap** - Monitors changes in the token’s total market capitalization.
+- **Holders** - Triggers when the number of token holders changes beyond your condition.
+
+---
+
+## Delivery Channels
+You can choose where Dexion delivers your alerts:
+
+- **In-App (Web)** – Displays directly in your dashboard.
+- **Telegram** – Requires linking your Telegram account in <Link href="https://dexion.pro/settings" target="_blank" rel="noopener noreferrer">Settings</Link>
+- **Email** – Sent if you signed up with email or linked Google.
+- **Webhook** – For developers who want to handle alerts programmatically.
+
+---
+
+## Alert States
+- **Active** – Currently monitoring and can trigger anytime.
+- **Paused** – Temporarily stopped.
+- **Completed** – Triggered and closed (for non-repeatable alerts).
+
+---
+
+## Example
+Example alert setup:
+> Notify me on Telegram when `$STX` price goes above 2.00.
+
+Once this condition is met, Dexion instantly sends a Telegram message with the details.
+
+<Image
+  src="/email-alerts-example.png"
+  alt="Example Price Alert"
+  width={800}
+  height={450}
+/>
+
+---

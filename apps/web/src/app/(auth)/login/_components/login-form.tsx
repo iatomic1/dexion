@@ -18,6 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { loginSchema } from "~/app/schema";
 import OtpModal from "~/components/auth/otp-modal";
+import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -66,7 +67,7 @@ export default function LoginForm() {
 								return;
 							}
 						} else {
-							router.push("/portfolio");
+							router.push(siteConfig.authSuccessRedirectUrl);
 							toast.success("Authenticated");
 						}
 					},
@@ -110,7 +111,7 @@ export default function LoginForm() {
 
 	const handleOtpSuccess = () => {
 		// Called when OTP verification succeeds
-		router.push("/portfolio");
+		router.push(siteConfig.authSuccessRedirectUrl);
 	};
 
 	return (

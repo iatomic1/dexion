@@ -13,5 +13,6 @@ const siteConfig = {
 		unlinkTelegram: false,
 		ott: false,
 	},
+	authSuccessRedirectUrl: "/settings",
 };
 export default siteConfig;

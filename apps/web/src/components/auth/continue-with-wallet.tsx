@@ -14,6 +14,7 @@ import {
 import { Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
 
 export default function ContinueWithWallet() {
@@ -78,7 +79,7 @@ export default function ContinueWithWallet() {
 
 			if (verificationData) {
 				toast.success("Authenticated");
-				router.push("/portfolio");
+				router.push(siteConfig.authSuccessRedirectUrl);
 				// return verificationData;
 			}
 		} catch (error) {

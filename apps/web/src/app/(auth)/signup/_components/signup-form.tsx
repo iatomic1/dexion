@@ -16,6 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { signUpSchema } from "~/app/schema";
 import OtpModal from "~/components/auth/otp-modal";
+import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -80,7 +81,7 @@ export default function SignupForm() {
 
 	const handleOtpSuccess = () => {
 		// Called when OTP verification succeeds
-		router.push("/portfolio"); // Or wherever you want to redirect after verification
+		router.push(siteConfig.authSuccessRedirectUrl); // Or wherever you want to redirect after verification
 	};
 
 	return (

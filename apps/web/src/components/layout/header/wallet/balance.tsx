@@ -172,7 +172,7 @@ export default function Balance({
 	children: React.ReactNode;
 }) {
 	const copy = useCopyToClipboard();
-	const isMobile = useIsMobile(640);
+	const isMobile = useIsMobile();
 	const walletAddress = session?.user.walletAddress;
 
 	const [isOpen, setIsOpen] = useState(false);

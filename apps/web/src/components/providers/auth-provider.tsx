@@ -18,7 +18,6 @@ export function Providers({ children }: { children: ReactNode }) {
 			}}
 			Link={Link}
 			twoFactor={["otp", "totp"]}
-			providers={["google"]}
 		>
 			{children}
 		</AuthUIProvider>

@@ -13,6 +13,7 @@ import {
 	openAPI,
 	twoFactor,
 } from "better-auth/plugins";
+import siteConfig from "~/config/site";
 import type { User } from "~/types/auth";
 import { db } from "../db/drizzle";
 import {
@@ -284,6 +285,7 @@ export const auth = betterAuth({
 				},
 				digits: 6,
 			},
+			issuer: siteConfig.title,
 			totpOptions: {
 				disable: false,
 			},

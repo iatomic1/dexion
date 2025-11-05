@@ -83,13 +83,8 @@ func (h *AlertHandler) DeleteAlerts(c *gin.Context, userID string) {
 		return
 	}
 
-	for _, id := range req.Ids {
-		for _, alert := range alerts {
-			if alert.ID == id {
-				h.deleteCachedAlert(ctx, id, alert.Ca)
-				break
-			}
-		}
+	for _, alert := range alerts {
+		h.deleteCachedAlert(ctx, alert.ID, alert.Ca)
 	}
 
 	http.SendSuccess(c, DeleteAlertsResponse{

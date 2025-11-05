@@ -85,7 +85,7 @@ export function CryptoHoverCard({
 	txId,
 }: CryptoCardProps) {
 	const copy = useCopyToClipboard();
-	const isMobile = useIsMobile(640);
+	const isMobile = useIsMobile();
 
 	return (
 		<HoverCard>

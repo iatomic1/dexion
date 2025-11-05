@@ -10,15 +10,7 @@ import { HTTP_STATUS } from "@dexion/shared";
 import { Badge } from "@dexion/ui/components/ui/badge";
 import { Button } from "@dexion/ui/components/ui/button";
 import { Checkbox } from "@dexion/ui/components/ui/checkbox";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@dexion/ui/components/ui/dialog";
+import { DialogFooter } from "@dexion/ui/components/ui/dialog";
 import {
 	Field,
 	FieldContent,
@@ -48,7 +40,7 @@ import {
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
 	createAlertAction,
@@ -169,7 +161,6 @@ export function AlertForm({
 		if (initialData) {
 			executeUpdateAlert(data);
 		} else {
-			console.log(data);
 			executeCreateAlert(data);
 		}
 	};

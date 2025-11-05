@@ -1,5 +1,5 @@
 import { getSessionCookie } from "better-auth/cookies";
-import { type NextRequest, NextResponse, userAgent } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const guestOnlyRoutes = ["/login", "/signup", "/recover-account"];
 

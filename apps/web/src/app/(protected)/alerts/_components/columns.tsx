@@ -33,9 +33,7 @@ import {
 	deleteAlertAction,
 	pauseAlertAction,
 } from "~/app/actions/price-alert-actions";
-import useCopyToClipboard from "~/hooks/useCopy";
-import { truncateBetween, truncateString } from "~/lib/helpers/strings";
-import { AlertDialog as UserAlertDialog } from "./alert-dialog";
+import { truncateBetween } from "~/lib/helpers/strings";
 
 const statusStyles: Record<string, string> = {
 	active: "bg-primary text-primary-foreground",

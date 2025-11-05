@@ -29,7 +29,7 @@ import {
 	VisibilityState,
 } from "@tanstack/react-table";
 import { PlusIcon, Webhook } from "lucide-react";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useAlertsTokenData } from "~/hooks/useAlertsTokenData";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { AlertForm } from "./alert-form";
@@ -39,7 +39,6 @@ import { TableActions } from "./alerts-table/table-actions";
 import { TableFilters } from "./alerts-table/table-filters";
 import { columns } from "./columns";
 import { WebhookConfigForm } from "./webhook-config-form";
-import { WebhookSettingsDialog } from "./webhook-settings-dialog";
 
 type AlertsTableProps = {
 	channels: Channel[];

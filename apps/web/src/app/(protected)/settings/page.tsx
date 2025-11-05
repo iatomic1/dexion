@@ -28,7 +28,7 @@ import { truncateBetween, truncateString } from "~/lib/helpers/strings";
 export default function AccountPage() {
 	const copy = useCopyToClipboard();
 	const { data: session } = useSession();
-	const { data: accounts, isPending } = useQuery({
+	const { data: accounts } = useQuery({
 		queryKey: ["listAccounts"],
 		queryFn: () => authClient.listAccounts(),
 		enabled: !!session?.user.id,
@@ -65,7 +65,7 @@ export default function AccountPage() {
 											<h3 className="text-base font-medium">
 												{session?.user.inviteCode ??
 													truncateBetween(
-														"hazyyyyverylongasfweirdemail@gmail.com" as string,
+														session?.user?.email as string,
 														"@",
 														7,
 													)}

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { userAgent, userAgentFromString } from "next/server";
 
 export const metadata: Metadata = {
 	title: "Alerts",

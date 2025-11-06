@@ -16,6 +16,6 @@ export default function robots(): MetadataRoute.Robots {
 				],
 			},
 		],
-		sitemap: "https://dexion.pro/sitemap.xml",
+		sitemap: "https://www.dexion.pro/sitemap.xml",
 	};
 }

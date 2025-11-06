@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 		default: title,
 	},
 	description: description,
+	metadataBase: new URL(FRONTEND_URL),
 	keywords: [
 		"DEXION",
 		"trading bot",

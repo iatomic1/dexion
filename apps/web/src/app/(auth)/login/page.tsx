@@ -1,4 +1,3 @@
-import { FRONTEND_URL } from "@dexion/shared";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,7 +5,7 @@ export const metadata: Metadata = {
 	description:
 		"Access your Dexion account to manage your Web3 trading activities.",
 	alternates: {
-		canonical: `${FRONTEND_URL}/login`,
+		canonical: "/login",
 	},
 };
 

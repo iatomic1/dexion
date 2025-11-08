@@ -17,6 +17,12 @@ export function Providers({ children }: { children: ReactNode }) {
 				router.refresh();
 			}}
 			Link={Link}
+			viewPaths={{
+				SIGN_IN: "/login",
+				SIGN_UP: "/signup",
+				FORGOT_PASSWORD: "/reset",
+				RECOVER_ACCOUNT: "/recover-account",
+			}}
 			twoFactor={["otp", "totp"]}
 		>
 			{children}

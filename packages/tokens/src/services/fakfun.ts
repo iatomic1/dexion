@@ -11,8 +11,11 @@ export async function getFakFunTokenMetadata(ca: string) {
 			},
 		});
 		const rawToken = data.data;
+		if (!rawToken) {
+			return null;
+		}
 
-		return transformFakFunToTokenMetadata(rawToken, "fakfun") || null;
+		return transformFakFunToTokenMetadata(rawToken, "fakfun");
 	} catch (err) {
 		console.error(err);
 		return null;

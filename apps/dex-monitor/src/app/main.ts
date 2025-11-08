@@ -1,5 +1,3 @@
-import { createLogger } from "@dexion/logger";
-import { config } from "@/config";
 import { logger } from "@/config/logger";
 import alertProcessor from "@/features/alert-processing/swap-queue-jobs";
 import emailProcessor from "@/features/notification-delivery/email-queue-jobs";

@@ -1,5 +1,4 @@
 import type { TokenMetadata } from "@dexion/tokens/types";
-import { getMetricValue } from "@/shared/utils/swap-events";
 
 export type Alert = {
 	channels: string[];

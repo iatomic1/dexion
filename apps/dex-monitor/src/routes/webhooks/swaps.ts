@@ -1,11 +1,15 @@
 import { type Context, Hono } from "hono";
 import { logger } from "@/config/logger";
 import { swapQueue } from "@/queues";
-import { extractAssetContracts } from "@/utils";
+import type { SwapEventPlatform } from "@/queues/types";
+import { extractAssetContracts, extractFakFunContracts } from "@/utils";
 
 const swaps = new Hono();
 
-export async function handleSwapWebhook(c: Context) {
+export async function handleSwapWebhook(
+	c: Context,
+	platform: SwapEventPlatform,
+) {
 	try {
 		logger.debug("step1: got req");
 		const body = await c.req.json();
@@ -17,14 +21,23 @@ export async function handleSwapWebhook(c: Context) {
 		const postConditions = txMetadata.post_conditions.post_conditions;
 		logger.debug({ postConditions }, "step4: post conds");
 
-		const assetContracts = extractAssetContracts(postConditions);
+		let assetContracts: string[] = [];
+		if (platform === "bitflow" || platform === "velar") {
+			assetContracts = extractAssetContracts(postConditions);
+		} else if (platform === "fakfun") {
+			assetContracts = extractFakFunContracts(postConditions);
+		}
 		logger.debug({ assetContracts }, "step5: assets");
 
 		const senderAddress = txMetadata.sender_address;
 		logger.debug("step6: enqueue maybe");
 
 		if (txMetadata.status === "success")
-			await swapQueue.add("swap-event", { senderAddress, assetContracts });
+			await swapQueue.add("swap-event", {
+				senderAddress,
+				assetContracts,
+				platform,
+			});
 
 		return c.json({ message: "ok" }, 200);
 	} catch (err) {
@@ -33,8 +46,10 @@ export async function handleSwapWebhook(c: Context) {
 	}
 }
 
-swaps.post("/velar", handleSwapWebhook);
+swaps.post("/velar", async (c) => handleSwapWebhook(c, "velar"));
 
-swaps.post("/bitflow", handleSwapWebhook);
+swaps.post("/bitflow", async (c) => handleSwapWebhook(c, "bitflow"));
+swaps.post("/fakfun/buy", async (c) => handleSwapWebhook(c, "fakfun"));
+swaps.post("/fakfun/sell", async (c) => handleSwapWebhook(c, "fakfun"));
 
 export default swaps;

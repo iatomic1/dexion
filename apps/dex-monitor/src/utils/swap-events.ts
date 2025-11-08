@@ -6,8 +6,7 @@ import type { Alert } from "@/workers/swap-events-worker";
 export function getMetricValue(metric: string, token: TokenMetadata): number {
 	const metricMap: Record<string, number> = {
 		price: token.metrics.price_usd,
-		volume: token.metrics.volume_1d_usd,
-		tvl: token.metrics.liquidity_usd,
+		liquidity: token.metrics.liquidity_usd,
 		marketcap: token.metrics.marketcap_usd,
 		holders: token.metrics.holder_count,
 	};

@@ -57,6 +57,10 @@ const telegramWorker = new Worker(
 		connection: bullMqRedisConnection,
 		removeOnComplete: { count: 1000 },
 		removeOnFail: { count: 5000 },
+		limiter: {
+			max: 25,
+			duration: 1000,
+		},
 	},
 );
 

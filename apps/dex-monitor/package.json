@@ -9,6 +9,7 @@
 	},
 	"scripts": {
 		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/index.ts",
+		"run:chainhook": "doppler run -p dexion -c dev_dexmonitor -- bun src/chainhooks.ts",
 		"lint": "bunx biome check ./",
 		"test": "bun test"
 	},

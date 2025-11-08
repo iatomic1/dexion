@@ -2,9 +2,11 @@ import type { TokenMetadata } from "@dexion/tokens/types";
 import type { CachedWebhookConfig } from "@/lib/redis/user-profile";
 import type { Alert } from "@/workers/swap-events-worker";
 
+export type SwapEventPlatform = "velar" | "bitflow" | "fakfun" | "stxcity";
 export type SwapEventJobData = {
 	senderAddress: string;
 	assetContracts: string[];
+	platform: SwapEventPlatform;
 };
 
 export type SendAlertJobData = {

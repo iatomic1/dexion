@@ -14,6 +14,7 @@
 		"@dexion/shared": "workspace:*",
 		"@dexion/tokens": "*",
 		"@dexion/ui": "*",
+		"@stacks/blockchain-api-client": "^8.13.4",
 		"axios": "^1.13.1",
 		"partykit": "^0.0.115",
 		"partysocket": "^0.0.10",

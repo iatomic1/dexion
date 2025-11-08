@@ -1,12 +1,14 @@
 import { STX_TOOLS_API_BASE_URL, STXWATCH_API_BASE_URL } from "@dexion/shared";
 import {
+	fetchFakFunTokens,
 	getSearch,
 	getStxCityTokenMetadata,
 	getTokenMetadata,
 	searchStxCity,
 } from "@dexion/tokens/services";
 import {
-	transformToTokenMetadata,
+	transformFakFunToTokenMetadata,
+	transformStxCityToTokenMetadata,
 	validateContractAddress,
 } from "@dexion/tokens/utils";
 import axios from "axios";
@@ -85,6 +87,7 @@ tokens.get("/get_batch_locked_liquidity/:ca", async (c) => {
 tokens.get("/search", async (c) => {
 	const searchTerm = c.req.query("searchTerm");
 	if (!searchTerm) return c.json({ error: "Missing searchTerm" }, 400);
+
 	let isContract;
 	try {
 		isContract = validateContractAddress(searchTerm);
@@ -92,31 +95,62 @@ tokens.get("/search", async (c) => {
 		console.error(err);
 		isContract = false;
 	}
+
 	try {
-		const [stxtoolsTokens, stxcityRaw] = await Promise.all([
+		const [stxtoolsTokens, stxcityRaw, fakfunAll] = await Promise.all([
 			getSearch(searchTerm),
 			searchStxCity(searchTerm, isContract),
+			fetchFakFunTokens(),
 		]);
 
-		console.log(stxcityRaw);
-		const stxcityTokens = (stxcityRaw || []).map(transformToTokenMetadata);
-		const combined = [...(stxtoolsTokens || []), ...stxcityTokens];
+		// filter fakfun manually
+		const fakfunFiltered = fakfunAll.filter((token: any) => {
+			const term = searchTerm.toLowerCase();
+			return (
+				token.name.toLowerCase().includes(term) ||
+				token.symbol.toLowerCase().includes(term) ||
+				token.tokenContract.toLowerCase().includes(term)
+			);
+		});
 
+		// transform fakfun tokens
+		const fakfunTokens = fakfunFiltered.map((raw: any) => {
+			const source = raw.progress < 1 ? "fakfun" : "stxtools";
+			return transformFakFunToTokenMetadata(raw, source);
+		});
+
+		// transform stxcity tokens
+		const stxcityTokens = (stxcityRaw || []).map(
+			transformStxCityToTokenMetadata,
+		);
+
+		// combine all
+		const combined = [
+			...(stxtoolsTokens || []),
+			...stxcityTokens,
+			...fakfunTokens,
+		];
+
+		// dedupe by priority: stxtools > stxcity > fakfun
 		const tokenMap = new Map();
+		const priority = { stxtools: 3, stxcity: 2, fakfun: 1 };
 
-		combined.forEach((token) => {
+		for (const token of combined) {
 			const id = token.contract_id;
 			const existing = tokenMap.get(id);
 
 			if (!existing) {
 				tokenMap.set(id, token);
-			} else if (
-				existing.platform === "stxcity" &&
-				token.platform !== "stxcity"
+				continue;
+			}
+
+			if (
+				priority[token.platform || token.source] >
+				priority[existing.platform || existing.source]
 			) {
 				tokenMap.set(id, token);
 			}
-		});
+		}
 
 		const filtered = Array.from(tokenMap.values());
 
@@ -161,7 +195,7 @@ tokens.post("/get_batch_token_data", async (c) => {
 						return { contractId, error: "No stxcity metadata found" };
 					}
 
-					return transformToTokenMetadata(raw);
+					return transformStxCityToTokenMetadata(raw);
 				}
 
 				if (src === "stxtools") {

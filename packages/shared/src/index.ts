@@ -49,3 +49,5 @@ export const SOCIALS = {
 	X: "https://x.com/dexion_pro",
 	DOCS: "https://docs.dexion.pro/",
 };
+
+export const RAILWAY_HEALTHCHECK_URL = "https://healthcheck.railway.app";

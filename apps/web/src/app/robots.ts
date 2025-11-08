@@ -1,3 +1,4 @@
+import { FRONTEND_URL } from "@dexion/shared";
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
@@ -16,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
 				],
 			},
 		],
-		sitemap: "https://dexion.pro/sitemap.xml",
+		sitemap: `${FRONTEND_URL}/sitemap.xml`,
 	};
 }

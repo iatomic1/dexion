@@ -32,7 +32,7 @@ export type TokenMetadata = {
 		volume_1d_usd: number;
 		volume_7d_usd: number;
 	};
-	source: "stxcity" | "stxtools";
+	source: "stxcity" | "stxtools" | "fakfun";
 };
 
 export type TokenSwapTransaction = {

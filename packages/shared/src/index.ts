@@ -11,7 +11,8 @@ export const PUBLIC_BASE_URL = DEV
 	? "http://localhost:3001"
 	: `https://${DOMAIN_NAME}`;
 export const VERCEL_FRONTEND_URL = "https://dexion-web.vercel.app";
-export const PARTKIT_HOST = "dexion-party.iatomic1.partykit.dev";
+// export const PARTKIT_HOST = "dexion-party.iatomic1.partykit.dev";
+export const PARTKIT_HOST = "129.0.0.1:1999";
 
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 export const TOKEN_WATCHER_API_BASE_URL = DEV
@@ -37,10 +38,14 @@ export const ADDRESSES = {
 };
 
 export const STX_TOOLS_API_BASE_URL = "https://api.stxtools.io/";
+export const FAKFUN_API_BASE_URL = "https://www.styxbtc.com/api/";
+export const FAKFUN_BEARER_TOKEN = process.env.FAKFUN_BEARER_TOKEN || "";
 export const STX_CITY_API_BASE_URL = "https://stx.city/api/";
 export const HIRO_PLATFORM_API_BASE_URL = "https://api.platform.hiro.so/";
 export const BNS_ONE_API_BASE_URL = "https://api.bns.one/";
 
 export const SOCIALS = {
 	DISCORD: "https://discord.gg/MxMeB2N5rJ",
+	X: "https://x.com/dexion_pro",
+	DOCS: "https://docs.dexion.pro/",
 };

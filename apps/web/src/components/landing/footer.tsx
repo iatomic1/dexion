@@ -1,10 +1,11 @@
+import { ExternalLink } from "@dexion/ui/components/ui/link";
 import { Separator } from "@dexion/ui/components/ui/separator";
+import { SiDiscord } from "@icons-pack/react-simple-icons";
 import {
 	Book,
 	FileText,
 	Github,
 	ScrollText,
-	Send,
 	Shield,
 	Twitter,
 } from "lucide-react";
@@ -27,27 +28,21 @@ const Footer = () => {
 							speed, security, and simplicity. Trade smarter, not harder.
 						</p>
 						<div className="flex space-x-4">
-							<a
-								href={siteConfig.socials.x}
+							<ExternalLink
+								href={siteConfig.socials.X}
 								className="flex items-center justify-center w-10 h-10 bg-secondary rounded-lg hover:bg-primary transition-colors duration-200 group"
 								aria-label="Twitter"
 							>
 								<Twitter className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
-							</a>
-							<a
-								href="#"
+							</ExternalLink>
+
+							<ExternalLink
+								href={siteConfig.socials.DISCORD}
 								className="flex items-center justify-center w-10 h-10 bg-secondary rounded-lg hover:bg-primary transition-colors duration-200 group"
-								aria-label="GitHub"
+								aria-label="Discord"
 							>
-								<Github className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
-							</a>
-							<a
-								href={siteConfig.socials.telegram}
-								className="flex items-center justify-center w-10 h-10 bg-secondary rounded-lg hover:bg-primary transition-colors duration-200 group"
-								aria-label="Telegram"
-							>
-								<Send className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
-							</a>
+								<SiDiscord className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground" />
+							</ExternalLink>
 						</div>
 					</div>
 
@@ -56,13 +51,13 @@ const Footer = () => {
 						<h4 className="font-semibold text-foreground mb-4">Resources</h4>
 						<ul className="space-y-3">
 							<li>
-								<a
-									href={siteConfig.socials.docs}
+								<ExternalLink
+									href={siteConfig.socials.DOCS}
 									className="flex items-center text-muted-foreground hover:text-accent transition-colors duration-200"
 								>
 									<Book className="w-4 h-4 mr-2" />
 									Documentation
-								</a>
+								</ExternalLink>
 							</li>
 							<li>
 								<a
@@ -71,15 +66,6 @@ const Footer = () => {
 								>
 									<FileText className="w-4 h-4 mr-2" />
 									Blog
-								</a>
-							</li>
-							<li>
-								<a
-									href="#"
-									className="flex items-center text-muted-foreground hover:text-accent transition-colors duration-200"
-								>
-									<Github className="w-4 h-4 mr-2" />
-									GitHub
 								</a>
 							</li>
 						</ul>

@@ -71,4 +71,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --quiet --spider http://localhost:3000/healthz || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "apps/dex-monitor/src/index.ts"]
+CMD ["bun", "run", "apps/dex-monitor/src/app/main.ts"]

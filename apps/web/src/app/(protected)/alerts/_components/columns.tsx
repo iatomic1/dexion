@@ -131,22 +131,28 @@ export const columns: ColumnDef<UserAlert>[] = [
 			}
 
 			return (
-				<div className="flex items-center gap-2 text-left">
-					<Avatar className="h-9 w-9 aspect-square rounded-md">
-						<AvatarImage
-							src={t.image_url || "/placeholder.svg"}
-							className="object-cover"
-							fetchPriority="high"
-						/>
-						<AvatarFallback>{t.symbol.charAt(0)}</AvatarFallback>
-					</Avatar>
-					<div className="flex flex-col justify-between">
-						<Label className="text-sm  font-medium">{t.symbol}</Label>
-						<span className="text-muted-foreground text-xs truncate max-w-[50px]">
-							{t.name}
-						</span>
+				t && (
+					<div className="flex items-center gap-2 text-left">
+						<Avatar className="h-9 w-9 aspect-square rounded-md">
+							<AvatarImage
+								src={t?.image_url || "/placeholder.svg"}
+								className="object-cover"
+								fetchPriority="high"
+							/>
+							<AvatarFallback>
+								{t.symbol.charAt(0) ?? "token not found"}
+							</AvatarFallback>
+						</Avatar>
+						<div className="flex flex-col justify-between">
+							<Label className="text-sm  font-medium">
+								{t.symbol ?? "Token Not Found"}
+							</Label>
+							<span className="text-muted-foreground text-xs truncate max-w-[50px]">
+								{t.name ?? "Token not found"}
+							</span>
+						</div>
 					</div>
-				</div>
+				)
 			);
 		},
 	},

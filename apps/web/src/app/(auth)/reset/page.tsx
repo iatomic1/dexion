@@ -1,4 +1,3 @@
-import { FRONTEND_URL } from "@dexion/shared";
 import {
 	Card,
 	CardContent,
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
 	description:
 		"Reset your Dexion account password to regain access to your Web3 trading dashboard.",
 	alternates: {
-		canonical: `${FRONTEND_URL}/reset`,
+		canonical: "/reset",
 	},
 };
 

@@ -1,4 +1,3 @@
-import { FRONTEND_URL } from "@dexion/shared";
 import {
 	Card,
 	CardContent,
@@ -17,7 +16,7 @@ export const metadata: Metadata = {
 	description:
 		"Create a new Dexion account to start trading on Stacks with our advanced Web3 trading bot.",
 	alternates: {
-		canonical: `${FRONTEND_URL}/signup`,
+		canonical: "/signup",
 	},
 };
 

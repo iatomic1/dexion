@@ -1,9 +1,4 @@
-import {
-	FAKFUN_API_BASE_URL,
-	FAKFUN_BEARER_TOKEN,
-	STX_CITY_API_BASE_URL,
-	STX_TOOLS_API_BASE_URL,
-} from "@dexion/shared";
+import { STX_CITY_API_BASE_URL, STX_TOOLS_API_BASE_URL } from "@dexion/shared";
 import { fetchFakFunTokens } from "@dexion/tokens/services";
 import axios from "axios";
 import type Redis from "ioredis";
@@ -28,7 +23,7 @@ export async function updateTokenSources(redisClient: Redis) {
 		fetchStxCityTokens(),
 		fetchFakFunTokens(),
 	]);
-	const stxToolsSet = new Set(stxToolsTokens.map((t: string) => t));
+	// const stxToolsSet = new Set(stxToolsTokens.map((t: string) => t));
 	const pipeline = redisClient.pipeline();
 
 	for (const token of stxToolsTokens) {

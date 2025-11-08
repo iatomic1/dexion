@@ -8,8 +8,8 @@
 		"typescript": "^5.0.0"
 	},
 	"scripts": {
-		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/index.ts",
-		"run:chainhook": "doppler run -p dexion -c dev_dexmonitor -- bun src/chainhooks.ts",
+		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/app/main.ts",
+		"run:chainhook": "doppler run -p dexion -c dev_dexmonitor -- bun scripts/chainhooks.ts",
 		"lint": "bunx biome check ./",
 		"test": "bun test"
 	},

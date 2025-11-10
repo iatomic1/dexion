@@ -61,14 +61,21 @@ export function createApp() {
 export function startServer(logger: Logger) {
 	const app = createApp();
 
-	serve(
-		{
-			fetch: app.fetch,
-			port: config.PORT,
-		},
-		({ port }) => {
-			logger.info(`✅ Server running at http://localhost:${port}`);
-			logger.info(`Bull Board UI available at http://localhost:${port}/ui`);
-		},
-	);
+	const options: Parameters<typeof serve>[0] = {
+		fetch: app.fetch,
+		port: config.PORT,
+	};
+
+	if (process.env.NODE_ENV === "production") {
+		options.hostname = "0.0.0.0";
+	}
+
+	serve(options, ({ port }) => {
+		logger.info(
+			`✅ Server running at http://${options.hostname ?? "localhost"}:${port}`,
+		);
+		logger.info(
+			`Bull Board UI available at http://${options.hostname ?? "localhost"}:${port}/ui`,
+		);
+	});
 }

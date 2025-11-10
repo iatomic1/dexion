@@ -1,6 +1,7 @@
 import { STX_TOOLS_API_BASE_URL, STXWATCH_API_BASE_URL } from "@dexion/shared";
 import {
 	fetchFakFunTokens,
+	getFakFunTokenMetadata,
 	getSearch,
 	getStxCityTokenMetadata,
 	getTokenMetadata,
@@ -187,6 +188,10 @@ tokens.post("/get_batch_token_data", async (c) => {
 		const tokenDataPromises = contract_ids.map(async (contractId) => {
 			try {
 				const src = sourceMap[contractId];
+				if (!src) {
+					console.warn("No source for", contractId);
+					return { contractId, error: "No source" };
+				}
 
 				if (src === "stxcity") {
 					const raw = await getStxCityTokenMetadata(contractId, true);
@@ -200,6 +205,9 @@ tokens.post("/get_batch_token_data", async (c) => {
 
 				if (src === "stxtools") {
 					return await getTokenMetadata(contractId);
+				}
+				if (src === "fakfun") {
+					return getFakFunTokenMetadata(contractId);
 				}
 
 				// If source undefined OR marked "fak"
@@ -217,6 +225,7 @@ tokens.post("/get_batch_token_data", async (c) => {
 		});
 
 		const results = await Promise.all(tokenDataPromises);
+		console.log("batched tokens", JSON.stringify(results, null, 2));
 		return c.json(results);
 	} catch (error) {
 		console.error("Error in get_batch_token_data:", error);

@@ -1,7 +1,7 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-const guestOnlyRoutes = ["/login", "/signup", "/recover-account"];
+const guestOnlyRoutes = ["/login", "/signup", "/recover-account", "/reset"];
 
 export async function middleware(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);

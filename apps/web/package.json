@@ -67,7 +67,7 @@
 		"partysocket": "^1.1.4",
 		"postgres": "^3.4.7",
 		"react": "19.1.2",
-		"react-dom": "^19.1.0",
+		"react-dom": "19.1.2",
 		"react-draggable": "^4.4.6",
 		"react-hook-form": "^7.65.0",
 		"react-qr-code": "^2.0.17",

@@ -13,6 +13,7 @@ import healthCheck from "@/features/health-check/http-entrypoint";
 import swapIngestion from "@/features/swap-ingestion/http-entrypoint";
 import {
 	emailQueue,
+	hodlmmQueue,
 	swapQueue,
 	telegramQueue,
 	webhookQueue,
@@ -34,6 +35,7 @@ export function createApp() {
 			new BullMQAdapter(emailQueue),
 			new BullMQAdapter(swapQueue),
 			new BullMQAdapter(telegramQueue),
+			new BullMQAdapter(hodlmmQueue),
 		],
 		options: {
 			uiConfig: {

@@ -23,6 +23,7 @@
 		"@hirosystems/chainhooks-client": "^0.8.0",
 		"@hono/node-server": "^1.19.5",
 		"@stacks/blockchain-api-client": "^8.11.2",
+		"axios": "^1.13.2",
 		"bullmq": "^5.61.0",
 		"hono": "^4.10.1",
 		"ioredis": "*",

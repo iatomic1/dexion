@@ -150,6 +150,18 @@ async function updateChainhookWebhookURLs(baseUrl: string) {
 	}
 }
 
+// ---------- GET ----------
+async function getChainhookByUUID(uuid: string) {
+	try {
+		const chainhook = await client.getChainhook(uuid);
+
+		logger.info(chainhook, "Chainhook retrieved");
+		return chainhook;
+	} catch (err) {
+		logger.error(err, "Failed to update chainhook URLs");
+	}
+}
+
 // ---------- ENABLE ----------
 async function enableAllChainhooks() {
 	try {
@@ -181,16 +193,18 @@ async function deleteAllChainhooks() {
 }
 
 // ---------- MAIN ----------
-export async function initChainhooks() {
-	await registerAllFakFunChainhooks(WEBHOOK_BASE_URL);
+async function initChainhooks() {
+	await registerAllFakFunChainhooks(PROD_WEBHOOK_BASE_URL);
+	await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
 
-	if (process.env.REGISTER_CHAINHOOKS_ON_LOAD === "true") {
-		await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
-	}
+	// if (process.env.REGISTER_CHAINHOOKS_ON_LOAD === "true") {
+	// 	await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
+	// }
 
 	// await updateChainhookWebhookURLs(WEBHOOK_BASE_URL);
 }
 
+await getChainhookByUUID("a4645018-7afe-4b3d-b67e-afcb08542068");
 // await initChainhooks();
-const chainhooks = await client.getChainhooks({ limit: 1 });
-logger.info(chainhooks, "Chainhooks");
+// const chainhooks = await client.getChainhooks({ limit: 1 });
+// logger.info(chainhooks, "Chainhooks");

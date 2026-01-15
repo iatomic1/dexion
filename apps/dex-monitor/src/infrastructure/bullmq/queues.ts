@@ -11,6 +11,10 @@ export const swapQueueDlq = new Queue<SwapEventJobData>(
 	{ connection: bullMqRedisConnection },
 );
 
+export const hodlmmQueue = new Queue("hodlmm-queue", {
+	connection: bullMqRedisConnection,
+});
+
 // Notification delivery queues
 export const webhookQueue = new Queue<NotificationJobData>("webhook-queue", {
 	connection: bullMqRedisConnection,

@@ -33,6 +33,7 @@ func SetupRouter(srv *http.Server) {
 		RegisterWatchlistRoutes(srv, api.Group("/watchlist"))
 		RegisterAlertRoutes(srv, api.Group("/alerts"))
 		RegisterWebhookRoutes(srv, api.Group("/webhooks"))
+		RegisterHodlmmRoutes(srv, api.Group("/hodlmm"))
 
 		RegisterDocsRoutes(api.Group("/docs"))
 	}

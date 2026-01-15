@@ -18,10 +18,11 @@ type Alert struct {
 	Operator   string    `binding:"required" json:"operator"`
 	Value      string    `binding:"required" json:"value"`
 	Ca         string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	Repeatable bool      `binding:"required" json:"repeatable"`
+	Repeatable *bool     `binding:"required" json:"repeatable"`
 	Status     string    `binding:"required" json:"status"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	CreatedAt  time.Time `json:"createdAt"`
+	Type       string    `json:"type"`
 }
 
 type AlertChannel struct {
@@ -36,6 +37,37 @@ type Channel struct {
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
+}
+
+type HodlmmAlert struct {
+	ID                  uuid.UUID          `json:"id"`
+	UserID              string             `json:"userId"`
+	StacksAddress       string             `json:"stacksAddress"`
+	PoolID              string             `json:"poolId"`
+	PoolContract        string             `json:"poolContract"`
+	DisplayName         string             `json:"displayName"`
+	TokenXSymbol        *string            `json:"tokenXSymbol"`
+	TokenYSymbol        *string            `json:"tokenYSymbol"`
+	NotifyViaWebapp     bool               `json:"notifyViaWebapp"`
+	NotifyViaTelegram   bool               `json:"notifyViaTelegram"`
+	NotifyViaEmail      bool               `json:"notifyViaEmail"`
+	NotifyViaWebhook    bool               `json:"notifyViaWebhook"`
+	NotifyOnOutOfRange  bool               `json:"notifyOnOutOfRange"`
+	NotifyOnBackInRange bool               `json:"notifyOnBackInRange"`
+	LastKnownStatus     string             `json:"lastKnownStatus"`
+	LastKnownValueUsd   pgtype.Numeric     `json:"lastKnownValueUsd"`
+	LastChecked         pgtype.Timestamptz `json:"lastChecked"`
+	LastNotified        pgtype.Timestamptz `json:"lastNotified"`
+	Status              string             `json:"status"`
+	CreatedAt           time.Time          `json:"createdAt"`
+	UpdatedAt           time.Time          `json:"updatedAt"`
+}
+
+type HodlmmAlertChannel struct {
+	ID        uuid.UUID `json:"id"`
+	AlertID   uuid.UUID `json:"alertId"`
+	ChannelID uuid.UUID `json:"channelId"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type TelegramUser struct {
@@ -53,20 +85,22 @@ type TelegramUserWallet struct {
 }
 
 type User struct {
-	ID               string             `json:"id"`
-	Name             *string            `json:"name"`
-	Email            *string            `json:"email"`
-	EmailVerified    bool               `json:"emailVerified"`
-	Image            *string            `json:"image"`
-	InviteCode       *string            `json:"inviteCode"`
-	SubOrgID         *string            `json:"subOrgId"`
-	WalletID         *string            `json:"walletId"`
-	WalletAddress    *string            `json:"walletAddress"`
-	WalletPublicKey  *string            `json:"walletPublicKey"`
-	CreatedAt        pgtype.Timestamptz `json:"createdAt"`
-	SubOrgCreated    *bool              `json:"subOrgCreated"`
-	UpdatedAt        pgtype.Timestamptz `json:"updatedAt"`
-	TwoFactorEnabled *bool              `json:"twoFactorEnabled"`
+	ID                        string             `json:"id"`
+	Name                      *string            `json:"name"`
+	Email                     *string            `json:"email"`
+	EmailVerified             bool               `json:"emailVerified"`
+	Image                     *string            `json:"image"`
+	InviteCode                *string            `json:"inviteCode"`
+	SubOrgID                  *string            `json:"subOrgId"`
+	WalletID                  *string            `json:"walletId"`
+	WalletAddress             *string            `json:"walletAddress"`
+	WalletPublicKey           *string            `json:"walletPublicKey"`
+	CreatedAt                 pgtype.Timestamptz `json:"createdAt"`
+	SubOrgCreated             *bool              `json:"subOrgCreated"`
+	UpdatedAt                 pgtype.Timestamptz `json:"updatedAt"`
+	TwoFactorEnabled          *bool              `json:"twoFactorEnabled"`
+	ExternalAddress           *string            `json:"externalAddress"`
+	ExternalAddressVerifiedAt pgtype.Date        `json:"externalAddressVerifiedAt"`
 }
 
 type UserWallet struct {

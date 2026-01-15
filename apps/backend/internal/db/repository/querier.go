@@ -15,6 +15,7 @@ type Querier interface {
 	CreateAlert(ctx context.Context, arg CreateAlertParams) (*Alert, error)
 	CreateAlertChannel(ctx context.Context, arg CreateAlertChannelParams) error
 	CreateAlertChannels(ctx context.Context, arg CreateAlertChannelsParams) error
+	CreateHodlmmAlerts(ctx context.Context, arg CreateHodlmmAlertsParams) ([]*HodlmmAlert, error)
 	CreateTelegramUser(ctx context.Context, arg CreateTelegramUserParams) (*TelegramUser, error)
 	CreateWallet(ctx context.Context, address string) (*CreateWalletRow, error)
 	CreateWatchlist(ctx context.Context, arg CreateWatchlistParams) (*Watchlist, error)
@@ -23,6 +24,7 @@ type Querier interface {
 	DeleteAlertChannels(ctx context.Context, alertID uuid.UUID) error
 	DeleteAlerts(ctx context.Context, arg DeleteAlertsParams) ([]*Alert, error)
 	DeleteAllInactiveAlerts(ctx context.Context, userID string) error
+	DeleteHodlmmAlert(ctx context.Context, arg DeleteHodlmmAlertParams) error
 	DeleteWatchlist(ctx context.Context, arg DeleteWatchlistParams) error
 	DeleteWebhookConfig(ctx context.Context, userID string) error
 	GetActiveAlertsByMetric(ctx context.Context, metric string) ([]*Alert, error)
@@ -30,6 +32,8 @@ type Querier interface {
 	GetAllChannels(ctx context.Context) ([]*Channel, error)
 	GetAllWallets(ctx context.Context) ([]*Wallet, error)
 	GetAllWalletsAndWatchers(ctx context.Context) ([]*GetAllWalletsAndWatchersRow, error)
+	GetHodlmmAlertByID(ctx context.Context, arg GetHodlmmAlertByIDParams) (*HodlmmAlert, error)
+	GetHodlmmAlerts(ctx context.Context, userID string) ([]*HodlmmAlert, error)
 	GetTelegramUser(ctx context.Context, chatID string) (*TelegramUser, error)
 	GetTrackedWalletsTelegram(ctx context.Context, chatID string) ([]*GetTrackedWalletsTelegramRow, error)
 	// returns: id:uuid, user_id:string, metric:string, operator:string, value:string, ca:string, repeatable:bool, status:string, updated_at:timestamp, created_at:timestamp, channels:[]Channel
@@ -48,6 +52,7 @@ type Querier interface {
 	InsertAlertChannels(ctx context.Context, arg InsertAlertChannelsParams) ([]uuid.UUID, error)
 	IsTrackingWallet(ctx context.Context, arg IsTrackingWalletParams) (bool, error)
 	IsTrackingWalletTelegram(ctx context.Context, arg IsTrackingWalletTelegramParams) (bool, error)
+	PauseAllHodlmmAlerts(ctx context.Context, userID string) error
 	ReplaceAlertChannels(ctx context.Context, arg ReplaceAlertChannelsParams) ([]byte, error)
 	TrackWalletTelegram(ctx context.Context, arg TrackWalletTelegramParams) (*TelegramUserWallet, error)
 	UntrackWallet(ctx context.Context, arg UntrackWalletParams) error
@@ -56,6 +61,8 @@ type Querier interface {
 	UpdateAlertStatus(ctx context.Context, arg UpdateAlertStatusParams) (*Alert, error)
 	// 👇 force dependency on inserted
 	UpdateAlertWithChannels(ctx context.Context, arg UpdateAlertWithChannelsParams) (*UpdateAlertWithChannelsRow, error)
+	UpdateHodlmmAlert(ctx context.Context, arg UpdateHodlmmAlertParams) (*HodlmmAlert, error)
+	UpdateHodlmmAlertStatus(ctx context.Context, arg UpdateHodlmmAlertStatusParams) (*HodlmmAlert, error)
 	UpdateTelegramUserPreference(ctx context.Context, arg UpdateTelegramUserPreferenceParams) (*TelegramUser, error)
 	UpdateWalletPreferences(ctx context.Context, arg UpdateWalletPreferencesParams) (*UserWallet, error)
 	UpdateWebhookConfig(ctx context.Context, arg UpdateWebhookConfigParams) (*WebhookConfig, error)

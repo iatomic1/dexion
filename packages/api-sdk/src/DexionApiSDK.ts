@@ -4,6 +4,7 @@
 
 import { API_BASE_URL } from "@dexion/shared";
 import { AlertManager } from "./alerts";
+import { HodlmmManager } from "./hodlmm";
 import {
 	type DexionConfig,
 	DexionError,
@@ -76,6 +77,14 @@ export class DexionClient {
 			this._alerts = new AlertManager(this);
 		}
 		return this._alerts;
+	}
+
+	private _hodlmm?: HodlmmManager;
+	get hodlmm(): HodlmmManager {
+		if (!this._hodlmm) {
+			this._hodlmm = new HodlmmManager(this);
+		}
+		return this._hodlmm;
 	}
 
 	private _wallets?: WalletManager;

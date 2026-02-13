@@ -1,6 +1,6 @@
 import type { DexionClient } from "../DexionApiSDK";
 import type { ApiResponse, FetchOptions } from "../types/index";
-import { encryptToken } from "../utils/crypto";
+import { decryptToken, encryptToken } from "../utils/crypto";
 import type { WebhookConfig } from "./types";
 
 export class WebhookManager {
@@ -9,11 +9,49 @@ export class WebhookManager {
 	async getWebhook(
 		options?: FetchOptions,
 	): Promise<ApiResponse<WebhookConfig>> {
-		return this.client.fetch<ApiResponse<WebhookConfig>>("dexion", "webhooks", {
-			method: "GET",
-			fetchOptions: options,
-		});
+		const response = await this.client.fetch<ApiResponse<WebhookConfig>>(
+			"dexion",
+			"webhooks",
+			{
+				method: "GET",
+				fetchOptions: options,
+			},
+		);
+
+		// If response not OK or no data, return as is
+		if (!response || response.status !== "OK" || !response.data) {
+			return response;
+		}
+
+		const { bearerToken } = response.data;
+
+		// decrypt ONLY if it exists
+		if (bearerToken) {
+			try {
+				const decrypted = decryptToken(
+					bearerToken,
+					process.env.INTERNAL_SECRET!,
+				);
+
+				return {
+					...response,
+					data: {
+						...response.data,
+						bearerToken: decrypted,
+					},
+				};
+			} catch (err) {
+				// Optional: prevent leaking crypto errors
+				return {
+					...response,
+					errors: ["Failed to decrypt bearer token"],
+				};
+			}
+		}
+
+		return response;
 	}
+
 	async createWebhook(
 		data: WebhookConfig,
 		options?: FetchOptions,
@@ -51,6 +89,7 @@ export class WebhookManager {
 			fetchOptions: options,
 		});
 	}
+
 	async deleteWebhook(options?: FetchOptions): Promise<ApiResponse<void>> {
 		return this.client.fetch<ApiResponse<void>>("dexion", "webhooks", {
 			method: "DELETE",

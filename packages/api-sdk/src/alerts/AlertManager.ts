@@ -35,6 +35,7 @@ export class AlertManager {
 			body: {
 				...data,
 				value: data.value.toString(),
+				repeatable: data.repeatable ?? false,
 			},
 			fetchOptions: options,
 		});

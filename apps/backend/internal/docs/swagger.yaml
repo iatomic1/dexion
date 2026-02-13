@@ -42,6 +42,66 @@ definitions:
       webhook:
         $ref: '#/definitions/backend_internal_db_repository.WebhookConfig'
     type: object
+  api_http_handlers_hodlmm.CreateHodlmmAlertItem:
+    properties:
+      displayName:
+        type: string
+      lastKnownStatus:
+        enum:
+        - in-range
+        - out-of-range
+        type: string
+      notifyOnBackInRange:
+        type: boolean
+      notifyOnOutOfRange:
+        type: boolean
+      notifyViaEmail:
+        type: boolean
+      notifyViaTelegram:
+        type: boolean
+      notifyViaWebapp:
+        type: boolean
+      notifyViaWebhook:
+        type: boolean
+      poolContract:
+        type: string
+      poolId:
+        type: string
+      stacksAddress:
+        type: string
+      tokenXSymbol:
+        type: string
+      tokenYSymbol:
+        type: string
+    required:
+    - displayName
+    - lastKnownStatus
+    - poolContract
+    - poolId
+    - stacksAddress
+    type: object
+  api_http_handlers_hodlmm.CreateHodlmmAlertsRequest:
+    properties:
+      alerts:
+        items:
+          $ref: '#/definitions/api_http_handlers_hodlmm.CreateHodlmmAlertItem'
+        minItems: 1
+        type: array
+    required:
+    - alerts
+    type: object
+  api_http_handlers_hodlmm.UpdateHodlmmStatusRequest:
+    properties:
+      id:
+        type: string
+      lastKnownStatus:
+        type: string
+      lastKnownValueUsd:
+        type: number
+    required:
+    - id
+    - lastKnownStatus
+    type: object
   backend_api_http.InternalServerErrorResponse:
     properties:
       errors: {}
@@ -76,6 +136,8 @@ definitions:
       repeatable:
         type: boolean
       status:
+        type: string
+      type:
         type: string
       updatedAt:
         type: string
@@ -158,6 +220,51 @@ definitions:
     - address
     - nickname
     type: object
+  backend_internal_db_repository.HodlmmAlert:
+    properties:
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      lastChecked:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      lastKnownStatus:
+        type: string
+      lastKnownValueUsd:
+        $ref: '#/definitions/pgtype.Numeric'
+      lastNotified:
+        $ref: '#/definitions/pgtype.Timestamptz'
+      notifyOnBackInRange:
+        type: boolean
+      notifyOnOutOfRange:
+        type: boolean
+      notifyViaEmail:
+        type: boolean
+      notifyViaTelegram:
+        type: boolean
+      notifyViaWebapp:
+        type: boolean
+      notifyViaWebhook:
+        type: boolean
+      poolContract:
+        type: string
+      poolId:
+        type: string
+      stacksAddress:
+        type: string
+      status:
+        type: string
+      tokenXSymbol:
+        type: string
+      tokenYSymbol:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
   backend_internal_db_repository.TelegramUser:
     properties:
       chatId:
@@ -235,6 +342,27 @@ definitions:
       userId:
         type: string
       value:
+        type: string
+    type: object
+  backend_internal_db_repository.UpdateHodlmmAlertParams:
+    properties:
+      id:
+        type: string
+      notifyOnBackInRange:
+        type: boolean
+      notifyOnOutOfRange:
+        type: boolean
+      notifyViaEmail:
+        type: boolean
+      notifyViaTelegram:
+        type: boolean
+      notifyViaWebapp:
+        type: boolean
+      notifyViaWebhook:
+        type: boolean
+      status:
+        type: string
+      userId:
         type: string
     type: object
   backend_internal_db_repository.UpdateWalletPreferencesParams:
@@ -363,6 +491,8 @@ definitions:
       webhookUrl:
         type: string
     type: object
+  big.Int:
+    type: object
   pgtype.InfinityModifier:
     enum:
     - 1
@@ -374,6 +504,20 @@ definitions:
     - Infinity
     - Finite
     - NegativeInfinity
+  pgtype.Numeric:
+    properties:
+      exp:
+        format: int32
+        type: integer
+      infinityModifier:
+        $ref: '#/definitions/pgtype.InfinityModifier'
+      int:
+        $ref: '#/definitions/big.Int'
+      naN:
+        type: boolean
+      valid:
+        type: boolean
+    type: object
   pgtype.Timestamptz:
     properties:
       infinityModifier:
@@ -793,6 +937,297 @@ paths:
       summary: Update an existing alert status
       tags:
       - Alerts
+  /hodlmm/alerts:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all position alerts belonging to the currently authenticated
+        user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User alerts retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.HodlmmAlert'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve all HODLMM alerts for the authenticated user
+      tags:
+      - HodlmmAlerts
+    post:
+      consumes:
+      - application/json
+      description: Create multiple position monitoring alerts for the authenticated
+        user
+      parameters:
+      - description: List of alerts
+        in: body
+        name: AlertsRequest
+        required: true
+        schema:
+          $ref: '#/definitions/api_http_handlers_hodlmm.CreateHodlmmAlertsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Alerts created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.HodlmmAlert'
+                  type: array
+              type: object
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create multiple HODLMM alerts
+      tags:
+      - HodlmmAlerts
+  /hodlmm/alerts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a position alert belonging to the authenticated user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an existing HODLMM alert
+      tags:
+      - HodlmmAlerts
+    get:
+      consumes:
+      - application/json
+      description: Fetch a single position alert by its UUID
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.HodlmmAlert'
+              type: object
+        "400":
+          description: Invalid UUID format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Retrieve a specific HODLMM alert by ID
+      tags:
+      - HodlmmAlerts
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a position alert belonging to the authenticated
+        user
+      parameters:
+      - description: Alert ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Alert update data
+        in: body
+        name: Alert
+        required: true
+        schema:
+          $ref: '#/definitions/backend_internal_db_repository.UpdateHodlmmAlertParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alert updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/backend_internal_db_repository.HodlmmAlert'
+              type: object
+        "400":
+          description: Invalid UUID format or request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Alert not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update an existing HODLMM alert
+      tags:
+      - HodlmmAlerts
+  /hodlmm/alerts/pause:
+    post:
+      description: Pause all position alerts for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Alerts paused successfully
+          schema:
+            $ref: '#/definitions/backend_api_http.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Pause all HODLMM alerts
+      tags:
+      - HodlmmAlerts
+  /hodlmm/alerts/status:
+    patch:
+      consumes:
+      - application/json
+      description: Internal endpoint to update the status (in-range/out-of-range)
+        of an alert
+      parameters:
+      - description: Status update data
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/api_http_handlers_hodlmm.UpdateHodlmmStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status updated
+          schema:
+            $ref: '#/definitions/backend_api_http.Response'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      summary: Update HODLMM alert internal status
+      tags:
+      - HodlmmAlerts
+  /hodlmm/alerts/sync:
+    post:
+      description: Fetch positions from external API and create missing alerts for
+        the authenticated user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Alerts synced successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/backend_api_http.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/backend_internal_db_repository.HodlmmAlert'
+                  type: array
+              type: object
+        "400":
+          description: User not linked or invalid state
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/backend_api_http.InternalServerErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Sync HODLMM alerts
+      tags:
+      - HodlmmAlerts
   /wallets:
     get:
       description: Retrieve all wallets tracked by the user

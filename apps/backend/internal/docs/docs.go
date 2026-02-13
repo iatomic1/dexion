@@ -688,6 +688,479 @@ const docTemplate = `{
                 }
             }
         },
+        "/hodlmm/alerts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetch all position alerts belonging to the currently authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Retrieve all HODLMM alerts for the authenticated user",
+                "responses": {
+                    "200": {
+                        "description": "User alerts retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.HodlmmAlert"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create multiple position monitoring alerts for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Create multiple HODLMM alerts",
+                "parameters": [
+                    {
+                        "description": "List of alerts",
+                        "name": "AlertsRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_http_handlers_hodlmm.CreateHodlmmAlertsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Alerts created successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.HodlmmAlert"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/hodlmm/alerts/pause": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Pause all position alerts for the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Pause all HODLMM alerts",
+                "responses": {
+                    "200": {
+                        "description": "Alerts paused successfully",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/hodlmm/alerts/status": {
+            "patch": {
+                "description": "Internal endpoint to update the status (in-range/out-of-range) of an alert",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Update HODLMM alert internal status",
+                "parameters": [
+                    {
+                        "description": "Status update data",
+                        "name": "status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api_http_handlers_hodlmm.UpdateHodlmmStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status updated",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/hodlmm/alerts/sync": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetch positions from external API and create missing alerts for the authenticated user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Sync HODLMM alerts",
+                "responses": {
+                    "201": {
+                        "description": "Alerts synced successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/backend_internal_db_repository.HodlmmAlert"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "User not linked or invalid state",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/hodlmm/alerts/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetch a single position alert by its UUID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Retrieve a specific HODLMM alert by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.HodlmmAlert"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID format",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a position alert belonging to the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Delete an existing HODLMM alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert deleted successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID format",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the details of a position alert belonging to the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HodlmmAlerts"
+                ],
+                "summary": "Update an existing HODLMM alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Alert update data",
+                        "name": "Alert",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/backend_internal_db_repository.UpdateHodlmmAlertParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alert updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/backend_api_http.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/backend_internal_db_repository.HodlmmAlert"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid UUID format or request data",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/backend_api_http.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/wallets": {
             "get": {
                 "security": [
@@ -1808,6 +2281,94 @@ const docTemplate = `{
                 }
             }
         },
+        "api_http_handlers_hodlmm.CreateHodlmmAlertItem": {
+            "type": "object",
+            "required": [
+                "displayName",
+                "lastKnownStatus",
+                "poolContract",
+                "poolId",
+                "stacksAddress"
+            ],
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "lastKnownStatus": {
+                    "type": "string",
+                    "enum": [
+                        "in-range",
+                        "out-of-range"
+                    ]
+                },
+                "notifyOnBackInRange": {
+                    "type": "boolean"
+                },
+                "notifyOnOutOfRange": {
+                    "type": "boolean"
+                },
+                "notifyViaEmail": {
+                    "type": "boolean"
+                },
+                "notifyViaTelegram": {
+                    "type": "boolean"
+                },
+                "notifyViaWebapp": {
+                    "type": "boolean"
+                },
+                "notifyViaWebhook": {
+                    "type": "boolean"
+                },
+                "poolContract": {
+                    "type": "string"
+                },
+                "poolId": {
+                    "type": "string"
+                },
+                "stacksAddress": {
+                    "type": "string"
+                },
+                "tokenXSymbol": {
+                    "type": "string"
+                },
+                "tokenYSymbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "api_http_handlers_hodlmm.CreateHodlmmAlertsRequest": {
+            "type": "object",
+            "required": [
+                "alerts"
+            ],
+            "properties": {
+                "alerts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/api_http_handlers_hodlmm.CreateHodlmmAlertItem"
+                    }
+                }
+            }
+        },
+        "api_http_handlers_hodlmm.UpdateHodlmmStatusRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "lastKnownStatus"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "lastKnownStatus": {
+                    "type": "string"
+                },
+                "lastKnownValueUsd": {
+                    "type": "number"
+                }
+            }
+        },
         "backend_api_http.InternalServerErrorResponse": {
             "type": "object",
             "properties": {
@@ -1865,6 +2426,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1976,6 +2540,74 @@ const docTemplate = `{
                 },
                 "notifications": {
                     "type": "boolean"
+                }
+            }
+        },
+        "backend_internal_db_repository.HodlmmAlert": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastChecked": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "lastKnownStatus": {
+                    "type": "string"
+                },
+                "lastKnownValueUsd": {
+                    "$ref": "#/definitions/pgtype.Numeric"
+                },
+                "lastNotified": {
+                    "$ref": "#/definitions/pgtype.Timestamptz"
+                },
+                "notifyOnBackInRange": {
+                    "type": "boolean"
+                },
+                "notifyOnOutOfRange": {
+                    "type": "boolean"
+                },
+                "notifyViaEmail": {
+                    "type": "boolean"
+                },
+                "notifyViaTelegram": {
+                    "type": "boolean"
+                },
+                "notifyViaWebapp": {
+                    "type": "boolean"
+                },
+                "notifyViaWebhook": {
+                    "type": "boolean"
+                },
+                "poolContract": {
+                    "type": "string"
+                },
+                "poolId": {
+                    "type": "string"
+                },
+                "stacksAddress": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tokenXSymbol": {
+                    "type": "string"
+                },
+                "tokenYSymbol": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         },
@@ -2096,6 +2728,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "backend_internal_db_repository.UpdateHodlmmAlertParams": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "notifyOnBackInRange": {
+                    "type": "boolean"
+                },
+                "notifyOnOutOfRange": {
+                    "type": "boolean"
+                },
+                "notifyViaEmail": {
+                    "type": "boolean"
+                },
+                "notifyViaTelegram": {
+                    "type": "boolean"
+                },
+                "notifyViaWebapp": {
+                    "type": "boolean"
+                },
+                "notifyViaWebhook": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "userId": {
                     "type": "string"
                 }
             }
@@ -2288,6 +2952,9 @@ const docTemplate = `{
                 }
             }
         },
+        "big.Int": {
+            "type": "object"
+        },
         "pgtype.InfinityModifier": {
             "type": "integer",
             "format": "int32",
@@ -2301,6 +2968,27 @@ const docTemplate = `{
                 "Finite",
                 "NegativeInfinity"
             ]
+        },
+        "pgtype.Numeric": {
+            "type": "object",
+            "properties": {
+                "exp": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "infinityModifier": {
+                    "$ref": "#/definitions/pgtype.InfinityModifier"
+                },
+                "int": {
+                    "$ref": "#/definitions/big.Int"
+                },
+                "naN": {
+                    "type": "boolean"
+                },
+                "valid": {
+                    "type": "boolean"
+                }
+            }
         },
         "pgtype.Timestamptz": {
             "type": "object",

@@ -8,6 +8,7 @@ import {
 import { createAuthClient } from "better-auth/react";
 import { siwsClient } from "./auth/plugins/siws/client";
 import telegramClient from "./auth/plugins/telegram/client";
+import { walletAddressVerificationClient } from "./auth/plugins/wallet-address-verification/client";
 
 const URL =
 	process.env.NODE_ENV === "production"
@@ -29,6 +30,7 @@ export const authClient = createAuthClient({
 	},
 	plugins: [
 		siwsClient(),
+		walletAddressVerificationClient(),
 		oneTimeTokenClient(),
 		inferAdditionalFields({
 			user: {

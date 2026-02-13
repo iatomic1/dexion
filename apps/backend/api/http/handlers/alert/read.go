@@ -123,7 +123,7 @@ type rawWebhookChannel struct {
 func (h *AlertHandler) GetUserChannels(c *gin.Context, userId string) {
 	ctx := c.Request.Context()
 
-	data, err := h.getUserChannels(ctx, userId)
+	data, err := h.alertService.GetUserChannelsFromCache(ctx, userId)
 	if err != nil {
 		http.SendInternalServerError(c, err, http.WithMessage("failed to get user channels"))
 		return

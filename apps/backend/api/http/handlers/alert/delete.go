@@ -32,7 +32,7 @@ func (h *AlertHandler) DeleteAlert(c *gin.Context, userID string) {
 		return
 	}
 
-	alert, err := h.alertService.DeleteAlert(ctx, id, userID)
+	_, err = h.alertService.DeleteAlert(ctx, id, userID)
 	if err != nil {
 		if err.Error() == "alert not found" {
 			http.SendNotFound(c, err, http.WithMessage("Alert not found"))
@@ -41,8 +41,6 @@ func (h *AlertHandler) DeleteAlert(c *gin.Context, userID string) {
 		http.SendInternalServerError(c, err)
 		return
 	}
-
-	h.deleteCachedAlert(ctx, id, alert.Ca)
 
 	http.SendSuccess(c, nil, http.WithMessage("Alert deleted successfully"))
 }
@@ -81,10 +79,6 @@ func (h *AlertHandler) DeleteAlerts(c *gin.Context, userID string) {
 	if err != nil {
 		http.SendInternalServerError(c, err)
 		return
-	}
-
-	for _, alert := range alerts {
-		h.deleteCachedAlert(ctx, alert.ID, alert.Ca)
 	}
 
 	http.SendSuccess(c, DeleteAlertsResponse{

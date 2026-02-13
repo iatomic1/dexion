@@ -52,7 +52,5 @@ func (h *AlertHandler) CreateAlert(c *gin.Context, userID string) {
 		return
 	}
 
-	h.cacheAlert(ctx, alert, req.Channels)
-
 	http.SendCreated(c, alert, http.WithMessage("Alert created successfully"))
 }

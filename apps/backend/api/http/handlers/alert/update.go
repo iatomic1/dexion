@@ -51,7 +51,7 @@ func (h *AlertHandler) UpdateAlert(c *gin.Context, userID string) {
 		Metric:     *req.Metric,
 		Operator:   *req.Operator,
 		Value:      *req.Value,
-		Repeatable: *req.Repeatable,
+		Repeatable: req.Repeatable,
 		ID:         alertId,
 		UserID:     userID,
 	}, req.ChannelIds)
@@ -63,8 +63,6 @@ func (h *AlertHandler) UpdateAlert(c *gin.Context, userID string) {
 		http.SendInternalServerError(c, err)
 		return
 	}
-
-	h.updateCachedAlert(ctx, alert, req.ChannelIds)
 
 	http.SendSuccess(c, alert, http.WithMessage("Alert updated successfully"))
 }
@@ -103,8 +101,6 @@ func (h *AlertHandler) PauseAlert(c *gin.Context, userID string) {
 		return
 	}
 
-	h.updateCachedAlert(ctx, alert, nil)
-
 	http.SendSuccess(c, alert, http.WithMessage("Alert paused successfully"))
 }
 
@@ -140,8 +136,6 @@ func (h *AlertHandler) UpdateAlertStatus(c *gin.Context) {
 		http.SendInternalServerError(c, err)
 		return
 	}
-
-	h.updateCachedAlert(ctx, alert, nil)
 
 	http.SendSuccess(c, alert, http.WithMessage("Alert status updated successfully"))
 }

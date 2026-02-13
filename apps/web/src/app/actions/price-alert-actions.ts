@@ -1,6 +1,7 @@
 "use server";
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
 import { addNewAlertSchema, updateAlertSchema } from "@dexion/api-sdk/index.ts";
+import { HTTP_STATUS } from "@dexion/shared";
 import { z } from "zod";
 import { authenticatedAction } from "~/lib/safe-action";
 import { revalidateTagServer } from "./revalidate";
@@ -11,8 +12,10 @@ export const createAlertAction = authenticatedAction
 		try {
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const alert = await sdk.alerts.addAlert(input);
+			if (alert.status === HTTP_STATUS.CREATED) {
+				revalidateTagServer(`user-alerts-${user.userId}`);
+			}
 
-			revalidateTagServer(`user-alerts-${user.userId}`);
 			return alert;
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));

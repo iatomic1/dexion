@@ -13,7 +13,7 @@ import {
 	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
 import { ReactNode, useState } from "react";
-import { AlertForm } from "./alert-form";
+import { AlertForm } from "./alert-form/alert-form";
 
 interface AlertDialogProps {
 	alert: UserAlert | null;
@@ -33,7 +33,7 @@ export function AlertDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="max-w-xl w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto">
+			<DialogContent className=" max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle>{alert ? "Edit Alert" : "Create New Alert"}</DialogTitle>
 					<DialogDescription>
@@ -49,6 +49,7 @@ export function AlertDialog({
 						setOpen(false);
 					}}
 					onSuccess={() => {
+						console.log("I am successfulk");
 						setOpen(false);
 					}}
 				/>

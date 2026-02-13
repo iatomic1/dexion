@@ -90,7 +90,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 		cell: ({ row, table }) => {
 			const tableMeta: any = table.options.meta;
 			return (
-				<div className="font-medium">
+				<div className="font-medium max-w-[150px]">
 					<Button
 						size={"xs"}
 						variant={"outline"}
@@ -98,7 +98,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 							tableMeta.onCopy(row.getValue("ca"));
 						}}
 					>
-						{truncateBetween(row.getValue("ca"), ".", 4)}
+						{truncateBetween(row.getValue("ca"), ".", 4, 13)}
 						<Copy className="h-2 w-2" />
 					</Button>
 				</div>
@@ -121,7 +121,6 @@ export const columns: ColumnDef<UserAlert>[] = [
 				return (
 					<div className="flex items-center gap-2">
 						<Skeleton className="h-9 w-9 aspect-square rounded-md" />
-
 						<div className="flex flex-col justify-between gap-1.5">
 							<Skeleton className="h-4 w-16" />
 							<Skeleton className="h-3 w-12" />
@@ -130,29 +129,29 @@ export const columns: ColumnDef<UserAlert>[] = [
 				);
 			}
 
-			return (
-				t && (
-					<div className="flex items-center gap-2 text-left">
-						<Avatar className="h-9 w-9 aspect-square rounded-md">
-							<AvatarImage
-								src={t?.image_url || "/placeholder.svg"}
-								className="object-cover"
-								fetchPriority="high"
-							/>
-							<AvatarFallback>
-								{t.symbol.charAt(0) ?? "token not found"}
-							</AvatarFallback>
-						</Avatar>
-						<div className="flex flex-col justify-between">
-							<Label className="text-sm  font-medium">
-								{t.symbol ?? "Token Not Found"}
-							</Label>
-							<span className="text-muted-foreground text-xs truncate max-w-[50px]">
-								{t.name ?? "Token not found"}
-							</span>
-						</div>
+			return t ? (
+				<div className="flex items-center gap-2 text-left">
+					<Avatar className="h-9 w-9 aspect-square rounded-md">
+						<AvatarImage
+							src={t?.image_url || "/placeholder.svg"}
+							className="object-cover"
+							fetchPriority="high"
+						/>
+						<AvatarFallback>
+							{t.symbol.charAt(0) ?? "token not found"}
+						</AvatarFallback>
+					</Avatar>
+					<div className="flex flex-col justify-between">
+						<Label className="text-sm  font-medium">
+							{t.symbol ?? "Token Not Found"}
+						</Label>
+						<span className="text-muted-foreground text-xs truncate max-w-[50px]">
+							{t.name ?? "Token not found"}
+						</span>
 					</div>
-				)
+				</div>
+			) : (
+				<div>Token not found</div>
 			);
 		},
 	},

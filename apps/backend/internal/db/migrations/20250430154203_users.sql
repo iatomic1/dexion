@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"sub_org_created" boolean DEFAULT false,
 	"updated_at" timestamp with time zone NOT NULL,
 	"two_factor_enabled" boolean,
+	"external_address" TEXT UNIQUE,
+	"external_address_verified_at" DATE,
 	CONSTRAINT "users_email_unique" UNIQUE("email"),
 	CONSTRAINT "users_invite_code_unique" UNIQUE("invite_code"),
 	CONSTRAINT "users_sub_org_id_unique" UNIQUE("sub_org_id"),

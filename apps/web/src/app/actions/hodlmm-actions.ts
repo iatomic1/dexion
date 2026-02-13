@@ -1,6 +1,6 @@
 "use server";
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
-import { updateHodlmmAlertSchema } from "@dexion/api-sdk/index.ts";
+import { updateHodlmmAlertSchema } from "@dexion/api-sdk/index.js";
 import { HTTP_STATUS } from "@dexion/shared";
 import { z } from "zod";
 import { authenticatedAction } from "~/lib/safe-action";

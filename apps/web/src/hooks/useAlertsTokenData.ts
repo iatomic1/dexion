@@ -20,11 +20,6 @@ export function useAlertsTokenData(visibleAlerts: { ca: string }[]) {
 		refetchOnWindowFocus: false,
 	});
 
-	useEffect(() => {
-		console.log("visible", visibleAlerts);
-		console.log("token data", data);
-	}, [data, visibleAlerts]);
-
 	const tokenDataMap = useMemo(() => {
 		if (!data) return new Map<string, TokenMetadata>();
 		return new Map(

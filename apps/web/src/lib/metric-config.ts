@@ -2,7 +2,6 @@ import type { TokenMetadata } from "@dexion/tokens/types";
 import { formatPrice, formatTinyDecimal } from "./helpers/numbers";
 
 export function buildMetricConfig(token: TokenMetadata | null) {
-	console.log(token, "token");
 	if (!token) {
 		return {
 			marketcap: {
@@ -51,10 +50,8 @@ export function buildMetricConfig(token: TokenMetadata | null) {
 			// formatValue: (val: number) => `$${(val / 1_000_000).toFixed(1)}M`,
 			formatValue: (val: number) => {
 				if (val > 1) {
-					console.log("[formatValue] using formatPrice — val:", val);
 					return formatPrice(token.metrics.price_usd);
 				}
-				console.log("[formatValue] using formatTinyDecimal — val:", val);
 				return formatTinyDecimal(token.metrics.price_usd);
 			},
 		},

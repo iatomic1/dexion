@@ -204,7 +204,7 @@ async function initChainhooks() {
 	// await updateChainhookWebhookURLs(WEBHOOK_BASE_URL);
 }
 
-await getChainhookByUUID("a4645018-7afe-4b3d-b67e-afcb08542068");
+// await getChainhookByUUID("a4645018-7afe-4b3d-b67e-afcb08542068");
 // await initChainhooks();
 // const chainhooks = await client.getChainhooks({ limit: 1 });
 // logger.info(chainhooks, "Chainhooks");

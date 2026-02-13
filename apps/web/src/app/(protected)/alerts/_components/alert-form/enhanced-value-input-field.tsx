@@ -35,9 +35,6 @@ export function EnhancedValueInput({
 }: EnhancedValueInputProps) {
 	const rawConfig = buildMetricConfig(token);
 	const config = getMetricConfig(metric, rawConfig);
-	useEffect(() => {
-		console.log(config);
-	}, [config]);
 
 	return (
 		<Controller

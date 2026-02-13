@@ -28,7 +28,6 @@ const getHodlmmAlerts = async () => {
 async function HodlmmAlertsPage(props: { session: Session }) {
 	const session = (await props).session;
 	const response = await getHodlmmAlerts();
-	console.log(session);
 
 	return (
 		<div className="min-h-screen bg-background">

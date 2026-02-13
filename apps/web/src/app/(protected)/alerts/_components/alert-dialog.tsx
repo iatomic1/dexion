@@ -49,7 +49,6 @@ export function AlertDialog({
 						setOpen(false);
 					}}
 					onSuccess={() => {
-						console.log("I am successfulk");
 						setOpen(false);
 					}}
 				/>

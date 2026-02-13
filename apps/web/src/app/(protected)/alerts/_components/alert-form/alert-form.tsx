@@ -130,9 +130,6 @@ export function AlertForm({
 			executeCreateAlert(data);
 		}
 	};
-	useEffect(() => {
-		console.log(selectedToken);
-	}, [selectedToken]);
 
 	return (
 		<form

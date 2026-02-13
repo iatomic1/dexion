@@ -82,7 +82,6 @@ export const walletAddressVerification = (
 				},
 				async (ctx) => {
 					const session = ctx.context.session;
-					console.log(session);
 					if (!session?.user) {
 						throw ctx.error("UNAUTHORIZED", {
 							message: "You must be logged in to verify a wallet address",

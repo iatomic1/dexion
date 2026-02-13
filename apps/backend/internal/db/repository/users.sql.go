@@ -10,7 +10,7 @@ import (
 )
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled FROM "users"
+SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled, external_address, external_address_verified_at FROM "users"
 WHERE email = $1
 `
 
@@ -32,12 +32,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email *string) (*User, err
 		&i.SubOrgCreated,
 		&i.UpdatedAt,
 		&i.TwoFactorEnabled,
+		&i.ExternalAddress,
+		&i.ExternalAddressVerifiedAt,
 	)
 	return &i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled FROM "users"
+SELECT id, name, email, email_verified, image, invite_code, sub_org_id, wallet_id, wallet_address, wallet_public_key, created_at, sub_org_created, updated_at, two_factor_enabled, external_address, external_address_verified_at FROM "users"
 WHERE id = $1
 `
 
@@ -59,6 +61,8 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (*User, error) {
 		&i.SubOrgCreated,
 		&i.UpdatedAt,
 		&i.TwoFactorEnabled,
+		&i.ExternalAddress,
+		&i.ExternalAddressVerifiedAt,
 	)
 	return &i, err
 }

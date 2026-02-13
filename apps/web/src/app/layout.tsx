@@ -1,6 +1,7 @@
 import "./globals.css";
 import { FRONTEND_URL } from "@dexion/shared";
 import { Toaster } from "@dexion/ui/components/ui/sonner";
+import { TooltipProvider } from "@dexion/ui/components/ui/tooltip";
 import { DeviceContextProvider } from "@dexion/ui/hooks/use-is-mobile";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { Metadata } from "next";
@@ -85,11 +86,13 @@ export default async function RootLayout({
 							<PresetsContextProvider>
 								<div className="flex min-h-screen flex-col font-geist">
 									<ClientQueryProvider>
-										{process.env.NODE_ENV !== "production" && (
+										{/*{process.env.NODE_ENV !== "production" && (
 											<ReactQueryDevtools buttonPosition="bottom-right" />
-										)}
+										)}*/}
 										<DeviceContextProvider isMobile={isMobile}>
-											<main className="flex-1">{children}</main>
+											<TooltipProvider>
+												<main className="flex-1">{children}</main>
+											</TooltipProvider>
 										</DeviceContextProvider>
 									</ClientQueryProvider>
 								</div>

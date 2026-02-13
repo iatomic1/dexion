@@ -9,6 +9,7 @@ import type { UserWatchlist } from "~/types/wallets";
 export interface TokenWithWatchlistId extends TokenMetadata {
 	watchlistId?: string;
 }
+export const USER_WATCHLIST_QUERY_KEY = "userWartchlist";
 
 export const useWatchlistData = () => {
 	// Fetch watchlist data
@@ -19,7 +20,7 @@ export const useWatchlistData = () => {
 		isFetching: isWatchlistFetching,
 		isInitialLoading: isWatchlistInitialLoading,
 	} = useQuery({
-		queryKey: ["watchlist"],
+		queryKey: [USER_WATCHLIST_QUERY_KEY],
 		queryFn: getUserWatchlist,
 		refetchOnWindowFocus: true,
 		placeholderData: keepPreviousData,

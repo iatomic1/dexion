@@ -42,13 +42,24 @@ export function truncateBetween(
 	str: string,
 	marker: string,
 	keep: number,
+	keepEnd?: number,
 ): string {
 	const parts = str.split(marker);
 	if (parts.length < 2) return str;
 
 	const start = parts[0];
-	const end = marker + parts.slice(1).join(marker);
+	const endRaw = marker + parts.slice(1).join(marker);
 
-	if (start.length <= keep) return str;
-	return start.slice(0, keep) + "..." + end;
+	const left = start.length > keep ? start.slice(0, keep) + "..." : start;
+
+	if (keepEnd == null) {
+		return left + endRaw;
+	}
+
+	const right =
+		endRaw.length > keepEnd
+			? "..." + endRaw.slice(endRaw.length - keepEnd)
+			: endRaw;
+
+	return left + right;
 }

@@ -20,6 +20,7 @@ import {
 	deleteWatchlistAction,
 	getUserWatchlist,
 } from "~/app/actions/watchlist-actions";
+import { USER_WATCHLIST_QUERY_KEY } from "~/hooks/useWatchlistData";
 import { getBatchTokenData } from "~/lib/queries/token-watcher";
 import type { UserWatchlist } from "~/types/wallets";
 
@@ -96,7 +97,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 		isFetching: isWatchlistFetching,
 		refetch: refetchWatchlistQuery,
 	} = useQuery({
-		queryKey: ["watchlist"],
+		queryKey: [USER_WATCHLIST_QUERY_KEY],
 		queryFn: getUserWatchlist,
 		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,
@@ -119,7 +120,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 		error: tokensError,
 		isFetching: isTokensFetching,
 	} = useQuery({
-		queryKey: ["batch-tokens", contractAddresses],
+		queryKey: ["watchlistTokens", contractAddresses.join(",")],
 		queryFn: () => getBatchTokenData(contractAddresses),
 		enabled: contractAddresses.length > 0,
 		staleTime: 60 * 5000, // 5 minutes
@@ -164,7 +165,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 	const addToWatchlist = useCallback(
 		async (ca: string) => {
 			await addToWatchlistAction({ ca });
-			queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+			queryClient.invalidateQueries({ queryKey: [USER_WATCHLIST_QUERY_KEY] });
 		},
 		[queryClient],
 	);
@@ -172,7 +173,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
 	const removeFromWatchlist = useCallback(
 		async (id: string) => {
 			await deleteWatchlistAction({ id });
-			queryClient.invalidateQueries({ queryKey: ["watchlist"] });
+			queryClient.invalidateQueries({ queryKey: [USER_WATCHLIST_QUERY_KEY] });
 		},
 		[queryClient],
 	);

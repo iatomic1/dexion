@@ -9,6 +9,7 @@ export type Alert = {
 	id: string;
 	userId: string;
 	status: "active" | "paused" | "completed";
+	type: "token";
 	repeatable: boolean;
 	operator: string;
 	metric: string;

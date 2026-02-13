@@ -11,6 +11,7 @@ interface RawAlert {
 	id: string;
 	userId: string;
 	status: string;
+	type: string;
 	repeatable: string;
 	operator: string;
 	metric: string;
@@ -70,6 +71,7 @@ export class AlertStore {
 						...rawAlert,
 						channels: rawAlert.channels.split(",").map((c) => c.trim()),
 						value: Number(rawAlert.value),
+						type: (rawAlert.type || "token") as "token",
 						repeatable: rawAlert.repeatable === "true",
 						status: rawAlert.status as "active",
 					}) as Alert,

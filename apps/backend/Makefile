@@ -107,3 +107,6 @@ dev:
 
 dev-local:
 	doppler run -p dexion -c dev_backend -- $(MAKE) dev
+
+gen-local:
+	doppler run -p dexion -c dev_backend -- $(MAKE) gen

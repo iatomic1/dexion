@@ -1,27 +1,21 @@
 import { config } from "@/config";
 import { logger } from "@/config/logger";
-import type {
-	INotifier,
-	NotificationPayload,
-} from "@/core/notifications/notifier";
+import type { INotifier, NotificationJobData } from "@/core/queues";
 import { decryptToken } from "@/shared/utils/crypto";
 
 export class WebhookNotifier implements INotifier {
-	async send(payload: NotificationPayload): Promise<void> {
-		const { alert, token, userProfile, triggeredAt } = payload;
+	async send(payload: NotificationJobData): Promise<void> {
+		const { userProfile, triggeredAt } = payload;
 		const webhook = userProfile.webhook;
 
 		if (!webhook?.webhookUrl) {
-			logger.warn(
-				{ userId: alert.userId },
-				"User has no webhook URL for notification",
-			);
+			logger.warn("User has no webhook URL for notification");
 			return;
 		}
 
 		if (!webhook.enabled || webhook.status === "interrupted") {
 			logger.warn(
-				{ userId: alert.userId, status: webhook.status },
+				{ status: webhook.status },
 				"Webhook is disabled or interrupted, skipping",
 			);
 			return;
@@ -31,11 +25,25 @@ export class WebhookNotifier implements INotifier {
 			? decryptToken(webhook.bearerToken, config.INTERNAL_SECRET)
 			: null;
 
-		const webhookPayload = {
-			alert,
-			token,
+		let webhookPayload: any = {
 			timestamp: triggeredAt,
+			type: payload.type,
 		};
+
+		if (payload.type === "token") {
+			webhookPayload = {
+				...webhookPayload,
+				alert: payload.alert,
+				token: payload.token,
+			};
+		} else if (payload.type === "hodlmm") {
+			webhookPayload = {
+				...webhookPayload,
+				alert: payload.alert,
+				currentStatus: payload.currentStatus,
+				positionValue: payload.positionValue,
+			};
+		}
 
 		const headers: Record<string, string> = {
 			"Content-Type": "application/json",
@@ -59,12 +67,11 @@ export class WebhookNotifier implements INotifier {
 			}
 
 			logger.info(
-				{ userId: alert.userId, status: response.status },
+				{ status: response.status },
 				"✅ Webhook delivered successfully",
 			);
 		} catch (err) {
 			logger.error(err, "❌ Error sending webhook");
-			// TODO: Add logic to update webhook status to 'interrupted'
 			throw err;
 		}
 	}

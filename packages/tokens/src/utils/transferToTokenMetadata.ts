@@ -77,11 +77,8 @@ export function transformFakFunToTokenMetadata(
 		.filter((s) => s.value && s.value.trim() !== "")
 		.map((s) => ({ platform: s.platform, value: s.value! }));
 
-	const progressPercent = Math.min((raw.progress ?? 0) * 100, 100);
 	return {
 		contract_id: raw.tokenContract,
-		dex_contract: raw.dexContract || null,
-		progress: progressPercent ?? undefined,
 		symbol: raw.symbol,
 		decimals: raw.decimals,
 		name: raw.name,
@@ -111,6 +108,14 @@ export function transformFakFunToTokenMetadata(
 			volume_1d_usd: raw.tradingVolume || 0,
 			volume_7d_usd: 0,
 		},
+		bc_data: {
+			pre_contract: raw.preContract || null,
+			targetAmm: raw.targetAmm || null,
+			tokenToDex: raw.tokenToDex || null,
+			tokenToDeployer: raw.tokenToDeployer || null,
+		},
+		dex_contract: raw.dexContract || null,
+		progress: raw.progress || 0,
 		source,
 	};
 }

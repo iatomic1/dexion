@@ -72,6 +72,7 @@ const processor = new Worker<SwapEventJobData>(
 						for (const channelName of activeChannels) {
 							const queue = queueMap[channelName];
 							await queue.add("send-notification", {
+								type: "token",
 								alert,
 								token,
 								userProfile,

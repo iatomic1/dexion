@@ -38,7 +38,7 @@ import {
 	TooltipTrigger,
 } from "@dexion/ui/components/ui/tooltip";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -46,6 +46,7 @@ import {
 	createAlertAction,
 	updateAlertAction,
 } from "~/app/actions/price-alert-actions";
+import { SearchDialog } from "~/components/layout/header/search-dialog";
 
 interface AlertDialogProps {
 	initialData: UserAlert | null;

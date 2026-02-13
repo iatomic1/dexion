@@ -1,11 +1,9 @@
 import { Resend } from "resend";
 import { config } from "@/config";
 import { logger } from "@/config/logger";
-import type {
-	INotifier,
-	NotificationPayload,
-} from "@/core/notifications/notifier";
 import { getAlertEmail } from "@/core/notifications/templates/email";
+import { getHodlmmAlertEmail } from "@/core/notifications/templates/email-hodlmm";
+import type { INotifier, NotificationJobData } from "@/core/queues";
 
 export class EmailNotifier implements INotifier {
 	private resend: Resend;
@@ -14,19 +12,28 @@ export class EmailNotifier implements INotifier {
 		this.resend = new Resend(config.RESEND_API_KEY);
 	}
 
-	async send(payload: NotificationPayload): Promise<void> {
-		const { alert, token, userProfile } = payload;
+	async send(payload: NotificationJobData): Promise<void> {
+		const { userProfile } = payload;
 
 		if (!userProfile.email) {
-			logger.warn(
-				{ userId: alert.userId },
-				"User has no email for notification",
-			);
+			logger.warn("User has no email for notification");
 			return;
 		}
 
-		const subject = `Alert Triggered: ${token.name} ${alert.metric} ${alert.operator} ${alert.value}`;
-		const html = getAlertEmail({ token, alert });
+		let subject = "";
+		let html = "";
+
+		if (payload.type === "token") {
+			const { alert, token } = payload;
+			subject = `Alert Triggered: ${token.name} ${alert.metric} ${alert.operator} ${alert.value}`;
+			html = getAlertEmail({ token, alert });
+		} else if (payload.type === "hodlmm") {
+			const { alert, currentStatus } = payload;
+			const statusText =
+				currentStatus === "out-of-range" ? "Out of Range" : "Back in Range";
+			subject = `HODLMM Alert: ${alert.displayName} is ${statusText}`;
+			html = getHodlmmAlertEmail(payload);
+		}
 
 		try {
 			const response = await this.resend.emails.send({
@@ -38,7 +45,7 @@ export class EmailNotifier implements INotifier {
 			logger.info(response, "✅ Email sent successfully");
 		} catch (err) {
 			logger.error(err, "❌ Error sending email");
-			throw err; // Re-throw to allow job retries
+			throw err;
 		}
 	}
 }

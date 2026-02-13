@@ -1,7 +1,7 @@
 import { Job, Worker } from "bullmq";
 import { bullMqRedisConnection } from "@/config/connections";
 import { logger } from "@/config/logger";
-import type { NotificationJobData as NotificationPayload } from "@/core/queues";
+import type { NotificationJobData } from "@/core/queues";
 import { webhookQueue, webhookQueueDlq } from "@/infrastructure/bullmq/queues";
 import { WebhookNotifier } from "@/infrastructure/notifiers/webhook";
 
@@ -9,9 +9,9 @@ import { WebhookNotifier } from "@/infrastructure/notifiers/webhook";
 
 const notifier = new WebhookNotifier();
 
-const processor = new Worker<NotificationPayload>(
+const processor = new Worker<NotificationJobData>(
 	webhookQueue.name,
-	async (job: Job<NotificationPayload>) => {
+	async (job: Job<NotificationJobData>) => {
 		await notifier.send(job.data);
 	},
 	{

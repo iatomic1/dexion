@@ -1,3 +1,4 @@
+export * from "./computeMarketcap";
 export * from "./contract";
 export * from "./convertSwapTransaction";
 export * from "./getFungibleContractID";

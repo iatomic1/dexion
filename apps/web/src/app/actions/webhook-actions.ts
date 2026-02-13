@@ -1,6 +1,7 @@
 "use server";
 import { createServerSDK } from "@dexion/api-sdk/DexionApiSDK.ts";
 import { webhookConfigSchema } from "@dexion/api-sdk/index.ts";
+import { HTTP_STATUS } from "@dexion/shared";
 import { authenticatedAction } from "~/lib/safe-action";
 import { revalidateTagServer } from "./revalidate";
 
@@ -28,7 +29,9 @@ export const updateWebhookConfigAction = authenticatedAction
 			const sdk = createServerSDK(user.accessToken, user.userId);
 			const webhookConfig = await sdk.webhooks.updateWebhook(input);
 
-			revalidateTagServer(`user-webhook-config-${user.userId}`);
+			if (webhookConfig.status === HTTP_STATUS.OK) {
+				revalidateTagServer(`user-webhook-config-${user.userId}`);
+			}
 
 			return webhookConfig;
 		} catch (err) {

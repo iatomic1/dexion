@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"@dexion/notifier": "workspace:*",
+		"@dexion/logger": "workspace:*",
 		"@dexion/shared": "workspace:*",
 		"@dexion/tokens": "workspace:*",
 		"@hono/node-server": "^1.14.3",

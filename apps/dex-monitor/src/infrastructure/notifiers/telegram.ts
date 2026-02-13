@@ -2,11 +2,9 @@ import { type NotificationButton, NotifierClient } from "@dexion/notifier";
 import { FRONTEND_URL, SOCIALS } from "@dexion/shared";
 import { config } from "@/config";
 import { logger } from "@/config/logger";
-import type {
-	INotifier,
-	NotificationPayload,
-} from "@/core/notifications/notifier";
 import { getAlertHtmlMessage } from "@/core/notifications/templates/telegram";
+import { getHodlmmAlertHtmlMessage } from "@/core/notifications/templates/telegram-hodlmm";
+import type { INotifier, NotificationJobData } from "@/core/queues";
 
 export class TelegramNotifier implements INotifier {
 	private notifier: NotifierClient;
@@ -15,26 +13,36 @@ export class TelegramNotifier implements INotifier {
 		this.notifier = new NotifierClient(config.TELEGRAM_BOT_TOKEN);
 	}
 
-	async send(payload: NotificationPayload): Promise<void> {
-		const { alert, token, userProfile } = payload;
+	async send(payload: NotificationJobData): Promise<void> {
+		const { userProfile } = payload;
 
 		if (!userProfile.telegram_id) {
-			logger.warn(
-				{ userId: alert.userId },
-				"User has no telegram_id for notification",
-			);
+			logger.warn("User has no telegram_id for notification");
 			return;
 		}
 
-		const message = getAlertHtmlMessage({ token, alert });
+		let message = "";
+		let buttons: NotificationButton[][] = [];
+
+		if (payload.type === "token") {
+			const { alert, token } = payload;
+			message = getAlertHtmlMessage({ token, alert });
+			buttons = [
+				[
+					{ text: "Join Community: 💬", url: SOCIALS.DISCORD },
+					{ text: "DEXION: 🔥", url: `${FRONTEND_URL}/meme/${alert.ca}` },
+				],
+				[{ text: "Manage your alerts: 🔕", url: `${FRONTEND_URL}/alerts` }],
+			];
+		} else if (payload.type === "hodlmm") {
+			message = getHodlmmAlertHtmlMessage(payload);
+			buttons = [
+				[{ text: "Manage Position 🏦", url: "https://hodlmm.bitflow.finance" }],
+				[{ text: "Alert Settings ⚙️", url: `${FRONTEND_URL}/alerts/hodlmm` }],
+			];
+		}
+
 		const recipient = { id: userProfile.telegram_id };
-		const buttons: NotificationButton[][] = [
-			[
-				{ text: "Join Community: 💬", url: SOCIALS.DISCORD },
-				{ text: "DEXION: 🔥", url: `${FRONTEND_URL}/meme/${alert.ca}` },
-			],
-			[{ text: "Manage your alerts: 🔕", url: `${FRONTEND_URL}/alerts` }],
-		];
 
 		try {
 			const result = await this.notifier.send("telegram", {
@@ -43,7 +51,7 @@ export class TelegramNotifier implements INotifier {
 				buttons,
 				parseMode: "HTML",
 			});
-			logger.info({ userId: alert.userId, result }, "✅ Telegram alert sent");
+			logger.info({ result }, "✅ Telegram alert sent");
 		} catch (err) {
 			logger.error(err, "❌ Error sending telegram message");
 			throw err;

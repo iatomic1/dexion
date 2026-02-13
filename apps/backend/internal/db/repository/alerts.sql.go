@@ -19,7 +19,7 @@ INSERT INTO alerts (
 ) VALUES (
     $1, $2, $3, $4, $5, $6, 'active'
 )
-RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type
 `
 
 type CreateAlertParams struct {
@@ -28,7 +28,7 @@ type CreateAlertParams struct {
 	Operator   string `binding:"required" json:"operator"`
 	Value      string `binding:"required" json:"value"`
 	Ca         string `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	Repeatable bool   `binding:"required" json:"repeatable"`
+	Repeatable *bool  `binding:"required" json:"repeatable"`
 }
 
 func (q *Queries) CreateAlert(ctx context.Context, arg CreateAlertParams) (*Alert, error) {
@@ -52,6 +52,7 @@ func (q *Queries) CreateAlert(ctx context.Context, arg CreateAlertParams) (*Aler
 		&i.Status,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
 	)
 	return &i, err
 }
@@ -91,7 +92,7 @@ func (q *Queries) CreateAlertChannels(ctx context.Context, arg CreateAlertChanne
 const deleteAlert = `-- name: DeleteAlert :one
 DELETE FROM alerts
 WHERE id = $1 AND user_id = $2
-RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type
 `
 
 type DeleteAlertParams struct {
@@ -113,6 +114,7 @@ func (q *Queries) DeleteAlert(ctx context.Context, arg DeleteAlertParams) (*Aler
 		&i.Status,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
 	)
 	return &i, err
 }
@@ -130,7 +132,7 @@ const deleteAlerts = `-- name: DeleteAlerts :many
 DELETE FROM alerts
 WHERE id = ANY($1)
   AND user_id = $2
-RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type
 `
 
 type DeleteAlertsParams struct {
@@ -158,6 +160,7 @@ func (q *Queries) DeleteAlerts(ctx context.Context, arg DeleteAlertsParams) ([]*
 			&i.Status,
 			&i.UpdatedAt,
 			&i.CreatedAt,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}
@@ -181,7 +184,7 @@ func (q *Queries) DeleteAllInactiveAlerts(ctx context.Context, userID string) er
 }
 
 const getActiveAlertsByMetric = `-- name: GetActiveAlertsByMetric :many
-SELECT id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at FROM alerts
+SELECT id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type FROM alerts
 WHERE metric = $1 AND status = 'active'
 `
 
@@ -205,6 +208,7 @@ func (q *Queries) GetActiveAlertsByMetric(ctx context.Context, metric string) ([
 			&i.Status,
 			&i.UpdatedAt,
 			&i.CreatedAt,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}
@@ -217,7 +221,7 @@ func (q *Queries) GetActiveAlertsByMetric(ctx context.Context, metric string) ([
 }
 
 const getAlertById = `-- name: GetAlertById :one
-SELECT id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at FROM alerts
+SELECT id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type FROM alerts
 WHERE id = $1 AND user_id = $2
 `
 
@@ -240,6 +244,7 @@ func (q *Queries) GetAlertById(ctx context.Context, arg GetAlertByIdParams) (*Al
 		&i.Status,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
 	)
 	return &i, err
 }
@@ -277,7 +282,7 @@ func (q *Queries) GetAllChannels(ctx context.Context) ([]*Channel, error) {
 
 const getUserAlerts = `-- name: GetUserAlerts :many
 SELECT
-    a.id, a.user_id, a.metric, a.operator, a.value, a.ca, a.repeatable, a.status, a.updated_at, a.created_at,
+    a.id, a.user_id, a.metric, a.operator, a.value, a.ca, a.repeatable, a.status, a.updated_at, a.created_at, a.type,
     COALESCE(
         json_agg(
             json_build_object(
@@ -303,10 +308,11 @@ type GetUserAlertsRow struct {
 	Operator   string    `binding:"required" json:"operator"`
 	Value      string    `binding:"required" json:"value"`
 	Ca         string    `binding:"required" example:"SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token" json:"ca"`
-	Repeatable bool      `binding:"required" json:"repeatable"`
+	Repeatable *bool     `binding:"required" json:"repeatable"`
 	Status     string    `binding:"required" json:"status"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	CreatedAt  time.Time `json:"createdAt"`
+	Type       string    `json:"type"`
 	Channels   []byte    `json:"channels"`
 }
 
@@ -331,6 +337,7 @@ func (q *Queries) GetUserAlerts(ctx context.Context, userID string) ([]*GetUserA
 			&i.Status,
 			&i.UpdatedAt,
 			&i.CreatedAt,
+			&i.Type,
 			&i.Channels,
 		); err != nil {
 			return nil, err
@@ -431,14 +438,14 @@ SET
     repeatable = COALESCE($4, repeatable),
     updated_at = now()
 WHERE id = $5 AND user_id = $6
-RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type
 `
 
 type UpdateAlertParams struct {
 	Metric     string    `binding:"required" json:"metric"`
 	Operator   string    `binding:"required" json:"operator"`
 	Value      string    `binding:"required" json:"value"`
-	Repeatable bool      `binding:"required" json:"repeatable"`
+	Repeatable *bool     `binding:"required" json:"repeatable"`
 	ID         uuid.UUID `json:"id"`
 	UserID     string    `json:"userId"`
 }
@@ -464,6 +471,7 @@ func (q *Queries) UpdateAlert(ctx context.Context, arg UpdateAlertParams) (*Aler
 		&i.Status,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
 	)
 	return &i, err
 }
@@ -474,7 +482,7 @@ SET
     status = COALESCE($1, status),
     updated_at = now()
 WHERE id = $2 AND user_id = $3
-RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at
+RETURNING id, user_id, metric, operator, value, ca, repeatable, status, updated_at, created_at, type
 `
 
 type UpdateAlertStatusParams struct {
@@ -497,6 +505,7 @@ func (q *Queries) UpdateAlertStatus(ctx context.Context, arg UpdateAlertStatusPa
 		&i.Status,
 		&i.UpdatedAt,
 		&i.CreatedAt,
+		&i.Type,
 	)
 	return &i, err
 }

@@ -1,7 +1,7 @@
 import { Job, Worker } from "bullmq";
 import { bullMqRedisConnection } from "@/config/connections";
 import { logger } from "@/config/logger";
-import type { NotificationJobData as NotificationPayload } from "@/core/queues";
+import type { NotificationJobData } from "@/core/queues";
 import {
 	telegramQueue,
 	telegramQueueDlq,
@@ -10,9 +10,9 @@ import { TelegramNotifier } from "@/infrastructure/notifiers/telegram";
 
 const notifier = new TelegramNotifier();
 
-const processor = new Worker<NotificationPayload>(
+const processor = new Worker<NotificationJobData>(
 	telegramQueue.name,
-	async (job: Job<NotificationPayload>) => {
+	async (job: Job<NotificationJobData>) => {
 		await notifier.send(job.data);
 	},
 	{

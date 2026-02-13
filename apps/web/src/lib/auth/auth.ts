@@ -27,6 +27,7 @@ import { handleEmailSendingImmediate } from "../utils/email";
 import { initWallet } from "./init-wallet";
 import { siws } from "./plugins/siws";
 import { getTelegramPlugin } from "./plugins/telegram/import";
+import { walletAddressVerification } from "./plugins/wallet-address-verification";
 
 const URL =
 	process.env.NODE_ENV === "production"
@@ -83,6 +84,13 @@ export const auth = betterAuth({
 				returned: true,
 			},
 			walletPublicKey: {
+				type: "string",
+				required: false,
+				defaultValue: null,
+				input: false,
+				returned: true,
+			},
+			externalAddress: {
 				type: "string",
 				required: false,
 				defaultValue: null,
@@ -233,6 +241,7 @@ export const auth = betterAuth({
 			sendVerificationOnSignUp: true,
 		}),
 		bearer(),
+		walletAddressVerification(),
 		siws({
 			domain: DOMAIN_NAME,
 			emailDomainName: DOMAIN_NAME,
@@ -242,24 +251,55 @@ export const auth = betterAuth({
 			bnsLookup: async ({ walletAddress }) => {
 				try {
 					const res = await getBnsAndAvatar(walletAddress);
-					return res;
+
+					// Validate the response
+					if (!res || typeof res !== "object") {
+						throw new Error("Invalid BNS response");
+					}
+
+					return {
+						name: res.name || walletAddress,
+						avatar: res.avatar || "",
+					};
 				} catch (err) {
+					// Log error for monitoring (but don't expose to client)
+					console.error(`BNS lookup failed for ${walletAddress}:`, err);
+
+					// Return safe defaults
 					return {
 						name: walletAddress,
 						avatar: "",
 					};
 				}
 			},
-			verifyMessage: async ({ message, signature, publicKey }) => {
+			verifyMessage: async ({
+				message,
+				signature,
+				publicKey,
+				address,
+				nonce,
+			}) => {
 				try {
-					const isValid = verifyMessageSignatureRsv({
+					const isValidSignature = verifyMessageSignatureRsv({
 						message,
 						signature,
 						publicKey,
 					});
-					return isValid;
+
+					if (!isValidSignature) {
+						console.error("Signature verification failed", {
+							address: address?.substring(0, 10) + "...",
+							signaturePrefix: signature?.substring(0, 20) + "...",
+						});
+						return false;
+					}
+
+					return true;
 				} catch (error) {
-					console.error("SIWE verification failed:", error);
+					console.error("SIWS verification error:", {
+						error: error instanceof Error ? error.message : "Unknown error",
+						address: address?.substring(0, 10) + "...",
+					});
 					return false;
 				}
 			},

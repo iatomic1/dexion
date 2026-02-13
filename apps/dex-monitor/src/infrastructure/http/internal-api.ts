@@ -56,3 +56,35 @@ export async function updateAlertStatus({
 		logger.error(err, "Failed to call UpdateAlertStatus");
 	}
 }
+
+export async function updateHodlmmAlertStatus({
+	id,
+	status,
+	valueUsd,
+}: {
+	id: string;
+	status: string;
+	valueUsd: number;
+}) {
+	try {
+		const res = await fetch(`${API_BASE_URL}hodlmm/alerts/status`, {
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"X-Internal-Secret": config.INTERNAL_SECRET,
+			},
+			body: JSON.stringify({
+				id,
+				lastKnownStatus: status,
+				lastKnownValueUsd: valueUsd,
+			}),
+		});
+
+		if (!res.ok) {
+			const text = await res.text();
+			throw new Error(`Failed to update hodlmm status: ${res.status} ${text}`);
+		}
+	} catch (err) {
+		logger.error(err, "Failed to call UpdateHodlmmAlertStatus");
+	}
+}

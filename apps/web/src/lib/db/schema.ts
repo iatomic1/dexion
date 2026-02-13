@@ -29,6 +29,10 @@ export const user = pgTable(
 			.$defaultFn(() => new Date())
 			.notNull(),
 		subOrgCreated: boolean("sub_org_created").default(false),
+		externalAddress: text("external_address").unique(),
+		externalAddressVerifiedAt: timestamp("external_address_verified_at", {
+			mode: "date",
+		}),
 		updatedAt: timestamp("updated_at", { withTimezone: true })
 			.$defaultFn(() => new Date())
 			.notNull(),

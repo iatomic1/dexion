@@ -32,8 +32,15 @@ export type TokenMetadata = {
 		volume_1d_usd: number;
 		volume_7d_usd: number;
 	};
+	bc_data?: BondingCurveData;
 	source: "stxcity" | "stxtools" | "fakfun";
 };
+export interface BondingCurveData {
+	pre_contract: string | null;
+	targetAmm: string | null;
+	tokenToDex: string | null;
+	tokenToDeployer: string | null;
+}
 
 export type TokenSwapTransaction = {
 	tx_id: string;

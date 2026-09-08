@@ -1,9 +1,8 @@
 //plugin/index.ts
 import { validateStacksAddress } from "@stacks/transactions";
 import { type BetterAuthPlugin, type User } from "better-auth";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthEndpoint } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
-import { createAuthEndpoint } from "better-auth/plugins";
 import { z } from "zod";
 import { initWallet } from "../../init-wallet";
 import { schema } from "./schema";
@@ -104,8 +103,8 @@ export const siws = (options: SIWSPluginOptions) =>
 							});
 						}
 
-						await ctx.context.internalAdapter.deleteVerificationValue(
-							verification.id,
+						await ctx.context.internalAdapter.deleteVerificationByIdentifier(
+							verification.identifier,
 						);
 
 						let user: User | null = null;
@@ -170,7 +169,6 @@ export const siws = (options: SIWSPluginOptions) =>
 
 						const session = await ctx.context.internalAdapter.createSession(
 							user.id,
-							ctx,
 						);
 						if (!session) {
 							throw ctx.error("INTERNAL_SERVER_ERROR", {

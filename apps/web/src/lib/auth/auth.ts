@@ -2,11 +2,11 @@ import { DOMAIN_NAME, FRONTEND_URL } from "@dexion/shared";
 import { verifyMessageSignatureRsv } from "@stacks/encryption";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { createAuthMiddleware } from "better-auth/api";
 import { generateRandomString } from "better-auth/crypto";
 import { nextCookies } from "better-auth/next-js";
 import {
 	bearer,
-	createAuthMiddleware,
 	emailOTP,
 	jwt,
 	oneTimeToken,
@@ -215,8 +215,8 @@ export const auth = betterAuth({
 	},
 	emailVerification: {
 		autoSignInAfterVerification: true,
-		async onEmailVerification(user, request) {
-			console.log(user, request, "from onEmailVerification");
+		async afterEmailVerification(user, request) {
+			console.log(user, request, "from afterEmailVerification");
 		},
 	},
 	plugins: [
@@ -227,6 +227,9 @@ export const auth = betterAuth({
 		}),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
+				if (type === "change-email") {
+					throw new Error("Email change verification is not supported");
+				}
 				console.log(`Sending OTP ${otp} to ${email} for ${type}`);
 				try {
 					await handleEmailSendingImmediate(email, type, otp);

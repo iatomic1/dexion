@@ -1,6 +1,10 @@
 import type { auth } from "~/lib/auth/auth";
 export type Session = typeof auth.$Infer.Session;
-export type User = (typeof auth.$Infer.Session)["user"];
+export type User = (typeof auth.$Infer.Session)["user"] & {
+	twoFactorEnabled?: boolean | null;
+	telegramId?: string | null;
+	telegramUsername?: string | null;
+};
 
 export type AuthSuccess = {
 	accessToken: string;

@@ -220,10 +220,8 @@ export const telegram = (options: TelegramPluginOptions) => {
 					}
 
 					// Create session
-					const session = await ctx.context.internalAdapter.createSession(
-						userId,
-						ctx,
-					);
+					const session =
+						await ctx.context.internalAdapter.createSession(userId);
 
 					const user = await ctx.context.adapter.findOne({
 						model: "user",
@@ -466,12 +464,9 @@ export const telegram = (options: TelegramPluginOptions) => {
 					});
 
 					// Clear Telegram data from user
-					await auth.api.updateUser({
-						headers: ctx.headers,
-						body: {
-							telegramId: null,
-							telegramUsername: null,
-						},
+					await ctx.context.internalAdapter.updateUser(session.user.id, {
+						telegramId: null,
+						telegramUsername: null,
 					});
 
 					return ctx.json({
@@ -611,10 +606,8 @@ export const telegram = (options: TelegramPluginOptions) => {
 								}
 
 								// Create session
-								const session = await ctx.context.internalAdapter.createSession(
-									userId,
-									ctx,
-								);
+								const session =
+									await ctx.context.internalAdapter.createSession(userId);
 
 								const user = await ctx.context.adapter.findOne({
 									model: "user",

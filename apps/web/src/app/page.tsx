@@ -1,18 +1,27 @@
 import { FRONTEND_URL } from "@dexion/shared";
 import type { Metadata } from "next";
-import CTASection from "~/components/landing/cta-section";
-import FeaturesSection from "~/components/landing/features";
-import Footer from "~/components/landing/footer";
-import HeroSection from "~/components/landing/hero";
-import HowItWorksSection from "~/components/landing/how-it-works";
-import PreviewSection from "~/components/landing/preview";
-import TestimonialsSection from "~/components/landing/testimonials";
-import WhyDexionSection from "~/components/landing/why-dexion";
+import type { CSSProperties } from "react";
+import { Suspense } from "react";
+import { archivo, jetbrainsMono } from "~/app/fonts/dexion-landing";
+import { AuthViewParamListener } from "~/components/auth/auth-view-param-listener";
+import { PrelaunchArchitecture } from "~/components/prelaunch/architecture";
+import { PrelaunchAvailableNowBeta } from "~/components/prelaunch/available-now-beta";
+import { PrelaunchClosingCta } from "~/components/prelaunch/closing-cta";
+import { PrelaunchFaq } from "~/components/prelaunch/faq";
+import { PrelaunchFeatureSwitcher } from "~/components/prelaunch/feature-switcher";
+import { PrelaunchFooter } from "~/components/prelaunch/footer";
+import { PrelaunchHeader } from "~/components/prelaunch/header";
+import { PrelaunchHero } from "~/components/prelaunch/hero";
+import { PrelaunchHodlmmSpotlight } from "~/components/prelaunch/hodlmm-spotlight";
+import { PrelaunchLiveInFourSteps } from "~/components/prelaunch/live-in-four-steps";
+import { PrelaunchNotificationsFanout } from "~/components/prelaunch/notifications-fanout";
+import { PrelaunchProductFrame } from "~/components/prelaunch/product-frame";
+import { PrelaunchStickyCtaBar } from "~/components/prelaunch/sticky-cta-bar";
 
 export const metadata: Metadata = {
-	title: "Home",
+	title: "Dexion Pro — The Market Edge for Stacks",
 	description:
-		"The all-in-one web-based trading bot on Stacks, designed for speed, security, and simplicity. Trade smarter, not harder with our advanced features.",
+		"Real-time crypto alerts for the Stacks ecosystem. Prices, wallets, HodlMM range alerts and a full trading stack — live in open beta.",
 	alternates: {
 		canonical: FRONTEND_URL,
 	},
@@ -20,26 +29,46 @@ export const metadata: Metadata = {
 
 export default function Home() {
 	return (
-		<div className="min-h-screen bg-background">
-			<div className="py-4 border-b flex items-center justify-center">
-				<span className="text-sm">Charts are powered by</span>
-				<a
-					href="https://tradingview.com"
-					className="underline ml-2 text-blue-300"
-					target="_blank"
-					rel="noopener"
-				>
-					TradingView
-				</a>
+		<div
+			className={`${archivo.variable} ${jetbrainsMono.variable} bg-black text-[#e9ece9] antialiased`}
+			style={
+				{
+					fontFamily: "var(--font-archivo)",
+					"--font-mono": "var(--font-jetbrains-mono)",
+				} as CSSProperties
+			}
+		>
+			<Suspense fallback={null}>
+				<AuthViewParamListener />
+			</Suspense>
+			<PrelaunchHeader />
+			<PrelaunchHero />
+			<PrelaunchProductFrame />
+			<PrelaunchFeatureSwitcher />
+			<PrelaunchLiveInFourSteps />
+			<PrelaunchNotificationsFanout />
+			<PrelaunchAvailableNowBeta />
+			<PrelaunchHodlmmSpotlight />
+			<PrelaunchArchitecture />
+			<PrelaunchFaq />
+			<PrelaunchClosingCta />
+			<div className="border-t border-[rgba(255,255,255,.06)] bg-black py-4 text-center">
+				<span className="text-[13px] text-[#8a918b]">
+					Charts are powered by{" "}
+					<a
+						href="https://tradingview.com"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-[#3ecf8e] underline hover:text-[#7de6b3]"
+					>
+						TradingView
+					</a>
+				</span>
 			</div>
-			<HeroSection />
-			<FeaturesSection />
-			<HowItWorksSection />
-			<WhyDexionSection />
-			<PreviewSection />
-			<TestimonialsSection />
-			<CTASection />
-			<Footer />
+			<PrelaunchFooter />
+			{/* Reserve space so mobile content clears the fixed sticky CTA bar */}
+			<div className="h-24 sm:hidden" aria-hidden="true" />
+			<PrelaunchStickyCtaBar />
 		</div>
 	);
 }

@@ -31,10 +31,12 @@ import {
 	Webhook,
 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
 import {
 	deleteHodlmmAlertAction,
 	updateHodlmmAlertAction,
 } from "~/app/actions/hodlmm-actions";
+import { EditChannelsDialog } from "./edit-channels-dialog";
 
 const statusStyles: Record<string, string> = {
 	active: "bg-primary text-primary-foreground",
@@ -162,6 +164,8 @@ export const columns: ColumnDef<HodlmmAlert>[] = [
 ];
 
 function RowActions({ alert }: { alert: HodlmmAlert }) {
+	const [editDialogOpen, setEditDialogOpen] = useState(false);
+
 	const { execute: executeUpdate, status: updateStatus } = useAction(
 		updateHodlmmAlertAction,
 		{
@@ -195,38 +199,50 @@ function RowActions({ alert }: { alert: HodlmmAlert }) {
 		updateStatus === "executing" || deleteStatus === "executing";
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button size="icon" variant="ghost">
-					<EllipsisIcon size={16} />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
-				<DropdownMenuGroup>
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button size="icon" variant="ghost">
+						<EllipsisIcon size={16} />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DropdownMenuGroup>
+						<DropdownMenuItem
+							disabled={isPending}
+							onClick={() =>
+								executeUpdate({
+									id: alert.id,
+									status: isPaused ? "active" : "paused",
+								})
+							}
+						>
+							{updateStatus === "executing" ? (
+								<Spinner className="mr-2" />
+							) : null}
+							{isPaused ? "Resume" : "Pause"}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+							Edit Channels
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
 					<DropdownMenuItem
 						disabled={isPending}
-						onClick={() =>
-							executeUpdate({
-								id: alert.id,
-								status: isPaused ? "active" : "paused",
-							})
-						}
+						className="text-destructive focus:text-destructive"
+						onClick={() => executeDelete({ id: alert.id })}
 					>
-						{updateStatus === "executing" ? <Spinner className="mr-2" /> : null}
-						{isPaused ? "Resume" : "Pause"}
+						{deleteStatus === "executing" ? <Spinner className="mr-2" /> : null}
+						Delete
+						<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
 					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					disabled={isPending}
-					className="text-destructive focus:text-destructive"
-					onClick={() => executeDelete({ id: alert.id })}
-				>
-					{deleteStatus === "executing" ? <Spinner className="mr-2" /> : null}
-					Delete
-					<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+				</DropdownMenuContent>
+			</DropdownMenu>
+			<EditChannelsDialog
+				alert={alert}
+				open={editDialogOpen}
+				onOpenChange={setEditDialogOpen}
+			/>
+		</>
 	);
 }

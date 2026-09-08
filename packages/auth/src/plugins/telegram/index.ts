@@ -1,8 +1,8 @@
 import type { BetterAuthPlugin, User } from "better-auth";
 import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
-import { REDIS_PREFIX, updateCachedUserField } from "~/lib/db/redis";
-import { auth } from "../../auth";
+import { getAuthInstance } from "../../auth-instance";
+import { REDIS_PREFIX, updateCachedUserField } from "../../redis";
 import type { TelegramAuthData, TelegramPluginOptions } from "./types";
 import {
 	parseMiniAppInitData,
@@ -390,7 +390,7 @@ export const telegram = (options: TelegramPluginOptions) => {
 						}
 
 						// Update user and cached session
-						await auth.api.updateUser({
+						await getAuthInstance().api.updateUser({
 							headers: ctx.headers,
 							body: updateData,
 						});

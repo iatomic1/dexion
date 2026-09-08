@@ -41,6 +41,10 @@ dexion_handoff*
 **/dexion_handoff*/
 app/web/dexion_handoff*
 
+# scratch/debug scripts - not shipped
+/bitflow-test.ts
+/hodlmm-api-documentation.md
+
 # Misc
 .DS_Store
 *.pem

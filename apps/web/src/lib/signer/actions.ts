@@ -8,6 +8,7 @@ import {
 	ValidationError,
 } from "@dexion/signer";
 import { z } from "zod";
+import siteConfig from "~/config/site";
 import { authenticatedAction } from "../safe-action";
 import { getSigner } from "./getSigner";
 
@@ -20,6 +21,10 @@ export const transferStx = authenticatedAction
 	)
 	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
+			if (!siteConfig.features.signing) {
+				throw new Error("Signing is temporarily disabled for maintenance");
+			}
+
 			console.log(input);
 			let signer: StacksSigner;
 			try {
@@ -90,6 +95,10 @@ export const callContract = authenticatedAction
 	)
 	.action(async ({ parsedInput: input, ctx: { user } }) => {
 		try {
+			if (!siteConfig.features.signing) {
+				throw new Error("Signing is temporarily disabled for maintenance");
+			}
+
 			console.log(input);
 			let signer: StacksSigner;
 

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import siteConfig from "~/config/site";
 
 export const metadata: Metadata = {
 	title: "Pulse",
@@ -11,5 +13,9 @@ export const metadata: Metadata = {
 import PulseContent from "./_components/pulse-content";
 
 export default function PulsePage() {
+	if (!siteConfig.features.trading) {
+		notFound();
+	}
+
 	return <PulseContent />;
 }

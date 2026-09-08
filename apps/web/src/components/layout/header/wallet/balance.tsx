@@ -26,6 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
+import siteConfig from "~/config/site";
 import { useBtcStxPriceContext } from "~/contexts/BtcStxPriceContext";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { useSubscribeAddressTransactions } from "~/hooks/useSubscribeAddressTransactions";
@@ -128,7 +129,12 @@ function BalanceContent({
 				</Button>
 			</Exchange>
 			<Withdraw stxBalance={formattedBalance} stxPrice={stxPrice}>
-				<Button className="rounded-full w-full" size="sm" variant={"default"}>
+				<Button
+					className="rounded-full w-full"
+					size="sm"
+					variant={"default"}
+					disabled={!siteConfig.features.signing}
+				>
 					Withdraw
 				</Button>
 			</Withdraw>

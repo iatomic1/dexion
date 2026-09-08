@@ -6,6 +6,7 @@ import {
 } from "@dexion/ui/components/ui/tabs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import siteConfig from "~/config/site";
 import BalanceSection from "./_components/balance";
 import Performance from "./_components/performance";
 import TransactionsTable from "./_components/transactions-table";
@@ -15,7 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-	notFound();
+	if (!siteConfig.features.trading) {
+		notFound();
+	}
 
 	return (
 		<div className="flex min-h-screen flex-col bg-background">

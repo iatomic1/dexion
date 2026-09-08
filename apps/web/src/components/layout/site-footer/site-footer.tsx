@@ -32,9 +32,6 @@ export default async function SiteFooter() {
 
 				<div className="flex flex-row-reverse sm:flex-row items-center gap-0.5 justify-between w-full sm:w-fit">
 					<ThemeSwitcherTab />
-					<Suspense fallback={<PriceDisplaySkeleton />}>
-						<PriceDisplayContainer />
-					</Suspense>
 				</div>
 			</div>
 		</footer>

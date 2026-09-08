@@ -57,22 +57,12 @@ const getAlertsAndChannels = async () => {
 		return null;
 	}
 };
-const authorizedEmails = [
-	"diego@bitflow.finance",
-	"oyetunduntaiwo@gmail.com",
-	"hazyidris@gmail.com",
-	"atomic.k.2739@gmail.com",
-	"dexion.app@gmail.com",
-	"hassanabdulramanabubakar@gmail.com",
-	"ipeter1010x@gmail.com",
-	"enyinnayaiyke0@gmail.com",
-	"peterseyi1010@gmail.com",
-	"kasalihikmot@gmail.com",
-];
 
 async function AlertsPage(props: { session: Session }) {
 	const data = await getAlertsAndChannels();
 	const session = (await props).session;
+	const authorizedEmails =
+		process.env.ALLOWED_EMAILS?.split(",").map((e) => e.trim()) ?? [];
 	if (!authorizedEmails.includes(session.user.email)) {
 		notFound();
 	}

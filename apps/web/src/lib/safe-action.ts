@@ -7,7 +7,7 @@ export const unauthenticatedAction = createSafeActionClient({});
 export const authMiddleware = createMiddleware().define(
 	async ({ ctx, next }) => {
 		const user = await assertUserAuthenticated();
-		if (!user) redirect("/login");
+		if (!user) redirect("/?authView=signin");
 		return next({ ctx: { user } });
 	},
 );

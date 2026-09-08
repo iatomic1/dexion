@@ -1,7 +1,13 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 
-const guestOnlyRoutes = ["/login", "/signup", "/recover-account", "/reset"];
+const guestOnlyRoutes = [
+	"/login",
+	"/signup",
+	"/recover-account",
+	"/reset",
+	"/prelaunch",
+];
 
 export async function middleware(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);
@@ -23,7 +29,7 @@ export async function middleware(request: NextRequest) {
 	const isProtectedRoute = !isGuestOnly && pathname !== "/";
 
 	if (!sessionCookie && isProtectedRoute) {
-		return NextResponse.redirect(new URL("/login", request.url));
+		return NextResponse.redirect(new URL("/?authView=signin", request.url));
 	}
 
 	return NextResponse.next();

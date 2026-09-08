@@ -11,6 +11,7 @@ import { Providers } from "~/components/providers/auth-provider";
 import { ClientQueryProvider } from "~/components/providers/query-client-provider";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { AuthClientContextProvider } from "~/contexts/AuthClientContext";
+import { AuthModalProvider } from "~/contexts/AuthModalContext";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { getDevice } from "~/lib/get-device";
 import { geistMono, geistSans } from "./fonts/geist";
@@ -84,18 +85,20 @@ export default async function RootLayout({
 							/>
 							{/* <WalletTrackerSocketProvider> */}
 							<PresetsContextProvider>
-								<div className="flex min-h-screen flex-col font-geist">
-									<ClientQueryProvider>
-										{/*{process.env.NODE_ENV !== "production" && (
-											<ReactQueryDevtools buttonPosition="bottom-right" />
-										)}*/}
-										<DeviceContextProvider isMobile={isMobile}>
-											<TooltipProvider>
-												<main className="flex-1">{children}</main>
-											</TooltipProvider>
-										</DeviceContextProvider>
-									</ClientQueryProvider>
-								</div>
+								<AuthModalProvider>
+									<div className="flex min-h-screen flex-col font-geist">
+										<ClientQueryProvider>
+											{/*{process.env.NODE_ENV !== "production" && (
+												<ReactQueryDevtools buttonPosition="bottom-right" />
+											)}*/}
+											<DeviceContextProvider isMobile={isMobile}>
+												<TooltipProvider>
+													<main className="flex-1">{children}</main>
+												</TooltipProvider>
+											</DeviceContextProvider>
+										</ClientQueryProvider>
+									</div>
+								</AuthModalProvider>
 							</PresetsContextProvider>
 							{process.env.NODE_ENV === "production" && (
 								<Script

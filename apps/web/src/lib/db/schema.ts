@@ -1,6 +1,7 @@
 import {
 	boolean,
 	index,
+	integer,
 	pgTable,
 	text,
 	timestamp,
@@ -127,6 +128,11 @@ export const twoFactor = pgTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
+		verified: boolean("verified").notNull().default(true),
+		failedVerificationCount: integer("failed_verification_count")
+			.notNull()
+			.default(0),
+		lockedUntil: timestamp("locked_until"),
 	},
 	(table) => ({
 		twoFactorSecretIdx: index("two_factor_secret_idx").on(table.secret),

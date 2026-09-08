@@ -237,7 +237,8 @@ export function AccountSecurityModal({
 							title="Manage 2FA"
 							description="Manage your auth"
 							action={
-								session?.user.twoFactorEnabled ? (
+								(session?.user as { twoFactorEnabled?: boolean })
+									?.twoFactorEnabled ? (
 									<Disable2FADialog
 										trigger={
 											<Button variant="secondary" size="sm">

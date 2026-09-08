@@ -86,7 +86,7 @@ export default function RecoverAccountContent() {
 					async onSuccess() {
 						await authClient.revokeSessions();
 						toast.success("Password updated successfully!");
-						router.push("/login");
+						router.push("/?authView=signin");
 					},
 				},
 			);

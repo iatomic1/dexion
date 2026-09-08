@@ -33,6 +33,18 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# design reference - not shipped
+design_handoff_dexion_landing/
+
+# design handoff reference — never commit
+dexion_handoff*
+**/dexion_handoff*/
+app/web/dexion_handoff*
+
+# scratch/debug scripts - not shipped
+/bitflow-test.ts
+/hodlmm-api-documentation.md
+
 # Misc
 .DS_Store
 *.pem

@@ -4,7 +4,6 @@ import { validateStacksAddress } from "@stacks/transactions";
 import { type BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint, sessionMiddleware } from "better-auth/api";
 import { z } from "zod";
-import { auth } from "../../auth";
 
 /**
  * Wallet Address Verification Plugin
@@ -175,8 +174,8 @@ export const walletAddressVerification = (
 
 						if (new Date() > verification.expiresAt) {
 							// Clean up expired nonce
-							await ctx.context.internalAdapter.deleteVerificationValue(
-								verification.id,
+							await ctx.context.internalAdapter.deleteVerificationByIdentifier(
+								`wallet-verify:${session.user.id}:${walletAddress}`,
 							);
 							throw ctx.error("UNAUTHORIZED", {
 								message:
@@ -220,8 +219,8 @@ It will not cost any gas fees or trigger a blockchain transaction.`;
 						}
 
 						// Delete nonce (prevent reuse)
-						await ctx.context.internalAdapter.deleteVerificationValue(
-							verification.id,
+						await ctx.context.internalAdapter.deleteVerificationByIdentifier(
+							`wallet-verify:${session.user.id}:${walletAddress}`,
 						);
 
 						// Double-check address isn't taken by another user
@@ -244,12 +243,9 @@ It will not cost any gas fees or trigger a blockchain transaction.`;
 							});
 						}
 
-						await auth.api.updateUser({
-							headers: ctx.headers,
-							body: {
-								externalAddress: walletAddress,
-								externalAddressVerifiedAt: new Date(),
-							},
+						await ctx.context.internalAdapter.updateUser(session.user.id, {
+							externalAddress: walletAddress,
+							externalAddressVerifiedAt: new Date(),
 						});
 
 						return ctx.json({
@@ -287,12 +283,9 @@ It will not cost any gas fees or trigger a blockchain transaction.`;
 								status: 401,
 							});
 						}
-						await auth.api.updateUser({
-							headers: ctx.headers,
-							body: {
-								externalAddress: null,
-								externalAddressVerifiedAt: null,
-							},
+						await ctx.context.internalAdapter.updateUser(session.user.id, {
+							externalAddress: null,
+							externalAddressVerifiedAt: null,
 						});
 
 						return ctx.json({ success: true });

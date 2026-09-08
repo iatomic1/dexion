@@ -1,5 +1,4 @@
 import { Redis } from "ioredis";
-import { User } from "~/types/auth";
 
 export const REDIS_PREFIX = "auth-";
 export interface SecondaryStorage {

@@ -4,7 +4,6 @@ import { type BetterAuthPlugin, type User } from "better-auth";
 import { APIError, createAuthEndpoint } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { z } from "zod";
-import { initWallet } from "../../init-wallet";
 import { schema } from "./schema";
 import type { SIWSPluginOptions, WalletAddress } from "./types";
 
@@ -143,8 +142,7 @@ export const siws = (options: SIWSPluginOptions) =>
 							});
 
 							if (user) {
-								// @ts-expect-error Ignore
-								await initWallet(user, false);
+								await options.onWalletProvision?.(user, false);
 							}
 
 							await ctx.context.adapter.create({

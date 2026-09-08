@@ -1,0 +1,26 @@
+{
+	"name": "@dexion/db",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"db-gen": "bunx drizzle-kit generate",
+		"db-mig": "bunx drizzle-kit migrate",
+		"studio:local": "doppler run -p dexion -c dev -- bunx drizzle-kit studio",
+		"clean": "rm -rf node_modules"
+	},
+	"devDependencies": {
+		"@dexion/typescript-config": "workspace:*",
+		"@types/node": "^22.14.0",
+		"drizzle-kit": "^0.31.1",
+		"typescript": "5.8.2"
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.44.1",
+		"postgres": "^3.4.7"
+	}
+}

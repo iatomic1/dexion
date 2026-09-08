@@ -1,3 +1,4 @@
+import type { BetterFetch } from "@better-fetch/fetch";
 import type { BetterAuthClientPlugin } from "better-auth";
 import type { telegram } from "./index";
 import type { TelegramAuthData } from "./types";
@@ -72,7 +73,7 @@ export const telegramClient = () => {
 		id: "telegram",
 		$InferServerPlugin: {} as ReturnType<TelegramPlugin>,
 
-		getActions: ($fetch) => ({
+		getActions: ($fetch: BetterFetch) => ({
 			/**
 			 * Sign in with Telegram
 			 * @param authData - Authentication data from Telegram Login Widget

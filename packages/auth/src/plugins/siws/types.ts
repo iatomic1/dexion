@@ -16,6 +16,8 @@ export interface BNSLookupResult {
 	avatar: string;
 }
 
+import type { WalletProvisionUser } from "../../types";
+
 export interface SIWSPluginOptions {
 	domain: string;
 	emailDomainName?: string;
@@ -29,4 +31,8 @@ export interface SIWSPluginOptions {
 		nonce: string;
 		publicKey: string;
 	}) => Promise<boolean>;
+	onWalletProvision?: (
+		user: WalletProvisionUser,
+		requireVerified: boolean,
+	) => Promise<void>;
 }

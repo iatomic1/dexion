@@ -178,7 +178,7 @@ describe("telegramClient", () => {
 			const actions = client.getActions(mockFetch);
 			await actions.unlinkTelegram();
 
-			const callArgs = mockFetch.mock.calls[0];
+			const callArgs = mockFetch.mock.calls[0]!;
 			expect(callArgs[1]).not.toHaveProperty("body");
 		});
 

@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { auth } from "~/lib/auth/auth";
 import LatestTransactionsModal from "./latest-transactions";
 import PriceDisplayContainer from "./price-display-container";
-import ThemeSwitcherTab from "./theme-switcher";
 import WalletTrackerContainer from "./wallet-tracker-container";
 
 export default async function SiteFooter() {
@@ -13,8 +12,8 @@ export default async function SiteFooter() {
 	});
 
 	return (
-		<footer className="fixed bottom-0 w-full border-t border-border bg-background px-2 py-1">
-			<div className="flex items-center justify-between">
+		<footer className="fixed bottom-0 w-full border-t border-dx-line bg-dx-bg px-[22px] py-2.5 font-mono text-[11px] text-dx-faint">
+			<div className="flex items-center justify-between gap-4">
 				<div className="hidden sm:flex gap-0.5 items-center">
 					{session && session.user && (
 						<div className="flex gap-0.5 items-center">
@@ -28,10 +27,6 @@ export default async function SiteFooter() {
 							)}
 						</div>
 					)}
-				</div>
-
-				<div className="flex flex-row-reverse sm:flex-row items-center gap-0.5 justify-between w-full sm:w-fit">
-					<ThemeSwitcherTab />
 				</div>
 			</div>
 		</footer>

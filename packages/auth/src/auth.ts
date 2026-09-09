@@ -141,6 +141,9 @@ export function createAuth(options: CreateAuthOptions) {
 			},
 		},
 		secondaryStorage: redisStorage,
+		rateLimit: {
+			storage: "secondary-storage",
+		},
 		hooks: {
 			after: createAuthMiddleware(async (ctx) => {
 				if (

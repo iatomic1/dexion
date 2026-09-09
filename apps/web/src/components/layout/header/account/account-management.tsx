@@ -30,7 +30,7 @@ function SegmentedControl<T extends string>({
 	onChange: (value: T) => void;
 }) {
 	return (
-		<span className="flex border border-dx-line">
+		<span className="flex overflow-hidden rounded-md border border-dx-line">
 			{options.map((option) => (
 				<button
 					key={option.value}
@@ -98,7 +98,7 @@ export function AccountDropdown({ session }: { session: Session }) {
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
-				className="w-[268px] rounded-none border-dx-line-strong bg-dx-panel p-0 shadow-lg"
+				className="w-[268px] border-dx-line-strong bg-dx-panel p-0 shadow-lg"
 				side="bottom"
 				align="end"
 				sideOffset={0}

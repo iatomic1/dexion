@@ -1,8 +1,4 @@
-import {
-	type Channel,
-	type UserAlertChannels,
-	type WebhookConfig,
-} from "@dexion/api-sdk/index.ts";
+import { type WebhookConfig } from "@dexion/api-sdk/index.ts";
 import { HTTP_STATUS } from "@dexion/shared";
 import {
 	AlertDialog,
@@ -17,27 +13,21 @@ import {
 } from "@dexion/ui/components/ui/alert-dialog";
 import { Button } from "@dexion/ui/components/ui/button";
 import { toast } from "@dexion/ui/components/ui/sonner";
-import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { Table } from "@tanstack/react-table";
 import { CircleAlertIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { deleteAlertsAction } from "~/app/actions/price-alert-actions";
-import { AlertDialog as UserAlertDialog } from "../alert-dialog";
 import { WebhookSettingsDialog } from "../webhook-settings-dialog";
 
 interface TableActionsProps<TData extends { id: string }> {
 	table: Table<TData>;
-	channels: Channel[];
 	webhookConfig: WebhookConfig | null;
-	availableUserChannels: UserAlertChannels;
-	onCreateAlert?: () => void;
+	onCreateAlert: () => void;
 }
 
 export function TableActions<TData extends { id: string }>({
 	table,
-	availableUserChannels,
-	channels,
 	webhookConfig,
 	onCreateAlert,
 }: TableActionsProps<TData>) {
@@ -45,7 +35,6 @@ export function TableActions<TData extends { id: string }>({
 
 	const selectedRows = table.getSelectedRowModel().rows;
 	const selectedRowsCount = selectedRows.length;
-	const isMobile = useIsMobile();
 
 	// ✅ memoize IDs to avoid unnecessary re-renders
 	const selectedRowsAlertsIds = useMemo(
@@ -71,21 +60,14 @@ export function TableActions<TData extends { id: string }>({
 		},
 	);
 
-	const createAlertButton = (
-		<Button className="rounded-none bg-dx-green font-semibold text-dx-green-ink hover:bg-dx-green/90">
-			<PlusIcon className="-ms-1 opacity-80" size={16} aria-hidden="true" />
-			Create Alert
-		</Button>
-	);
-
 	return (
-		<div className="flex items-center gap-3">
+		<div className="hidden items-center gap-3 sm:flex">
 			{/* Delete button */}
 			{selectedRowsCount > 0 && (
 				<AlertDialog open={open} onOpenChange={setOpen}>
 					<AlertDialogTrigger asChild>
 						<Button
-							className="ml-auto rounded-none border-dx-red/50 text-dx-red hover:bg-dx-red/10"
+							className="ml-auto border-dx-red/50 text-dx-red hover:bg-dx-red/10"
 							variant="outline"
 						>
 							<TrashIcon
@@ -94,12 +76,12 @@ export function TableActions<TData extends { id: string }>({
 								aria-hidden="true"
 							/>
 							Delete
-							<span className="-me-1 inline-flex h-5 max-h-full items-center rounded-none border border-dx-red/40 bg-transparent px-1 font-[inherit] text-[0.625rem] font-medium text-dx-red">
+							<span className="-me-1 inline-flex h-5 max-h-full items-center rounded-sm border border-dx-red/40 bg-transparent px-1 font-[inherit] text-[0.625rem] font-medium text-dx-red">
 								{selectedRowsCount}
 							</span>
 						</Button>
 					</AlertDialogTrigger>
-					<AlertDialogContent className="rounded-none border-dx-line-strong bg-dx-panel">
+					<AlertDialogContent className="border-dx-line-strong bg-dx-panel">
 						<div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
 							<div
 								className="flex size-9 shrink-0 items-center justify-center rounded-full border border-dx-line"
@@ -121,7 +103,7 @@ export function TableActions<TData extends { id: string }>({
 						<AlertDialogFooter>
 							<AlertDialogCancel
 								disabled={deleteStatus === "executing"}
-								className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2"
 							>
 								Cancel
 							</AlertDialogCancel>
@@ -131,7 +113,7 @@ export function TableActions<TData extends { id: string }>({
 									executeDeleteAlerts({ ids: selectedRowsAlertsIds });
 								}}
 								disabled={deleteStatus === "executing"}
-								className="rounded-none bg-dx-red text-white hover:bg-dx-red/90"
+								className="bg-dx-red text-white hover:bg-dx-red/90"
 							>
 								{deleteStatus === "executing" ? "Deleting..." : "Delete"}
 							</AlertDialogAction>
@@ -140,26 +122,16 @@ export function TableActions<TData extends { id: string }>({
 				</AlertDialog>
 			)}
 
-			{isMobile && onCreateAlert ? (
-				<Button
-					className="ml-auto rounded-none bg-dx-green font-semibold text-dx-green-ink hover:bg-dx-green/90"
-					onClick={onCreateAlert}
-				>
-					<PlusIcon className="-ms-1 opacity-80" size={16} aria-hidden="true" />
-					Create Alert
-				</Button>
-			) : (
-				<UserAlertDialog
-					alert={null}
-					availableUserChannels={availableUserChannels}
-					channels={channels}
-				>
-					{createAlertButton}
-				</UserAlertDialog>
-			)}
+			<Button
+				onClick={onCreateAlert}
+				className="bg-dx-green font-semibold text-dx-green-ink hover:bg-dx-green/90"
+			>
+				<PlusIcon className="-ms-1 opacity-80" size={16} aria-hidden="true" />
+				Create Alert
+			</Button>
 
 			<WebhookSettingsDialog config={webhookConfig}>
-				<Button className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2">
+				<Button className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2">
 					<PlusIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
 					Webhook Config
 				</Button>

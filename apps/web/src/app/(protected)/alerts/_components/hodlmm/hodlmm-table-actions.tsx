@@ -45,16 +45,25 @@ export function HodlmmTableActions({
 	const relative = formatRelative(lastSyncedAt);
 
 	return (
-		<div className="flex items-center justify-between gap-4 border border-dx-line bg-dx-panel px-[14px] py-[13px]">
-			<span className="flex items-center gap-[10px] whitespace-nowrap text-[13px] text-dx-dim">
+		<div className="flex items-center justify-between gap-4 rounded-md border border-dx-line bg-dx-panel px-[14px] py-[13px]">
+			<span className="flex items-center gap-[10px] truncate text-[13px] text-dx-dim">
 				<RefreshCwIcon
 					className={cn(
-						"size-[14px] text-dx-green",
+						"size-[14px] shrink-0 text-dx-green",
 						isSyncing && "animate-spin",
 					)}
 					strokeWidth={2}
 				/>
-				{relative ? `Synced ${relative} · no new positions` : "Not synced yet"}
+				<span className="truncate">
+					<span className="hidden sm:inline">
+						{relative
+							? `Synced ${relative} · no new positions`
+							: "Not synced yet"}
+					</span>
+					<span className="sm:hidden">
+						{relative ? `Synced ${relative}` : "Not synced"}
+					</span>
+				</span>
 			</span>
 			<button
 				type="button"
@@ -66,10 +75,11 @@ export function HodlmmTableActions({
 					}
 				}}
 				disabled={isSyncing || !externalAddress}
-				className="flex items-center gap-2 whitespace-nowrap border border-dx-line-strong bg-transparent px-[13px] py-[8px] text-[12px] font-medium text-dx-ink hover:bg-dx-panel-2 disabled:cursor-not-allowed disabled:opacity-45"
+				className="flex flex-none items-center gap-2 whitespace-nowrap rounded-md border border-dx-line-strong bg-transparent px-[13px] py-[8px] text-[12px] font-medium text-dx-ink hover:bg-dx-panel-2 disabled:cursor-not-allowed disabled:opacity-45"
 			>
 				{isSyncing && <Spinner className="size-3" />}
-				Sync positions
+				<span className="hidden sm:inline">Sync positions</span>
+				<span className="sm:hidden">Sync</span>
 			</button>
 		</div>
 	);

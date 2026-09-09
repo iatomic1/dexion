@@ -14,7 +14,7 @@ export function RepeatableField({ control }: RepeatableFieldProps) {
 			control={control}
 			name="repeatable"
 			render={({ field }) => (
-				<div className="flex gap-[1px] border border-dx-line-strong bg-dx-line-strong">
+				<div className="flex gap-[1px] overflow-hidden rounded-md border border-dx-line-strong bg-dx-line-strong">
 					<RepeatOption
 						title="Recurring"
 						description="Fires every time"
@@ -49,7 +49,7 @@ function RepeatOption({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex flex-1 flex-col gap-[2px] px-[14px] py-[12px] text-left transition-colors duration-100",
+				"flex min-h-11 flex-1 flex-col gap-[2px] px-[14px] py-[12px] text-left transition-colors duration-100",
 				selected
 					? "bg-dx-panel-2 text-dx-ink"
 					: "bg-dx-panel text-dx-dim hover:bg-dx-panel-2",

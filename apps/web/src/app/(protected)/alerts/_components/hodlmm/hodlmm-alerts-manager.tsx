@@ -12,10 +12,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { columns } from "./columns";
 import { HodlmmTableActions } from "./hodlmm-table-actions";
+import { MobileHodlmmList } from "./mobile-list";
 
 function DataTable({ table }: { table: any }) {
 	return (
-		<div className="overflow-hidden border border-dx-line bg-dx-panel">
+		<div className="hidden overflow-hidden rounded-md border border-dx-line bg-dx-panel sm:block">
 			<table className="w-full border-collapse">
 				<thead>
 					{table.getHeaderGroups().map((headerGroup: any) => (
@@ -125,17 +126,17 @@ export default function HodlmmAlertsManager({
 
 			<DataTable table={table} />
 
-			<div className="flex items-center justify-between gap-4 border-t-2 border-dx-line-strong px-[14px] py-[12px] font-mono text-[11px] text-dx-dim">
+			<div className="hidden items-center justify-between gap-4 border-t-2 border-dx-line-strong px-[14px] py-[12px] font-mono text-[11px] text-dx-dim sm:flex">
 				<span>
 					{alerts.length} POSITION{alerts.length === 1 ? "" : "S"} · 0 SELECTED
 				</span>
-				<div className="flex gap-[1px]">
+				<div className="flex gap-[1px] overflow-hidden rounded-md border border-dx-line">
 					<button
 						type="button"
 						onClick={() => table.previousPage()}
 						disabled={!table.getCanPreviousPage()}
 						aria-label="Previous page"
-						className="border border-dx-line px-[9px] py-[5px] text-dx-faint hover:text-dx-ink disabled:cursor-not-allowed disabled:opacity-40"
+						className="px-[9px] py-[5px] text-dx-faint hover:text-dx-ink disabled:cursor-not-allowed disabled:opacity-40"
 					>
 						‹
 					</button>
@@ -144,11 +145,16 @@ export default function HodlmmAlertsManager({
 						onClick={() => table.nextPage()}
 						disabled={!table.getCanNextPage()}
 						aria-label="Next page"
-						className="border border-dx-line px-[9px] py-[5px] text-dx-ink hover:text-dx-ink disabled:cursor-not-allowed disabled:opacity-40"
+						className="border-l border-dx-line px-[9px] py-[5px] text-dx-ink hover:text-dx-ink disabled:cursor-not-allowed disabled:opacity-40"
 					>
 						›
 					</button>
 				</div>
+			</div>
+
+			<MobileHodlmmList alerts={alerts} className="sm:hidden" />
+			<div className="px-[18px] py-[13px] font-mono text-[11px] uppercase text-dx-faint sm:hidden">
+				{alerts.length} POSITION{alerts.length === 1 ? "" : "S"}
 			</div>
 		</div>
 	);

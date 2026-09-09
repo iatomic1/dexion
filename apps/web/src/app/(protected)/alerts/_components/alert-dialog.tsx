@@ -12,6 +12,8 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@dexion/ui/components/ui/sheet";
+import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
+import { cn } from "@dexion/ui/lib/utils";
 import { ReactNode, useState } from "react";
 import { AlertForm } from "./alert-form/alert-form";
 
@@ -19,7 +21,9 @@ interface AlertDialogProps {
 	alert: UserAlert | null;
 	channels: Channel[];
 	availableUserChannels: UserAlertChannels;
-	children: ReactNode;
+	children?: ReactNode;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 }
 
 export function AlertDialog({
@@ -27,15 +31,25 @@ export function AlertDialog({
 	channels,
 	availableUserChannels,
 	children,
+	open: openProp,
+	onOpenChange: onOpenChangeProp,
 }: AlertDialogProps) {
-	const [open, setOpen] = useState(false);
+	const [internalOpen, setInternalOpen] = useState(false);
+	const isMobile = useIsMobile();
+	const open = openProp ?? internalOpen;
+	const setOpen = onOpenChangeProp ?? setInternalOpen;
 
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
-			<SheetTrigger asChild>{children}</SheetTrigger>
+			{children && <SheetTrigger asChild>{children}</SheetTrigger>}
 			<SheetContent
-				side="right"
-				className="flex h-full w-full flex-col gap-0 overflow-y-auto border-l-2 border-dx-line-strong bg-[#0d0f0e] p-0 sm:max-w-[440px]"
+				side={isMobile ? "bottom" : "right"}
+				className={cn(
+					"flex flex-col gap-0 overflow-y-auto border-dx-line-strong bg-dx-panel p-0",
+					isMobile
+						? "inset-x-0 top-16 bottom-0 h-auto max-h-[calc(100%-4rem)] rounded-t-md border-t-2"
+						: "h-full w-full border-l-2 sm:max-w-[440px]",
+				)}
 			>
 				<SheetHeader className="flex-none gap-[6px] border-b-2 border-dx-line-strong px-5 py-5">
 					<span className="font-mono text-[10px] tracking-[.2em] text-dx-faint">

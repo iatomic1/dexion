@@ -19,11 +19,10 @@ import {
 	updateAlertAction,
 } from "~/app/actions/price-alert-actions";
 import { ChannelsField } from "./channels-field";
+import { ConditionFields } from "./condition-fields";
 import { FormActions } from "./form-actions";
-import { MetricOperatorFields } from "./metric-operator-fields";
 import { RepeatableField } from "./repeatable-field";
 import { TokenSearchPopover } from "./token-search-input";
-import { ValueField } from "./value-field";
 
 const METRIC_LABELS: Record<string, string> = {
 	price: "PRICE",
@@ -153,30 +152,33 @@ export function AlertForm({
 	else if (!(selectedChannels?.length ?? 0))
 		disabledReason = "Select at least one channel.";
 
+	const echoText = hasValue
+		? `Notify me when ${METRIC_LABELS[metric] ?? metric?.toUpperCase()} ${operator} ${value.toLocaleString()}`
+		: undefined;
+
 	return (
 		<form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col">
-			<FormSection index="01" title="TARGET">
-				<TokenSearchPopover
-					control={form.control}
-					name="ca"
-					label="Token Contract Address"
-					description="Search and select the token you want to set an alert for"
-					disabled={!!initialData}
-					onTokenSelect={setSelectedToken}
-				/>
-			</FormSection>
+			{!initialData && (
+				<FormSection index="01" title="TOKEN">
+					<TokenSearchPopover
+						control={form.control}
+						name="ca"
+						label="Token Contract Address"
+						description="Search and select the token you want to set an alert for"
+						disabled={!!initialData}
+						onTokenSelect={setSelectedToken}
+					/>
+				</FormSection>
+			)}
 
 			<FormSection index="02" title="CONDITION">
-				<MetricOperatorFields control={form.control} />
-				<ValueField control={form.control} />
-				<div className="border-l-2 border-dx-green bg-dx-green/[.06] px-3 py-[10px] font-mono text-[12px] text-dx-ink">
-					{hasValue
-						? `Notify me when ${METRIC_LABELS[metric] ?? metric?.toUpperCase()} ${operator} ${value.toLocaleString()}`
-						: "Set a value to preview the alert condition."}
+				<ConditionFields control={form.control} />
+				<div className="hidden border-l-2 border-dx-green bg-dx-green/[.06] px-3 py-[10px] font-mono text-[12px] text-dx-ink sm:block">
+					{echoText ?? "Set a value to preview the alert condition."}
 				</div>
 			</FormSection>
 
-			<FormSection index="03" title="CHANNELS">
+			<FormSection index="03" title="DELIVERY">
 				<ChannelsField
 					control={form.control}
 					channels={channels}
@@ -184,7 +186,7 @@ export function AlertForm({
 				/>
 			</FormSection>
 
-			<FormSection index="04" title="FREQUENCY">
+			<FormSection index="04" title="REPEAT">
 				<RepeatableField control={form.control} />
 			</FormSection>
 
@@ -193,6 +195,7 @@ export function AlertForm({
 				isEditing={!!initialData}
 				disabled={!canSubmit}
 				hint={!canSubmit ? disabledReason : undefined}
+				echo={canSubmit ? echoText : undefined}
 				onCancel={onCancel}
 			/>
 		</form>

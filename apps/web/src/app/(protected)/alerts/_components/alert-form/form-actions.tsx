@@ -8,6 +8,7 @@ interface FormActionsProps {
 	isEditing: boolean;
 	disabled?: boolean;
 	hint?: string;
+	echo?: string;
 	onCancel?: () => void;
 }
 
@@ -16,10 +17,16 @@ export function FormActions({
 	isEditing,
 	disabled,
 	hint,
+	echo,
 	onCancel,
 }: FormActionsProps) {
 	return (
-		<div className="sticky bottom-0 z-10 mt-auto flex flex-col gap-0 border-t-2 border-dx-line-strong bg-[#0d0f0e]">
+		<div className="sticky bottom-0 z-10 mt-auto flex flex-col gap-0 border-t-2 border-dx-line-strong bg-dx-panel">
+			{echo && (
+				<p className="truncate bg-dx-panel px-[18px] py-[11px] font-mono text-[12px] text-[#cfe9dc] sm:hidden">
+					{echo}
+				</p>
+			)}
 			{hint && (
 				<p className="px-5 pt-[10px] text-[12px] text-dx-faint">{hint}</p>
 			)}
@@ -27,7 +34,7 @@ export function FormActions({
 				<button
 					type="button"
 					onClick={() => onCancel?.()}
-					className="bg-[#0d0f0e] px-[22px] py-4 text-[13px] text-dx-dim hover:text-dx-ink"
+					className="bg-dx-panel px-[20px] py-[17px] text-[13px] text-dx-dim hover:text-dx-ink"
 				>
 					Cancel
 				</button>
@@ -35,7 +42,7 @@ export function FormActions({
 					type="submit"
 					disabled={isLoading || disabled}
 					className={cn(
-						"flex flex-1 items-center justify-center gap-2 bg-dx-green py-4 text-[13px] font-semibold text-dx-green-ink transition-opacity",
+						"flex flex-1 items-center justify-start gap-2 bg-dx-green px-[20px] py-4 text-[14px] font-semibold text-dx-green-ink transition-opacity",
 						(isLoading || disabled) && "opacity-50",
 					)}
 				>

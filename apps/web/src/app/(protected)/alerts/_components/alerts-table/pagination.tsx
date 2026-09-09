@@ -34,7 +34,7 @@ export function TablePagination<TData>({
 	const rowCount = table.getRowCount();
 
 	return (
-		<div className="flex items-center justify-between gap-8">
+		<div className="hidden items-center justify-between gap-8 sm:flex">
 			{/* Results per page */}
 			<div className="flex items-center gap-3">
 				<Label htmlFor={id} className="text-dx-dim max-sm:sr-only">
@@ -48,11 +48,11 @@ export function TablePagination<TData>({
 				>
 					<SelectTrigger
 						id={id}
-						className="w-fit rounded-none border-dx-line bg-dx-panel text-dx-ink whitespace-nowrap"
+						className="w-fit border-dx-line bg-dx-panel text-dx-ink whitespace-nowrap"
 					>
 						<SelectValue placeholder="Select number of results" />
 					</SelectTrigger>
-					<SelectContent className="rounded-none border-dx-line-strong bg-dx-panel [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
+					<SelectContent className="border-dx-line-strong bg-dx-panel [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
 						{[5, 10, 25, 50].map((size) => (
 							<SelectItem key={size} value={size.toString()}>
 								{size}
@@ -81,7 +81,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.firstPage()}
 								disabled={!table.getCanPreviousPage()}
 								aria-label="Go to first page"
@@ -94,7 +94,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.previousPage()}
 								disabled={!table.getCanPreviousPage()}
 								aria-label="Go to previous page"
@@ -107,7 +107,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 								aria-label="Go to next page"
@@ -120,7 +120,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.lastPage()}
 								disabled={!table.getCanNextPage()}
 								aria-label="Go to last page"

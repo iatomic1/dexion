@@ -7,7 +7,15 @@ import type {
 } from "@dexion/api-sdk/index.ts";
 import { FieldDescription, FieldError } from "@dexion/ui/components/ui/field";
 import { cn } from "@dexion/ui/lib/utils";
+import { Mail, Monitor, Send, Webhook as WebhookIcon } from "lucide-react";
 import { type Control, Controller } from "react-hook-form";
+
+const CHANNEL_ICONS: Record<string, typeof Mail> = {
+	email: Mail,
+	telegram: Send,
+	webapp: Monitor,
+	webhook: WebhookIcon,
+};
 
 interface ChannelsFieldProps {
 	control: Control<UpdateAlertInput>;
@@ -26,7 +34,7 @@ export function ChannelsField({
 			control={control}
 			render={({ field, fieldState }) => (
 				<div className="flex flex-col gap-2" data-invalid={fieldState.invalid}>
-					<div className="grid grid-cols-2 gap-[1px] border border-dx-line bg-dx-line">
+					<div className="grid grid-cols-2 gap-[1px] overflow-hidden rounded-md border border-dx-line bg-dx-line">
 						{channels?.map((channel) => {
 							const isSelected = field.value.includes(channel.id);
 
@@ -38,6 +46,7 @@ export function ChannelsField({
 								(channel.name === "webhook" && !!availableUserChannels.webhook);
 
 							const isDisabled = !isChannelAvailable;
+							const Icon = CHANNEL_ICONS[channel.name] ?? Mail;
 
 							let disabledReason = "";
 							if (isDisabled) {
@@ -70,7 +79,7 @@ export function ChannelsField({
 										field.onChange(newValue);
 									}}
 									className={cn(
-										"flex items-center justify-between px-[14px] py-[12px] text-left transition-colors duration-100",
+										"flex min-h-11 items-center justify-between px-[14px] py-[12px] text-left transition-colors duration-100",
 										isDisabled
 											? "cursor-not-allowed bg-dx-panel text-dx-faint/50"
 											: isSelected
@@ -78,7 +87,12 @@ export function ChannelsField({
 												: "bg-dx-panel text-dx-dim hover:bg-dx-panel-2",
 									)}
 								>
-									<span className="text-[13px] capitalize">{channel.name}</span>
+									<span className="flex items-center gap-2">
+										<Icon className="size-[15px]" strokeWidth={2} />
+										<span className="text-[13px] capitalize">
+											{channel.name}
+										</span>
+									</span>
 									<span
 										className={cn(
 											"font-mono text-[10px] tracking-[.1em]",

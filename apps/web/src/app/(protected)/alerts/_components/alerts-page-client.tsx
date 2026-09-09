@@ -11,6 +11,7 @@ import {
 	DataStrip,
 	type DataStripItem,
 	SectionBand,
+	VALUE_TONE,
 } from "@dexion/ui/components/ui/instrument";
 import { cn } from "@dexion/ui/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -73,7 +74,7 @@ export default function AlertsPageClient({
 		};
 	}, [availableUserChannels, webhookConfig]);
 
-	const summaryItems: DataStripItem[] = useMemo(() => {
+	const { active, paused, monitored, fired24h } = useMemo(() => {
 		const activeAlerts: Array<{ status: string }> =
 			tab === "contract" ? alerts : hodlmmAlerts;
 		const monitored = activeAlerts.length;
@@ -91,7 +92,11 @@ export default function AlertsPageClient({
 						);
 					}).length;
 
-		return [
+		return { active, paused, monitored, fired24h };
+	}, [tab, alerts, hodlmmAlerts]);
+
+	const summaryItems: DataStripItem[] = useMemo(
+		() => [
 			{ key: "monitored", label: "MONITORED", value: monitored },
 			{ key: "active", label: "ACTIVE", value: active, tone: "green" },
 			{ key: "paused", label: "PAUSED", value: paused, tone: "amber" },
@@ -107,38 +112,96 @@ export default function AlertsPageClient({
 						</span>
 					) : undefined,
 			},
-		];
-	}, [tab, alerts, hodlmmAlerts, channelAvailability]);
+		],
+		[active, paused, monitored, fired24h, channelAvailability],
+	);
+
+	const mobileSummaryItems: DataStripItem[] = useMemo(
+		() => [
+			{ key: "active", label: "ACTIVE", value: active, tone: "green" },
+			{ key: "paused", label: "PAUSED", value: paused, tone: "amber" },
+			{ key: "fired24h", label: "FIRED 24H", value: fired24h },
+		],
+		[active, paused, fired24h],
+	);
+
+	function tabPair(extra?: string) {
+		return (
+			<div
+				className={cn(
+					"flex items-center overflow-hidden rounded-md border border-dx-line-strong",
+					extra,
+				)}
+			>
+				<TabButton
+					label="Contract"
+					count={alerts.length}
+					active={tab === "contract"}
+					onClick={() => setTab("contract")}
+					className="border-r border-dx-line-strong"
+				/>
+				<TabButton
+					label="HODLMM / LP"
+					count={hodlmmAlerts.length}
+					active={tab === "hodlmm"}
+					onClick={() => setTab("hodlmm")}
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex min-h-screen flex-col bg-dx-bg">
 			<SectionBand
 				breadcrumb="TRACKERS / ALERTS"
+				className="pb-3"
 				title="Alerts"
-				actions={
-					<div className="flex items-center border border-dx-line-strong">
-						<TabButton
-							label="Contract"
-							count={alerts.length}
-							active={tab === "contract"}
-							onClick={() => setTab("contract")}
-							className="border-r border-dx-line-strong"
-						/>
-						<TabButton
-							label="HODLMM / LP"
-							count={hodlmmAlerts.length}
-							active={tab === "hodlmm"}
-							onClick={() => setTab("hodlmm")}
-						/>
-					</div>
-				}
+				actions={<div className="hidden sm:block">{tabPair()}</div>}
 			/>
 
-			<div className="px-[22px] pt-5">
+			<div className="hidden px-[22px] pt-5 sm:block">
 				<DataStrip items={summaryItems} />
 			</div>
+			<div className="grid grid-cols-3 border-b border-dx-line bg-dx-panel sm:hidden">
+				{mobileSummaryItems.map((item, i) => (
+					<div
+						key={item.key}
+						className={cn(
+							"flex flex-col gap-[5px] px-3.5 py-3",
+							i < 2 && "border-r border-dx-line",
+						)}
+					>
+						<span className="font-mono text-[9px] uppercase tracking-[.16em] text-dx-faint">
+							{item.label}
+						</span>
+						<span
+							className={cn(
+								"font-mono text-[20px] leading-none",
+								VALUE_TONE[item.tone ?? "ink"],
+							)}
+						>
+							{item.value}
+						</span>
+					</div>
+				))}
+			</div>
 
-			<div className="px-[22px] pt-4 pb-16">
+			<div className="flex border-b-2 border-dx-line-strong sm:hidden">
+				<MobileTabButton
+					label="Contract"
+					count={alerts.length}
+					active={tab === "contract"}
+					onClick={() => setTab("contract")}
+				/>
+				<MobileTabButton
+					label="HODLMM"
+					count={hodlmmAlerts.length}
+					active={tab === "hodlmm"}
+					onClick={() => setTab("hodlmm")}
+				/>
+			</div>
+
+			<div className="pb-16 sm:px-[22px]">
 				{tab === "contract" ? (
 					<AlertsManager
 						alerts={alerts}
@@ -154,6 +217,33 @@ export default function AlertsPageClient({
 				)}
 			</div>
 		</div>
+	);
+}
+
+function MobileTabButton({
+	label,
+	count,
+	active,
+	onClick,
+}: {
+	label: string;
+	count: number;
+	active: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={cn(
+				"-mb-0.5 flex-1 border-b-2 py-[13px] text-center text-[13px] font-semibold transition-colors duration-150",
+				active
+					? "border-dx-green bg-dx-panel text-dx-ink"
+					: "border-transparent text-dx-dim",
+			)}
+		>
+			{label} · {count}
+		</button>
 	);
 }
 
@@ -175,7 +265,7 @@ function TabButton({
 			type="button"
 			onClick={onClick}
 			className={cn(
-				"flex items-center gap-2 whitespace-nowrap px-4 py-[10px] text-[13px] font-semibold transition-colors duration-150",
+				"flex items-center gap-2 whitespace-nowrap px-4 py-3 text-[13px] font-semibold transition-colors duration-150 sm:py-[10px]",
 				active
 					? "border-b-2 border-b-dx-green bg-dx-panel text-dx-ink"
 					: "border-b-2 border-b-transparent text-dx-dim hover:bg-dx-panel",

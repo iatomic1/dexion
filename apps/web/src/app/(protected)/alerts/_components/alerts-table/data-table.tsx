@@ -29,7 +29,7 @@ export function DataTable<TData>({
 	isLoadingTokens,
 }: DataTableProps<TData>) {
 	return (
-		<div className="overflow-hidden rounded-md border border-dx-line bg-dx-panel">
+		<div className="hidden overflow-hidden rounded-md border border-dx-line bg-dx-panel sm:block">
 			<Table className="table-fixed">
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (

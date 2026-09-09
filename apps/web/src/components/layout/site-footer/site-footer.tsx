@@ -12,7 +12,7 @@ export default async function SiteFooter() {
 	});
 
 	return (
-		<footer className="fixed bottom-0 w-full border-t border-dx-line bg-dx-bg px-[22px] py-2.5 font-mono text-[11px] text-dx-faint">
+		<footer className="fixed bottom-0 hidden w-full border-t border-dx-line bg-dx-bg px-[22px] py-2.5 font-mono text-[11px] text-dx-faint sm:block">
 			<div className="flex items-center justify-between gap-4">
 				<div className="hidden sm:flex gap-0.5 items-center">
 					{session && session.user && (

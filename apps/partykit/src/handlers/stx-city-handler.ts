@@ -1,8 +1,6 @@
 import { getStxCityTokenTrades } from "@dexion/tokens/services";
-import {
-	convertTransaction,
-	transformStxCityToTokenMetadata,
-} from "@dexion/tokens/utils";
+import type { TokenMetadata } from "@dexion/tokens/types";
+import { convertTransaction } from "@dexion/tokens/utils";
 import type * as Party from "partykit/server";
 import { sendMetadata, sendTrades } from "../utils/messaging";
 
@@ -18,20 +16,9 @@ interface TokenData {
 export async function handleStxCityToken(
 	room: Party.Room,
 	contractAddress: string,
-	stxCityMetadata: any,
+	token: TokenMetadata,
 	conn?: Party.Connection,
 ) {
-	const token = transformStxCityToTokenMetadata(stxCityMetadata);
-	await handleIncompleteStxCityToken(room, contractAddress, token, conn);
-}
-
-async function handleIncompleteStxCityToken(
-	room: Party.Room,
-	contractAddress: string,
-	token: any,
-	conn?: Party.Connection,
-) {
-	token.source = "stxcity";
 	sendMetadata(room, contractAddress, token, conn);
 	try {
 		const res = await getStxCityTokenTrades(

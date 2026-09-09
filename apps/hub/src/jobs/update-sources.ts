@@ -45,21 +45,43 @@ async function safeFetchFakFun() {
 }
 
 export async function updateTokenSources(redisClient: Redis) {
-	let stxToolsTokens: any[] = [];
-	let stxCityTokens: any[] = [];
-	let fakfunTokens: any[] = [];
+	const [stxToolsResult, stxCityResult, fakfunResult] = await Promise.allSettled([
+		fetchStxToolsTokens(),
+		fetchStxCityTokens(),
+		safeFetchFakFun(),
+	]);
 
-	try {
-		[stxToolsTokens, stxCityTokens, fakfunTokens] = await Promise.all([
-			fetchStxToolsTokens(),
-			fetchStxCityTokens(),
-			safeFetchFakFun(),
-		]);
-	} catch (err) {
+	// Each source is independent - a failure fetching one (e.g. Tenero's bulk
+	// listing endpoint, which isn't confirmed working post-rebrand) shouldn't
+	// stop the other two sources from getting their entries refreshed.
+	const stxToolsTokens: any[] =
+		stxToolsResult.status === "fulfilled" ? stxToolsResult.value : [];
+	const stxCityTokens: any[] =
+		stxCityResult.status === "fulfilled" ? stxCityResult.value : [];
+	const fakfunTokens: any[] =
+		fakfunResult.status === "fulfilled" ? fakfunResult.value : [];
+
+	if (stxToolsResult.status === "rejected") {
 		logger.error(
-			{ error: (err as Error).message },
-			"updateTokenSources upstream fetch failure",
+			{ error: stxToolsResult.reason?.message },
+			"updateTokenSources: stxtools fetch failed, skipping its entries",
 		);
+	}
+	if (stxCityResult.status === "rejected") {
+		logger.error(
+			{ error: stxCityResult.reason?.message },
+			"updateTokenSources: stxcity fetch failed, skipping its entries",
+		);
+	}
+	if (fakfunResult.status === "rejected") {
+		logger.error(
+			{ error: fakfunResult.reason?.message },
+			"updateTokenSources: fakfun fetch failed, skipping its entries",
+		);
+	}
+
+	if (!stxToolsTokens.length && !stxCityTokens.length && !fakfunTokens.length) {
+		logger.error("updateTokenSources: all upstream fetches failed");
 		return;
 	}
 
@@ -71,9 +93,12 @@ export async function updateTokenSources(redisClient: Redis) {
 		}
 
 		for (const token of stxCityTokens) {
-			const key = `source:${token.token_contract}`;
+			const contractId = token.token_contract;
 			const value = token.progress < 100 ? "stxcity" : "stxtools";
-			pipeline.set(key, value);
+			pipeline.set(`source:${contractId}`, value);
+			// bc is observed directly from stxcity's own bonding-curve listing,
+			// never inferred - written once and kept even after graduation.
+			pipeline.setnx(`bc:${contractId}`, "stxcity");
 		}
 
 		for (const token of fakfunTokens) {
@@ -81,6 +106,7 @@ export async function updateTokenSources(redisClient: Redis) {
 			const contractId =
 				token.progress < 1 ? token.dexContract : token.tokenContract;
 			pipeline.set(`source:${contractId}`, value);
+			pipeline.setnx(`bc:${contractId}`, "fakfun");
 		}
 
 		const results = await pipeline.exec();

@@ -49,7 +49,7 @@ export function TableFilters<TData>({
 					id={`${id}-input`}
 					ref={inputRef}
 					className={cn(
-						"peer min-w-60 ps-9",
+						"peer min-w-60 rounded-none border-dx-line bg-dx-panel ps-9 text-dx-ink placeholder:text-dx-faint focus-visible:border-dx-line-strong",
 						Boolean(table.getColumn("ca")?.getFilterValue()) && "pe-9",
 					)}
 					value={(table.getColumn("ca")?.getFilterValue() ?? "") as string}
@@ -60,12 +60,13 @@ export function TableFilters<TData>({
 					type="text"
 					aria-label="Filter by ca or token..."
 				/>
-				<div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+				<div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-dx-faint peer-disabled:opacity-50">
 					<ListFilterIcon size={16} aria-hidden="true" />
 				</div>
 				{Boolean(table.getColumn("ca")?.getFilterValue()) && (
 					<button
-						className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md text-muted-foreground/80 transition-[color,box-shadow] outline-none hover:text-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+						type="button"
+						className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center text-dx-faint transition-[color,box-shadow] outline-none hover:text-dx-ink focus:z-10 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
 						aria-label="Clear filter"
 						onClick={() => {
 							table.getColumn("ca")?.setFilterValue("");
@@ -82,7 +83,10 @@ export function TableFilters<TData>({
 				{/* Filter by status */}
 				<Popover>
 					<PopoverTrigger asChild>
-						<Button variant="outline">
+						<Button
+							variant="outline"
+							className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2"
+						>
 							<FilterIcon
 								className="-ms-1 opacity-60"
 								size={16}
@@ -90,17 +94,18 @@ export function TableFilters<TData>({
 							/>
 							Status
 							{selectedStatuses.length > 0 && (
-								<span className="-me-1 inline-flex h-5 max-h-full items-center rounded border bg-background px-1 font-[inherit] text-[0.625rem] font-medium text-muted-foreground/70">
+								<span className="-me-1 inline-flex h-5 max-h-full items-center rounded-none border border-dx-line bg-dx-panel px-1 font-[inherit] text-[0.625rem] font-medium text-dx-dim">
 									{selectedStatuses.length}
 								</span>
 							)}
 						</Button>
 					</PopoverTrigger>
-					<PopoverContent className="w-auto min-w-36 p-3" align="start">
+					<PopoverContent
+						className="w-auto min-w-36 rounded-none border-dx-line-strong bg-dx-panel p-3"
+						align="start"
+					>
 						<div className="space-y-3">
-							<div className="text-xs font-medium text-muted-foreground">
-								Filters
-							</div>
+							<div className="text-xs font-medium text-dx-faint">Filters</div>
 							<div className="space-y-3">
 								{uniqueStatusValues.map((value, i) => (
 									<div key={value} className="flex items-center gap-2">
@@ -113,10 +118,10 @@ export function TableFilters<TData>({
 										/>
 										<Label
 											htmlFor={`${id}-${i}`}
-											className="flex grow justify-between gap-2 font-normal"
+											className="flex grow justify-between gap-2 font-normal text-dx-ink"
 										>
 											{value}{" "}
-											<span className="ms-2 text-xs text-muted-foreground">
+											<span className="ms-2 text-xs text-dx-faint">
 												{statusCounts.get(value)}
 											</span>
 										</Label>
@@ -129,7 +134,10 @@ export function TableFilters<TData>({
 				{/* Toggle columns visibility */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline">
+						<Button
+							variant="outline"
+							className="rounded-none border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2"
+						>
 							<Columns3Icon
 								className="-ms-1 opacity-60"
 								size={16}
@@ -138,8 +146,13 @@ export function TableFilters<TData>({
 							View
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+					<DropdownMenuContent
+						align="end"
+						className="rounded-none border-dx-line-strong bg-dx-panel"
+					>
+						<DropdownMenuLabel className="text-dx-faint">
+							Toggle columns
+						</DropdownMenuLabel>
 						{table
 							.getAllColumns()
 							.filter((column) => column.getCanHide())

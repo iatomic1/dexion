@@ -6,9 +6,6 @@ import {
 	type UserAlertChannels,
 	type WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
-import { SOCIALS } from "@dexion/shared";
-import { Button } from "@dexion/ui/components/ui/button";
-import { ExternalLink } from "@dexion/ui/components/ui/link";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tabs,
@@ -29,7 +26,6 @@ import {
 	useReactTable,
 	VisibilityState,
 } from "@tanstack/react-table";
-import { PlusIcon, Webhook } from "lucide-react";
 import { useCallback, useId, useMemo, useState } from "react";
 import { useAlertsTokenData } from "~/hooks/useAlertsTokenData";
 import useCopyToClipboard from "~/hooks/useCopy";
@@ -126,6 +122,7 @@ export default function AlertsManager({
 			isLoadingTokens,
 			channels,
 			availableUserChannels,
+			webhookConfig,
 			onCopy: handleCopy,
 			onEditAlert: handleEditAlert,
 		}),
@@ -134,6 +131,7 @@ export default function AlertsManager({
 			isLoadingTokens,
 			channels,
 			availableUserChannels,
+			webhookConfig,
 			handleCopy,
 			handleEditAlert,
 		],
@@ -185,17 +183,17 @@ export default function AlertsManager({
 	);
 
 	return isMobile ? (
-		<div className="space-y-4 px-3">
+		<div className="flex flex-col gap-4">
 			<Tabs defaultValue="list" value={mobileTab} onValueChange={setMobileTab}>
-				<TabsList className="w-full rounded-none border-b h-12 bg-background">
-					<TabsTrigger value="list" className="flex-1">
+				<TabsList className="h-11 w-full rounded-none border border-dx-line bg-dx-panel">
+					<TabsTrigger value="list" className="flex-1 rounded-none">
 						Alerts
 					</TabsTrigger>
-					<TabsTrigger value="form" className="flex-1">
+					<TabsTrigger value="form" className="flex-1 rounded-none">
 						{editingAlert ? "Edit Alert" : "Create Alert"}
 					</TabsTrigger>
 				</TabsList>
-				<TabsContent value="list" className="w-full space-y-4 ">
+				<TabsContent value="list" className="w-full space-y-4">
 					<div className="flex flex-wrap items-center justify-between gap-3">
 						<TableFilters
 							table={table}
@@ -204,30 +202,15 @@ export default function AlertsManager({
 							selectedStatuses={selectedStatuses}
 							onStatusChange={handleStatusChange}
 						/>
-						<div className="flex items-center gap-2">
-							<Button
-								className="ml-auto"
-								variant="default"
-								onClick={() => setMobileTab("form")}
-							>
-								<PlusIcon
-									className="-ms-1 opacity-60"
-									size={16}
-									aria-hidden="true"
-								/>
-								Create Alert
-							</Button>
-						</div>
-
 						<TableActions
 							table={table}
 							availableUserChannels={availableUserChannels}
 							channels={channels}
 							webhookConfig={webhookConfig}
+							onCreateAlert={() => setMobileTab("form")}
 						/>
 					</div>
 
-					{/* Table */}
 					<DataTable
 						table={table}
 						columns={columns}
@@ -235,34 +218,16 @@ export default function AlertsManager({
 						isLoadingTokens={isLoadingTokens}
 					/>
 
-					{/* Pagination */}
 					<TablePagination table={table} id={id} />
-
-					<p className="mt-4 text-center text-sm text-muted-foreground">
-						Report bugs in the{" "}
-						<a
-							className="underline hover:text-foreground"
-							href={SOCIALS.DISCORD}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							Community
-						</a>
-					</p>
 				</TabsContent>
-				<TabsContent value="form" className="w-full px-2 space-y-3">
-					<div className="flex flex-row items-start sm:items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 flex-shrink-0">
-							<Webhook className="h-5 w-5 text-primary" />
-						</div>
-						<div>
-							<h4 className="text-lg text-primary">
-								{editingAlert ? "Edit Alert" : "Create New Alert"}
-							</h4>
-							<span className="text-sm text-muted-foreground">
-								Configure your contract monitoring alert.
-							</span>
-						</div>
+				<TabsContent value="form" className="w-full space-y-3 px-1">
+					<div className="flex flex-col gap-1">
+						<span className="font-mono text-[10px] tracking-[.2em] text-dx-faint">
+							{editingAlert ? "EDIT CONTRACT ALERT" : "NEW CONTRACT ALERT"}
+						</span>
+						<h4 className="text-[18px] font-bold text-dx-ink">
+							{editingAlert ? "Edit alert" : "Create alert"}
+						</h4>
 					</div>
 					<AlertForm
 						channels={channels}
@@ -281,7 +246,7 @@ export default function AlertsManager({
 			</Tabs>
 		</div>
 	) : (
-		<div className="space-y-4 py-4 px-3">
+		<div className="flex flex-col gap-4">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<TableFilters
 					table={table}
@@ -298,7 +263,6 @@ export default function AlertsManager({
 				/>
 			</div>
 
-			{/* Table */}
 			<DataTable
 				table={table}
 				columns={columns}
@@ -306,18 +270,7 @@ export default function AlertsManager({
 				isLoadingTokens={isLoadingTokens}
 			/>
 
-			{/* Pagination */}
 			<TablePagination table={table} id={id} />
-
-			<p className="mt-4 text-center text-sm text-muted-foreground">
-				Report bugs in the{" "}
-				<ExternalLink
-					className="underline hover:text-foreground"
-					href={SOCIALS.DISCORD}
-				>
-					Community
-				</ExternalLink>
-			</p>
 		</div>
 	);
 }

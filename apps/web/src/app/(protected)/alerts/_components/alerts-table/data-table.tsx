@@ -29,17 +29,20 @@ export function DataTable<TData>({
 	isLoadingTokens,
 }: DataTableProps<TData>) {
 	return (
-		<div className="overflow-hidden rounded-md border bg-background">
+		<div className="overflow-hidden rounded-md border border-dx-line bg-dx-panel">
 			<Table className="table-fixed">
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id} className="hover:bg-transparent">
+						<TableRow
+							key={headerGroup.id}
+							className="border-b-2 border-dx-line-strong hover:bg-transparent"
+						>
 							{headerGroup.headers.map((header) => {
 								return (
 									<TableHead
 										key={header.id}
 										style={{ width: `${header.getSize()}px` }}
-										className="h-11"
+										className="h-11 font-mono text-[10px] uppercase tracking-[.16em] text-dx-faint"
 									>
 										{header.isPlaceholder ? null : header.column.getCanSort() ? (
 											<div
@@ -98,6 +101,7 @@ export function DataTable<TData>({
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && "selected"}
+								className="border-dx-line hover:bg-dx-panel-2"
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id} className="last:py-0">
@@ -107,8 +111,11 @@ export function DataTable<TData>({
 							</TableRow>
 						))
 					) : (
-						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
+						<TableRow className="border-dx-line hover:bg-transparent">
+							<TableCell
+								colSpan={columns.length}
+								className="h-24 text-center text-dx-dim"
+							>
 								No alerts created yet.
 							</TableCell>
 						</TableRow>

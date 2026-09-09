@@ -2,44 +2,44 @@ import {
 	Channel,
 	UserAlert,
 	UserAlertChannels,
+	WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
-import { HTTP_STATUS } from "@dexion/shared";
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from "@dexion/ui/components/ui/avatar";
-import { Badge } from "@dexion/ui/components/ui/badge";
-import { Button } from "@dexion/ui/components/ui/button";
 import { Checkbox } from "@dexion/ui/components/ui/checkbox";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuShortcut,
-	DropdownMenuTrigger,
-} from "@dexion/ui/components/ui/dropdown-menu";
-import { Label } from "@dexion/ui/components/ui/label";
+import { StatusDot } from "@dexion/ui/components/ui/instrument";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
-import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { cn } from "@dexion/ui/lib/utils";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
-import { Copy, EllipsisIcon, TrendingDown, TrendingUp } from "lucide-react";
-import { useAction } from "next-safe-action/hooks";
 import {
-	deleteAlertAction,
-	pauseAlertAction,
-} from "~/app/actions/price-alert-actions";
+	ArrowLeftRight,
+	Copy,
+	Mail,
+	Monitor,
+	Send,
+	TrendingDown,
+	TrendingUp,
+	Webhook,
+} from "lucide-react";
 import { truncateBetween } from "~/lib/helpers/strings";
+import { AlertRowMenu } from "./alert-row-menu";
 
-const statusStyles: Record<string, string> = {
-	active: "bg-primary text-primary-foreground",
-	paused: "bg-yellow-500/20 text-yellow-700",
-	completed: "bg-green-500/20 text-green-700",
+export const METRIC_LABELS: Record<string, string> = {
+	price: "PRICE",
+	liquidity: "LIQ",
+	marketcap: "MCAP",
+	holders: "HOLDERS",
 };
+
+export const CHANNEL_ORDER: Array<{
+	name: string;
+	Icon: typeof Mail;
+	label: string;
+}> = [
+	{ name: "email", Icon: Mail, label: "Email" },
+	{ name: "telegram", Icon: Send, label: "Telegram" },
+	{ name: "webapp", Icon: Monitor, label: "Web app" },
+	{ name: "webhook", Icon: Webhook, label: "Webhook" },
+];
+
 const multiColumnFilterFn: FilterFn<UserAlert> = (
 	row,
 	columnId,
@@ -71,6 +71,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 				}
 				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 				aria-label="Select all"
+				className="border-dx-line-strong data-[state=checked]:border-dx-green data-[state=checked]:bg-dx-green"
 			/>
 		),
 		cell: ({ row }) => (
@@ -78,6 +79,7 @@ export const columns: ColumnDef<UserAlert>[] = [
 				checked={row.getIsSelected()}
 				onCheckedChange={(value) => row.toggleSelected(!!value)}
 				aria-label="Select row"
+				className="border-dx-line-strong data-[state=checked]:border-dx-green data-[state=checked]:bg-dx-green"
 			/>
 		),
 		size: 28,
@@ -85,106 +87,90 @@ export const columns: ColumnDef<UserAlert>[] = [
 		enableHiding: false,
 	},
 	{
-		header: "Contract Address",
+		header: "Token / Contract",
 		accessorKey: "ca",
 		cell: ({ row, table }) => {
 			const tableMeta: any = table.options.meta;
-			return (
-				<div className="font-medium max-w-[150px]">
-					<Button
-						size={"xs"}
-						variant={"outline"}
-						onClick={() => {
-							tableMeta.onCopy(row.getValue("ca"));
-						}}
-					>
-						{truncateBetween(row.getValue("ca"), ".", 4, 13)}
-						<Copy className="h-2 w-2" />
-					</Button>
-				</div>
-			);
-		},
-		size: 180,
-		filterFn: multiColumnFilterFn,
-		enableHiding: false,
-	},
-	{
-		header: "Token",
-		accessorKey: "token",
-		size: 220,
-		cell: ({ row, table }) => {
-			const ca = row.getValue("ca");
-			const tableMeta: any = table.options.meta;
+			const ca = row.getValue("ca") as string;
 			const t = tableMeta?.tokenDataMap?.get(ca);
 
 			if (tableMeta?.isLoadingTokens) {
 				return (
-					<div className="flex items-center gap-2">
-						<Skeleton className="h-9 w-9 aspect-square rounded-md" />
-						<div className="flex flex-col justify-between gap-1.5">
-							<Skeleton className="h-4 w-16" />
-							<Skeleton className="h-3 w-12" />
-						</div>
+					<div className="flex flex-col gap-1.5">
+						<Skeleton className="h-4 w-16" />
+						<Skeleton className="h-3 w-24" />
 					</div>
 				);
 			}
 
-			return t ? (
-				<div className="flex items-center gap-2 text-left">
-					<Avatar className="h-9 w-9 aspect-square rounded-md">
-						<AvatarImage
-							src={t?.image_url || "/placeholder.svg"}
-							className="object-cover"
-							fetchPriority="high"
-						/>
-						<AvatarFallback>
-							{t.symbol.charAt(0) ?? "token not found"}
-						</AvatarFallback>
-					</Avatar>
-					<div className="flex flex-col justify-between">
-						<Label className="text-sm  font-medium">
-							{t.symbol ?? "Token Not Found"}
-						</Label>
-						<span className="text-muted-foreground text-xs truncate max-w-[50px]">
-							{t.name ?? "Token not found"}
+			return (
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center gap-2">
+						<span className="text-[14px] font-semibold text-dx-ink">
+							{t?.symbol ?? "Unknown"}
 						</span>
+						{!t && (
+							<span className="border border-dx-line px-[6px] py-[1px] font-mono text-[9px] tracking-[.1em] text-dx-faint">
+								UNRESOLVED
+							</span>
+						)}
 					</div>
+					<button
+						type="button"
+						onClick={() => tableMeta.onCopy(ca)}
+						className="flex items-center gap-1.5 font-mono text-[11px] text-dx-dim hover:text-dx-ink"
+					>
+						{truncateBetween(ca, ".", 4, 13)}
+						<Copy className="size-[11px]" />
+					</button>
 				</div>
-			) : (
-				<div>Token not found</div>
 			);
 		},
+		size: 200,
+		filterFn: multiColumnFilterFn,
+		enableHiding: false,
 	},
 	{
 		header: "Condition",
 		accessorKey: "condition",
-		cell: ({ row }) => (
-			<div className="flex items-center gap-2">
-				<span className="text-sm capitalize">{row.original.metric}</span>
-				<Badge variant="outline" className="gap-1 font-mono text-xs">
-					{getConditionIcon(row.original.operator)}
-					{row.original.operator} {row.original.value.toLocaleString()}
-				</Badge>
-			</div>
-		),
+		cell: ({ row }) => {
+			const { metric, operator, value } = row.original;
+			const Icon = getConditionIcon(operator);
+			const iconTone =
+				operator === ">" || operator === ">="
+					? "text-dx-red"
+					: operator === "<" || operator === "<="
+						? "text-dx-green"
+						: "text-dx-faint";
+			return (
+				<div className="flex items-center gap-2 font-mono text-[12px]">
+					<Icon className={cn("size-[13px]", iconTone)} strokeWidth={2} />
+					<span className="text-dx-ink">
+						{METRIC_LABELS[metric] ?? metric.toUpperCase()}
+					</span>
+					<span className="text-dx-faint">{operator}</span>
+					<span className="text-dx-ink">{value.toLocaleString()}</span>
+				</div>
+			);
+		},
 		size: 180,
 	},
 	{
 		header: "Status",
 		accessorKey: "status",
 		cell: ({ row }) => {
-			const value = row.getValue("status") as string;
-
+			const value = (row.getValue("status") as string)?.toLowerCase();
 			return (
-				<Badge
-					className={cn(
-						statusStyles[value?.toLowerCase()] ??
-							"bg-muted-foreground/60 text-primary-foreground",
-						"capitalize",
-					)}
-				>
-					{value}
-				</Badge>
+				<StatusDot
+					tone={
+						value === "active"
+							? "active"
+							: value === "paused"
+								? "paused"
+								: "neutral"
+					}
+					label={value ? value.charAt(0).toUpperCase() + value.slice(1) : ""}
+				/>
 			);
 		},
 		size: 100,
@@ -194,9 +180,9 @@ export const columns: ColumnDef<UserAlert>[] = [
 		header: "Type",
 		accessorKey: "type",
 		cell: ({ row }) => (
-			<div className="text-medium">
-				{row.original.repeatable ? "Recurring" : "Once"}
-			</div>
+			<span className="font-mono text-[11px] tracking-[.1em] text-dx-dim">
+				{row.original.repeatable ? "RECURRING" : "ONCE"}
+			</span>
 		),
 		enableHiding: false,
 		enableSorting: false,
@@ -204,18 +190,42 @@ export const columns: ColumnDef<UserAlert>[] = [
 	{
 		header: "Channels",
 		accessorKey: "channels",
-		cell: ({ row }) => {
+		cell: ({ row, table }) => {
+			const tableMeta: any = table.options.meta;
+			const webhookConfig: WebhookConfig | null = tableMeta?.webhookConfig;
+			const alertChannelNames = new Set(
+				row.original.channels.map((c) => c.name),
+			);
+
 			return (
-				<div className="flex gap-1 flex-wrap max-w-[200px]">
-					{row.original.channels.map((channel) => (
-						<Badge
-							key={channel.id}
-							variant="secondary"
-							className="text-xs whitespace-nowrap"
-						>
-							{channel.name}
-						</Badge>
-					))}
+				<div className="flex items-center gap-[9px]">
+					{CHANNEL_ORDER.map(({ name, Icon, label }) => {
+						const enabled = alertChannelNames.has(name);
+						const isFailing =
+							enabled &&
+							name === "webhook" &&
+							webhookConfig?.status === "interrupted";
+
+						return (
+							<span
+								key={name}
+								title={isFailing ? `${label} — delivery failing` : label}
+							>
+								<Icon
+									aria-label={label}
+									className={cn(
+										"size-[15px]",
+										isFailing
+											? "text-dx-red"
+											: enabled
+												? "text-dx-ink"
+												: "text-dx-faint/40",
+									)}
+									strokeWidth={1.7}
+								/>
+							</span>
+						);
+					})}
 				</div>
 			);
 		},
@@ -229,122 +239,20 @@ export const columns: ColumnDef<UserAlert>[] = [
 		cell: ({ row, table }) => {
 			const tableMeta: any = table.options.meta;
 			return (
-				<RowActions
+				<AlertRowMenu
 					alert={row.original}
-					availableUserChannels={tableMeta.availableUserChannels}
-					channels={tableMeta.channels}
 					onEditAlert={tableMeta.onEditAlert}
 				/>
 			);
 		},
-		size: 60,
+		size: 46,
 		enableHiding: false,
 		enableSorting: false,
 	},
 ];
 
-function RowActions({
-	alert,
-	availableUserChannels,
-	channels,
-	onEditAlert,
-}: {
-	alert: UserAlert;
-	availableUserChannels: UserAlertChannels;
-	channels: Channel[];
-	onEditAlert?: (alert: UserAlert) => void;
-}) {
-	const { execute: executeDeleteAlert, status: deleteStatus } = useAction(
-		deleteAlertAction,
-		{
-			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert deleted successfully");
-				} else {
-					toast.error(data.data?.message || "Failed to delete alert");
-				}
-			},
-			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to delete alert");
-			},
-		},
-	);
-
-	const { execute: executePauseAlert, status: pauseStatus } = useAction(
-		pauseAlertAction,
-		{
-			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert paused successfully");
-				} else {
-					toast.error(data.data?.message || "Failed to pause alert");
-				}
-			},
-			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to pause alert");
-			},
-		},
-	);
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<div className="flex justify-end">
-					<Button
-						size="icon"
-						variant="ghost"
-						className="shadow-none"
-						aria-label="Edit item"
-					>
-						<EllipsisIcon size={16} aria-hidden="true" />
-					</Button>
-				</div>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
-				<DropdownMenuGroup>
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.preventDefault();
-							onEditAlert?.(alert);
-						}}
-					>
-						<span>Edit</span>
-						<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-					</DropdownMenuItem>
-
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.preventDefault();
-							executePauseAlert({ id: alert.id });
-						}}
-						disabled={pauseStatus === "executing"}
-					>
-						{pauseStatus === "executing" && <Spinner />}
-						<span>{pauseStatus === "executing" ? "Pausing" : "Pause"}</span>
-						<DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					className="text-destructive focus:text-destructive"
-					disabled={deleteStatus === "executing"}
-					onClick={(e) => {
-						e.preventDefault();
-						executeDeleteAlert({ id: alert.id });
-					}}
-				>
-					{deleteStatus === "executing" && <Spinner />}
-					<span>{deleteStatus === "executing" ? "Deleting" : "Delete"}</span>
-					<DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
-const getConditionIcon = (condition: string) => {
-	if (condition === ">" || condition === ">=") {
-		return <TrendingUp className="h-3 w-3" />;
-	}
-	return <TrendingDown className="h-3 w-3" />;
+export const getConditionIcon = (operator: string) => {
+	if (operator === ">" || operator === ">=") return TrendingUp;
+	if (operator === "<" || operator === "<=") return TrendingDown;
+	return ArrowLeftRight;
 };

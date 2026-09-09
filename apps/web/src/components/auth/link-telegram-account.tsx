@@ -12,6 +12,7 @@ import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { CheckCircle2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type React from "react";
 import { useEffect, useState } from "react";
 import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
@@ -28,7 +29,17 @@ type LinkTelegramResponse = {
 
 type LinkStep = "link" | "start-bot";
 
-export default function LinkTelegramAccount({ user }: { user: User }) {
+export default function LinkTelegramAccount({
+	user,
+	className,
+	linkedTriggerLabel = "Unlink Telegram",
+	unlinkedTriggerLabel = "Link Telegram",
+}: {
+	user: User;
+	className?: string;
+	linkedTriggerLabel?: React.ReactNode;
+	unlinkedTriggerLabel?: React.ReactNode;
+}) {
 	const [isLinking, setIsLinking] = useState(false);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -137,6 +148,7 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 				{user.telegramId ? (
 					<Button
 						variant="destructive"
+						className={className}
 						onClick={handleUnlink}
 						disabled={!siteConfig.features.unlinkTelegram || loading}
 					>
@@ -145,12 +157,12 @@ export default function LinkTelegramAccount({ user }: { user: User }) {
 						) : (
 							<Send className="h-5 w-5" />
 						)}
-						Unlink Telegram
+						{linkedTriggerLabel}
 					</Button>
 				) : (
-					<Button variant="secondary">
+					<Button variant="secondary" className={className}>
 						<Send className="h-5 w-5" />
-						Link Telegram
+						{unlinkedTriggerLabel}
 					</Button>
 				)}
 			</DialogTrigger>

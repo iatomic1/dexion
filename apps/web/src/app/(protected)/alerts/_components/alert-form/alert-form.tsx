@@ -8,11 +8,11 @@ import {
 } from "@dexion/api-sdk/index.ts";
 import { HTTP_STATUS } from "@dexion/shared";
 import { TokenMetadata } from "@dexion/tokens/types";
-import { FieldGroup } from "@dexion/ui/components/ui/field";
+import { MonoLabel } from "@dexion/ui/components/ui/instrument";
 import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
 	createAlertAction,
@@ -24,6 +24,13 @@ import { MetricOperatorFields } from "./metric-operator-fields";
 import { RepeatableField } from "./repeatable-field";
 import { TokenSearchPopover } from "./token-search-input";
 import { ValueField } from "./value-field";
+
+const METRIC_LABELS: Record<string, string> = {
+	price: "PRICE",
+	liquidity: "LIQ",
+	marketcap: "MCAP",
+	holders: "HOLDERS",
+};
 
 interface AlertFormProps {
 	initialData: UserAlert | null;
@@ -131,12 +138,24 @@ export function AlertForm({
 		}
 	};
 
+	const ca = form.watch("ca");
+	const metric = form.watch("metric");
+	const operator = form.watch("operator");
+	const value = form.watch("value");
+	const selectedChannels = form.watch("channels");
+
+	const hasValue = typeof value === "number" && !Number.isNaN(value);
+	const canSubmit = !!ca && hasValue && (selectedChannels?.length ?? 0) > 0;
+
+	let disabledReason: string | undefined;
+	if (!ca) disabledReason = "Select a token to continue.";
+	else if (!hasValue) disabledReason = "Set a value to continue.";
+	else if (!(selectedChannels?.length ?? 0))
+		disabledReason = "Select at least one channel.";
+
 	return (
-		<form
-			onSubmit={form.handleSubmit(handleSubmit)}
-			className="space-y-0 gap-0"
-		>
-			<FieldGroup className="space-y-0 gap-3">
+		<form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col">
+			<FormSection index="01" title="TARGET">
 				<TokenSearchPopover
 					control={form.control}
 					name="ca"
@@ -145,28 +164,56 @@ export function AlertForm({
 					disabled={!!initialData}
 					onTokenSelect={setSelectedToken}
 				/>
+			</FormSection>
+
+			<FormSection index="02" title="CONDITION">
 				<MetricOperatorFields control={form.control} />
 				<ValueField control={form.control} />
-				{/*<EnhancedValueInput
-					key={selectedToken?.contract_id || "no-token"}
-					control={form.control}
-					metric={form.watch("metric")}
-					name="value"
-					token={selectedToken}
-				/>*/}
+				<div className="border-l-2 border-dx-green bg-dx-green/[.06] px-3 py-[10px] font-mono text-[12px] text-dx-ink">
+					{hasValue
+						? `Notify me when ${METRIC_LABELS[metric] ?? metric?.toUpperCase()} ${operator} ${value.toLocaleString()}`
+						: "Set a value to preview the alert condition."}
+				</div>
+			</FormSection>
+
+			<FormSection index="03" title="CHANNELS">
 				<ChannelsField
 					control={form.control}
 					channels={channels}
 					availableUserChannels={availableUserChannels}
 				/>
-				<RepeatableField control={form.control} />
+			</FormSection>
 
-				<FormActions
-					isLoading={isCreatePending || isEditPending}
-					isEditing={!!initialData}
-					onCancel={onCancel}
-				/>
-			</FieldGroup>
+			<FormSection index="04" title="FREQUENCY">
+				<RepeatableField control={form.control} />
+			</FormSection>
+
+			<FormActions
+				isLoading={isCreatePending || isEditPending}
+				isEditing={!!initialData}
+				disabled={!canSubmit}
+				hint={!canSubmit ? disabledReason : undefined}
+				onCancel={onCancel}
+			/>
 		</form>
+	);
+}
+
+function FormSection({
+	index,
+	title,
+	children,
+}: {
+	index: string;
+	title: string;
+	children: ReactNode;
+}) {
+	return (
+		<div className="flex flex-col gap-3 border-b border-dx-line px-5 py-5 last:border-b-0">
+			<MonoLabel className="tracking-[.16em]">
+				{index} — {title}
+			</MonoLabel>
+			{children}
+		</div>
 	);
 }

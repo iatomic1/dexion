@@ -1,13 +1,7 @@
 "use client";
 
 import type { UpdateAlertInput } from "@dexion/api-sdk/index.ts";
-import { Checkbox } from "@dexion/ui/components/ui/checkbox";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldLabel,
-} from "@dexion/ui/components/ui/field";
+import { cn } from "@dexion/ui/lib/utils";
 import { type Control, Controller } from "react-hook-form";
 
 interface RepeatableFieldProps {
@@ -19,28 +13,50 @@ export function RepeatableField({ control }: RepeatableFieldProps) {
 		<Controller
 			control={control}
 			name="repeatable"
-			render={({ field, fieldState }) => (
-				<Field
-					className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-border p-4"
-					data-invalid={fieldState.invalid}
-				>
-					<Checkbox
-						checked={field.value}
-						onCheckedChange={field.onChange}
-						id="repeatable-checkbox"
-						name={field.name}
-						className="flex-shrink-0 !w-5 h-5 mt-0.5"
+			render={({ field }) => (
+				<div className="flex gap-[1px] border border-dx-line-strong bg-dx-line-strong">
+					<RepeatOption
+						title="Recurring"
+						description="Fires every time"
+						selected={field.value === true}
+						onClick={() => field.onChange(true)}
 					/>
-					<div className="space-y-1 leading-none">
-						<FieldLabel htmlFor="repeatable-checkbox">Repeat alert</FieldLabel>
-						<FieldDescription>
-							When enabled, alert will trigger repeatedly. Otherwise, it will
-							trigger only once.
-						</FieldDescription>
-					</div>
-					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-				</Field>
+					<RepeatOption
+						title="Once"
+						description="Then auto-pauses"
+						selected={field.value === false}
+						onClick={() => field.onChange(false)}
+					/>
+				</div>
 			)}
 		/>
+	);
+}
+
+function RepeatOption({
+	title,
+	description,
+	selected,
+	onClick,
+}: {
+	title: string;
+	description: string;
+	selected: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={cn(
+				"flex flex-1 flex-col gap-[2px] px-[14px] py-[12px] text-left transition-colors duration-100",
+				selected
+					? "bg-dx-panel-2 text-dx-ink"
+					: "bg-dx-panel text-dx-dim hover:bg-dx-panel-2",
+			)}
+		>
+			<span className="text-[13px] font-semibold">{title}</span>
+			<span className="text-[11px] text-dx-faint">{description}</span>
+		</button>
 	);
 }

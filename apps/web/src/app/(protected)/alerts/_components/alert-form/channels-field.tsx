@@ -5,20 +5,8 @@ import type {
 	UpdateAlertInput,
 	UserAlertChannels,
 } from "@dexion/api-sdk/index.ts";
-import { Badge } from "@dexion/ui/components/ui/badge";
-import {
-	FieldDescription,
-	FieldError,
-	FieldLegend,
-	FieldSet,
-} from "@dexion/ui/components/ui/field";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@dexion/ui/components/ui/tooltip";
-import { X } from "lucide-react";
+import { FieldDescription, FieldError } from "@dexion/ui/components/ui/field";
+import { cn } from "@dexion/ui/lib/utils";
 import { type Control, Controller } from "react-hook-form";
 
 interface ChannelsFieldProps {
@@ -37,80 +25,80 @@ export function ChannelsField({
 			name="channels"
 			control={control}
 			render={({ field, fieldState }) => (
-				<FieldSet data-invalid={fieldState.invalid} className="gap-3">
-					<FieldLegend>Notification Channels</FieldLegend>
-					<FieldDescription>
-						Click to toggle channels. At least one channel is required.
-					</FieldDescription>
+				<div className="flex flex-col gap-2" data-invalid={fieldState.invalid}>
+					<div className="grid grid-cols-2 gap-[1px] border border-dx-line bg-dx-line">
+						{channels?.map((channel) => {
+							const isSelected = field.value.includes(channel.id);
 
-					<div className="flex flex-wrap gap-2">
-						<TooltipProvider>
-							{channels?.map((channel) => {
-								const isSelected = field.value.includes(channel.id);
+							const isChannelAvailable =
+								channel.name === "webapp" ||
+								(channel.name === "email" && !!availableUserChannels.email) ||
+								(channel.name === "telegram" &&
+									!!availableUserChannels.telegram_id) ||
+								(channel.name === "webhook" && !!availableUserChannels.webhook);
 
-								const isChannelAvailable =
-									channel.name === "webapp" ||
-									(channel.name === "email" && !!availableUserChannels.email) ||
-									(channel.name === "telegram" &&
-										!!availableUserChannels.telegram_id) ||
-									(channel.name === "webhook" &&
-										!!availableUserChannels.webhook);
+							const isDisabled = !isChannelAvailable;
 
-								const isDisabled = !isChannelAvailable;
-
-								let tooltipMessage = "";
-								if (isDisabled) {
-									switch (channel.name) {
-										case "email":
-											tooltipMessage = "No email linked (wallet signup)";
-											break;
-										case "telegram":
-											tooltipMessage = "Link Telegram in settings";
-											break;
-										case "webhook":
-											tooltipMessage = "No webhook configured";
-											break;
-										default:
-											tooltipMessage = "Unavailable channel";
-									}
+							let disabledReason = "";
+							if (isDisabled) {
+								switch (channel.name) {
+									case "email":
+										disabledReason = "No email linked (wallet signup)";
+										break;
+									case "telegram":
+										disabledReason = "Link Telegram in settings";
+										break;
+									case "webhook":
+										disabledReason = "No webhook configured";
+										break;
+									default:
+										disabledReason = "Unavailable channel";
 								}
+							}
 
-								const badgeEl = (
-									<Badge
-										key={channel.id}
-										variant={isSelected ? "default" : "outline"}
-										className={`capitalize text-sm ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-										onClick={() => {
-											if (isDisabled) return;
-											const newValue = isSelected
-												? field.value.filter((id) => id !== channel.id)
-												: [...field.value, channel.id];
-											field.onChange(newValue);
-										}}
-									>
-										{channel.name}
-										{isSelected && !isDisabled && (
-											<X className="ml-1 h-3 w-3" />
+							return (
+								<button
+									key={channel.id}
+									type="button"
+									title={isDisabled ? disabledReason : undefined}
+									disabled={isDisabled}
+									onClick={() => {
+										if (isDisabled) return;
+										const newValue = isSelected
+											? field.value.filter((id) => id !== channel.id)
+											: [...field.value, channel.id];
+										field.onChange(newValue);
+									}}
+									className={cn(
+										"flex items-center justify-between px-[14px] py-[12px] text-left transition-colors duration-100",
+										isDisabled
+											? "cursor-not-allowed bg-dx-panel text-dx-faint/50"
+											: isSelected
+												? "bg-dx-panel-2 text-dx-ink"
+												: "bg-dx-panel text-dx-dim hover:bg-dx-panel-2",
+									)}
+								>
+									<span className="text-[13px] capitalize">{channel.name}</span>
+									<span
+										className={cn(
+											"font-mono text-[10px] tracking-[.1em]",
+											isSelected && !isDisabled
+												? "text-dx-green"
+												: "text-dx-faint",
 										)}
-									</Badge>
-								);
-
-								return isDisabled ? (
-									<Tooltip key={channel.id}>
-										<TooltipTrigger asChild>{badgeEl}</TooltipTrigger>
-										<TooltipContent>
-											<p>{tooltipMessage}</p>
-										</TooltipContent>
-									</Tooltip>
-								) : (
-									badgeEl
-								);
-							})}
-						</TooltipProvider>
+									>
+										{isSelected && !isDisabled ? "ON" : "OFF"}
+									</span>
+								</button>
+							);
+						})}
 					</div>
 
+					<FieldDescription className="text-dx-faint">
+						At least one channel required.
+					</FieldDescription>
 					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-				</FieldSet>
+				</div>
 			)}
 		/>
 	);

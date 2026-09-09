@@ -4,8 +4,10 @@ import type * as React from "react";
 /**
  * Shared "instrument panel" primitives for the ruled-cell design system
  * (navbar, Alerts, and future Discover/Pulse/Portfolio surfaces).
- * Deliberately un-rounded: these are structural dividers, not interactive
- * surfaces, so they stay square in both the `lyra` and `vega` presets.
+ * `RuledCell`'s inner `border-r` divider is a single-sided structural
+ * separator and stays square in both presets. Outer bordered containers
+ * built from these primitives (like `DataStrip`) are cards, not structural
+ * dividers, and round dynamically with `--radius`.
  */
 
 export function MonoLabel({
@@ -52,7 +54,7 @@ export function SectionBand({
 	return (
 		<div
 			className={cn(
-				"flex flex-wrap items-end justify-between gap-6 px-[22px] pt-[26px]",
+				"flex flex-wrap items-end justify-between gap-6 px-[18px] pt-[26px] sm:px-[22px]",
 				className,
 			)}
 		>
@@ -88,7 +90,7 @@ export function StatusDot({
 	const [textTone, dotTone] = STATUS_TONE[tone].split(" ");
 	return (
 		<span className={cn("flex items-center gap-2", className)}>
-			<span className={cn("size-1.5 flex-none", dotTone)} />
+			<span className={cn("size-1.5 flex-none rounded-sm", dotTone)} />
 			<span className={cn("text-[13px]", textTone)}>{label}</span>
 		</span>
 	);
@@ -102,7 +104,7 @@ export type DataStripItem = {
 	suffix?: React.ReactNode;
 };
 
-const VALUE_TONE = {
+export const VALUE_TONE = {
 	ink: "text-dx-ink",
 	green: "text-dx-green",
 	amber: "text-dx-amber",
@@ -119,7 +121,7 @@ export function DataStrip({
 	return (
 		<div
 			className={cn(
-				"grid border border-dx-line bg-dx-panel",
+				"grid overflow-hidden rounded-md border border-dx-line bg-dx-panel",
 				className,
 			)}
 			style={{

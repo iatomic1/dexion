@@ -23,12 +23,19 @@ import {
 	RefreshCw,
 	Shield,
 } from "lucide-react";
+import type React from "react";
 import { useState } from "react";
 import siteConfig from "~/config/site";
 import useCopyToClipboard from "~/hooks/useCopy";
 import { authClient } from "~/lib/auth-client";
 
-export default function OTTModal() {
+export default function OTTModal({
+	className,
+	triggerLabel = "Generate OTT",
+}: {
+	className?: string;
+	triggerLabel?: React.ReactNode;
+} = {}) {
 	const [token, setToken] = useState("");
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [copied, setCopied] = useState(false);
@@ -93,9 +100,9 @@ export default function OTTModal() {
 			}}
 		>
 			<DialogTrigger asChild>
-				<Button variant={"secondary"}>
+				<Button variant={"secondary"} className={className}>
 					<Key className=" h-5 w-5" />
-					Generate OTT
+					{triggerLabel}
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">

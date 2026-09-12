@@ -1,9 +1,11 @@
+import { publishEvent } from "@dexion/bus";
+import { EVENTS, type SwapDetectedPayload } from "@dexion/events";
 import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { config } from "@/config";
 import { logger } from "@/config/logger";
 import type { SwapEventPlatform } from "@/core/queues";
-import { swapQueue } from "@/infrastructure/bullmq/queues";
+import { publisher } from "@/infrastructure/rabbitmq";
 import {
 	extractAssetContracts,
 	extractFakFunContracts,
@@ -38,11 +40,11 @@ async function handleWebhook(c: any, platform: SwapEventPlatform) {
 		}
 
 		if (assetContracts.length > 0) {
-			await swapQueue.add("process-swap", {
+			await publishEvent(publisher, EVENTS.SwapDetected, {
 				senderAddress: txMetadata.sender_address,
 				assetContracts,
 				platform,
-			});
+			} satisfies SwapDetectedPayload);
 		}
 
 		return c.json({ message: "ok" }, 200);

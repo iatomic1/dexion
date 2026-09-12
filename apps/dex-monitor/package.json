@@ -16,9 +16,11 @@
 	"dependencies": {
 		"@bull-board/api": "^6.13.1",
 		"@bull-board/hono": "6.0.0",
+		"@dexion/bus": "workspace:*",
 		"@dexion/logger": "workspace:*",
 		"@dexion/notifier": "workspace:*",
 		"@dexion/shared": "workspace:*",
+		"@dexion/events": "workspace:*",
 		"@dexion/tokens": "workspace:*",
 		"@dexion/transactional": "workspace:*",
 		"@hirosystems/chainhooks-client": "^0.8.0",

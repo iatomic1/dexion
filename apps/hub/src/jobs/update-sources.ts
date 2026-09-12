@@ -6,9 +6,23 @@ import { logger } from "../lib/logger";
 
 async function fetchStxToolsTokens() {
 	try {
-		const url = `${STX_TOOLS_API_BASE_URL}tokens?page=0&size=4000`;
-		const response = await axios.get(url);
-		return response.data.data.map((t: any) => t.contract_id);
+		const baseUrl = `${STX_TOOLS_API_BASE_URL}tokens`;
+		let cursor: string | undefined;
+		const addresses: string[] = [];
+
+		do {
+			const url = cursor ? `${baseUrl}?cursor=${cursor}` : baseUrl;
+
+			const response = await axios.get(url);
+			const { rows, next } = response.data.data;
+
+			addresses.push(...rows.map((t: any) => t.address));
+
+			cursor = next;
+		} while (cursor);
+
+		console.log(`Fetched ${addresses.length} tokens`);
+		return addresses;
 	} catch (err) {
 		if (err instanceof AxiosError) {
 			logger.error({ error: err.message }, "stxtools fetch failed");
@@ -45,11 +59,12 @@ async function safeFetchFakFun() {
 }
 
 export async function updateTokenSources(redisClient: Redis) {
-	const [stxToolsResult, stxCityResult, fakfunResult] = await Promise.allSettled([
-		fetchStxToolsTokens(),
-		fetchStxCityTokens(),
-		safeFetchFakFun(),
-	]);
+	const [stxToolsResult, stxCityResult, fakfunResult] =
+		await Promise.allSettled([
+			fetchStxToolsTokens(),
+			fetchStxCityTokens(),
+			safeFetchFakFun(),
+		]);
 
 	// Each source is independent - a failure fetching one (e.g. Tenero's bulk
 	// listing endpoint, which isn't confirmed working post-rebrand) shouldn't
@@ -62,6 +77,7 @@ export async function updateTokenSources(redisClient: Redis) {
 		fakfunResult.status === "fulfilled" ? fakfunResult.value : [];
 
 	if (stxToolsResult.status === "rejected") {
+		logger.error({ stxToolsResult });
 		logger.error(
 			{ error: stxToolsResult.reason?.message },
 			"updateTokenSources: stxtools fetch failed, skipping its entries",

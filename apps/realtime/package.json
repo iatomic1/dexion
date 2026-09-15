@@ -1,0 +1,33 @@
+{
+	"name": "@dexion/realtime",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"scripts": {
+		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/app/main.ts",
+		"lint": "bunx biome check ./",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@dexion/bus": "workspace:*",
+		"@dexion/events": "workspace:*",
+		"@dexion/logger": "workspace:*",
+		"@dexion/notifier": "workspace:*",
+		"@dexion/shared": "workspace:*",
+		"@dexion/tokens": "workspace:*",
+		"@dexion/transactional": "workspace:*",
+		"@hono/node-server": "^1.19.5",
+		"@socket.io/bun-engine": "^0.1.2",
+		"@socket.io/redis-adapter": "^8.3.0",
+		"axios": "^1.13.2",
+		"hono": "^4.10.1",
+		"ioredis": "*",
+		"jose": "^6.2.12",
+		"socket.io": "^4.8.3",
+		"zod": "4.1.12"
+	}
+}

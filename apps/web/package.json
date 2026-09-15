@@ -3,8 +3,8 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "doppler run -p dexion -c dev -- bun run dev:local",
-		"build:local": "doppler run -p dexion -c dev -- bun run next build",
+		"dev": "doppler run -p dexion -c dev_web -- bun run dev:local",
+		"build:local": "doppler run -p dexion -c dev_web -- bun run next build",
 		"dev:local": "next dev --turbopack --port 3001",
 		"build": "next build",
 		"start": "next start",

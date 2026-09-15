@@ -1,4 +1,4 @@
-import { normalRedisConnection as redis } from "@/config/connections";
+import { appCacheRedisConnection as redis } from "@/config/connections";
 import { logger } from "@/config/logger";
 import type { HodlmmAlert } from "./hodlmm-alert";
 

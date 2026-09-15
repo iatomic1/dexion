@@ -62,7 +62,7 @@ export const startAlertTriggeredConsumer = () => {
 					{ err: err },
 					"Failed dispatching alert to their respective channels",
 				);
-				ctx.retry();
+				ctx.reject();
 			}
 		},
 	);

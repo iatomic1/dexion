@@ -4,7 +4,7 @@ export const EVENTS = {
 	AlertTriggered: "alert.triggered",
 } as const;
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];
-export type ChannelType = "email" | "telegram" | "webhook";
+export type ChannelType = "email" | "telegram" | "webhook" | "webapp";
 
 export type AlertTriggeredPayload<TAlert, TUserProfile, TData> = {
 	type: "token" | "hodlmm";

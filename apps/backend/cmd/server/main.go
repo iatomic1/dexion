@@ -78,14 +78,14 @@ func main() {
 
 	log.Info().Msg("Database connection pool established successfully")
 
-	rdbURL := os.Getenv("REDIS_URL")
+	rdbURL := os.Getenv("REDIS_CACHE_URL")
 	if rdbURL == "" {
 		rdbURL = cfg.RdbURL
 	}
 
 	opt, err := redis.ParseURL(rdbURL)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Invalid Redis URL")
+		log.Fatal().Err(err).Msg("Invalid Redis URL now using REDIS_CACHE_URL")
 	}
 
 	rdb := redis.NewClient(opt)

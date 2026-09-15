@@ -1,35 +1,44 @@
 import { Redis } from "ioredis";
 
 export const REDIS_PREFIX = "auth-";
+
 export interface SecondaryStorage {
 	get: (key: string) => Promise<string | null>;
 	set: (key: string, value: string, ttl?: number) => Promise<void>;
 	delete: (key: string) => Promise<void>;
 }
 
-const url = process.env.REDIS_URL;
-if (!url) throw new Error("REDIS_URL is not defined");
+const authUrl = process.env.REDIS_AUTH_URL;
+if (!authUrl) throw new Error("REDIS_AUTH_URL is not defined");
 
-const redisClient = new Redis(url);
+const cacheUrl = process.env.REDIS_CACHE_URL;
+if (!cacheUrl) throw new Error("REDIS_CACHE_URL is not defined");
 
-redisClient.on("error", (err) => {
-	console.error("Redis Client Error", err);
+const authRedis = new Redis(authUrl);
+const cacheRedis = new Redis(cacheUrl);
+
+authRedis.on("error", (err) => {
+	console.error("Auth Redis Client Error", err);
+});
+
+cacheRedis.on("error", (err) => {
+	console.error("Cache Redis Client Error", err);
 });
 
 export const redisStorage: SecondaryStorage = {
 	get: async (key: string) => {
-		const data = await redisClient.get(REDIS_PREFIX + key);
+		const data = await authRedis.get(REDIS_PREFIX + key);
 		return data ?? null;
 	},
 	set: async (key: string, value: string, ttl?: number) => {
 		if (ttl) {
-			await redisClient.set(REDIS_PREFIX + key, value, "EX", ttl);
+			await authRedis.set(REDIS_PREFIX + key, value, "EX", ttl);
 		} else {
-			await redisClient.set(REDIS_PREFIX + key, value);
+			await authRedis.set(REDIS_PREFIX + key, value);
 		}
 	},
 	delete: async (key: string) => {
-		await redisClient.del(REDIS_PREFIX + key);
+		await authRedis.del(REDIS_PREFIX + key);
 	},
 };
 
@@ -46,7 +55,7 @@ export async function updateCachedUserField(
 	if (!userId || !field) return;
 
 	const key = `user:${userId}`;
-	await redisClient.hset(key, field, value);
+	await cacheRedis.hset(key, field, value);
 }
 
 export async function getCachedUserData(
@@ -55,9 +64,9 @@ export async function getCachedUserData(
 	if (!userId) return null;
 
 	const key = `user:${userId}`;
-	const data = await redisClient.hgetall(key);
+	const data = await cacheRedis.hgetall(key);
 
-	if (!data || Object.keys(data).length === 0) return null;
+	if (Object.keys(data).length === 0) return null;
 
 	return data as CachedUserData;
 }

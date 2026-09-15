@@ -9,7 +9,6 @@ const configSchema = z.object({
 	HIRO_PLATFORM_API_KEY: z.string().min(1),
 	INTERNAL_SECRET: z.string().min(1),
 	REDIS_CACHE_URL: z.string().min(1),
-	REDIS_AUTH_URL: z.string().min(1),
 	PORT: z.coerce.number().default(4000),
 	RESEND_API_KEY: z.string().min(1),
 	TELEGRAM_BOT_TOKEN: z.string().min(1),

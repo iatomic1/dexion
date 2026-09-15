@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import {
+	appCacheRedisConnection,
 	bullMqRedisConnection,
-	normalRedisConnection,
 } from "@/config/connections";
 import {
 	emailQueue,
@@ -12,7 +12,7 @@ import {
 
 const healthCheck = new Hono();
 
-const checkRedisConnection = async (redis: typeof normalRedisConnection) => {
+const checkRedisConnection = async (redis: typeof appCacheRedisConnection) => {
 	try {
 		const ping = await redis.ping();
 		return ping === "PONG";
@@ -38,7 +38,7 @@ const checkBullMqQueues = async () => {
 healthCheck.get("/healthz", async (c) => {
 	const [bullMqRedis, normalRedis, bullMqQueues] = await Promise.all([
 		checkRedisConnection(bullMqRedisConnection),
-		checkRedisConnection(normalRedisConnection),
+		checkRedisConnection(appCacheRedisConnection),
 		checkBullMqQueues(),
 	]);
 

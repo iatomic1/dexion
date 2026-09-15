@@ -20,7 +20,6 @@ export function shouldTrigger(alert: Alert, token: TokenMetadata): boolean {
 		price: token.metrics.price_usd,
 		liquidity: token.metrics.liquidity_usd,
 		marketcap: token.metrics.marketcap_usd,
-
 		holders: token.metrics.holder_count,
 	};
 	const currentValue = metricMap[alert.metric] ?? 0;

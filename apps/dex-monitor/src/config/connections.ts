@@ -5,18 +5,22 @@ export const bullMqRedisConnection = new Redis(config.BULLMQ_REDIS_URL, {
 	maxRetriesPerRequest: null,
 });
 
-export const normalRedisConnection = new Redis(config.REDIS_URL, {
+export const appCacheRedisConnection = new Redis(config.REDIS_CACHE_URL, {
 	maxRetriesPerRequest: null,
 });
 
-normalRedisConnection.on("connect", () => {
+// export const authCacheRedisConnection = new Redis(config.REDIS_AUTH_URL, {
+// 	maxRetriesPerRequest: null,
+// });
+
+appCacheRedisConnection.on("connect", () => {
 	console.log("Redis connected");
 });
 
-normalRedisConnection.on("ready", () => {
+appCacheRedisConnection.on("ready", () => {
 	console.log("Redis ready");
 });
 
-normalRedisConnection.on("error", (err) => {
+appCacheRedisConnection.on("error", (err) => {
 	console.error("Redis error", err);
 });

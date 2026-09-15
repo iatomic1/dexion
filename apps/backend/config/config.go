@@ -13,7 +13,7 @@ type Config struct {
 	HttpAddress    string `mapstructure:"HTTP_SERVER_ADDRESS"`
 	Host           string `mapstructure:"HOST"`
 	FrontendURL    string `mapstructure:"FRONTEND_URL"`
-	RdbURL         string `mapstructure:"REDIS_URL"`
+	RdbURL         string `mapstructure:"REDIS_CACHE_URL"`
 	InternalSecret string `mapstructure:"INTERNAL_SECRET"`
 	// AllowedOrigins specifies the list of allowed origins for CORS configuration.
 	// Expected format: comma-separated list of origins (e.g., "https://example.com,https://another.com").

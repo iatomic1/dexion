@@ -11,7 +11,7 @@ export type TokenMetadata = {
 	header_image_url: string | null;
 	description: string;
 	verified: boolean;
-	bc: "stxcity" | "fakfun";
+	bc?: "stxcity" | "fakfun";
 	socials: {
 		platform: string;
 		value: string;

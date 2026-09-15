@@ -1,9 +1,6 @@
 import { TOKEN_WATCHER_API_BASE_URL } from "@dexion/shared";
-import {
-	getFakFunTokenMetadata,
-	getStxCityTokenMetadata,
-	getTokenMetadata,
-} from "@dexion/tokens/services";
+import { getProvider, type ProviderSource } from "@dexion/tokens/providers";
+import type { TokenMetadata } from "@dexion/tokens/types";
 import axios from "axios";
 import type * as Party from "partykit/server";
 import { handleInCompleteFakFunToken } from "./handlers/fakfun-handler";
@@ -61,6 +58,31 @@ export default class Server implements Party.Server {
 		return new Response("Not found", { status: 404 });
 	}
 
+	async dispatchMetadata(
+		source: ProviderSource,
+		contractAddress: string,
+		metadata: TokenMetadata | null,
+		conn?: Party.Connection,
+	) {
+		if (!metadata) {
+			sendError(this.room, contractAddress, "No metadata found", conn);
+			return;
+		}
+
+		if (source === "stxcity") {
+			await handleStxCityToken(this.room, contractAddress, metadata, conn);
+		} else if (source === "fakfun") {
+			await handleInCompleteFakFunToken(
+				this.room,
+				contractAddress,
+				metadata,
+				conn,
+			);
+		} else {
+			await handleRegularToken(this.room, contractAddress, conn, metadata);
+		}
+	}
+
 	async fetchAndSendData(contractAddress: string, conn?: Party.Connection) {
 		try {
 			const sourceResponse = await axios.get(
@@ -68,59 +90,38 @@ export default class Server implements Party.Server {
 			);
 			const source = sourceResponse.data.source;
 
-			if (source === "stxcity") {
-				const metadata = await getStxCityTokenMetadata(contractAddress, true);
-				if (metadata) {
-					await handleStxCityToken(this.room, contractAddress, metadata, conn);
-				} else {
-					sendError(this.room, contractAddress, "No metadata found", conn);
-				}
-			} else if (source === "stxtools") {
-				const metadata = await getTokenMetadata(contractAddress);
-				if (metadata) {
-					await handleRegularToken(this.room, contractAddress, conn, metadata);
-				} else {
-					sendError(this.room, contractAddress, "No metadata found", conn);
-				}
-			} else if (source === "fakfun") {
-				const metadata = await getFakFunTokenMetadata(contractAddress);
-				if (metadata) {
-					await handleInCompleteFakFunToken(
-						this.room,
-						contractAddress,
-						metadata,
-						conn,
-					);
-				} else {
-					sendError(this.room, contractAddress, "No metadata found", conn);
-				}
-			} else {
-				// Fallback logic if source is not found
-				let metadata = await getStxCityTokenMetadata(contractAddress, true);
-				if (!metadata) {
-					metadata = await getTokenMetadata(contractAddress);
-				}
-
-				if (metadata) {
-					if ("progress" in metadata) {
-						await handleStxCityToken(
-							this.room,
-							contractAddress,
-							metadata,
-							conn,
-						);
-					} else {
-						await handleRegularToken(
-							this.room,
-							contractAddress,
-							conn,
-							metadata,
-						);
-					}
-				} else {
-					sendError(this.room, contractAddress, "No metadata found", conn);
-				}
+			if (source === "stxcity" || source === "stxtools" || source === "fakfun") {
+				const metadata = await getProvider(source).getTokenMetadata(
+					contractAddress,
+				);
+				await this.dispatchMetadata(source, contractAddress, metadata, conn);
+				return;
 			}
+
+			// Fallback if the source registry has no entry: probe stxcity first
+			// (bonding-curve tokens aren't indexed by Tenero yet), then stxtools.
+			const stxcityMetadata = await getProvider("stxcity").getTokenMetadata(
+				contractAddress,
+			);
+			if (stxcityMetadata) {
+				await this.dispatchMetadata(
+					"stxcity",
+					contractAddress,
+					stxcityMetadata,
+					conn,
+				);
+				return;
+			}
+
+			const stxtoolsMetadata = await getProvider("stxtools").getTokenMetadata(
+				contractAddress,
+			);
+			await this.dispatchMetadata(
+				"stxtools",
+				contractAddress,
+				stxtoolsMetadata,
+				conn,
+			);
 		} catch (err: any) {
 			console.log(err);
 			sendError(this.room, contractAddress, err.message, conn);

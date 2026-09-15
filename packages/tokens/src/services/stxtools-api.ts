@@ -6,8 +6,11 @@ import type {
 	TokenSwapTransaction,
 	TokenHolder,
 	LiquidityPool,
-	SearchResult,
 } from "../types";
+import {
+	transformTeneroToTokenMetadata,
+	transformTeneroHolder,
+} from "../utils/transferToTokenMetadata";
 
 export const getTokenMetadata = async (
 	ca: string,
@@ -16,7 +19,7 @@ export const getTokenMetadata = async (
 		const url = `${STX_TOOLS_API_BASE_URL}tokens/${ca}`;
 		const { data } = await axios.get(url);
 
-		return data;
+		return data?.data ? transformTeneroToTokenMetadata(data.data) : null;
 	} catch (err) {
 		// console.error(err);
 		return null;
@@ -41,10 +44,15 @@ export const getHolders = async (
 	ca: string,
 ): Promise<ApiRes<TokenHolder> | null> => {
 	try {
-		const url = `${STX_TOOLS_API_BASE_URL}tokens/${ca}/holders?page=0&size=50&sort=balance%2Cdesc`;
+		const url = `${STX_TOOLS_API_BASE_URL}tokens/${ca}/holders`;
 		const { data } = await axios.get(url);
+		const rows = data?.data?.rows;
+		if (!Array.isArray(rows)) return null;
 
-		return data;
+		return {
+			data: rows.map(transformTeneroHolder),
+			rowCount: rows.length,
+		};
 	} catch (err) {
 		// console.error(err);
 		return null;
@@ -66,13 +74,12 @@ export const getSearch = async (
 	searchTerm: string,
 ): Promise<TokenMetadata[] | null> => {
 	try {
-		const url = `${STX_TOOLS_API_BASE_URL}search?searchTerm=${searchTerm}`;
-		const { data } = await axios.get<SearchResult>(url);
+		const url = `${STX_TOOLS_API_BASE_URL}search?q=${searchTerm}`;
+		const { data } = await axios.get(url);
+		const tokens = data?.data?.tokens;
+		if (!Array.isArray(tokens)) return null;
 
-		return data.tokens.map((token: any) => ({
-			...token,
-			platform: "stxtools",
-		}));
+		return tokens.map((token: any) => transformTeneroToTokenMetadata(token));
 	} catch (err) {
 		// console.error(err);
 		return null;

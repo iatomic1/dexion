@@ -22,11 +22,15 @@ interface AvatarUploadProps {
 	onUploadSuccess?: (url: string, fileId: string) => void;
 	currentAvatarUrl?: string | null;
 	email: string;
+	avatarClassName?: string;
+	fallback?: React.ReactNode;
 }
 
 export default function AvatarUpload({
 	onUploadSuccess,
 	currentAvatarUrl,
+	avatarClassName,
+	fallback,
 }: AvatarUploadProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [avatarUrl, setAvatarUrl] = useState<string>(currentAvatarUrl || "");
@@ -153,7 +157,10 @@ export default function AvatarUpload({
 			/>
 
 			<Avatar
-				className="w-18 h-18 mx-auto cursor-pointer hover:opacity-80 transition-opacity"
+				className={
+					avatarClassName ??
+					"w-18 h-18 mx-auto cursor-pointer hover:opacity-80 transition-opacity"
+				}
 				onClick={() => setIsOpen(true)}
 			>
 				<AvatarImage
@@ -162,7 +169,7 @@ export default function AvatarUpload({
 					className="object-cover"
 				/>
 				<AvatarFallback>
-					<User className="w-8 h-8" />
+					{fallback ?? <User className="w-8 h-8" />}
 				</AvatarFallback>
 			</Avatar>
 

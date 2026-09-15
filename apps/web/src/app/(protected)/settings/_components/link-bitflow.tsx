@@ -17,7 +17,15 @@ import siteConfig from "~/config/site";
 import { authClient } from "~/lib/auth-client";
 import { User } from "~/types/auth";
 
-export default function LinkBitflow({ user }: { user: User }) {
+export default function LinkBitflow({
+	user,
+	className,
+	variant = "secondary",
+}: {
+	user: User;
+	className?: string;
+	variant?: "secondary" | "outline" | "default";
+}) {
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 	const isLinked = Boolean(user.externalAddress);
@@ -146,8 +154,8 @@ export default function LinkBitflow({ user }: { user: User }) {
 
 	return (
 		<Button
-			variant="secondary"
-			// className="w-full bg-muted/50 py-5 text-sm rounded-full relative gap-2"
+			variant={variant}
+			className={className}
 			onClick={isLinked ? handleUnlinkBitflowAccount : handleLinkBitflowAccount}
 			disabled={isLoading}
 		>

@@ -34,10 +34,10 @@ export function TablePagination<TData>({
 	const rowCount = table.getRowCount();
 
 	return (
-		<div className="flex items-center justify-between gap-8">
+		<div className="hidden items-center justify-between gap-8 sm:flex">
 			{/* Results per page */}
 			<div className="flex items-center gap-3">
-				<Label htmlFor={id} className="max-sm:sr-only">
+				<Label htmlFor={id} className="text-dx-dim max-sm:sr-only">
 					Rows per page
 				</Label>
 				<Select
@@ -46,10 +46,13 @@ export function TablePagination<TData>({
 						table.setPageSize(Number(value));
 					}}
 				>
-					<SelectTrigger id={id} className="w-fit whitespace-nowrap">
+					<SelectTrigger
+						id={id}
+						className="w-fit border-dx-line bg-dx-panel text-dx-ink whitespace-nowrap"
+					>
 						<SelectValue placeholder="Select number of results" />
 					</SelectTrigger>
-					<SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
+					<SelectContent className="border-dx-line-strong bg-dx-panel [&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 [&_*[role=option]>span]:start-auto [&_*[role=option]>span]:end-2">
 						{[5, 10, 25, 50].map((size) => (
 							<SelectItem key={size} value={size.toString()}>
 								{size}
@@ -60,16 +63,13 @@ export function TablePagination<TData>({
 			</div>
 
 			{/* Page number information */}
-			<div className="flex grow justify-end text-sm whitespace-nowrap text-muted-foreground">
-				<p
-					className="text-sm whitespace-nowrap text-muted-foreground"
-					aria-live="polite"
-				>
-					<span className="text-foreground">
+			<div className="flex grow justify-end text-sm whitespace-nowrap text-dx-dim">
+				<p className="text-sm whitespace-nowrap text-dx-dim" aria-live="polite">
+					<span className="text-dx-ink">
 						{pageIndex * pageSize + 1}-
 						{Math.min(Math.max(pageIndex * pageSize + pageSize, 0), rowCount)}
 					</span>{" "}
-					of <span className="text-foreground">{rowCount.toString()}</span>
+					of <span className="text-dx-ink">{rowCount.toString()}</span>
 				</p>
 			</div>
 
@@ -81,7 +81,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.firstPage()}
 								disabled={!table.getCanPreviousPage()}
 								aria-label="Go to first page"
@@ -94,7 +94,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.previousPage()}
 								disabled={!table.getCanPreviousPage()}
 								aria-label="Go to previous page"
@@ -107,7 +107,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.nextPage()}
 								disabled={!table.getCanNextPage()}
 								aria-label="Go to next page"
@@ -120,7 +120,7 @@ export function TablePagination<TData>({
 							<Button
 								size="icon"
 								variant="outline"
-								className="disabled:pointer-events-none disabled:opacity-50"
+								className="border-dx-line-strong bg-transparent text-dx-ink hover:bg-dx-panel-2 disabled:pointer-events-none disabled:opacity-50"
 								onClick={() => table.lastPage()}
 								disabled={!table.getCanNextPage()}
 								aria-label="Go to last page"

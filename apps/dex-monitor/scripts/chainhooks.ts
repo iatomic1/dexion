@@ -194,8 +194,8 @@ async function deleteAllChainhooks() {
 
 // ---------- MAIN ----------
 async function initChainhooks() {
-	await registerAllFakFunChainhooks(PROD_WEBHOOK_BASE_URL);
-	await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
+	// await registerAllFakFunChainhooks(PROD_WEBHOOK_BASE_URL);
+	await registerSwapChainhooks(WEBHOOK_BASE_URL);
 
 	// if (process.env.REGISTER_CHAINHOOKS_ON_LOAD === "true") {
 	// 	await registerSwapChainhooks(PROD_WEBHOOK_BASE_URL);
@@ -205,6 +205,6 @@ async function initChainhooks() {
 }
 
 // await getChainhookByUUID("a4645018-7afe-4b3d-b67e-afcb08542068");
-// await initChainhooks();
+await initChainhooks();
 // const chainhooks = await client.getChainhooks({ limit: 1 });
 // logger.info(chainhooks, "Chainhooks");

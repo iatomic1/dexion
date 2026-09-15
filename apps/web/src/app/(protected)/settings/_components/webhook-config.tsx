@@ -2,39 +2,20 @@
 
 import { WebhookConfig, webhookConfigSchema } from "@dexion/api-sdk/index.ts";
 import { HTTP_STATUS } from "@dexion/shared";
-import { Badge } from "@dexion/ui/components/ui/badge";
-import { Button } from "@dexion/ui/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@dexion/ui/components/ui/field";
-import { Input } from "@dexion/ui/components/ui/input";
+import { MonoLabel } from "@dexion/ui/components/ui/instrument";
 import { ExternalLink } from "@dexion/ui/components/ui/link";
-import { toast } from "@dexion/ui/components/ui/sonner";
-import { Spinner } from "@dexion/ui/components/ui/spinner";
-import { Switch } from "@dexion/ui/components/ui/switch";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@dexion/ui/components/ui/tooltip";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import {
-	AlertCircle,
-	CheckCircle,
-	Copy,
-	Eye,
-	EyeOff,
-	Info,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, Copy, Eye, EyeOff } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
 	createWebhookConfigAction,
-	deleteWebhookConfigAction,
 	updateWebhookConfigAction,
 } from "~/app/actions/webhook-actions";
 import siteConfig from "~/config/site";
 import useCopyToClipboard from "~/hooks/useCopy";
+import { OutlineButton, SettingsBadge } from "./settings-ui";
 
 interface WebhookConfigProps {
 	initialConfig: WebhookConfig | null;
@@ -46,203 +27,68 @@ export function WebhookConfigSection({
 	onSuccess,
 }: WebhookConfigProps) {
 	const [showBearerToken, setShowBearerToken] = useState(false);
-	const [isEditingWebhook, setIsEditingWebhook] = useState(false);
+	const [saveState, setSaveState] = useState<"idle" | "saved" | "failed">(
+		"idle",
+	);
 	const copy = useCopyToClipboard();
 
 	const form = useForm<WebhookConfig>({
 		resolver: standardSchemaResolver(webhookConfigSchema),
-		defaultValues: {
-			webhookUrl: "",
-			bearerToken: "",
-		},
+		defaultValues: initialConfig ?? { webhookUrl: "", bearerToken: "" },
 	});
 
-	useEffect(() => {
-		if (initialConfig) {
-			form.reset(initialConfig);
-		} else {
-			form.reset({ webhookUrl: "", bearerToken: "" });
-		}
-	}, [initialConfig, form]);
-
-	const { execute: executeCreate, status: createStatus } = useAction(
-		createWebhookConfigAction,
-		{
-			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.CREATED) {
-					toast.success("Configuration saved successfully");
-					setIsEditingWebhook(false);
-					onSuccess?.();
-				} else {
-					toast.error(data.data?.message || "Failed to save configuration");
-				}
-			},
-			onError: ({ error: { serverError } }) => {
-				toast.error(
-					serverError?.errorMessage || "Failed to save configuration",
-				);
-			},
+	const { execute: executeCreate } = useAction(createWebhookConfigAction, {
+		onSuccess: (data) => {
+			setSaveState(
+				data.data?.status === HTTP_STATUS.CREATED ? "saved" : "failed",
+			);
+			onSuccess?.();
 		},
-	);
+		onError: () => setSaveState("failed"),
+	});
 
 	const { execute: executeUpdate, status: updateStatus } = useAction(
 		updateWebhookConfigAction,
 		{
 			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Configuration updated successfully");
-					setIsEditingWebhook(false);
-					onSuccess?.();
-				} else {
-					toast.error(data.data?.message || "Failed to update configuration");
-				}
+				setSaveState(data.data?.status === HTTP_STATUS.OK ? "saved" : "failed");
+				onSuccess?.();
 			},
-			onError: ({ error: { serverError } }) => {
-				toast.error(
-					serverError?.errorMessage || "Failed to update configuration",
-				);
-			},
+			onError: () => setSaveState("failed"),
 		},
 	);
 
-	const { execute: executeDelete, status: deleteStatus } = useAction(
-		deleteWebhookConfigAction,
-		{
-			onSuccess: (data) => {
-				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Configuration deleted successfully");
-					form.reset({ webhookUrl: "", bearerToken: "" });
-					setIsEditingWebhook(false);
-					onSuccess?.();
-				} else {
-					toast.error(data.data?.message || "Failed to delete configuration");
-				}
-			},
-			onError: ({ error: { serverError } }) => {
-				toast.error(
-					serverError?.errorMessage || "Failed to delete configuration",
-				);
-			},
+	const saveOnBlur = form.handleSubmit(
+		(data) => {
+			if (initialConfig) {
+				executeUpdate(data);
+			} else {
+				executeCreate(data);
+			}
 		},
+		() => setSaveState("failed"),
 	);
-
-	const isPending =
-		createStatus === "executing" ||
-		updateStatus === "executing" ||
-		deleteStatus === "executing";
-
-	const handleSubmit = form.handleSubmit((data) => {
-		if (initialConfig) {
-			executeUpdate(data);
-		} else {
-			executeCreate(data);
-		}
-	});
-
-	const handleDelete = () => {
-		if (
-			confirm("Are you sure you want to delete this webhook configuration?")
-		) {
-			executeDelete();
-		}
-	};
-
-	const cancelWebhookEdit = () => {
-		if (initialConfig) {
-			form.reset(initialConfig);
-		} else {
-			form.reset({ webhookUrl: "", bearerToken: "" });
-		}
-		setIsEditingWebhook(false);
-	};
-
-	const toggleWebhookEnabled = () => {
-		if (initialConfig) {
-			executeUpdate({
-				...form.getValues(),
-				enabled: !initialConfig.enabled,
-			});
-		}
-	};
 
 	const resetWebhookStatus = () => {
 		if (initialConfig) {
-			executeUpdate({
-				...form.getValues(),
-				status: "streaming",
-			});
+			executeUpdate({ ...form.getValues(), status: "streaming" });
 		}
 	};
 
-	return (
-		<form onSubmit={handleSubmit} className="p-6">
-			{/* Webhook Status & Enable/Disable */}
-			{initialConfig && (
-				<div className="flex items-start justify-between mb-6">
-					<div className="flex-1">
-						<div className="flex items-center gap-2 mb-1">
-							<h3 className="text-base font-medium">Webhook Delivery</h3>
-							{initialConfig.status === "streaming" ? (
-								<div className="flex items-center gap-1.5 text-xs text-green-500">
-									<CheckCircle className="h-3.5 w-3.5" />
-									<span>Streaming</span>
-								</div>
-							) : (
-								<div className="flex items-center gap-1.5 text-xs text-amber-500">
-									<AlertCircle className="h-3.5 w-3.5" />
-									<span>Interrupted</span>
-								</div>
-							)}
-						</div>
-						<p className="text-sm text-muted-foreground">
-							{initialConfig.enabled
-								? initialConfig.status === "streaming"
-									? "Webhook alerts are active and delivering"
-									: "Delivery failed. Check your webhook endpoint and reset status"
-								: "Webhook alerts are currently disabled"}
-						</p>
-					</div>
-					<div className="ml-6 flex items-center gap-3">
-						{initialConfig.status === "interrupted" && (
-							<Button
-								type="button"
-								variant="outline"
-								size="sm"
-								onClick={resetWebhookStatus}
-								disabled={!initialConfig.enabled || isPending}
-							>
-								{updateStatus === "executing" && <Spinner />}
-								Reset Status
-							</Button>
-						)}
-						<Tooltip>
-							<TooltipTrigger>
-								<Switch
-									checked={initialConfig.enabled}
-									onCheckedChange={toggleWebhookEnabled}
-									disabled={isPending}
-								/>
-							</TooltipTrigger>
-							<TooltipContent>
-								{initialConfig.enabled
-									? "Turn Off Webhook Alerts"
-									: "Turn On Webhook Alerts"}
-							</TooltipContent>
-						</Tooltip>
-					</div>
-				</div>
-			)}
+	const interrupted = initialConfig?.status === "interrupted";
 
-			{/* Webhook Configuration */}
-			<div className="space-y-4">
-				<Controller
-					name="webhookUrl"
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="webhook-url">Webhook URL</FieldLabel>
-							<div className="flex gap-2">
-								<Input
+	return (
+		<div>
+			{/* Field strip */}
+			<div className="grid sm:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
+				<div className="flex flex-col gap-1.5 border-b border-dx-line px-[18px] py-[14px] sm:border-b-0 sm:border-r sm:px-4.5 sm:py-4">
+					<MonoLabel>Endpoint URL</MonoLabel>
+					<Controller
+						name="webhookUrl"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<div className="flex items-center gap-2 rounded-md border border-dx-line-strong bg-dx-panel px-3 py-2">
+								<input
 									{...field}
 									id="webhook-url"
 									type="url"
@@ -251,41 +97,41 @@ export function WebhookConfigSection({
 									autoCorrect="off"
 									autoCapitalize="none"
 									spellCheck={false}
-									disabled={!isEditingWebhook}
 									placeholder="https://api.example.com/webhooks/alerts"
-									className="flex-1 bg-muted font-mono text-sm"
+									className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-dx-ink placeholder:text-dx-faint focus:outline-none"
+									onBlur={(e) => {
+										field.onBlur();
+										saveOnBlur();
+									}}
+									aria-invalid={fieldState.invalid}
 								/>
-								<Button
+								<button
 									type="button"
-									variant="ghost"
-									size="icon"
-									onClick={() => copy(field.value)}
-									disabled={isEditingWebhook || !field.value}
+									aria-label="Copy endpoint URL"
+									onClick={() => {
+										copy(field.value);
+									}}
+									disabled={!field.value}
+									className="flex-none text-dx-faint hover:text-dx-ink disabled:opacity-40"
 								>
-									<Copy className="h-4 w-4" />
-								</Button>
+									<Copy className="size-3.5" />
+								</button>
 							</div>
-							<p className="text-xs text-muted-foreground mt-1.5">
-								The endpoint that will receive alert notifications
-							</p>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
-				/>
+						)}
+					/>
+					<p className="text-[12px] text-dx-faint">
+						Receives a POST for every triggered alert.
+					</p>
+				</div>
 
-				<Controller
-					name="bearerToken"
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="bearer-token">
-								Bearer Token
-								{/*<Badge variant="secondary" className="ml-2">
-									encrypted
-								</Badge>*/}
-							</FieldLabel>
-							<div className="flex gap-2">
-								<Input
+				<div className="flex flex-col gap-1.5 px-[18px] py-[14px] sm:px-4.5 sm:py-4">
+					<MonoLabel>Bearer Token</MonoLabel>
+					<Controller
+						name="bearerToken"
+						control={form.control}
+						render={({ field, fieldState }) => (
+							<div className="flex items-center gap-2 rounded-md border border-dx-line-strong bg-dx-panel px-3 py-2">
+								<input
 									{...field}
 									id="bearer-token"
 									type={showBearerToken ? "text" : "password"}
@@ -293,100 +139,120 @@ export function WebhookConfigSection({
 									autoCorrect="off"
 									autoCapitalize="none"
 									spellCheck={false}
-									disabled={!isEditingWebhook}
 									placeholder="Enter your bearer token"
-									className="flex-1 bg-muted font-mono text-sm"
+									className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-dx-ink placeholder:text-dx-faint focus:outline-none"
+									onBlur={(e) => {
+										field.onBlur();
+										saveOnBlur();
+									}}
+									aria-invalid={fieldState.invalid}
 								/>
-								<Button
+								<button
 									type="button"
-									variant="ghost"
-									size="icon"
-									onClick={() => setShowBearerToken(!showBearerToken)}
+									aria-label={
+										showBearerToken
+											? "Hide bearer token"
+											: "Reveal bearer token"
+									}
+									onClick={() => setShowBearerToken((s) => !s)}
+									className="flex-none text-dx-faint hover:text-dx-ink"
 								>
 									{showBearerToken ? (
-										<EyeOff className="h-4 w-4" />
+										<EyeOff className="size-3.5" />
 									) : (
-										<Eye className="h-4 w-4" />
+										<Eye className="size-3.5" />
 									)}
-								</Button>
+								</button>
 							</div>
-							<p className="text-xs text-muted-foreground mt-1.5">
-								Token will be sent in the Authorization header as "Bearer
-								[token]"
-							</p>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
-				/>
-
-				{/* Action Buttons */}
-				<div className="flex justify-end gap-2 pt-2">
-					{isEditingWebhook ? (
-						<>
-							<Button
-								type="button"
-								variant="ghost"
-								size="sm"
-								onClick={cancelWebhookEdit}
-								disabled={isPending}
-							>
-								Cancel
-							</Button>
-							{initialConfig && (
-								<Button
-									type="button"
-									variant="destructive"
-									size="sm"
-									onClick={handleDelete}
-									disabled={isPending}
-								>
-									{deleteStatus === "executing" && <Spinner />}
-									Delete
-								</Button>
-							)}
-							<Button type="submit" size="sm" disabled={isPending}>
-								{(createStatus === "executing" ||
-									updateStatus === "executing") && <Spinner />}
-								Save Changes
-							</Button>
-						</>
-					) : (
-						<Button
-							type="button"
-							variant="secondary"
-							size="sm"
-							onClick={() => setIsEditingWebhook(true)}
-							className="border-0"
-						>
-							Edit Configuration
-						</Button>
-					)}
+						)}
+					/>
+					<p className="text-[12px] text-dx-faint">
+						Sent as Authorization: Bearer …
+					</p>
 				</div>
 			</div>
 
-			{/* Info Box */}
-			<div className="mt-6 p-3 bg-muted/50 rounded-lg border border-border">
-				<div className="flex gap-2">
-					<Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-					<div className="text-xs text-muted-foreground space-y-2">
-						<p>
-							Webhooks will be sent when price alerts are triggered. The system
-							automatically marks delivery as interrupted if your endpoint
-							fails.
-						</p>
-						<p>
-							You can reset the status to resume receiving alerts once your
-							endpoint is fixed.
-						</p>
+			{/* Save indicator */}
+			{saveState !== "idle" && (
+				<div className="border-t border-dx-line px-[18px] py-[8px] sm:px-4.5">
+					<span
+						className={
+							saveState === "saved"
+								? "font-mono text-[11px] uppercase text-dx-green"
+								: "font-mono text-[11px] uppercase text-dx-red"
+						}
+					>
+						{saveState === "saved" ? "Saved" : "Failed to save"}
+					</span>
+				</div>
+			)}
+
+			{/* Status bar */}
+			{initialConfig && (
+				<div className="flex flex-wrap items-center justify-between gap-3 border-t border-dx-line bg-dx-panel px-[18px] py-[12px] sm:px-4.5">
+					<div className="flex items-center gap-2">
+						{interrupted ? (
+							<AlertCircle className="size-4 flex-none text-dx-red" />
+						) : (
+							<CheckCircle2 className="size-4 flex-none text-dx-green" />
+						)}
+						<span className="text-[13px] text-dx-ink">
+							{interrupted
+								? "Delivery paused after repeated failed attempts — reset once your endpoint is fixed."
+								: "Webhook delivery is healthy."}
+						</span>
+					</div>
+					<div className="flex flex-wrap items-center gap-3">
 						<ExternalLink
 							href={siteConfig.socials.DOCS + "price-alerts/developers"}
-							className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+							className="font-mono text-[11px] uppercase tracking-[.08em] text-dx-dim hover:text-dx-ink"
 						>
-							View Payload Schema
+							View payload schema
 						</ExternalLink>
+						<OutlineButton disabled title="Test-send isn't available yet">
+							Send test
+						</OutlineButton>
+						{interrupted && (
+							<OutlineButton
+								danger
+								onClick={resetWebhookStatus}
+								disabled={updateStatus === "executing"}
+								className="w-auto"
+							>
+								Reset delivery
+							</OutlineButton>
+						)}
 					</div>
 				</div>
+			)}
+
+			{/* Delivery stats — static placeholder data until real delivery metrics exist */}
+			<div className="grid border-t border-dx-line sm:grid-cols-4">
+				<div className="flex flex-col gap-1.5 border-b border-dx-line px-[18px] py-[14px] sm:border-b-0 sm:border-r sm:px-4.5 sm:py-4">
+					<MonoLabel>Sent 24h</MonoLabel>
+					<span className="font-mono text-[20px] leading-none text-dx-ink">
+						28
+					</span>
+				</div>
+				<div className="flex flex-col gap-1.5 border-b border-dx-line px-[18px] py-[14px] sm:border-b-0 sm:border-r sm:px-4.5 sm:py-4">
+					<MonoLabel>Failed</MonoLabel>
+					<span className="font-mono text-[20px] leading-none text-dx-red">
+						5
+					</span>
+				</div>
+				<div className="flex flex-col gap-1.5 border-b border-dx-line px-[18px] py-[14px] sm:border-b-0 sm:border-r sm:px-4.5 sm:py-4">
+					<MonoLabel>Avg Latency</MonoLabel>
+					<span className="font-mono text-[20px] leading-none text-dx-ink">
+						412ms
+					</span>
+				</div>
+				<div className="flex flex-col gap-1.5 px-[18px] py-[14px] sm:px-4.5 sm:py-4">
+					<MonoLabel>Last Delivery</MonoLabel>
+					<span className="font-mono text-[20px] leading-none text-dx-ink">
+						2h ago
+					</span>
+				</div>
 			</div>
-		</form>
+		</div>
 	);
 }

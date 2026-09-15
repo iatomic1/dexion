@@ -63,6 +63,21 @@
   --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.13);
   --tracking-normal: 0rem;
   --spacing: 0.25rem;
+
+  /* Dexion instrument-panel tokens (navbar/Alerts redesign) */
+  --dx-bg: #f7f8f7;
+  --dx-panel: #ffffff;
+  --dx-panel-2: #f0f2f0;
+  --dx-line: rgba(0, 0, 0, 0.1);
+  --dx-line-strong: rgba(0, 0, 0, 0.22);
+  --dx-ink: #151816;
+  --dx-dim: #5c635d;
+  --dx-faint: #8b938c;
+  --dx-green: #149a63;
+  --dx-green-ink: #ffffff;
+  --dx-red: #ce2c31;
+  --dx-amber: #9a6a12;
+  --shadow-card: var(--shadow-sm);
 }
 
 .dark {
@@ -115,6 +130,21 @@
   --shadow-xl:
     0px 2px 4px 0px hsl(0 0% 0% / 0.1), 0px 8px 10px -1px hsl(0 0% 0% / 0.1);
   --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.25);
+
+  /* Dexion instrument-panel tokens (navbar/Alerts redesign) */
+  --dx-bg: #0a0b0a;
+  --dx-panel: #0e100f;
+  --dx-panel-2: #131614;
+  --dx-line: rgba(255, 255, 255, 0.09);
+  --dx-line-strong: rgba(255, 255, 255, 0.18);
+  --dx-ink: #eef1ee;
+  --dx-dim: #8b938c;
+  --dx-faint: #5f665f;
+  --dx-green: #3ecf8e;
+  --dx-green-ink: #04150d;
+  --dx-red: #e5484d;
+  --dx-amber: #e2a33c;
+  --shadow-card: var(--shadow-sm);
 }
 
 @theme inline {
@@ -150,6 +180,19 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-dx-bg: var(--dx-bg);
+  --color-dx-panel: var(--dx-panel);
+  --color-dx-panel-2: var(--dx-panel-2);
+  --color-dx-line: var(--dx-line);
+  --color-dx-line-strong: var(--dx-line-strong);
+  --color-dx-ink: var(--dx-ink);
+  --color-dx-dim: var(--dx-dim);
+  --color-dx-faint: var(--dx-faint);
+  --color-dx-green: var(--dx-green);
+  --color-dx-green-ink: var(--dx-green-ink);
+  --color-dx-red: var(--dx-red);
+  --color-dx-amber: var(--dx-amber);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -231,5 +274,10 @@ select:-webkit-autofill {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--dx-green);
+    outline-offset: 2px;
   }
 }

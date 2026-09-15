@@ -1,17 +1,5 @@
 import { STX_TOOLS_API_BASE_URL, STXWATCH_API_BASE_URL } from "@dexion/shared";
-import {
-	fetchFakFunTokens,
-	getFakFunTokenMetadata,
-	getSearch,
-	getStxCityTokenMetadata,
-	getTokenMetadata,
-	searchStxCity,
-} from "@dexion/tokens/services";
-import {
-	transformFakFunToTokenMetadata,
-	transformStxCityToTokenMetadata,
-	validateContractAddress,
-} from "@dexion/tokens/utils";
+import { getProvider, type ProviderSource } from "@dexion/tokens/providers";
 import axios from "axios";
 import { Hono } from "hono";
 import { STX_WATCH_API_KEY } from "../../config/env";
@@ -97,47 +85,25 @@ tokens.get("/search", async (c) => {
 	const searchTerm = c.req.query("searchTerm");
 	if (!searchTerm) return c.json({ error: "Missing searchTerm" }, 400);
 
-	let isContract;
 	try {
-		isContract = validateContractAddress(searchTerm);
-	} catch (err) {
-		logger.error(err, "[search] Validation error for term: " + searchTerm);
-		isContract = false;
-	}
-
-	try {
-		const [stxtoolsTokens, stxcityRaw, fakfunAll] = await Promise.all([
-			getSearch(searchTerm),
-			searchStxCity(searchTerm, isContract),
-			fetchFakFunTokens(),
+		const [stxtoolsTokens, stxcityTokens, fakfunTokens] = await Promise.all([
+			getProvider("stxtools").search(searchTerm),
+			getProvider("stxcity").search(searchTerm),
+			getProvider("fakfun").search(searchTerm),
 		]);
-
-		const fakfunFiltered = fakfunAll.filter((token) => {
-			const term = searchTerm.toLowerCase();
-			return (
-				token.name.toLowerCase().includes(term) ||
-				token.symbol.toLowerCase().includes(term) ||
-				token.tokenContract.toLowerCase().includes(term)
-			);
-		});
-
-		const fakfunTokens = fakfunFiltered.map((raw) => {
-			const source = raw.progress < 1 ? "fakfun" : "stxtools";
-			return transformFakFunToTokenMetadata(raw, source);
-		});
-
-		const stxcityTokens = (stxcityRaw || []).map(
-			transformStxCityToTokenMetadata,
-		);
 
 		const combined = [
 			...(stxtoolsTokens || []),
-			...stxcityTokens,
-			...fakfunTokens,
+			...(stxcityTokens || []),
+			...(fakfunTokens || []),
 		];
 
 		const tokenMap = new Map();
-		const priority = { stxtools: 3, stxcity: 2, fakfun: 1 };
+		const priority: Record<ProviderSource, number> = {
+			stxtools: 3,
+			stxcity: 2,
+			fakfun: 1,
+		};
 
 		for (const token of combined) {
 			const id = token.contract_id;
@@ -148,10 +114,7 @@ tokens.get("/search", async (c) => {
 				continue;
 			}
 
-			if (
-				priority[token.platform || token.source] >
-				priority[existing.platform || existing.source]
-			) {
+			if (priority[token.source] > priority[existing.source]) {
 				tokenMap.set(id, token);
 			}
 		}
@@ -240,74 +203,28 @@ tokens.post("/get_batch_token_data", async (c) => {
 					"[get_batch_token_data] Fetching token data",
 				);
 
-				if (src === "stxcity") {
-					const raw = await getStxCityTokenMetadata(contractId, true);
-					if (!raw) {
-						logger.warn(
-							{ contractId },
-							"[get_batch_token_data] No stxcity metadata found",
-						);
-						return { contractId, error: "No stxcity metadata found" };
-					}
-					const result = transformStxCityToTokenMetadata(raw);
-					if (!result) {
-						logger.warn(
-							{ contractId },
-							"[get_batch_token_data] Transform failed",
-						);
-						return {
-							contractId,
-							error: "Failed to transform stxcity metadata",
-						};
-					}
-					logger.info(
-						{ contractId, durationMs: Date.now() - tokenStartTime },
-						"[get_batch_token_data] Fetched from stxcity",
+				if (src !== "stxcity" && src !== "stxtools" && src !== "fakfun") {
+					logger.warn(
+						{ contractId, src },
+						"[get_batch_token_data] Unknown token source",
 					);
-					return result;
+					return { contractId, error: "Unknown token source" };
 				}
 
-				if (src === "stxtools") {
-					const result = await getTokenMetadata(contractId);
-					if (!result) {
-						logger.warn(
-							{ contractId },
-							"[get_batch_token_data] No stxtools metadata found",
-						);
-						return { contractId, error: "No stxtools metadata found" };
-					}
-					logger.info(
-						{ contractId, durationMs: Date.now() - tokenStartTime },
-						"[get_batch_token_data] Fetched from stxtools",
+				const result = await getProvider(src).getTokenMetadata(contractId);
+				if (!result) {
+					logger.warn(
+						{ contractId, src },
+						"[get_batch_token_data] No metadata found",
 					);
-					return result;
+					return { contractId, error: `No ${src} metadata found` };
 				}
 
-				if (src === "fakfun") {
-					const result = await getFakFunTokenMetadata(contractId);
-					if (!result) {
-						logger.warn(
-							{ contractId },
-							"[get_batch_token_data] No fakfun metadata found",
-						);
-						return { contractId, error: "No fakfun metadata found" };
-					}
-					logger.info(
-						{ contractId, durationMs: Date.now() - tokenStartTime },
-						"[get_batch_token_data] Fetched from fakfun",
-					);
-					return result;
-				}
-
-				const errorMsg =
-					src === "fak"
-						? "Fake token metadata disabled"
-						: "Unknown token source";
-				logger.warn(
-					{ contractId, src, errorMsg },
-					"[get_batch_token_data] Metadata fetch skipped or unknown source",
+				logger.info(
+					{ contractId, src, durationMs: Date.now() - tokenStartTime },
+					"[get_batch_token_data] Fetched token metadata",
 				);
-				return { contractId, error: errorMsg };
+				return result;
 			} catch (error) {
 				const errorMsg = error?.message ?? "Unknown error";
 				logger.error(

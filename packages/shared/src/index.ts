@@ -37,7 +37,9 @@ export const ADDRESSES = {
 	CHARISMA: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop",
 };
 
-export const STX_TOOLS_API_BASE_URL = "https://api.stxtools.io/";
+// stxtools rebranded to Tenero; base URL points at the new API, path shape kept
+// compatible with the old "tokens/{ca}" / "tokens/{ca}/holders" / "search" calls
+export const STX_TOOLS_API_BASE_URL = "https://api.tenero.io/v1/stacks/";
 export const FAKFUN_API_BASE_URL = "https://www.styxbtc.com/api/";
 export const FAKFUN_BEARER_TOKEN = process.env.FAKFUN_BEARER_TOKEN || "";
 export const STX_CITY_API_BASE_URL = "https://stx.city/api/";

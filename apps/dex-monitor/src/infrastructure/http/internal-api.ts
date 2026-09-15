@@ -24,6 +24,7 @@ export async function updateWebhookStatus(
 		logger.info({ userId, status }, "Webhook status updated");
 	} catch (err) {
 		logger.error(err, "Failed to call UpdateWebhookStatus");
+		throw err;
 	}
 }
 
@@ -54,6 +55,7 @@ export async function updateAlertStatus({
 		logger.info({ userId, status }, "Alert status updated");
 	} catch (err) {
 		logger.error(err, "Failed to call UpdateAlertStatus");
+		throw err;
 	}
 }
 
@@ -86,5 +88,6 @@ export async function updateHodlmmAlertStatus({
 		}
 	} catch (err) {
 		logger.error(err, "Failed to call UpdateHodlmmAlertStatus");
+		throw err;
 	}
 }

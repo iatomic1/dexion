@@ -16,10 +16,13 @@
 	"dependencies": {
 		"@bull-board/api": "^6.13.1",
 		"@bull-board/hono": "6.0.0",
+		"@dexion/bus": "workspace:*",
 		"@dexion/logger": "workspace:*",
 		"@dexion/notifier": "workspace:*",
 		"@dexion/shared": "workspace:*",
+		"@dexion/events": "workspace:*",
 		"@dexion/tokens": "workspace:*",
+		"@dexion/transactional": "workspace:*",
 		"@hirosystems/chainhooks-client": "^0.8.0",
 		"@hono/node-server": "^1.19.5",
 		"@stacks/blockchain-api-client": "^8.11.2",
@@ -27,7 +30,6 @@
 		"bullmq": "^5.61.0",
 		"hono": "^4.10.1",
 		"ioredis": "*",
-		"resend": "^6.2.2",
 		"zod": "4.1.12"
 	}
 }

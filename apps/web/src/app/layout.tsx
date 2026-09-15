@@ -9,11 +9,13 @@ import Script from "next/script";
 import type React from "react";
 import { Providers } from "~/components/providers/auth-provider";
 import { ClientQueryProvider } from "~/components/providers/query-client-provider";
+import { ThemePresetProvider } from "~/components/providers/theme-preset-provider";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { AuthClientContextProvider } from "~/contexts/AuthClientContext";
 import { AuthModalProvider } from "~/contexts/AuthModalContext";
 import { PresetsContextProvider } from "~/contexts/PresetsContext";
 import { getDevice } from "~/lib/get-device";
+import { THEME_PRESET_BLOCKING_SCRIPT } from "~/lib/themes";
 import { geistMono, geistSans } from "./fonts/geist";
 
 const title = "DEXION Pro - Cryptocurrency Trading Platform";
@@ -67,6 +69,12 @@ export default async function RootLayout({
 	const isMobile = await getDevice();
 	return (
 		<html lang="en" suppressHydrationWarning className="dark">
+			<head>
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: blocking preset-flash guard, must run before paint */}
+				<script
+					dangerouslySetInnerHTML={{ __html: THEME_PRESET_BLOCKING_SCRIPT }}
+				/>
+			</head>
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
 				<AuthClientContextProvider>
 					<Providers>
@@ -76,30 +84,32 @@ export default async function RootLayout({
 							enableSystem
 							disableTransitionOnChange
 						>
-							<Toaster
-								position="top-center"
-								// richColors
-								theme="light"
-								visibleToasts={1}
-								expand={true}
-							/>
-							{/* <WalletTrackerSocketProvider> */}
-							<PresetsContextProvider>
-								<AuthModalProvider>
-									<div className="flex min-h-screen flex-col font-geist">
-										<ClientQueryProvider>
-											{/*{process.env.NODE_ENV !== "production" && (
+							<ThemePresetProvider>
+								<Toaster
+									position="top-center"
+									// richColors
+									theme="light"
+									visibleToasts={1}
+									expand={true}
+								/>
+								{/* <WalletTrackerSocketProvider> */}
+								<PresetsContextProvider>
+									<AuthModalProvider>
+										<div className="flex min-h-screen flex-col font-geist">
+											<ClientQueryProvider>
+												{/*{process.env.NODE_ENV !== "production" && (
 												<ReactQueryDevtools buttonPosition="bottom-right" />
 											)}*/}
-											<DeviceContextProvider isMobile={isMobile}>
-												<TooltipProvider>
-													<main className="flex-1">{children}</main>
-												</TooltipProvider>
-											</DeviceContextProvider>
-										</ClientQueryProvider>
-									</div>
-								</AuthModalProvider>
-							</PresetsContextProvider>
+												<DeviceContextProvider isMobile={isMobile}>
+													<TooltipProvider>
+														<main className="flex-1">{children}</main>
+													</TooltipProvider>
+												</DeviceContextProvider>
+											</ClientQueryProvider>
+										</div>
+									</AuthModalProvider>
+								</PresetsContextProvider>
+							</ThemePresetProvider>
 							{process.env.NODE_ENV === "production" && (
 								<Script
 									src="https://cdn.databuddy.cc/databuddy.js"

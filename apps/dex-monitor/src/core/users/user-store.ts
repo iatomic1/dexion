@@ -1,4 +1,4 @@
-import { normalRedisConnection as redis } from "@/config/connections";
+import { appCacheRedisConnection as redis } from "@/config/connections";
 import type { CachedUserProfile, CachedWebhookConfig } from "@/core/users/user";
 
 export class UserStore {

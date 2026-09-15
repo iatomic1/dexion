@@ -52,3 +52,4 @@ app/web/dexion_handoff*
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+TENERO.md

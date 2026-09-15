@@ -1,14 +1,12 @@
+import type { WalletProvisionUser } from "@dexion/auth";
+import { db, eq, user } from "@dexion/db";
 import { getAddressFromPublicKey } from "@stacks/transactions";
-import { eq } from "drizzle-orm";
-import type { User } from "~/types/auth";
-import { db } from "../db/drizzle";
-import { user } from "../db/schema";
 import { createSubOrganization } from "../turnkey/service";
 
 // WARNING: Passing `requireVerified = false` bypasses email verification check.
 // Ensure upstream validation is done before use.
 export async function initWallet(
-	userFromSession: User,
+	userFromSession: WalletProvisionUser,
 	requireVerified = true,
 ) {
 	// Check if subOrgCreated is true and return

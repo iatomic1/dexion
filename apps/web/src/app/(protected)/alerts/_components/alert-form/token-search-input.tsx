@@ -51,6 +51,7 @@ import useCopyToClipboard from "~/hooks/useCopy";
 import useDebounce from "~/hooks/useDebounce";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import { formatPrice } from "~/lib/helpers/numbers";
+import { truncateBetween } from "~/lib/helpers/strings";
 import {
 	getBatchTokenData,
 	getSearchResults,
@@ -217,7 +218,7 @@ export function TokenSearchPopover<
 									aria-invalid={fieldState.invalid}
 									disabled={disabled}
 									className={cn(
-										"w-full justify-between font-mono text-sm bg-transparent",
+										"min-h-11 w-full justify-between font-mono text-sm bg-transparent sm:min-h-0",
 										!field.value && "text-muted-foreground",
 									)}
 								>
@@ -296,7 +297,34 @@ export function TokenSearchPopover<
 								</Command>
 							</PopoverContent>
 						</Popover>
-						{description && <FieldDescription>{description}</FieldDescription>}
+
+						{selectedToken && (
+							<div className="flex items-center gap-2 border-l-2 border-dx-green bg-dx-green/[.06] px-3 py-2 sm:hidden">
+								<Avatar className="h-[26px] w-[26px] rounded-md">
+									<AvatarImage
+										src={selectedToken.image_url}
+										className="object-cover"
+									/>
+									<AvatarFallback>
+										{selectedToken.symbol.charAt(0)}
+									</AvatarFallback>
+								</Avatar>
+								<span className="text-[13px] font-semibold text-dx-ink">
+									{selectedToken.symbol}
+								</span>
+								<span className="truncate font-mono text-[11px] text-dx-dim">
+									{truncateBetween(selectedToken.contract_id, ".", 4, 13)}
+								</span>
+								<span className="ml-auto font-mono text-[10px] tracking-[.1em] text-dx-green">
+									SELECTED
+								</span>
+							</div>
+						)}
+						{description && (
+							<FieldDescription className="text-xs">
+								{description}
+							</FieldDescription>
+						)}
 						{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 					</Field>
 				);

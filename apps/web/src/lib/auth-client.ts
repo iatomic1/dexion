@@ -1,3 +1,8 @@
+import {
+	siwsClient,
+	telegramClient,
+	walletAddressVerificationClient,
+} from "@dexion/auth/client";
 import { DOMAIN_NAME } from "@dexion/shared";
 import {
 	emailOTPClient,
@@ -6,9 +11,6 @@ import {
 	twoFactorClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { siwsClient } from "./auth/plugins/siws/client";
-import telegramClient from "./auth/plugins/telegram/client";
-import { walletAddressVerificationClient } from "./auth/plugins/wallet-address-verification/client";
 
 const URL =
 	process.env.NODE_ENV === "production"

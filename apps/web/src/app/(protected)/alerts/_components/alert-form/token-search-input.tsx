@@ -127,6 +127,10 @@ export function TokenSearchPopover<
 		retry: 1,
 	});
 
+	useEffect(() => {
+		console.log(searchResults);
+	}, [searchResults]);
+
 	// Query for history tokens when search is empty
 	const {
 		data: historyTokensData,
@@ -390,11 +394,11 @@ const TokenItem = memo(function TokenItem({
 	onSelect,
 }: TokenItemProps) {
 	const copy = useCopyToClipboard();
-	const { prices = [], isLoading } = useBtcStxPriceContext();
+	// const { prices = [], isLoading } = useBtcStxPriceContext();
 
-	const stxPrice =
-		prices?.find((p) => p.id === "blockstack" && p.symbol === "stx")
-			?.current_price ?? null;
+	// const stxPrice =
+	// 	prices?.find((p) => p.id === "blockstack" && p.symbol === "stx")
+	// 		?.current_price ?? null;
 
 	const handleCopyClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -405,19 +409,19 @@ const TokenItem = memo(function TokenItem({
 		[copy, token.contract_id],
 	);
 
-	const fakMc =
-		token.source === "fakfun"
-			? (() => {
-					if (isLoading || stxPrice === null) return null;
-					const tokenToDex = Number(token.bc_data?.tokenToDex ?? 0);
-					return computeFakFunMarketcap(
-						tokenToDex,
-						token.decimals,
-						token.metrics.price_usd,
-						stxPrice,
-					);
-				})()
-			: null;
+	// const fakMc =
+	// 	token.source === "fakfun"
+	// 		? (() => {
+	// 				if (isLoading || stxPrice === null) return null;
+	// 				const tokenToDex = Number(token.bc_data?.tokenToDex ?? 0);
+	// 				return computeFakFunMarketcap(
+	// 					tokenToDex,
+	// 					token.decimals,
+	// 					token.metrics.price_usd,
+	// 					stxPrice,
+	// 				);
+	// 			})()
+	// 		: null;
 
 	return (
 		<CommandItem
@@ -456,13 +460,16 @@ const TokenItem = memo(function TokenItem({
 				</div>
 
 				<div className="flex items-center gap-3 text-xs text-muted-foreground">
-					{token.source === "fakfun" ? (
+					{/*{token.source === "fakfun" ? (
 						isLoading || fakMc === null ? (
 							<Skeleton className="h-3 w-10 rounded" />
 						) : (
 							<span>MC: ${formatPrice(fakMc)}</span>
 						)
 					) : (
+						<span>MC: ${formatPrice(token.metrics.marketcap_usd)}</span>
+					)}*/}
+					{token.source !== "fakfun" && (
 						<span>MC: ${formatPrice(token.metrics.marketcap_usd)}</span>
 					)}
 

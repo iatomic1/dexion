@@ -26,12 +26,14 @@
 		}
 	},
 	"include": [
-		"next-env.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
-		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts",
-		"add-toast-id.js"
+		".next/types/**/*.ts",
+		"add-toast-id.js",
+		"next-env.d.ts",
+		".next-dev/types/**/*.ts",
+		".next-prod/types/**/*.ts"
 	],
 	"exclude": ["node_modules"]
 }

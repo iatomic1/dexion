@@ -7,9 +7,9 @@ import { config } from "./config";
 import { logger } from "./config/logger";
 import { validateToken } from "./verify-auth-token";
 
-const pubClient = new Redis(config.SOCKETIO_REDIS_URL);
+export const pubClient = new Redis(config.SOCKETIO_REDIS_URL);
 const subClient = pubClient.duplicate();
-export const io = new Server(config.PORT, {
+export const io = new Server({
 	cors: {
 		origin: FRONTEND_URL,
 		methods: ["GET", "POST"],

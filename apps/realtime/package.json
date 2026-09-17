@@ -8,7 +8,7 @@
 		"typescript": "^5.0.0"
 	},
 	"scripts": {
-		"dev": "doppler run -p dexion -c dev_dexmonitor -- bun --watch src/app/main.ts",
+		"dev": "doppler run -p dexion -c dev_realtime -- bun --watch src/index.ts",
 		"lint": "bunx biome check ./",
 		"test": "bun test"
 	},
@@ -16,10 +16,8 @@
 		"@dexion/bus": "workspace:*",
 		"@dexion/events": "workspace:*",
 		"@dexion/logger": "workspace:*",
-		"@dexion/notifier": "workspace:*",
 		"@dexion/shared": "workspace:*",
 		"@dexion/tokens": "workspace:*",
-		"@dexion/transactional": "workspace:*",
 		"@hono/node-server": "^1.19.5",
 		"@socket.io/bun-engine": "^0.1.2",
 		"@socket.io/redis-adapter": "^8.3.0",

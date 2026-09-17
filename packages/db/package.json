@@ -10,7 +10,7 @@
 		"check-types": "tsc --noEmit",
 		"db-gen": "bunx drizzle-kit generate",
 		"db-mig": "bunx drizzle-kit migrate",
-		"studio:local": "doppler run -p dexion -c dev -- bunx drizzle-kit studio",
+		"studio:local": "doppler run -p dexion -c dev_web -- bunx drizzle-kit studio",
 		"clean": "rm -rf node_modules"
 	},
 	"devDependencies": {

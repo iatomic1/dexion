@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
-import { AlertsNotificationFeed } from "~/components/icons/alert-notification-feed";
+import { AlertsNotificationFeed } from "~/components/alert-notification-feed";
 import AlertSheetRoot from "~/components/layout/alert-sheet-root";
 import WalletTrackerBanner from "~/components/layout/banners/wallet-tracker-banner";
 import MobileBottomNav from "~/components/layout/header/mobile-bottom-nav";

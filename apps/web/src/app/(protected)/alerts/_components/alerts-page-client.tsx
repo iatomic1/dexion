@@ -7,6 +7,7 @@ import type {
 	UserAlertChannels,
 	WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
+import { Button } from "@dexion/ui/components/ui/button";
 import {
 	DataStrip,
 	type DataStripItem,
@@ -16,6 +17,7 @@ import {
 import { cn } from "@dexion/ui/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { type ReactNode, useCallback, useMemo } from "react";
+import { toast as sonnerToast } from "sonner";
 import AlertsManager from "./alerts-manager";
 import HodlmmAlertsManager from "./hodlmm/hodlmm-alerts-manager";
 
@@ -185,6 +187,21 @@ export default function AlertsPageClient({
 					</div>
 				))}
 			</div>
+			{/*<Button
+				onClick={() => {
+					toast({
+						title: "This is a headless toast",
+						description:
+							"You have full control of styles and jsx, while still having the animations.",
+						button: {
+							label: "Reply",
+							onClick: () => sonnerToast.dismiss(),
+						},
+					});
+				}}
+			>
+				Test
+			</Button>*/}
 
 			<div className="flex border-b-2 border-dx-line-strong sm:hidden">
 				<MobileTabButton

@@ -86,17 +86,18 @@ tokens.get("/search", async (c) => {
 	if (!searchTerm) return c.json({ error: "Missing searchTerm" }, 400);
 
 	try {
-		const [stxtoolsTokens, stxcityTokens, fakfunTokens] = await Promise.all([
+		// const [stxtoolsTokens, stxcityTokens, fakfunTokens] = await Promise.all([
+		// 	getProvider("stxtools").search(searchTerm),
+		// 	getProvider("stxcity").search(searchTerm),
+		// 	getProvider("fakfun").search(searchTerm),
+		// ]);
+
+		const [stxtoolsTokens, stxcityTokens] = await Promise.all([
 			getProvider("stxtools").search(searchTerm),
 			getProvider("stxcity").search(searchTerm),
-			getProvider("fakfun").search(searchTerm),
 		]);
 
-		const combined = [
-			...(stxtoolsTokens || []),
-			...(stxcityTokens || []),
-			...(fakfunTokens || []),
-		];
+		const combined = [...(stxtoolsTokens || []), ...(stxcityTokens || [])];
 
 		const tokenMap = new Map();
 		const priority: Record<ProviderSource, number> = {

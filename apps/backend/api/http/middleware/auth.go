@@ -15,81 +15,124 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var (
-	jwks               *keyfunc.JWKS
-	jwksOnce           sync.Once
-	jwksInitErr        error
-	ErrInvalidIssuer   = errors.New("invalid issuer")
-	ErrInvalidAudience = errors.New("invalid audience")
-)
+// betterAuthValidMethods are the JWS algorithms better-auth's JWT plugin is
+// allowed to sign with. This must match `jwks.keyPairConfig.alg` on the
+// better-auth side ("EdDSA" is better-auth's default) - pinning it here
+// stops the parser from accepting a token signed with an algorithm the
+// server never asked for.
+var betterAuthValidMethods = []string{"EdDSA"}
 
-// setupJWKS initializes the JWKS for JWT verification
-func setupJWKS(betterAuthBaseURL string) error {
-	jwksURL := fmt.Sprintf("%s/api/auth/jwks", betterAuthBaseURL)
-	log.Debug().Msgf("[JWT DEBUG] Fetching JWKS from: %s", jwksURL)
+// jwksRetryBackoff bounds how often a failed JWKS fetch is retried on the
+// request path, so a burst of requests during an outage doesn't turn into a
+// burst of outbound fetches.
+const jwksRetryBackoff = 30 * time.Second
 
-	options := keyfunc.Options{
+// jwksVerifier owns the JWKS used to verify better-auth JWTs. Unlike a plain
+// sync.Once, a failed fetch is retried (with backoff) instead of being
+// cached as a permanent failure for the life of the process.
+type jwksVerifier struct {
+	cfg *config.Config
+
+	mu          sync.Mutex
+	jwks        *keyfunc.JWKS
+	lastErr     error
+	lastAttempt time.Time
+}
+
+func newJWKSVerifier(cfg *config.Config) *jwksVerifier {
+	return &jwksVerifier{cfg: cfg}
+}
+
+// warmUp performs an initial JWKS fetch eagerly (called at router setup /
+// process startup) so a misconfigured or unreachable better-auth instance
+// is surfaced in the logs immediately rather than on some user's first
+// request. Failure here is non-fatal: get() will retry lazily.
+func (v *jwksVerifier) warmUp() {
+	if _, err := v.get(); err != nil {
+		log.Warn().Err(err).Msg("initial JWKS fetch failed; will retry on incoming requests")
+	}
+}
+
+func (v *jwksVerifier) get() (*keyfunc.JWKS, error) {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+
+	if v.jwks != nil {
+		return v.jwks, nil
+	}
+	if v.lastErr != nil && time.Since(v.lastAttempt) < jwksRetryBackoff {
+		return nil, v.lastErr
+	}
+
+	jwksURL := fmt.Sprintf("%s/api/auth/jwks", v.cfg.FrontendURL)
+	log.Debug().Str("url", jwksURL).Msg("fetching JWKS")
+
+	fetched, err := keyfunc.Get(jwksURL, keyfunc.Options{
 		RefreshInterval: 24 * time.Hour,
 		RefreshTimeout:  10 * time.Second,
-	}
-
-	var err error
-	jwks, err = keyfunc.Get(jwksURL, options)
-	if err != nil {
-		log.Debug().Err(err).Msg("[JWT DEBUG] Failed to fetch JWKS")
-		return fmt.Errorf("failed to get JWKS: %w", err)
-	}
-
-	log.Debug().Msg("[JWT DEBUG] Successfully fetched JWKS")
-	return nil
-}
-
-// initJWKS ensures JWKS is initialized exactly once
-func initJWKS(cfg *config.Config) error {
-	jwksOnce.Do(func() {
-		jwksInitErr = setupJWKS(cfg.FrontendURL)
 	})
-	return jwksInitErr
+	v.lastAttempt = time.Now()
+	if err != nil {
+		v.lastErr = fmt.Errorf("failed to fetch JWKS: %w", err)
+		return nil, v.lastErr
+	}
+
+	v.jwks = fetched
+	v.lastErr = nil
+	return fetched, nil
 }
 
-// verifyBetterAuthJWT verifies a JWT token from better-auth
-func verifyBetterAuthJWT(tokenString string, cfg *config.Config) (*jwt.Token, error) {
-	if err := initJWKS(cfg); err != nil {
+// verify parses and validates a better-auth JWT: signature (against the
+// JWKS, restricted to betterAuthValidMethods), issuer, audience, and
+// expiry/not-before with a small clock-skew allowance.
+func (v *jwksVerifier) verify(tokenString string) (jwt.MapClaims, error) {
+	jwks, err := v.get()
+	if err != nil {
 		return nil, err
 	}
 
-	token, err := jwt.Parse(tokenString, jwks.Keyfunc)
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		jwks.Keyfunc,
+		jwt.WithValidMethods(betterAuthValidMethods),
+		jwt.WithIssuer(v.cfg.FrontendURL),
+		jwt.WithAudience(v.cfg.FrontendURL),
+		jwt.WithLeeway(30*time.Second),
+	)
 	if err != nil {
-		log.Debug().Err(err).Msg("[JWT DEBUG] Failed to parse token")
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
-
 	if !token.Valid {
-		log.Debug().Msg("[JWT DEBUG] Token is invalid")
 		return nil, errors.New("invalid token")
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		log.Debug().Msg("[JWT DEBUG] Failed to extract claims")
-		return nil, errors.New("invalid token claims")
-	}
-
-	if iss, ok := claims["iss"].(string); !ok || iss != cfg.FrontendURL {
-		log.Debug().Msgf("[JWT DEBUG] Issuer mismatch: got '%s', expected '%s'", iss, cfg.FrontendURL)
-		return nil, ErrInvalidIssuer
-	}
-
-	if aud, ok := claims["aud"].(string); !ok || aud != cfg.FrontendURL {
-		log.Debug().Msgf("[JWT DEBUG] Audience mismatch: got '%s', expected '%s'", aud, cfg.FrontendURL)
-		return nil, ErrInvalidAudience
-	}
-
-	return token, nil
+	return claims, nil
 }
 
-// BetterAuthJWTMiddleware validates JWT tokens from better-auth
-func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
+var (
+	sharedJWKSVerifier     *jwksVerifier
+	sharedJWKSVerifierOnce sync.Once
+)
+
+// getSharedJWKSVerifier returns the process-wide verifier, constructing (and
+// warming up) it on first use. All routers share one verifier/JWKS so
+// mounting auth on multiple route groups doesn't fetch the JWKS repeatedly.
+func getSharedJWKSVerifier(cfg *config.Config) *jwksVerifier {
+	sharedJWKSVerifierOnce.Do(func() {
+		sharedJWKSVerifier = newJWKSVerifier(cfg)
+		sharedJWKSVerifier.warmUp()
+	})
+	return sharedJWKSVerifier
+}
+
+// AccessTokenMiddleware validates better-auth-issued access tokens (JWTs)
+// passed as `Authorization: Bearer <token>` and populates the gin context
+// with the authenticated user's id/name/email/etc.
+func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
+	verifier := getSharedJWKSVerifier(cfg)
+
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
@@ -105,16 +148,13 @@ func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		tokenString = tokenParts[1]
-
-		token, err := verifyBetterAuthJWT(tokenString, cfg)
+		claims, err := verifier.verify(tokenParts[1])
 		if err != nil {
+			log.Debug().Err(err).Msg("JWT validation failed")
 			http.SendUnauthorized(c, err, http.WithMessage("Token validation failed"))
 			c.Abort()
 			return
 		}
-
-		claims := token.Claims.(jwt.MapClaims)
 
 		userID, ok := claims["id"].(string)
 		if !ok {
@@ -140,14 +180,10 @@ func BetterAuthJWTMiddleware(cfg *config.Config) gin.HandlerFunc {
 			c.Set("userEmailVerified", emailVerified)
 		}
 
-		if image, ok := claims["image"].(string); ok && image != "null" {
+		if image, ok := claims["image"].(string); ok {
 			c.Set("userImage", image)
 		}
 
 		c.Next()
 	}
-}
-
-func AccessTokenMiddleware(cfg *config.Config) gin.HandlerFunc {
-	return BetterAuthJWTMiddleware(cfg)
 }

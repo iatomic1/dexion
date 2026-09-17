@@ -1,8 +1,8 @@
 "use client";
 import { EXPLORER_BASE_URL, HTTP_STATUS } from "@dexion/shared";
 import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -48,15 +48,21 @@ export const WalletItem = ({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Wallet removed successfully");
+					toast.success("Wallet removed successfully", {
+						toasterId: "global",
+					});
 					revalidateTagServer("wallets");
 				} else {
-					toast.error(data.data?.message || "Failed to untrack wallet");
+					toast.error(data.data?.message || "Failed to untrack wallet", {
+						toasterId: "global",
+					});
 				}
 			},
 
 			onError: ({ error: { serverError } }) => {
-				toast.error(serverError?.errorMessage || "Failed to untrack wallet");
+				toast.error(serverError?.errorMessage || "Failed to untrack wallet", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -66,14 +72,20 @@ export const WalletItem = ({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Wallet updated successfully");
+					toast.success("Wallet updated successfully", {
+						toasterId: "global",
+					});
 					revalidateTagServer("wallets");
 				} else {
-					toast.error(data.data?.message || "Failed to update wallet");
+					toast.error(data.data?.message || "Failed to update wallet", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: ({ error: { serverError } }) => {
-				toast.error(serverError?.errorMessage || "Failed to update wallet");
+				toast.error(serverError?.errorMessage || "Failed to update wallet", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -204,7 +216,9 @@ export const WalletItem = ({
 						className="p-0 text-xs  items-center text-muted-foreground flex gap-1"
 						onClick={() => {
 							copy(wallet.address);
-							toast.success("Address copied to clipboard");
+							toast.success("Address copied to clipboard", {
+								toasterId: "global",
+							});
 						}}
 					>
 						<p>{truncateString(wallet.address, 10, 4)}</p>

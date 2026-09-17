@@ -10,6 +10,7 @@ import {
 	CredenzaTrigger,
 } from "@dexion/ui/components/ui/credenza";
 import { DialogTitle } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	Select,
 	SelectContent,
@@ -18,7 +19,6 @@ import {
 	SelectValue,
 } from "@dexion/ui/components/ui/select";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Copy, ExternalLink, Info, User } from "lucide-react";
@@ -90,7 +90,9 @@ export function AccountSecurityModal({
 										await authClient.updateUser({
 											image: url,
 										});
-										toast.success("Profile updated");
+										toast.success("Profile updated", {
+											toasterId: "global",
+										});
 									}}
 								/>
 								<div className="flex-1">
@@ -110,7 +112,9 @@ export function AccountSecurityModal({
 											className="h-5 w-5 ml-1 text-muted-foreground hover:text-foreground"
 											onClick={() => {
 												copy(session?.user.id as string);
-												toast.copy("UserID copied to clipboard");
+												toast.copy("UserID copied to clipboard", {
+													toasterId: "global",
+												});
 											}}
 										>
 											<Copy className="h-3 w-3" />
@@ -139,7 +143,9 @@ export function AccountSecurityModal({
 													className="h-5 w-5 ml-1 text-muted-foreground hover:text-foreground"
 													onClick={() => {
 														copy(`@${session.user.inviteCode}`);
-														toast.copy("Referral link copied to clipboard");
+														toast.copy("Referral link copied to clipboard", {
+															toasterId: "global",
+														});
 													}}
 												>
 													<Copy className="h-3 w-3" />
@@ -370,6 +376,7 @@ export function AccountSecurityModal({
 											error: (error) => {
 												return error?.message || "Failed to log out";
 											},
+											toasterId: "global",
 										});
 									}}
 									size="sm"

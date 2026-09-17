@@ -9,6 +9,7 @@ export function hasChannel(
 		email: !!userProfile.email,
 		telegram: !!userProfile.telegram_id,
 		webhook: !!userProfile.webhook,
+		webapp: true,
 	};
 	return channelMap[channel] ?? false;
 }

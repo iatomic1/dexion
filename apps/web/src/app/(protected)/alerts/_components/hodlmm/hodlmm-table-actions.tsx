@@ -1,7 +1,7 @@
 "use client";
 
 import { HTTP_STATUS } from "@dexion/shared";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { cn } from "@dexion/ui/lib/utils";
 import { RefreshCwIcon } from "lucide-react";
@@ -33,11 +33,15 @@ export function HodlmmTableActions({
 			if (data.data?.status === HTTP_STATUS.CREATED) {
 				router.refresh();
 			} else {
-				toast.error(data.data?.message || "Failed to sync alerts");
+				toast.error(data.data?.message || "Failed to sync alerts", {
+					toasterId: "global",
+				});
 			}
 		},
 		onError: (error) => {
-			toast.error((error as any).serverError || "Failed to sync alerts");
+			toast.error((error as any).serverError || "Failed to sync alerts", {
+				toasterId: "global",
+			});
 		},
 	});
 
@@ -71,7 +75,9 @@ export function HodlmmTableActions({
 					if (externalAddress) {
 						executeSync();
 					} else {
-						toast.error("No external address linked to your account.");
+						toast.error("No external address linked to your account.", {
+							toasterId: "global",
+						});
 					}
 				}}
 				disabled={isSyncing || !externalAddress}

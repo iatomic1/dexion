@@ -8,13 +8,13 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@dexion/ui/components/ui/dropdown-menu";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	Sheet,
 	SheetContent,
 	SheetHeader,
 	SheetTitle,
 } from "@dexion/ui/components/ui/sheet";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { cn } from "@dexion/ui/lib/utils";
@@ -37,12 +37,19 @@ export function HodlmmRowMenu({ alert }: { alert: HodlmmAlert }) {
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === "OK") {
-					toast.success("Alert updated successfully");
+					toast.success("Alert updated successfully", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error("Failed to update alert");
+					toast.error("Failed to update alert", {
+						toasterId: "global",
+					});
 				}
 			},
-			onError: () => toast.error("Failed to update alert"),
+			onError: () =>
+				toast.error("Failed to update alert", {
+					toasterId: "global",
+				}),
 		},
 	);
 
@@ -51,12 +58,19 @@ export function HodlmmRowMenu({ alert }: { alert: HodlmmAlert }) {
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === "OK") {
-					toast.success("Alert deleted successfully");
+					toast.success("Alert deleted successfully", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error("Failed to delete alert");
+					toast.error("Failed to delete alert", {
+						toasterId: "global",
+					});
 				}
 			},
-			onError: () => toast.error("Failed to delete alert"),
+			onError: () =>
+				toast.error("Failed to delete alert", {
+					toasterId: "global",
+				}),
 		},
 	);
 

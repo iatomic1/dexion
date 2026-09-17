@@ -2,13 +2,13 @@
 import { EXPLORER_BASE_URL } from "@dexion/shared";
 import type { TokenSwapTransaction } from "@dexion/tokens/types";
 import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
 } from "@dexion/ui/components/ui/hover-card";
 import { Separator } from "@dexion/ui/components/ui/separator";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -105,7 +105,9 @@ export function CryptoHoverCard({
 						className="text-[10px] md:text-xs h-6 md:h-7"
 						onClick={() => {
 							copy(address);
-							toast.info("Address copied to clipboard");
+							toast.info("Address copied to clipboard", {
+								toasterId: "global",
+							});
 						}}
 					>
 						{bns

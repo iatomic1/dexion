@@ -9,7 +9,7 @@ import {
 } from "@dexion/ui/components/ui/avatar";
 import { Badge } from "@dexion/ui/components/ui/badge";
 import { Button } from "@dexion/ui/components/ui/button";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { Copy, ExternalLink } from "lucide-react";
 import useCopyToClipboard from "~/hooks/useCopy";
@@ -170,7 +170,9 @@ export function CompactView({
 							className="h-5 w-5 p-0"
 							onClick={() => {
 								copy(transaction.txId);
-								toast.copy("Transaction ID copied to clipboard");
+								toast.copy("Transaction ID copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 						>
 							<Copy className="h-3 w-3" />

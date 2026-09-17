@@ -9,9 +9,9 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@dexion/ui/components/ui/field";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ValidationError } from "@stacks/common";
@@ -78,16 +78,25 @@ export default function Withdraw({
 			if (data.data?.success) {
 				toast.success(
 					`Transaction successful! TX ID: ${data.data.txid?.slice(0, 8)}...`,
+					{
+						toasterId: "global",
+					},
 				);
 			} else if ("error" in data.data) {
-				toast.error(`${data.data.reason}: ${data.data.error}`);
+				toast.error(`${data.data.reason}: ${data.data.error}`, {
+					toasterId: "global",
+				});
 			} else {
-				toast.error("Transaction failed");
+				toast.error("Transaction failed", {
+					toasterId: "global",
+				});
 			}
 		},
 
 		onError: ({ error: { serverError } }) => {
-			toast.error(serverError?.errorMessage || "Transaction failed");
+			toast.error(serverError?.errorMessage || "Transaction failed", {
+				toasterId: "global",
+			});
 		},
 	});
 

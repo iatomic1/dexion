@@ -1,8 +1,8 @@
 "use client";
 
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { MonoLabel, RuledCell } from "@dexion/ui/components/ui/instrument";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Copy } from "lucide-react";
 import { useState } from "react";
 import AvatarUpload from "~/components/layout/header/account/avatar-upload";
@@ -49,7 +49,9 @@ export function ProfileSection({ session }: { session: Session | null }) {
 				}
 				onUploadSuccess={async (url) => {
 					await authClient.updateUser({ image: url });
-					toast.success("Profile updated");
+					toast.success("Profile updated", {
+						toasterId: "global",
+					});
 				}}
 			/>
 			<div className="flex min-w-0 flex-col gap-0.5">
@@ -82,7 +84,9 @@ export function ProfileSection({ session }: { session: Session | null }) {
 							aria-label="Copy user ID"
 							onClick={() => {
 								copy(userId);
-								toast.copy("User ID copied to clipboard");
+								toast.copy("User ID copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 							className="text-dx-faint hover:text-dx-ink"
 						>
@@ -117,7 +121,9 @@ export function ProfileSection({ session }: { session: Session | null }) {
 						}
 						onUploadSuccess={async (url) => {
 							await authClient.updateUser({ image: url });
-							toast.success("Profile updated");
+							toast.success("Profile updated", {
+								toasterId: "global",
+							});
 						}}
 					/>
 					<div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -168,7 +174,9 @@ export function ProfileSection({ session }: { session: Session | null }) {
 						<OutlineButton
 							onClick={() => {
 								copy(`@${session.user.inviteCode}`);
-								toast.copy("Referral code copied to clipboard");
+								toast.copy("Referral code copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 						>
 							<Copy className="size-3.5" />@{session.user.inviteCode}

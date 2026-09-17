@@ -6,20 +6,13 @@ export const handleEmailSendingImmediate = async (
 	type: EmailType,
 	otp: string,
 ): Promise<void> => {
-	sendEmailWithTrigger
-		.trigger({
-			to: email,
-			type,
-			otp,
-		})
-		.then((handle) => {
-			console.log(
-				`Email task triggered for ${type} email to ${email}, Run ID: ${handle.id}`,
-			);
-		})
-		.catch((error) => {
-			console.error(`Error triggering ${type} email to ${email}:`, error);
-		});
+	const handle = await sendEmailWithTrigger.trigger({
+		to: email,
+		type,
+		otp,
+	});
 
-	return Promise.resolve();
+	console.log(
+		`Email task triggered for ${type} email to ${email}, Run ID: ${handle.id}`,
+	);
 };

@@ -15,8 +15,8 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@dexion/ui/components/ui/drawer";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -268,7 +268,9 @@ function TokenInfoContent({
 							className=""
 							onClick={() => {
 								copy(token?.contract_id || "");
-								toast.copy("Address copied to clipboard");
+								toast.copy("Address copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 						>
 							<div className="text-muted-foreground text-sm flex items-center gap-0.5">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@dexion/ui/components/ui/button";
 import { MonoLabel, StatusDot } from "@dexion/ui/components/ui/instrument";
 import { cn } from "@dexion/ui/lib/utils";
 import type React from "react";
@@ -153,7 +154,7 @@ export function OutlineButton({
 	...props
 }: React.ComponentProps<"button"> & { danger?: boolean }) {
 	return (
-		<button
+		<Button
 			type="button"
 			className={cn(
 				BUTTON_BASE,
@@ -174,7 +175,7 @@ export function SolidButton({
 	...props
 }: React.ComponentProps<"button"> & { danger?: boolean }) {
 	return (
-		<button
+		<Button
 			type="button"
 			className={cn(
 				BUTTON_BASE,

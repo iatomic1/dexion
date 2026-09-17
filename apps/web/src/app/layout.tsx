@@ -1,6 +1,7 @@
 import "./globals.css";
 import { FRONTEND_URL } from "@dexion/shared";
-import { Toaster } from "@dexion/ui/components/ui/sonner";
+import { Toaster as GlobalToaster } from "@dexion/ui/components/ui/global-sonner";
+import { Toaster as AlertsToaster } from "@dexion/ui/components/ui/sonner";
 import { TooltipProvider } from "@dexion/ui/components/ui/tooltip";
 import { DeviceContextProvider } from "@dexion/ui/hooks/use-is-mobile";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -85,11 +86,18 @@ export default async function RootLayout({
 							disableTransitionOnChange
 						>
 							<ThemePresetProvider>
-								<Toaster
+								<GlobalToaster
 									position="top-center"
 									// richColors
 									theme="light"
 									visibleToasts={1}
+									id="global"
+									expand={true}
+								/>
+								<AlertsToaster
+									position="bottom-right"
+									visibleToasts={1}
+									id="alerts"
 									expand={true}
 								/>
 								{/* <WalletTrackerSocketProvider> */}

@@ -24,6 +24,7 @@ export const startAlertTriggeredConsumer = () => {
 		EVENTS.AlertTriggered,
 		async (payload, ctx) => {
 			try {
+				logger.debug("gotten in notification-engine.alert-triggered");
 				if (!payload) return ctx.ack();
 				const {
 					activeChannels,

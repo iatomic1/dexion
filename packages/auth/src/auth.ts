@@ -16,10 +16,14 @@ import {
 } from "better-auth/plugins";
 import { setAuthInstance } from "./auth-instance";
 import { getBnsAndAvatar } from "./bns";
-import { getCachedUserData, redisStorage, updateCachedUserField } from "./redis";
 import { siws } from "./plugins/siws";
 import { getTelegramPlugin } from "./plugins/telegram/import";
 import { walletAddressVerification } from "./plugins/wallet-address-verification";
+import {
+	getCachedUserData,
+	redisStorage,
+	updateCachedUserField,
+} from "./redis";
 import type { WalletProvisionUser } from "./types";
 
 const URL =
@@ -29,6 +33,7 @@ const URL =
 const NGROK_PERSONAL_DOMAIN =
 	"https://unhuntable-kristofer-unresident.ngrok-free.dev";
 
+type WaitUntil = (promise: Promise<unknown>) => void;
 export interface CreateAuthOptions {
 	onWalletProvision: (
 		user: WalletProvisionUser,
@@ -39,10 +44,20 @@ export interface CreateAuthOptions {
 		type: "sign-in" | "email-verification" | "forget-password",
 		otp: string,
 	) => Promise<void>;
+	waitUntil?: WaitUntil;
+}
+function runInBackground(
+	task: Promise<unknown>,
+	options: { waitUntil?: WaitUntil; errorMessage: string },
+) {
+	const settled = task.catch((error) => {
+		console.error(options.errorMessage, error);
+	});
+	options?.waitUntil?.(settled);
 }
 
 export function createAuth(options: CreateAuthOptions) {
-	const { onWalletProvision, sendAuthEmail } = options;
+	const { onWalletProvision, sendAuthEmail, waitUntil } = options;
 
 	const auth = betterAuth({
 		appName: "Dexion Pro",
@@ -172,6 +187,7 @@ export function createAuth(options: CreateAuthOptions) {
 				enabled: true,
 				maxAge: 5 * 60,
 			},
+			storeSessionInDatabase: true,
 		},
 		socialProviders: {
 			google: {
@@ -203,12 +219,16 @@ export function createAuth(options: CreateAuthOptions) {
 			autoSignIn: true,
 			minPasswordLength: 8,
 			sendResetPassword: async ({ user, url }) => {
-				try {
-					await sendAuthEmail(user.email, "forget-password", url);
-				} catch (error) {
-					console.error("Failed to send reset password email:", error);
-					throw new Error("Failed to send reset password email");
-				}
+				runInBackground(sendAuthEmail(user.email, "forget-password", url), {
+					waitUntil,
+					errorMessage: "Failed to send reset password email:",
+				});
+				// try {
+				// 	await sendAuthEmail(user.email, "forget-password", url);
+				// } catch (error) {
+				// 	console.error("Failed to send reset password email:", error);
+				// 	throw new Error("Failed to send reset password email");
+				// }
 			},
 			revokeSessionsOnPasswordReset: true,
 			resetPasswordTokenExpiresIn: 10 * 60,
@@ -230,13 +250,10 @@ export function createAuth(options: CreateAuthOptions) {
 					if (type === "change-email") {
 						throw new Error("Email change verification is not supported");
 					}
-					console.log(`Sending OTP ${otp} to ${email} for ${type}`);
-					try {
-						await sendAuthEmail(email, type, otp);
-					} catch (error) {
-						console.error("Failed to send verification OTP:", error);
-						throw new Error("Failed to send verification OTP");
-					}
+					runInBackground(sendAuthEmail(email, type, otp), {
+						waitUntil,
+						errorMessage: "Failed to send verification OTP:",
+					});
 				},
 				expiresIn: 300,
 				otpLength: 6,

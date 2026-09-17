@@ -6,7 +6,7 @@ import {
 	type UserAlertChannels,
 	type WebhookConfig,
 } from "@dexion/api-sdk/index.ts";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	type ColumnFiltersState,
 	getCoreRowModel,
@@ -66,7 +66,9 @@ export default function AlertsManager({
 	const handleCopy = useCallback(
 		(text: string) => {
 			copy(text);
-			toast.copy("Contract Address copied to clipboard!");
+			toast.copy("Contract Address copied to clipboard!", {
+				toasterId: "global",
+			});
 		},
 		[copy],
 	);
@@ -170,7 +172,7 @@ export default function AlertsManager({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-wrap items-center justify-between gap-3">
+			<div className="flex flex-wrap items-center justify-between gap-3 md:py-2">
 				<TableFilters
 					table={table}
 					uniqueStatusValues={uniqueStatusValues}

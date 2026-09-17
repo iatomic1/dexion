@@ -9,9 +9,9 @@ import { Badge } from "@dexion/ui/components/ui/badge";
 import { Button } from "@dexion/ui/components/ui/button";
 import { DialogFooter } from "@dexion/ui/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@dexion/ui/components/ui/field";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { ExternalLink } from "@dexion/ui/components/ui/link";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useAction } from "next-safe-action/hooks";
@@ -55,16 +55,23 @@ export function WebhookConfigForm({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.CREATED) {
-					toast.success("Configuration saved successfully");
+					toast.success("Configuration saved successfully", {
+						toasterId: "global",
+					});
 					form.reset();
 					onSuccess?.();
 				} else {
-					toast.error(data.data?.message || "Failed to save configuration");
+					toast.error(data.data?.message || "Failed to save configuration", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: ({ error: { serverError } }) => {
 				toast.error(
 					serverError?.errorMessage || "Failed to save configuration",
+					{
+						toasterId: "global",
+					},
 				);
 			},
 		},
@@ -75,16 +82,23 @@ export function WebhookConfigForm({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Configuration saved successfully");
+					toast.success("Configuration saved successfully", {
+						toasterId: "global",
+					});
 					form.reset();
 					onSuccess?.();
 				} else {
-					toast.error(data.data?.message || "Failed to save configuration");
+					toast.error(data.data?.message || "Failed to save configuration", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: ({ error: { serverError } }) => {
 				toast.error(
 					serverError?.errorMessage || "Failed to save configuration",
+					{
+						toasterId: "global",
+					},
 				);
 			},
 		},
@@ -95,16 +109,23 @@ export function WebhookConfigForm({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Configuration deleted successfully");
+					toast.success("Configuration deleted successfully", {
+						toasterId: "global",
+					});
 					form.reset();
 					onSuccess?.();
 				} else {
-					toast.error(data.data?.message || "Failed to delete configuration");
+					toast.error(data.data?.message || "Failed to delete configuration", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: ({ error: { serverError } }) => {
 				toast.error(
 					serverError?.errorMessage || "Failed to delete configuration",
+					{
+						toasterId: "global",
+					},
 				);
 			},
 		},

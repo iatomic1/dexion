@@ -1,4 +1,4 @@
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Copy } from "lucide-react";
 import Image from "next/image";
 import { QrcodeCanvas } from "react-qrcode-pretty";
@@ -37,7 +37,9 @@ export default function Deposit({
 				className="flex relative gap-1 border rounded-xl p-1 hover:bg-popover transition-colors duration-150"
 				onClick={() => {
 					copy(stxAddress as string);
-					toast.copy("STX address copied to clipboard");
+					toast.copy("STX address copied to clipboard", {
+						toasterId: "global",
+					});
 				}}
 			>
 				<QrcodeCanvas

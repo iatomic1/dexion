@@ -128,15 +128,20 @@ const Market = ({
 								openInNewPage(`${EXPLORER_BASE_URL}txid/${data.data?.txId}`);
 							},
 						},
+						toasterId: "global",
 					},
 				);
 			} else {
-				toast.error("Buy transaction completed but was not successful");
+				toast.error("Buy transaction completed but was not successful", {
+					toasterId: "global",
+				});
 			}
 		},
 
 		onError: ({ error: { serverError } }) => {
-			toast.error(serverError?.errorMessage || "Buy transaction failed");
+			toast.error(serverError?.errorMessage || "Buy transaction failed", {
+				toasterId: "global",
+			});
 		},
 	});
 
@@ -149,13 +154,20 @@ const Market = ({
 						0,
 						8,
 					)}... | Expected STX: ${data.data.expectedOutput}`,
+					{
+						toasterId: "global",
+					},
 				);
 			} else {
-				toast.error("Sell transaction failed");
+				toast.error("Sell transaction failed", {
+					toasterId: "global",
+				});
 			}
 		},
 		onError: ({ error: { serverError } }) => {
-			toast.error(serverError?.errorMessage || "Sell transaction failed");
+			toast.error(serverError?.errorMessage || "Sell transaction failed", {
+				toasterId: "global",
+			});
 		},
 	});
 
@@ -233,7 +245,9 @@ const Market = ({
 
 	const handleBuyToken = async () => {
 		if (!selectedAmount || selectedAmount <= 0) {
-			toast.error("Please enter a valid STX amount");
+			toast.error("Please enter a valid STX amount", {
+				toasterId: "global",
+			});
 			return;
 		}
 
@@ -246,7 +260,9 @@ const Market = ({
 	// Handle sell token transaction
 	const handleSellToken = async () => {
 		if (!selectedAmount || selectedAmount <= 0) {
-			toast.error("Please enter a valid token amount");
+			toast.error("Please enter a valid token amount", {
+				toasterId: "global",
+			});
 			return;
 		}
 

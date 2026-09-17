@@ -13,6 +13,9 @@ export const PUBLIC_BASE_URL = DEV
 export const VERCEL_FRONTEND_URL = "https://dexion-web.vercel.app";
 // export const PARTKIT_HOST = "dexion-party.iatomic1.partykit.dev";
 export const PARTKIT_HOST = "129.0.0.1:1999";
+export const REALTIME_WEBSOCKET_URL = DEV
+	? "http://localhost:4005"
+	: "https://realtime.dexion.pro";
 
 export const WALLET_TRACKER_SOCKET_URL = "http://localhost:3005";
 export const TOKEN_WATCHER_API_BASE_URL = DEV

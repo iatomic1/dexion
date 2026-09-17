@@ -12,7 +12,7 @@ import {
 	AlertDialogTrigger,
 } from "@dexion/ui/components/ui/alert-dialog";
 import { Button } from "@dexion/ui/components/ui/button";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Table } from "@tanstack/react-table";
 import { CircleAlertIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
@@ -47,15 +47,21 @@ export function TableActions<TData extends { id: string }>({
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alerts deleted successfully");
+					toast.success("Alerts deleted successfully", {
+						toasterId: "global",
+					});
 					setOpen(false); // ✅ manually close dialog
 					table.resetRowSelection(); // ✅ clear selection
 				} else {
-					toast.error(data.data?.message || "Failed to delete alerts");
+					toast.error(data.data?.message || "Failed to delete alerts", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to delete alerts");
+				toast.error((error as any).serverError || "Failed to delete alerts", {
+					toasterId: "global",
+				});
 			},
 		},
 	);

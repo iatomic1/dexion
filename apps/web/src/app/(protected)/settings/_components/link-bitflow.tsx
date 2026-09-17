@@ -1,7 +1,7 @@
 "use client";
 import { DOMAIN_NAME } from "@dexion/shared";
 import { Button } from "@dexion/ui/components/ui/button";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import {
 	connect,
@@ -42,7 +42,9 @@ export default function LinkBitflow({
 			await connect({ network: "mainnet" });
 
 			if (!isConnected()) {
-				toast.error("Failed to connect to wallet");
+				toast.error("Failed to connect to wallet", {
+					toasterId: "global",
+				});
 				return;
 			}
 
@@ -51,7 +53,9 @@ export default function LinkBitflow({
 			const address = walletData?.addresses?.stx?.[0]?.address;
 
 			if (!address) {
-				toast.error("No Stacks address found");
+				toast.error("No Stacks address found", {
+					toasterId: "global",
+				});
 				return;
 			}
 
@@ -63,7 +67,9 @@ export default function LinkBitflow({
 			);
 
 			if (nonceError || !nonceData?.nonce) {
-				toast.error("Failed to generate authentication nonce");
+				toast.error("Failed to generate authentication nonce", {
+					toasterId: "global",
+				});
 				console.error("Nonce error:", nonceError);
 				return;
 			}
@@ -77,7 +83,9 @@ export default function LinkBitflow({
 			});
 
 			if (!signResponse?.publicKey || !signResponse?.signature) {
-				toast.error("Message signing was cancelled or failed");
+				toast.error("Message signing was cancelled or failed", {
+					toasterId: "global",
+				});
 				return;
 			}
 
@@ -91,13 +99,17 @@ export default function LinkBitflow({
 				});
 
 			if (verificationError) {
-				toast.error("Authentication verification failed");
+				toast.error("Authentication verification failed", {
+					toasterId: "global",
+				});
 				console.error("Verification error:", verificationError);
 				return;
 			}
 
 			if (verificationData?.success) {
-				toast.success("Bitflow account linked successfully");
+				toast.success("Bitflow account linked successfully", {
+					toasterId: "global",
+				});
 				router.refresh(); // Refresh to update UI with new user data
 			}
 		} catch (error) {
@@ -105,17 +117,25 @@ export default function LinkBitflow({
 
 			if (error instanceof Error) {
 				if (error.message?.includes("network")) {
-					toast.error("Network error - please check your connection");
+					toast.error("Network error - please check your connection", {
+						toasterId: "global",
+					});
 				} else if (
 					error.message?.includes("user") ||
 					error.message?.includes("cancel")
 				) {
-					toast.error("Authentication cancelled by user");
+					toast.error("Authentication cancelled by user", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error("Authentication failed - please try again");
+					toast.error("Authentication failed - please try again", {
+						toasterId: "global",
+					});
 				}
 			} else {
-				toast.error("An unexpected error occurred");
+				toast.error("An unexpected error occurred", {
+					toasterId: "global",
+				});
 			}
 		} finally {
 			setIsLoading(false);
@@ -137,15 +157,21 @@ export default function LinkBitflow({
 				disconnect();
 			}
 
-			toast.success("Bitflow account unlinked successfully");
+			toast.success("Bitflow account unlinked successfully", {
+				toasterId: "global",
+			});
 			router.refresh(); // Refresh to update UI with new user data
 		} catch (error) {
 			console.error("Unlink error:", error);
 
 			if (error instanceof Error) {
-				toast.error(error.message);
+				toast.error(error.message, {
+					toasterId: "global",
+				});
 			} else {
-				toast.error("Failed to unlink Bitflow account");
+				toast.error("Failed to unlink Bitflow account", {
+					toasterId: "global",
+				});
 			}
 		} finally {
 			setIsLoading(false);

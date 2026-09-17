@@ -1,5 +1,6 @@
 import { FRONTEND_URL } from "@dexion/shared";
 import { createRemoteJWKSet, jwtVerify } from "jose";
+import { logger } from "./config/logger";
 
 const baseUrl =
 	process.env.NODE_ENV === "production"
@@ -15,7 +16,7 @@ export async function validateToken(token: string) {
 		});
 		return payload;
 	} catch (error) {
-		console.error("Token validation failed:", error);
+		logger.error(error, "Token validation failed:");
 		throw error;
 	}
 }

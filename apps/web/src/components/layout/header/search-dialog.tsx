@@ -13,11 +13,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { ScrollArea, ScrollBar } from "@dexion/ui/components/ui/scroll-area";
 import { Separator } from "@dexion/ui/components/ui/separator";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Toggle } from "@dexion/ui/components/ui/toggle";
 import {
 	Tooltip,
@@ -329,7 +329,9 @@ const HistoryItem = ({
 			e.preventDefault();
 			e.stopPropagation();
 			copy(token.contract_id);
-			toast.copy("Address copied to clipboard");
+			toast.copy("Address copied to clipboard", {
+				toasterId: "global",
+			});
 		},
 		[copy, token.contract_id],
 	);

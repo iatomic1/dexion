@@ -8,7 +8,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { CheckCircle2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -69,16 +69,23 @@ export default function LinkTelegramAccount({
 									linkRes.data.message ===
 										"Telegram account linked successfully"
 								) {
-									toast.success("Telegram linked successfully");
+									toast.success("Telegram linked successfully", {
+										toasterId: "global",
+									});
 									setLinkStep("start-bot");
 								} else {
 									toast.error(
 										linkRes?.data?.error || "Failed to link Telegram account",
+										{
+											toasterId: "global",
+										},
 									);
 								}
 							} catch (error) {
 								console.error("Failed to link:", error);
-								toast.error("Failed to link Telegram account");
+								toast.error("Failed to link Telegram account", {
+									toasterId: "global",
+								});
 							} finally {
 								setIsLinking(false);
 							}
@@ -86,7 +93,9 @@ export default function LinkTelegramAccount({
 					);
 				} catch (err) {
 					console.error(err);
-					toast.error("Failed to initialize Telegram login");
+					toast.error("Failed to initialize Telegram login", {
+						toasterId: "global",
+					});
 					setIsLinking(false);
 				}
 			};
@@ -111,6 +120,9 @@ export default function LinkTelegramAccount({
 
 		toast.success(
 			"Opening Telegram... Start the bot to receive notifications!",
+			{
+				toasterId: "global",
+			},
 		);
 
 		// Close dialog and refresh after a short delay
@@ -128,17 +140,23 @@ export default function LinkTelegramAccount({
 
 			try {
 				await authClient.unlinkTelegram();
-				toast.success("Telegram account unlinked");
+				toast.success("Telegram account unlinked", {
+					toasterId: "global",
+				});
 				router.refresh();
 			} catch (err: any) {
 				console.error(err);
 				setError(err?.message || "Failed to unlink Telegram account");
-				toast.error(err?.message || "Failed to unlink Telegram account");
+				toast.error(err?.message || "Failed to unlink Telegram account", {
+					toasterId: "global",
+				});
 			} finally {
 				setLoading(false);
 			}
 		} else {
-			toast.info("Telegram account unlinking is disabled at the moment");
+			toast.info("Telegram account unlinking is disabled at the moment", {
+				toasterId: "global",
+			});
 		}
 	};
 

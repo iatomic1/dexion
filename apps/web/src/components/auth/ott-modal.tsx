@@ -11,9 +11,9 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { Label } from "@dexion/ui/components/ui/label";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Clock,
 	Copy,
@@ -49,7 +49,9 @@ export default function OTTModal({
 			const { data, error } = await authClient.oneTimeToken.generate();
 			setIsGenerating(false);
 			if (error) {
-				toast.error(error.message ?? "An error occurred while generating ott");
+				toast.error(error.message ?? "An error occurred while generating ott", {
+					toasterId: "global",
+				});
 				return;
 			}
 			if (data.token) {
@@ -57,13 +59,17 @@ export default function OTTModal({
 				setToken(data.token);
 			}
 		}
-		toast.info("OTT signing in is disabled at the moment");
+		toast.info("OTT signing in is disabled at the moment", {
+			toasterId: "global",
+		});
 	};
 
 	const copyToken = async () => {
 		if (token) {
 			copy(token);
-			toast.copy("OTT copied to clipboard");
+			toast.copy("OTT copied to clipboard", {
+				toasterId: "global",
+			});
 		}
 	};
 

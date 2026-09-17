@@ -6,7 +6,7 @@ import {
 	AvatarImage,
 } from "@dexion/ui/components/ui/avatar";
 import { Button } from "@dexion/ui/components/ui/button";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -74,7 +74,9 @@ export default function TokenInfo({ token }: { token: TokenMetadata }) {
 												className="h-6 w-6 hover:text-indigo-500 transition-colors duration-150 ease-in-out"
 												onClick={() => {
 													copy(token.contract_id);
-													toast.copy("Address copied to clipboard");
+													toast.copy("Address copied to clipboard", {
+														toasterId: "global",
+													});
 												}}
 											>
 												<Copy className="h-4 w-4" />
@@ -193,7 +195,9 @@ const Actions = ({
 				)}
 				onClick={() => {
 					copy(`${PUBLIC_BASE_URL}/meme/${ca}`);
-					toast.copy("Link copied to clipboard");
+					toast.copy("Link copied to clipboard", {
+						toasterId: "global",
+					});
 				}}
 			>
 				<Share2 className="h-5 w-5" />

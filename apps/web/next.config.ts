@@ -4,6 +4,7 @@ const nextConfig = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
+	distDir: process.env.NODE_ENV === "production" ? ".next-prod" : ".next-dev",
 	images: {
 		remotePatterns: [
 			{

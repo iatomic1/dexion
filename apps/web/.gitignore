@@ -3,6 +3,8 @@ extract-env-keys.ts
 
 .trigger
 .next
+.next-dev
+.next-prod
 
 # design handoff reference — never commit
 dexion_handoff*

@@ -1,4 +1,4 @@
-import { logger, task } from "@trigger.dev/sdk/v3";
+import { logger, task } from "@trigger.dev/sdk";
 import { sendEmail } from "~/lib/email/send";
 import type { EmailPayload, EmailResponse } from "~/types/email";
 

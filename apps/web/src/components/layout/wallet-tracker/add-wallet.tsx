@@ -8,13 +8,13 @@ import {
 	EmojiPickerSearch,
 } from "@dexion/ui/components/ui/emoji-picker";
 import { Field, FieldError, FieldGroup } from "@dexion/ui/components/ui/field";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from "@dexion/ui/components/ui/popover";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { validateStacksAddress } from "@stacks/transactions";
 import { useAction } from "next-safe-action/hooks";
@@ -53,20 +53,28 @@ export default function AddWalletModal({ children }: { children: ReactNode }) {
 	const { execute, status } = useAction(trackWalletAction, {
 		onSuccess: (data) => {
 			if (data.data?.status === HTTP_STATUS.CREATED) {
-				toast.success("Wallet tracked successfully");
+				toast.success("Wallet tracked successfully", {
+					toasterId: "global",
+				});
 				form.reset();
 				setSelectedEmoji("🤣");
 				setIsDialogOpen(false);
 				revalidateTagServer("wallets");
 			} else {
-				toast.error(data.data?.message || "Failed to track wallet");
+				toast.error(data.data?.message || "Failed to track wallet", {
+					toasterId: "global",
+				});
 			}
 		},
 		onError: ({ error: { serverError } }) => {
 			if (serverError) {
-				toast.error(serverError.errorMessage);
+				toast.error(serverError.errorMessage, {
+					toasterId: "global",
+				});
 			} else {
-				toast.error("Failed to track wallet");
+				toast.error("Failed to track wallet", {
+					toasterId: "global",
+				});
 			}
 		},
 	});

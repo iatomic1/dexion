@@ -7,6 +7,7 @@ import {
 	DrawerHeader,
 	DrawerTrigger,
 } from "@dexion/ui/components/ui/drawer";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	Popover,
 	PopoverContent,
@@ -14,7 +15,6 @@ import {
 } from "@dexion/ui/components/ui/popover";
 import { Separator } from "@dexion/ui/components/ui/separator";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import {
 	Tooltip,
 	TooltipContent,
@@ -201,7 +201,9 @@ export default function Balance({
 		walletAddress as string,
 		useCallback(
 			(tx) => {
-				toast.message("New transaction detected. Refreshing balance...");
+				toast.message("New transaction detected. Refreshing balance...", {
+					toasterId: "global",
+				});
 				refetch();
 			},
 			[refetch],
@@ -210,7 +212,9 @@ export default function Balance({
 
 	const handleCopyAddress = () => {
 		copy(session?.user.walletAddress as string);
-		toast.success("STX address copied to clipboard");
+		toast.success("STX address copied to clipboard", {
+			toasterId: "global",
+		});
 	};
 
 	const contentProps = {

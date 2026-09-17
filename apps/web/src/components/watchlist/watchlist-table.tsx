@@ -6,10 +6,10 @@ import {
 	AvatarImage,
 } from "@dexion/ui/components/ui/avatar";
 import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Label } from "@dexion/ui/components/ui/label";
 import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
 import { Skeleton } from "@dexion/ui/components/ui/skeleton";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import {
 	type ColumnDef,
@@ -95,16 +95,22 @@ export const createTableColumns = (
 				e.stopPropagation();
 
 				if (!t.watchlistId) {
-					toast.error("Unable to delete: watchlist ID not found");
+					toast.error("Unable to delete: watchlist ID not found", {
+						toasterId: "global",
+					});
 					return;
 				}
 
 				try {
 					await removeFromWatchlist(t.watchlistId);
 					revalidateTagServer("watchlist");
-					toast.success("Removed from watchlist");
+					toast.success("Removed from watchlist", {
+						toasterId: "global",
+					});
 				} catch (error) {
-					toast.error("Failed to remove token from watchlist");
+					toast.error("Failed to remove token from watchlist", {
+						toasterId: "global",
+					});
 				}
 			};
 

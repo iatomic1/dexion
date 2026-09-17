@@ -12,7 +12,7 @@ import {
 	CredenzaHeader,
 } from "@dexion/ui/components/ui/credenza";
 import { DialogTitle } from "@dexion/ui/components/ui/dialog";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { IKUpload, ImageKitProvider } from "imagekitio-next";
 import { Upload, User, X } from "lucide-react";
 import type React from "react";
@@ -64,11 +64,15 @@ export default function AvatarUpload({
 
 	const validateFile = (file: File) => {
 		if (file.size > 5 * 1024 * 1024) {
-			toast.error("File must be less than 5MB in size.");
+			toast.error("File must be less than 5MB in size.", {
+				toasterId: "global",
+			});
 			return false;
 		}
 		if (!file.type.startsWith("image/")) {
-			toast.error("File must be an image.");
+			toast.error("File must be an image.", {
+				toasterId: "global",
+			});
 			return false;
 		}
 		return true;

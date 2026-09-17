@@ -10,13 +10,13 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@dexion/ui/components/ui/dropdown-menu";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import {
 	Sheet,
 	SheetContent,
 	SheetHeader,
 	SheetTitle,
 } from "@dexion/ui/components/ui/sheet";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { useIsMobile } from "@dexion/ui/hooks/use-is-mobile";
 import { cn } from "@dexion/ui/lib/utils";
@@ -43,13 +43,19 @@ export function AlertRowMenu({ alert, onEditAlert }: AlertRowMenuProps) {
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert deleted successfully");
+					toast.success("Alert deleted successfully", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error(data.data?.message || "Failed to delete alert");
+					toast.error(data.data?.message || "Failed to delete alert", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to delete alert");
+				toast.error((error as any).serverError || "Failed to delete alert", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -59,13 +65,19 @@ export function AlertRowMenu({ alert, onEditAlert }: AlertRowMenuProps) {
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert paused successfully");
+					toast.success("Alert paused successfully", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error(data.data?.message || "Failed to pause alert");
+					toast.error(data.data?.message || "Failed to pause alert", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to pause alert");
+				toast.error((error as any).serverError || "Failed to pause alert", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -75,13 +87,19 @@ export function AlertRowMenu({ alert, onEditAlert }: AlertRowMenuProps) {
 		{
 			onSuccess: (data) => {
 				if (data.data?.status === HTTP_STATUS.CREATED) {
-					toast.success("Alert duplicated successfully");
+					toast.success("Alert duplicated successfully", {
+						toasterId: "global",
+					});
 				} else {
-					toast.error(data.data?.message || "Failed to duplicate alert");
+					toast.error(data.data?.message || "Failed to duplicate alert", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to duplicate alert");
+				toast.error((error as any).serverError || "Failed to duplicate alert", {
+					toasterId: "global",
+				});
 			},
 		},
 	);

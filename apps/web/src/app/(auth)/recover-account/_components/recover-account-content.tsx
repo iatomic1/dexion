@@ -13,8 +13,8 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@dexion/ui/components/ui/field";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import InputPassword from "@dexion/ui/components/ui/input-password";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { XCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,9 @@ export default function RecoverAccountContent() {
 
 	const onSubmit = async (values: RecoverFormValues) => {
 		if (!token) {
-			toast.error("Missing reset token. Please request a new link.");
+			toast.error("Missing reset token. Please request a new link.", {
+				toasterId: "global",
+			});
 			return;
 		}
 
@@ -85,7 +87,9 @@ export default function RecoverAccountContent() {
 				{
 					async onSuccess() {
 						await authClient.revokeSessions();
-						toast.success("Password updated successfully!");
+						toast.success("Password updated successfully!", {
+							toasterId: "global",
+						});
 						router.push("/?authView=signin");
 					},
 				},
@@ -93,7 +97,9 @@ export default function RecoverAccountContent() {
 
 			if (resetError) {
 				console.error("Password reset error:", resetError);
-				toast.error(resetError.message || "Failed to reset password.");
+				toast.error(resetError.message || "Failed to reset password.", {
+					toasterId: "global",
+				});
 			}
 		} catch (err) {
 			console.error("Unexpected error:", err);
@@ -103,7 +109,9 @@ export default function RecoverAccountContent() {
 					: err instanceof Error
 						? err.message
 						: "An unexpected error occurred. Please try again.";
-			toast.error(message);
+			toast.error(message, {
+				toasterId: "global",
+			});
 		} finally {
 			setIsSubmitting(false);
 		}

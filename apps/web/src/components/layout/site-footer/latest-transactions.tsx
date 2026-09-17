@@ -5,8 +5,8 @@ import {
 } from "@dexion/tokens/parser";
 import { Button } from "@dexion/ui/components/ui/button";
 import { DialogClose, DialogTitle } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { ScrollArea } from "@dexion/ui/components/ui/scroll-area";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftRight, X } from "lucide-react";
 import Link from "next/link";
@@ -31,7 +31,9 @@ export default function LatestTransactionsModal({
 	useSubscribeAddressTransactions(
 		walletAddress as string,
 		useCallback((tx) => {
-			toast.message("New transaction detected. Refreshing balance...");
+			toast.message("New transaction detected. Refreshing balance...", {
+				toasterId: "global",
+			});
 			// refetch();
 		}, []),
 	);

@@ -5,7 +5,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "@dexion/ui/components/ui/dropdown-menu";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { ChevronDown, Copy } from "lucide-react";
 import Link from "next/link";
@@ -112,7 +112,9 @@ export function AccountDropdown({ session }: { session: Session }) {
 							type="button"
 							onClick={() => {
 								copy(address as string);
-								toast.copy("Address copied to clipboard");
+								toast.copy("Address copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 							className="flex items-center gap-2 font-mono text-[13px] text-dx-ink hover:text-dx-green"
 						>
@@ -124,7 +126,9 @@ export function AccountDropdown({ session }: { session: Session }) {
 							type="button"
 							onClick={() => {
 								copy(session?.user?.id ?? "");
-								toast.copy("User ID copied to clipboard");
+								toast.copy("User ID copied to clipboard", {
+									toasterId: "global",
+								});
 							}}
 							className="flex items-center gap-2 font-mono text-[13px] text-dx-ink hover:text-dx-green"
 						>
@@ -210,6 +214,7 @@ export function AccountDropdown({ session }: { session: Session }) {
 								return "Logged out successfully";
 							},
 							error: (error) => error?.message || "Failed to log out",
+							toasterId: "global",
 						});
 					}}
 					className="block w-full text-left"

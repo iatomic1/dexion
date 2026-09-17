@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { useRouter } from "next/navigation";
 import { authClient } from "~/lib/auth-client";
 import { OutlineButton, SettingsRow, SolidButton } from "../settings-ui";
@@ -32,6 +32,7 @@ export function AccountSection() {
 									return "Signed out successfully";
 								},
 								error: (error) => error?.message || "Failed to sign out",
+								toasterId: "global",
 							});
 						}}
 					>
@@ -44,7 +45,14 @@ export function AccountSection() {
 				description="Permanently removes your alerts, trackers and linked accounts."
 				danger
 				action={
-					<SolidButton danger onClick={() => toast.info("Coming soon")}>
+					<SolidButton
+						danger
+						onClick={() =>
+							toast.info("Coming soon", {
+								toasterId: "global",
+							})
+						}
+					>
 						Delete account
 					</SolidButton>
 				}

@@ -10,8 +10,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Label } from "@dexion/ui/components/ui/label";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { Spinner } from "@dexion/ui/components/ui/spinner";
 import { Switch } from "@dexion/ui/components/ui/switch";
 import { AppWindow, Mail, MessageCircle, Webhook } from "lucide-react";
@@ -52,13 +52,20 @@ export function EditChannelsDialog({
 	const { execute, status } = useAction(updateHodlmmAlertAction, {
 		onSuccess: (data) => {
 			if (data.data?.status === "OK") {
-				toast.success("Notification channels updated successfully");
+				toast.success("Notification channels updated successfully", {
+					toasterId: "global",
+				});
 				onOpenChange(false);
 			} else {
-				toast.error("Failed to update notification channels");
+				toast.error("Failed to update notification channels", {
+					toasterId: "global",
+				});
 			}
 		},
-		onError: () => toast.error("Failed to update notification channels"),
+		onError: () =>
+			toast.error("Failed to update notification channels", {
+				toasterId: "global",
+			}),
 	});
 
 	const handleSave = () => {

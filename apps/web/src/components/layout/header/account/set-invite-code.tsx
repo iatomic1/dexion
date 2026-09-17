@@ -7,10 +7,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@dexion/ui/components/ui/dialog";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { Label } from "@dexion/ui/components/ui/label";
 import { Separator } from "@dexion/ui/components/ui/separator";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import type React from "react";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
@@ -56,6 +56,7 @@ export default function SetInviteCode({
 				setIsLoading(false);
 				return error.message || "Failed to set referral code";
 			},
+			toasterId: "global",
 		});
 	};
 
@@ -88,7 +89,8 @@ export default function SetInviteCode({
 					<Button
 						className="rounded-full w-full mt-4 font-bold text-sm"
 						size={"lg"}
-						disabled={isLoading}
+						disabled
+						// disabled={isLoading}
 						type="submit"
 					>
 						{isLoading ? "Setting..." : "Set"}

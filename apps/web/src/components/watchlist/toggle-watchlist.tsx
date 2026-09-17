@@ -1,5 +1,5 @@
 import { Button } from "@dexion/ui/components/ui/button";
-import { toast } from "@dexion/ui/components/ui/sonner";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { cn } from "@dexion/ui/lib/utils";
 import { Star } from "lucide-react";
 import { useState } from "react";
@@ -35,7 +35,9 @@ export function ToggleWatchlist({
 			if (isInWatchlist) {
 				// Remove from watchlist
 				if (!watchlistItem?.id) {
-					toast.error("Watchlist ID not found");
+					toast.error("Watchlist ID not found", {
+						toasterId: "global",
+					});
 					setIsProcessing(false);
 					return;
 				}
@@ -47,6 +49,7 @@ export function ToggleWatchlist({
 						return "Removed from watchlist";
 					},
 					error: "Failed to remove from watchlist",
+					toasterId: "global",
 				});
 			} else {
 				// Add to watchlist
@@ -66,6 +69,7 @@ export function ToggleWatchlist({
 						}
 						return "Failed to add to watchlist";
 					},
+					toasterId: "global",
 				});
 			}
 		} catch (error) {
@@ -73,6 +77,9 @@ export function ToggleWatchlist({
 				isInWatchlist
 					? "Failed to remove from watchlist"
 					: "Failed to add to watchlist",
+				{
+					toasterId: "global",
+				},
 			);
 		} finally {
 			setIsProcessing(false);

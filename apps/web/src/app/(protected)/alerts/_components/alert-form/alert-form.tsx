@@ -8,8 +8,8 @@ import {
 } from "@dexion/api-sdk/index.ts";
 import { HTTP_STATUS } from "@dexion/shared";
 import { TokenMetadata } from "@dexion/tokens/types";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { MonoLabel } from "@dexion/ui/components/ui/instrument";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useAction } from "next-safe-action/hooks";
 import { type ReactNode, useEffect, useState } from "react";
@@ -22,6 +22,7 @@ import { ChannelsField } from "./channels-field";
 import { ConditionFields } from "./condition-fields";
 import { FormActions } from "./form-actions";
 import { RepeatableField } from "./repeatable-field";
+import TokenSearchInput from "./token-search";
 import { TokenSearchPopover } from "./token-search-input";
 
 const METRIC_LABELS: Record<string, string> = {
@@ -94,15 +95,21 @@ export function AlertForm({
 			onSuccess: (serverData) => {
 				const data = serverData.data;
 				if (data?.status === HTTP_STATUS.OK) {
-					toast.success("Alert updated successfully");
+					toast.success("Alert updated successfully", {
+						toasterId: "global",
+					});
 					onSuccess && onSuccess();
 					form.reset();
 				} else {
-					toast.error(data?.message || "Failed to update alert");
+					toast.error(data?.message || "Failed to update alert", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to update alert");
+				toast.error((error as any).serverError || "Failed to update alert", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -113,15 +120,21 @@ export function AlertForm({
 			onSuccess: (serverData) => {
 				const data = serverData.data;
 				if (data?.status === HTTP_STATUS.CREATED) {
-					toast.success("Alert created successfully");
+					toast.success("Alert created successfully", {
+						toasterId: "global",
+					});
 					form.reset();
 					onSuccess && onSuccess();
 				} else {
-					toast.error(data?.message || "Failed to create alert");
+					toast.error(data?.message || "Failed to create alert", {
+						toasterId: "global",
+					});
 				}
 			},
 			onError: (error) => {
-				toast.error((error as any).serverError || "Failed to create alert");
+				toast.error((error as any).serverError || "Failed to create alert", {
+					toasterId: "global",
+				});
 			},
 		},
 	);
@@ -160,6 +173,7 @@ export function AlertForm({
 		<form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col">
 			{!initialData && (
 				<FormSection index="01" title="TOKEN">
+					{/*<TokenSearchInput />*/}
 					<TokenSearchPopover
 						control={form.control}
 						name="ca"

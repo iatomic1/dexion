@@ -15,7 +15,9 @@ export default function useCopyToClipboard(trackCopiedText = false) {
 	const copy: CopyFn = useCallback(
 		async (text) => {
 			if (!navigator?.clipboard) {
-				toast.error("Clipboard not supported");
+				toast.error("Clipboard not supported", {
+					toasterId: "global",
+				});
 				console.warn("Clipboard not supported");
 				return false;
 			}

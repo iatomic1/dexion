@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@dexion/ui/components/ui/button";
+import { toast } from "@dexion/ui/components/ui/global-sonner";
 import { Input } from "@dexion/ui/components/ui/input";
 import { Label } from "@dexion/ui/components/ui/label";
-import { toast } from "@dexion/ui/components/ui/sonner";
 import { useState } from "react";
 import { authClient } from "~/lib/auth-client";
 
@@ -28,6 +28,9 @@ export default function ResetPasswordForm() {
 						setEmail("");
 						toast.info(
 							"If you have an account with us, check your email for a link to reset your password.",
+							{
+								toasterId: "global",
+							},
 						);
 					},
 				},
@@ -37,11 +40,16 @@ export default function ResetPasswordForm() {
 				console.error("Password reset request failed:", error);
 				toast.error(
 					error.message || "Something went wrong while sending the reset link.",
+					{
+						toasterId: "global",
+					},
 				);
 				return;
 			}
 
-			toast.success("Password reset request sent successfully!");
+			toast.success("Password reset request sent successfully!", {
+				toasterId: "global",
+			});
 		} catch (err: unknown) {
 			console.error("Unexpected error:", err);
 
@@ -51,7 +59,9 @@ export default function ResetPasswordForm() {
 					? err.message
 					: "An unexpected error occurred. Please try again.";
 
-			toast.error(message);
+			toast.error(message, {
+				toasterId: "global",
+			});
 		} finally {
 			setIsLoading(false);
 		}

@@ -82,6 +82,7 @@ export function NotificationProvider({
 						label: "DEXplorer",
 						onClick: () => openInNewPage(`${EXPLORER_BASE_URL}txid/${tx.txId}`),
 					},
+					toasterId: "global",
 				});
 			}
 		},
@@ -108,6 +109,7 @@ export function NotificationProvider({
 					onError?.(data.message);
 					toast.error("Notification Error", {
 						description: data.message,
+						toasterId: "global",
 					});
 					break;
 
@@ -145,6 +147,7 @@ export function NotificationProvider({
 					onError?.("Error parsing server message");
 					toast.error("Message Error", {
 						description: "Error parsing server message",
+						toasterId: "global",
 					});
 				}
 			},
@@ -157,6 +160,7 @@ export function NotificationProvider({
 				onError?.("Connection error");
 				toast.error("Connection Error", {
 					description: "WebSocket connection error",
+					toasterId: "global",
 				});
 			},
 			[onError],

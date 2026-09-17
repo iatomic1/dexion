@@ -15,7 +15,9 @@ export function useSocket(serverUrl: string) {
 			console.log("DisCOnnected");
 		});
 		setSocket(s);
-		return () => s.disconnect();
+		return () => {
+			s.disconnect();
+		};
 	}, [serverUrl]);
 
 	return socket;

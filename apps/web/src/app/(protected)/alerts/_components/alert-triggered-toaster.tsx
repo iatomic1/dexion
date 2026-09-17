@@ -53,7 +53,7 @@ export function AlertHeader({
 	as?: React.ElementType;
 	titleAs?: React.ElementType;
 	className?: string;
-	toastId: string | number;
+	toastId?: string | number;
 }) {
 	const label = (
 		<MonoLabel className="tracking-[.14em] text-dx-green">

@@ -82,6 +82,7 @@ export const startSwapConsumer = () => {
 					),
 				];
 
+				logger.debug("fetching user profiles");
 				const userProfiles = await Promise.all(
 					uniqueUserIDs.map(async (id) => {
 						const profile = await userStore.getUserProfile(id);
@@ -105,6 +106,16 @@ export const startSwapConsumer = () => {
 								continue;
 							}
 
+							logger.debug(
+								{
+									channels: alert.channels
+										.map(
+											(cid) => ALERT_CHANNELS.find((ch) => ch.id === cid)?.name,
+										)
+										.filter(Boolean),
+								},
+								"activechannels",
+							);
 							const activeChannels = alert.channels
 								.map((cid) => ALERT_CHANNELS.find((ch) => ch.id === cid)?.name)
 								.filter(Boolean)
@@ -116,6 +127,8 @@ export const startSwapConsumer = () => {
 								userProfile,
 								activeChannels,
 							});
+						} else {
+							logger.debug("Alert can't trigger");
 						}
 					}
 				}

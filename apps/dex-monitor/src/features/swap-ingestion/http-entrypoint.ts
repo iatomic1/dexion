@@ -24,6 +24,7 @@ swapIngestion.use(
 async function handleWebhook(c: any, platform: SwapEventPlatform) {
 	try {
 		const body = await c.req.json();
+		// await Bun.write("./payload.json", JSON.stringify(body, null, 2));
 		const txMetadata = body.event.apply[0].transactions[0].metadata;
 
 		if (txMetadata.status !== "success") {
